@@ -52,6 +52,25 @@ The viewer follows NVIDIA's official quick-start behavior and continues until
 `PYTHONPATH`, and `LD_LIBRARY_PATH` so the host's Isaac Sim 6.0 installation
 cannot silently replace the locked 5.1 runtime.
 
+### Current host rendering status
+
+On the current RTX 5070 Ti host (driver `595.84`), the locked physics-only
+headless evaluation is validated, but both the GUI viewer and headless camera
+recorder crash in Isaac Sim's native `librtx.scenedb.plugin.so` before the G1
+stage is created. Isaac Sim's compatibility checker passes the GPU, driver,
+VRAM, OS, CPU, RAM, storage, and display checks. Selecting GPU 0 explicitly,
+disabling automatic and explicit multi-GPU rendering, disabling asynchronous
+rendering, and resetting the user configuration do not remove the crash.
+
+Treat this as an Isaac Sim 5.1 rendering-runtime blocker, not as a SONIC policy
+failure. Do not substitute results from the host's Isaac Sim 6.0 installation
+into this locked baseline. Resolve or migrate the renderer separately while
+keeping the 5.1/2.3.2 physics result as the reference until parity is measured.
+Isaac Sim 5.1 is now marked unsupported upstream; NVIDIA only ships fixes in
+newer releases. See the official
+[requirements](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/installation/requirements.html)
+and [known issues](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/overview/known_issues.html).
+
 ## Evaluation contract
 
 Use SONIC as the shared execution backend, not as the judge. In the recovery
