@@ -30,3 +30,12 @@ The bootstrap command clones only source code and checks out immutable commits.
 It deliberately does not install packages or download model/data artifacts.
 Follow [`docs/BASELINE.md`](docs/BASELINE.md) for the official install, artifact,
 preflight, and smoke-test commands.
+
+The tested SONIC-only simulator baseline is documented in
+[`docs/SONIC_BASELINE.md`](docs/SONIC_BASELINE.md). After its isolated runtime
+and locked artifacts are present, run either:
+
+```bash
+python3 scripts/run_sonic_release.py metrics
+python3 scripts/run_sonic_release.py viewer
+```
