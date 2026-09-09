@@ -23,10 +23,10 @@
       "destination": "GR00T-WholeBodyControl"
     },
     "isaac_gr00t": {
-      "role": "Official GR00T N1.7 VLA implementation",
+      "role": "Official GR00T N1.7 implementation containing UNITREE_G1_SONIC integration",
       "url": "https://github.com/NVIDIA/Isaac-GR00T.git",
-      "ref": "n1.7-release",
-      "revision": "23ace64f17aa5015259b8609d371eb61a357c776",
+      "ref": "main",
+      "revision": "51d4c89f72fda44cbf77285c6a8114b52676b8a1",
       "destination": "Isaac-GR00T"
     },
     "unitree_sim_isaaclab": {
@@ -42,6 +42,23 @@
       "ref": "v2.3.2",
       "revision": "37ddf626871758333d6ed89cf64ad702aef127d0",
       "destination": "IsaacLab"
+    }
+  },
+  "evaluation_profiles": {
+    "zero_shot_base": {
+      "source_ref": "n1.7-release",
+      "source_revision": "23ace64f17aa5015259b8609d371eb61a357c776",
+      "python": "3.10",
+      "model": "nvidia/GR00T-N1.7-3B",
+      "allowed_embodiments": "pretrain tags baked into the base checkpoint",
+      "training_allowed": false
+    },
+    "unitree_g1_sonic": {
+      "source_component": "isaac_gr00t",
+      "python": ">=3.12,<3.13",
+      "model": "nvidia/GR00T-N1.7-3B plus a task-specific post-trained checkpoint",
+      "embodiment": "UNITREE_G1_SONIC",
+      "training_required": true
     }
   },
   "huggingface": {

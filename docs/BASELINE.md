@@ -15,12 +15,20 @@ camera + proprioception -> GR00T N1.7 policy server
 `nvidia/GR00T-N1.7-3B` checkpoint must be fine-tuned for it; the lock file does
 not imply that the base checkpoint is directly inference-ready for SONIC.
 
+This is separate from the base-model zero-shot profile. The release supports
+zero-shot inference only for embodiment tags already baked into the base model,
+including `OXE_DROID_RELATIVE_EEF_RELATIVE_JOINT` and `REAL_G1`. NVIDIA provides
+an included DROID dataset for the runnable zero-shot smoke test, but does not
+provide an equivalent closed-loop Unitree G1 + SONIC apple-picking task that can
+run from the base checkpoint without post-training.
+
 The compatibility tuple used here is the intersection of official requirements:
 
 - GEAR-SONIC training: Ubuntu 22.04+, CUDA 12.x, Python 3.11, Isaac Lab 2.3+;
 - Isaac Lab 2.3.x: built on Isaac Sim 5.1;
 - Unitree simulator: supports Isaac Sim 5.1 with Python 3.11;
-- Isaac-GR00T N1.7 release: Python `>=3.12,<3.13`.
+- locked Isaac-GR00T SONIC integration source: Python `>=3.12,<3.13`;
+- N1.7 release used for the zero-shot audit: Python 3.10.
 
 That is why the policy server and simulator/controller are isolated processes.
 Do not `pip install` both projects into one environment.
@@ -91,7 +99,14 @@ uv run python gr00t/eval/run_gr00t_server.py \
 Dataset paths and checkpoint paths are placeholders by design; they must point
 to artifacts produced or selected for a concrete experiment.
 
-## 4. Artifact ownership
+## 4. Zero-shot base-model audit
+
+The zero-shot audit is deliberately outside the SONIC profile. It uses the
+official N1.7 release source, the official DROID sample, and the base model with
+no optimizer, training, adapter, or modified weights. Results and the exact
+command are recorded in [`ZERO_SHOT_AUDIT.md`](ZERO_SHOT_AUDIT.md).
+
+## 5. Artifact ownership
 
 Official baseline inputs remain in the NVIDIA Hugging Face repositories locked
 in the manifest. Project-produced large files and benchmark outputs belong in
@@ -103,6 +118,7 @@ source.
 
 - [GEAR-SONIC training installation](https://github.com/NVlabs/GR00T-WholeBodyControl/blob/087f9ac01d46f6d8e4d0b73c01ae64799f292a38/docs/source/getting_started/installation_training.md)
 - [GEAR-SONIC VLA workflow](https://github.com/NVlabs/GR00T-WholeBodyControl/blob/087f9ac01d46f6d8e4d0b73c01ae64799f292a38/docs/source/tutorials/vla_workflow.md)
-- [Isaac-GR00T N1.7 release](https://github.com/NVIDIA/Isaac-GR00T/tree/23ace64f17aa5015259b8609d371eb61a357c776)
+- [Isaac-GR00T integration source](https://github.com/NVIDIA/Isaac-GR00T/tree/51d4c89f72fda44cbf77285c6a8114b52676b8a1)
+- [Isaac-GR00T N1.7 zero-shot release source](https://github.com/NVIDIA/Isaac-GR00T/tree/23ace64f17aa5015259b8609d371eb61a357c776)
 - [Unitree Isaac Lab simulator](https://github.com/unitreerobotics/unitree_sim_isaaclab/tree/e30c25b1dffdf92ada1d6c8c1fe9a47bdde0fecc)
 - [Isaac Lab 2.3.2](https://github.com/isaac-sim/IsaacLab/tree/37ddf626871758333d6ed89cf64ad702aef127d0)

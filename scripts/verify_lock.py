@@ -88,6 +88,12 @@ def validate(lock: dict[str, object], vendor: Path, check_local: bool) -> list[s
         if not repo_id.startswith("nvidia/"):
             errors.append(f"{name}: baseline artifact is not from official nvidia namespace")
 
+    zero_shot = lock.get("evaluation_profiles", {}).get("zero_shot_base", {})
+    if not SHA40.fullmatch(str(zero_shot.get("source_revision", ""))):
+        errors.append("zero_shot_base: source_revision is not a 40-character Git SHA")
+    if zero_shot.get("training_allowed") is not False:
+        errors.append("zero_shot_base: training_allowed must remain false")
+
     return errors
 
 

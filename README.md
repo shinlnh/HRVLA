@@ -13,6 +13,17 @@ The upstream sources are locked in [`config/upstreams.lock.json`](config/upstrea
 - Unitree `unitree_sim_isaaclab` for the G1 simulation/DDS reference;
 - NVIDIA Isaac Lab 2.3.2 on Isaac Sim 5.1 for the simulation runtime.
 
+Two evaluation profiles are intentionally distinct:
+
+- zero-shot base-model audit: the N1.7 release source, a baked-in pretrain
+  embodiment, and no fine-tuning;
+- Unitree G1 + SONIC integration: current locked integration source and the
+  `UNITREE_G1_SONIC` post-training embodiment.
+
+The base checkpoint is not a zero-shot SONIC checkpoint. See
+[`docs/ZERO_SHOT_AUDIT.md`](docs/ZERO_SHOT_AUDIT.md) for the first measured
+zero-shot run and its limitations.
+
 The VLA and simulator/controller dependencies require different Python
 versions. Keep them in separate environments:
 
