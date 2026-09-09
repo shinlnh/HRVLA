@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://huggingface.co/datasets/shin0412/HRVLA/episode.schema.json",
+  "title": "HRVLA recovery benchmark episode",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "episode_id",
+    "method_id",
+    "task_id",
+    "scenario_id",
+    "protocol",
+    "training_seed",
+    "rollout_seed",
+    "initial_snapshot_id",
+    "policy_checkpoint_id",
+    "controller_id",
+    "simulator_revision",
+    "success",
+    "termination"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "episode_id": {"type": "string", "minLength": 1},
+    "method_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "scenario_id": {"type": "string", "minLength": 1},
+    "protocol": {
+      "enum": ["nominal", "failure_start", "online_failure"]
+    },
+    "training_seed": {"type": "integer", "minimum": 0},
+    "rollout_seed": {"type": "integer", "minimum": 0},
+    "initial_snapshot_id": {"type": "string", "minLength": 1},
+    "failure_snapshot_id": {"type": ["string", "null"]},
+    "policy_checkpoint_id": {"type": "string", "minLength": 1},
+    "controller_id": {"type": "string", "minLength": 1},
+    "simulator_revision": {"type": "string", "minLength": 1},
+    "success": {"type": "boolean"},
+    "termination": {
+      "enum": ["success", "timeout", "fall", "safety", "unrecoverable", "other"]
+    },
+    "detected": {"type": "boolean"},
+    "detection_latency_s": {"type": "number", "minimum": 0},
+    "recovery_time_s": {"type": "number", "minimum": 0},
+    "replans": {"type": "integer", "minimum": 0},
+    "retries": {"type": "integer", "minimum": 0},
+    "safety_violations": {"type": "integer", "minimum": 0},
+    "pre_failure_score": {"type": "number", "minimum": 0, "maximum": 1},
+    "post_failure_score": {"type": "number", "minimum": 0, "maximum": 1},
+    "completed_subtasks": {"type": "integer", "minimum": 0},
+    "total_subtasks": {"type": "integer", "minimum": 1},
+    "failure": {
+      "type": ["object", "null"],
+      "required": [
+        "event_id",
+        "event_boundary",
+        "level",
+        "humanoid_axes",
+        "severity",
+        "recoverable_oracle"
+      ],
+      "properties": {
+        "event_id": {"type": "string", "minLength": 1},
+        "event_boundary": {"type": "string", "minLength": 1},
+        "level": {"enum": ["L1", "L2", "L3", "L4"]},
+        "humanoid_axes": {
+          "type": "array",
+          "items": {"enum": ["H1", "H2", "H3"]},
+          "uniqueItems": true
+        },
+        "severity": {"enum": ["low", "medium", "high"]},
+        "recoverable_oracle": {"const": true}
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"protocol": {"const": "nominal"}}},
+      "then": {"properties": {"failure": {"type": "null"}}},
+      "else": {
+        "required": ["failure"],
+        "properties": {"failure": {"type": "object"}}
+      }
+    },
+    {
+      "if": {"properties": {"protocol": {"const": "failure_start"}}},
+      "then": {
+        "required": ["failure_snapshot_id"],
+        "properties": {"failure_snapshot_id": {"type": "string", "minLength": 1}}
+      }
+    }
+  ],
+  "additionalProperties": false
+}

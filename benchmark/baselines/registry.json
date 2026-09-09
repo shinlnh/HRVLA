@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "policy": {
+    "paper_reported_results": "reference_only",
+    "direct_ranking_requirement": "rerun each method under the same HRVLA snapshots, controller contract, observations, budgets, and seeds",
+    "missing_official_implementation": "report as not rerun; never substitute a locally approximated method under the paper name"
+  },
+  "entries": [
+    {
+      "id": "gr00t_n1_7_sonic",
+      "kind": "runnable_baseline",
+      "question": "Can the official GR00T N1.7 plus SONIC stack complete and recover the HRVLA task?",
+      "source": "https://github.com/NVlabs/GR00T-WholeBodyControl",
+      "implementation": "feat(GR00T)/reproduce-baseline-humanoid-robotic@0f6440ae2263100f229fe5b0bf30d8aba60bbd72",
+      "status": "baseline_scaffolded"
+    },
+    {
+      "id": "libero_recover",
+      "kind": "benchmark_reference",
+      "question": "Can a manipulation policy recover after an execution-induced failure?",
+      "source": "https://arxiv.org/abs/2609.05178",
+      "borrowed_contracts": ["L1-L4 taxonomy", "RSR", "RD", "RC"],
+      "directly_comparable": false,
+      "reason": "LIBERO uses a fixed-base manipulation setting rather than humanoid whole-body execution"
+    },
+    {
+      "id": "humanoid_arena",
+      "kind": "benchmark_reference",
+      "question": "How do hierarchical whole-body policies compare on leg-critical egocentric tasks and across motion trackers?",
+      "source": "https://arxiv.org/abs/2606.17833",
+      "borrowed_contracts": ["seven task coverage seed", "matched initializations", "3 seeds x 20 rollouts", "fall and execution-failure reporting"],
+      "directly_comparable": false,
+      "reason": "It is a general whole-body benchmark, not a dedicated recovery benchmark"
+    },
+    {
+      "id": "pro_hoi",
+      "kind": "method_reference",
+      "question": "Can a G1 detect a dropped object, estimate its resting pose, and regrasp it?",
+      "source": "https://arxiv.org/abs/2603.01126",
+      "comparable_slice": "L3 object-drop recovery",
+      "directly_comparable": "only_after_rerun_or_matched_protocol"
+    },
+    {
+      "id": "omnicontact",
+      "kind": "method_reference",
+      "question": "Can contact-flow meta-skills be chained, replanned, and resumed in long-horizon loco-manipulation?",
+      "source": "https://arxiv.org/abs/2606.26201",
+      "comparable_slice": "long-horizon object-drop and environment-aware replanning",
+      "directly_comparable": "only_after_rerun_or_matched_protocol"
+    },
+    {
+      "id": "sugar",
+      "kind": "method_reference",
+      "question": "Can scalable human-video priors produce robust, reference-free humanoid loco-manipulation?",
+      "source": "https://arxiv.org/abs/2605.20373",
+      "comparable_slice": "disturbance robustness and autonomous recovery",
+      "directly_comparable": "only_after_rerun_or_matched_protocol"
+    },
+    {
+      "id": "humanoid_exo",
+      "kind": "method_reference",
+      "question": "Can wearable-exoskeleton demonstrations scale whole-body humanoid manipulation?",
+      "source": "https://arxiv.org/abs/2510.03022",
+      "comparable_slice": "nominal whole-body task execution and data collection",
+      "directly_comparable": false
+    }
+  ]
+}

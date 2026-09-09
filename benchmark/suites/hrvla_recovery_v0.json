@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "suite_id": "hrvla_recovery_v0",
+  "status": "protocol_draft_no_results",
+  "robot": "Unitree G1",
+  "reference_stack": {
+    "vla": "NVIDIA GR00T N1.7",
+    "embodiment_tag": "UNITREE_G1_SONIC",
+    "whole_body_controller": "GEAR-SONIC",
+    "simulator": "Isaac Lab 2.3.2 / Isaac Sim 5.1",
+    "baseline_branch_commit": "0f6440ae2263100f229fe5b0bf30d8aba60bbd72"
+  },
+  "protocols": {
+    "nominal": {
+      "failure_injection": false,
+      "purpose": "Measure ordinary task success and detect recovery-module regression"
+    },
+    "failure_start": {
+      "failure_injection": false,
+      "start_state": "shared immutable post-failure simulator snapshot",
+      "purpose": "Isolate recovery competence from pre-failure execution quality"
+    },
+    "online_failure": {
+      "failure_injection": true,
+      "trigger": "shared semantic event or sub-task boundary",
+      "purpose": "Evaluate detection, diagnosis, recovery, and task continuation end to end"
+    }
+  },
+  "recovery_levels": {
+    "L1": "Action retry; task state is materially unchanged",
+    "L2": "Action adaptation; object state changed but remains directly usable",
+    "L3": "Object-state restoration before the original task can continue",
+    "L4": "Environment restoration involving a blocking non-target state or object"
+  },
+  "humanoid_axes": {
+    "H1": "Body-state recovery: support, balance, foot placement, or recoverable fall state",
+    "H2": "Policy-tracker failure: valid high-level intent is not realized by the whole-body tracker",
+    "H3": "Coupled failure: body-state disruption and task/object-state disruption co-occur"
+  },
+  "task_seed_source": {
+    "source": "HumanoidArena",
+    "tasks": [
+      "football",
+      "double_desk",
+      "pick_and_place_box",
+      "open_door",
+      "sit_sofa",
+      "boxing",
+      "visual_navigation"
+    ],
+    "note": "Task names seed coverage only; HRVLA recovery scenarios require their own recoverability oracle and event annotations"
+  },
+  "replication": {
+    "training_seeds": [0, 1, 2],
+    "rollouts_per_seed_per_cell": 20,
+    "paired_rollout_seeds_across_methods": true
+  },
+  "fairness_requirements": [
+    "Identical initial and failure snapshots for every method in a comparison cell",
+    "Identical event boundary, perturbation parameters, and rollout seed",
+    "Identical observation permissions, action rate, time budget, and success predicate",
+    "Controller identity and revision reported; controller changes form a separate comparison",
+    "No retry outside the episode budget and no silent reset after failure",
+    "Every injected scenario is independently verified recoverable by an oracle policy or expert",
+    "All episode records, failed rollouts, exclusions, and seeds are retained"
+  ],
+  "primary_metrics": [
+    "nominal_success_rate",
+    "macro_recovery_success_rate_by_protocol",
+    "recovery_success_rate_by_L_level",
+    "recovery_success_rate_by_H_axis",
+    "fall_rate",
+    "safety_violation_rate"
+  ],
+  "diagnostic_metrics": [
+    "detection_precision_recall_f1",
+    "detection_latency_s",
+    "successful_recovery_time_s",
+    "replans",
+    "retries",
+    "recovery_degradation",
+    "recovery_consistency"
+  ]
+}

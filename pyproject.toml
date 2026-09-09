@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=67", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hrvla-bench"
+version = "0.1.0"
+description = "Protocol validation and scoring for humanoid VLA recovery"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+hrvla-score = "hrvla_bench.score:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
