@@ -11,8 +11,11 @@
       "kind": "runnable_baseline",
       "question": "Can the official GR00T N1.7 plus SONIC stack complete and recover the HRVLA task?",
       "source": "https://github.com/NVlabs/GR00T-WholeBodyControl",
-      "implementation": "feat(GR00T)/reproduce-baseline-humanoid-robotic@0f6440ae2263100f229fe5b0bf30d8aba60bbd72",
-      "status": "baseline_scaffolded"
+      "implementation": "feat(GR00T)/reproduce-gr00t-sonic-whole-body@5638698",
+      "status": "controller_tracking_and_h1_disturbance_pilots_executed",
+      "result": "results/benchmark/sonic-official-sample-v0.json",
+      "disturbance_result": "results/benchmark/sonic-h1-push-pilot-v0.json",
+      "claim_boundary": "2/2 official walking motions completed both nominally and under one audited 0.35 m/s lateral velocity injection; no VLA manipulation or admitted recovery scenario was evaluated"
     },
     {
       "id": "libero_recover",

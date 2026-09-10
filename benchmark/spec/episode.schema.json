@@ -8,6 +8,8 @@
     "run_id",
     "episode_id",
     "method_id",
+    "evaluation_track",
+    "suite_id",
     "task_id",
     "scenario_id",
     "protocol",
@@ -25,6 +27,10 @@
     "run_id": {"type": "string", "minLength": 1},
     "episode_id": {"type": "string", "minLength": 1},
     "method_id": {"type": "string", "minLength": 1},
+    "evaluation_track": {"type": "string", "minLength": 1},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "task_id": {"type": "string", "minLength": 1},
     "scenario_id": {"type": "string", "minLength": 1},
     "protocol": {
@@ -51,6 +57,8 @@
     "post_failure_score": {"type": "number", "minimum": 0, "maximum": 1},
     "completed_subtasks": {"type": "integer", "minimum": 0},
     "total_subtasks": {"type": "integer", "minimum": 1},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "diagnostics": {"type": "object"},
     "failure": {
       "type": ["object", "null"],
       "required": [
@@ -59,24 +67,32 @@
         "level",
         "humanoid_axes",
         "severity",
-        "recoverable_oracle"
+        "recoverable_oracle",
+        "injector_id",
+        "injector_parameters"
       ],
       "properties": {
         "event_id": {"type": "string", "minLength": 1},
         "event_boundary": {"type": "string", "minLength": 1},
-        "level": {"enum": ["L1", "L2", "L3", "L4"]},
+        "level": {"enum": ["L1", "L2", "L3", "L4", null]},
         "humanoid_axes": {
           "type": "array",
           "items": {"enum": ["H1", "H2", "H3"]},
           "uniqueItems": true
         },
         "severity": {"enum": ["low", "medium", "high"]},
-        "recoverable_oracle": {"const": true}
+        "recoverable_oracle": {"type": "boolean"},
+        "injector_id": {"type": "string", "minLength": 1},
+        "injector_parameters": {"type": "object"}
       },
       "additionalProperties": false
     }
   },
   "allOf": [
+    {
+      "if": {"properties": {"evaluation_track": {"const": "end_to_end_recovery"}}},
+      "then": {"required": ["suite_sha256", "plan_sha256"]}
+    },
     {
       "if": {"properties": {"protocol": {"const": "nominal"}}},
       "then": {"properties": {"failure": {"type": "null"}}},

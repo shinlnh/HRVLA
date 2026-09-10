@@ -1,0 +1,123 @@
+{
+  "artifacts": {
+    "disturbed_metrics": {
+      "path": "results/benchmark/raw/sonic-h1-push-metrics.json",
+      "sha256": "656732c9b2d5123b861de2b17b04ebc90c7695ef4d8d6d417a12e5cdc6e9f546"
+    },
+    "injection_audit": {
+      "path": "results/benchmark/raw/sonic-h1-push-audit.jsonl",
+      "sha256": "4dcbd146215a835ec5829ba794474601702ef52b82125eb698df194d8912658c"
+    },
+    "nominal_metrics": {
+      "path": "results/benchmark/raw/sonic-nominal-metrics.json",
+      "sha256": "f71cf0113059a7b562dc3ab4fd5e6680e3696fefa8dfa0d6b3efbc1bb1762b04"
+    }
+  },
+  "claim_status": "diagnostic_only_unadmitted",
+  "controller_id": "gear-sonic@087f9ac01d46f6d8e4d0b73c01ae64799f292a38",
+  "delta_disturbed_minus_nominal": {
+    "mean_mpjpe_global_mm": -87.74891125865639,
+    "mean_mpjpe_local_mm": -5.9896474753694555,
+    "mean_mpjpe_pa_mm": -5.857011226529593,
+    "mean_progress": 0.0,
+    "success_rate": 0.0,
+    "terminations": 0
+  },
+  "disturbed": {
+    "episodes": 2,
+    "mean_mpjpe_global_mm": 118.08434175769258,
+    "mean_mpjpe_local_mm": 17.563790091561362,
+    "mean_mpjpe_pa_mm": 11.456642772363818,
+    "mean_progress": 1.0,
+    "motions": [
+      "walk_forward_amateur_001__A001_M",
+      "walk_forward_amateur_001__A001"
+    ],
+    "success_rate": 1.0,
+    "successes": 2,
+    "terminations": 0
+  },
+  "evaluation_track": "controller_disturbance_pilot",
+  "failure": {
+    "event_boundary": "2.0 s after motion initialization (gait-settle timer proxy)",
+    "humanoid_axes": [
+      "H1"
+    ],
+    "injector_id": "isaaclab.push_by_setting_velocity+hrvla.once",
+    "level": null,
+    "severity": "low",
+    "velocity_delta_mps": {
+      "x": 0.0,
+      "y": 0.35,
+      "z": 0.0
+    }
+  },
+  "injection_audit": [
+    {
+      "environment_ids": [
+        0,
+        1
+      ],
+      "episode_steps": [
+        101,
+        101
+      ],
+      "event": "push_once_by_setting_velocity",
+      "velocity_range": {
+        "pitch": [
+          0.0,
+          0.0
+        ],
+        "roll": [
+          0.0,
+          0.0
+        ],
+        "x": [
+          0.0,
+          0.0
+        ],
+        "y": [
+          0.35,
+          0.35
+        ],
+        "yaw": [
+          0.0,
+          0.0
+        ],
+        "z": [
+          0.0,
+          0.0
+        ]
+      }
+    }
+  ],
+  "injection_verified": true,
+  "limitations": [
+    "Two official motions are a smoke test, not a statistically powered benchmark.",
+    "The timer is a proxy for gait-settle, not a task-semantic event detector.",
+    "Motion completion does not establish VLA manipulation or recovery success.",
+    "The disturbance is not admitted until an independent oracle passes 20/20 trials."
+  ],
+  "method_id": "gear_sonic_original_release",
+  "nominal": {
+    "episodes": 2,
+    "mean_mpjpe_global_mm": 205.83325301634898,
+    "mean_mpjpe_local_mm": 23.553437566930818,
+    "mean_mpjpe_pa_mm": 17.31365399889341,
+    "mean_progress": 1.0,
+    "motions": [
+      "walk_forward_amateur_001__A001_M",
+      "walk_forward_amateur_001__A001"
+    ],
+    "success_rate": 1.0,
+    "successes": 2,
+    "terminations": 0
+  },
+  "policy_checkpoint_id": "hf://nvidia/GEAR-SONIC@6733128a3d8a523b1418b06bca3cdf61c8b0987f/sonic_release/last.pt#sha256=e6bdab3f64a39336b3d41877d4f497d05f58af275f288ec0e6746c283ded8909",
+  "protocol": "online_failure_probe",
+  "recorded_at": "2026-09-10T07:04:26+00:00",
+  "run_id": "sonic-h1-push-pilot-20260910",
+  "schema_version": "1.0",
+  "simulator_revision": "isaac-sim-5.1.0+isaaclab@37ddf626871758333d6ed89cf64ad702aef127d0",
+  "task_id": "walk_forward_motion_tracking"
+}

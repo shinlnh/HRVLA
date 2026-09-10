@@ -10,6 +10,7 @@ requires-python = ">=3.10"
 dependencies = []
 
 [project.scripts]
+hrvla-bench = "hrvla_bench.cli:main"
 hrvla-score = "hrvla_bench.score:main"
 
 [tool.setuptools.packages.find]

@@ -16,6 +16,33 @@ papers optimize a different primary question. Therefore:
 
 The baseline registry records this boundary per work.
 
+## Evaluation tracks
+
+Never pool results from different tracks:
+
+- `controller_tracking_pilot` verifies that the locked whole-body checkpoint can
+  execute its official motion inputs in physics;
+- `end_to_end_recovery` evaluates task success under nominal, failure-start,
+  and online-failure protocols;
+- paper-reported values remain contextual metadata and are never converted into
+  synthetic episode records.
+
+The first tracked pilot uses the exact SONIC checkpoint from the baseline
+branch. Both official walk-forward motions completed (`2/2`, 4,004 frames,
+80.04 s); local MPJPE was `23.55 mm`. This proves the controller path is alive,
+not that a G1 can grasp, recover, or outperform another paper. See
+[`results/benchmark/sonic-official-sample-v0.json`](../results/benchmark/sonic-official-sample-v0.json).
+
+An additional H1 diagnostic injected a one-shot `+0.35 m/s` world-frame
+lateral root velocity at simulator step 101 (about 2.0 s) into both official
+motions. The injector wrote an audit record before scoring; both motions still
+completed (`2/2`, zero terminations). Mean local MPJPE changed from `23.55 mm`
+to `17.56 mm`. Because the perturbation happened to improve this tiny sample,
+the result is reported as a beneficial perturbation, not as evidence of
+recovery. The timer is only a gait-settle proxy and the scenario lacks the
+required independent 20/20 oracle admission. See
+[`results/benchmark/sonic-h1-push-pilot-v0.json`](../results/benchmark/sonic-h1-push-pilot-v0.json).
+
 ## Protocols
 
 ### Nominal
@@ -54,7 +81,8 @@ Humanoid consequences form a separate multi-label axis:
 - H2: valid high-level intent but failed whole-body tracker execution;
 - H3: coupled body and object/task-state disruption.
 
-A case may be `L3 + H3`; H3 is not a higher difficulty level than L4.
+A case may be `L3 + H3`, or `H1` alone for a pure body disturbance; H3 is not
+a higher difficulty level than L4.
 
 ## Scenario admission
 
@@ -72,6 +100,93 @@ Freeze before evaluation:
 - observation fields, control rate, controller revision, and horizon;
 - allowed compute, model checkpoint, recovery memory, and reset policy.
 
+All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
+`draft`. A draft becomes `admitted` only after its immutable artifacts are
+published, its predicates are tested, and an independent oracle succeeds in
+all 20 admission trials. The default planner excludes drafts, so a missing
+dataset cannot silently become a publishable score.
+
+## Reproducible pipeline
+
+Validate the suite and generate an immutable paired plan:
+
+```bash
+PYTHONPATH=src python3 -m hrvla_bench.cli validate-suite \
+  benchmark/suites/hrvla_recovery_v0.json
+PYTHONPATH=src python3 -m hrvla_bench.cli plan \
+  benchmark/suites/hrvla_recovery_v0.json \
+  --method gear_sonic_original_release \
+  --method hrvla \
+  --output outputs/plan.json \
+  --manifest outputs/run-manifest.json
+```
+
+The suite SHA-256 and plan SHA-256 freeze task cells independently of method
+order. Each cell fixes the initial/failure snapshots, semantic event,
+injector parameters, training seed, rollout seed, controller, horizon, and
+success predicate.
+
+Method integrations implement `run_episode(episode)` and are loaded through a
+`package.module:attribute` adapter. The runner protects planned identifiers,
+refuses non-admitted states by default, validates every returned episode, and
+fsyncs each episode to a validated `.partial` JSONL. A retry resumes at the
+first missing plan entry; only a complete run atomically replaces the final
+JSONL:
+
+```bash
+PYTHONPATH=src python3 -m hrvla_bench.cli run outputs/plan.json \
+  --adapter my_method.hrvla_adapter:create_adapter \
+  --method hrvla \
+  --track end_to_end_recovery \
+  --run-id hrvla-v0-s0 \
+  --checkpoint-id sha256:... \
+  --controller-id gear-sonic:e6bdab3... \
+  --simulator-revision isaac-sim-5.1+isaaclab-37ddf62 \
+  --output outputs/hrvla-v0-s0.jsonl
+```
+
+The `--allow-draft` option is for harness development only. Its outputs are not
+eligible for claim-bearing reports.
+
+Validate and score without installing extra dependencies:
+
+```bash
+PYTHONPATH=src python3 -m hrvla_bench.cli validate-records outputs/episodes.jsonl
+PYTHONPATH=src python3 -m hrvla_bench.cli score outputs/episodes.jsonl \
+  --output outputs/summary.json
+```
+
+Disturbance smoke tests remain outside the claim-bearing JSONL. Run the locked
+Sonic checkpoint with the audited one-shot injector:
+
+```bash
+export HRVLA_ISAACSIM_ROOT=/home/shin/isaacsim
+export HRVLA_ISAACLAB_ROOT=/home/shin/IsaacLab
+python3 scripts/run_sonic_h1_pilot.py --runtime workstation
+```
+
+The wrapper reuses GEAR-SONIC's typed `push_robot` event slot, schedules it at
+step 101 (about 2.0 s), replaces the event function with HRVLA's one-shot
+wrapper, and writes `injection-audit.jsonl`. Rebuild the tracked report from the
+committed raw metrics and audit with:
+
+```bash
+PYTHONPATH=src python3 -m hrvla_bench.cli report-sonic-disturbance \
+  results/benchmark/raw/sonic-nominal-metrics.json \
+  results/benchmark/raw/sonic-h1-push-metrics.json \
+  results/benchmark/raw/sonic-h1-push-audit.jsonl \
+  --run-id sonic-h1-push-pilot-20260910 \
+  --checkpoint-id 'hf://nvidia/GEAR-SONIC@<revision>/sonic_release/last.pt#sha256=<sha256>' \
+  --controller-id 'gear-sonic@<revision>' \
+  --simulator-revision 'isaac-sim-5.1.0+isaaclab@<revision>' \
+  --recorded-at '2026-09-10T07:04:26+00:00' \
+  --output results/benchmark/sonic-h1-push-pilot-v0.json
+```
+
+The committed report links each raw input path and its SHA-256. The raw files
+are small enough to review in Git; simulator caches and model artifacts remain
+ignored.
+
 ## Reporting
 
 Use three training seeds and 20 rollout trials per seed per comparison cell as
@@ -87,7 +202,9 @@ diagnostics.
 
 The scorer also reports the LIBERO-RECOVER-inspired recovery degradation (RD)
 and recovery consistency (RC), detection precision/recall/F1, latency, recovery
-time, and paired McNemar tests when methods share episode keys.
+time, and paired McNemar tests when methods share episode keys. Pairing also
+requires identical suite, snapshots, controller, simulator revision, and seeds;
+Holm-adjusted p-values are emitted across the comparison family.
 
 Do not combine `nominal`, `failure_start`, and `online_failure` into one headline
 score; they answer different questions.

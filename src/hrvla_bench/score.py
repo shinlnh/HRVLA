@@ -22,6 +22,8 @@ REQUIRED = {
     "run_id",
     "episode_id",
     "method_id",
+    "evaluation_track",
+    "suite_id",
     "task_id",
     "scenario_id",
     "protocol",
@@ -40,13 +42,25 @@ def _is_nonnegative_int(value: Any) -> bool:
     return isinstance(value, int) and not isinstance(value, bool) and value >= 0
 
 
-def validate_record(record: dict[str, Any]) -> None:
+def validate_record(record: dict[str, Any], *, allow_unverified: bool = False) -> None:
     """Raise ValueError when an episode violates the benchmark contract."""
     missing = sorted(REQUIRED - set(record))
     if missing:
         raise ValueError(f"missing required field(s): {', '.join(missing)}")
     if record["schema_version"] != "1.0":
         raise ValueError("schema_version must be '1.0'")
+    for field in ("run_id", "episode_id", "method_id", "evaluation_track", "suite_id"):
+        if not isinstance(record[field], str) or not record[field]:
+            raise ValueError(f"{field} must be a non-empty string")
+    if record["evaluation_track"] == "end_to_end_recovery":
+        for field in ("suite_sha256", "plan_sha256"):
+            value = record.get(field)
+            if (
+                not isinstance(value, str)
+                or len(value) != 64
+                or set(value) - set("0123456789abcdef")
+            ):
+                raise ValueError(f"{field} must be a lowercase SHA-256 digest")
     if record["protocol"] not in PROTOCOLS:
         raise ValueError(f"unknown protocol: {record['protocol']!r}")
     if type(record["success"]) is not bool:
@@ -67,19 +81,25 @@ def validate_record(record: dict[str, Any]) -> None:
     else:
         if not isinstance(failure, dict):
             raise ValueError("recovery episodes require a failure object")
-        if failure.get("level") not in LEVELS:
-            raise ValueError("failure.level must be L1, L2, L3, or L4")
-        if failure.get("severity") not in SEVERITIES:
-            raise ValueError("failure.severity must be low, medium, or high")
         axes = failure.get("humanoid_axes")
         if not isinstance(axes, list) or len(axes) != len(set(axes)):
             raise ValueError("failure.humanoid_axes must be a unique list")
         if not set(axes).issubset(AXES):
             raise ValueError("failure.humanoid_axes contains an unknown axis")
-        if failure.get("recoverable_oracle") is not True:
+        if failure.get("level") not in LEVELS and not (
+            failure.get("level") is None and axes
+        ):
+            raise ValueError("failure.level must be L1-L4, or null with a humanoid axis")
+        if failure.get("severity") not in SEVERITIES:
+            raise ValueError("failure.severity must be low, medium, or high")
+        if failure.get("recoverable_oracle") is not True and not allow_unverified:
             raise ValueError("a recovery scenario must be oracle-verified recoverable")
         if not failure.get("event_id") or not failure.get("event_boundary"):
             raise ValueError("failure event_id and event_boundary are required")
+        if not failure.get("injector_id") or not isinstance(
+            failure.get("injector_parameters"), dict
+        ):
+            raise ValueError("failure injector_id and injector_parameters are required")
         if protocol == "failure_start" and not record.get("failure_snapshot_id"):
             raise ValueError("failure_start requires failure_snapshot_id")
 
@@ -132,7 +152,8 @@ def _recovery_summary(records: Sequence[dict[str, Any]]) -> dict[str, Any]:
         axis_key = tuple(sorted(failure["humanoid_axes"])) or ("none",)
         cell = (record["task_id"], failure["level"], axis_key, failure["severity"])
         cells[cell].append(record["success"])
-        levels[failure["level"]].append(record["success"])
+        level_key = failure["level"] or "none"
+        levels[level_key].append(record["success"])
         for axis in axis_key:
             axes[axis].append(record["success"])
         seeds[record["training_seed"]].append(record["success"])
@@ -182,7 +203,10 @@ def _detection_summary(records: Sequence[dict[str, Any]]) -> dict[str, Any] | No
         return None
     tp = sum(record["protocol"] == "online_failure" and record["detected"] for record in eligible)
     fp = sum(record["protocol"] == "nominal" and record["detected"] for record in eligible)
-    fn = sum(record["protocol"] == "online_failure" and not record["detected"] for record in eligible)
+    fn = sum(
+        record["protocol"] == "online_failure" and not record["detected"]
+        for record in eligible
+    )
     tn = sum(record["protocol"] == "nominal" and not record["detected"] for record in eligible)
     precision = tp / (tp + fp) if tp + fp else None
     recall = tp / (tp + fn) if tp + fn else None
@@ -228,53 +252,75 @@ def _mcnemar_exact(a_wins: int, b_wins: int) -> float | None:
 
 
 def _paired_comparisons(records: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
-    by_protocol_method: dict[str, dict[str, dict[tuple[Any, ...], bool]]] = defaultdict(
-        lambda: defaultdict(dict)
-    )
+    by_track_protocol_method: dict[
+        str, dict[str, dict[str, dict[tuple[Any, ...], bool]]]
+    ] = defaultdict(lambda: defaultdict(lambda: defaultdict(dict)))
     for record in records:
         if record["protocol"] == "nominal":
             continue
         key = (
+            record["suite_id"],
+            record.get("suite_sha256"),
+            record.get("plan_sha256"),
             record["task_id"],
             record["scenario_id"],
             record["training_seed"],
             record["rollout_seed"],
+            record["initial_snapshot_id"],
+            record.get("failure_snapshot_id"),
+            record["controller_id"],
+            record["simulator_revision"],
         )
-        method_records = by_protocol_method[record["protocol"]][record["method_id"]]
+        method_records = by_track_protocol_method[record["evaluation_track"]][
+            record["protocol"]
+        ][record["method_id"]]
         if key in method_records:
             raise ValueError(
-                f"duplicate paired comparison key for {record['protocol']}/"
+                f"duplicate paired comparison key for {record['evaluation_track']}/"
+                f"{record['protocol']}/"
                 f"{record['method_id']}: {key}"
             )
         method_records[key] = record["success"]
 
     output: list[dict[str, Any]] = []
-    for protocol, by_method in sorted(by_protocol_method.items()):
-        for method_a, method_b in combinations(sorted(by_method), 2):
-            common = sorted(set(by_method[method_a]) & set(by_method[method_b]))
-            if not common:
-                continue
-            outcomes = [
-                (by_method[method_a][key], by_method[method_b][key]) for key in common
-            ]
-            a_wins = sum(a and not b for a, b in outcomes)
-            b_wins = sum(b and not a for a, b in outcomes)
-            ties = len(outcomes) - a_wins - b_wins
-            output.append(
-                {
-                    "protocol": protocol,
-                    "method_a": method_a,
-                    "method_b": method_b,
-                    "paired_episodes": len(outcomes),
-                    "success_rate_delta_a_minus_b": statistics.fmean(
-                        float(a) - float(b) for a, b in outcomes
-                    ),
-                    "a_only_success": a_wins,
-                    "b_only_success": b_wins,
-                    "ties": ties,
-                    "mcnemar_exact_two_sided_p": _mcnemar_exact(a_wins, b_wins),
-                }
-            )
+    for track, by_protocol in sorted(by_track_protocol_method.items()):
+        for protocol, by_method in sorted(by_protocol.items()):
+            for method_a, method_b in combinations(sorted(by_method), 2):
+                common = sorted(set(by_method[method_a]) & set(by_method[method_b]))
+                if not common:
+                    continue
+                outcomes = [
+                    (by_method[method_a][key], by_method[method_b][key]) for key in common
+                ]
+                a_wins = sum(a and not b for a, b in outcomes)
+                b_wins = sum(b and not a for a, b in outcomes)
+                ties = len(outcomes) - a_wins - b_wins
+                output.append(
+                    {
+                        "evaluation_track": track,
+                        "protocol": protocol,
+                        "method_a": method_a,
+                        "method_b": method_b,
+                        "paired_episodes": len(outcomes),
+                        "success_rate_delta_a_minus_b": statistics.fmean(
+                            float(a) - float(b) for a, b in outcomes
+                        ),
+                        "a_only_success": a_wins,
+                        "b_only_success": b_wins,
+                        "ties": ties,
+                        "mcnemar_exact_two_sided_p": _mcnemar_exact(a_wins, b_wins),
+                    }
+                )
+    finite = sorted(
+        (item["mcnemar_exact_two_sided_p"], index)
+        for index, item in enumerate(output)
+        if item["mcnemar_exact_two_sided_p"] is not None
+    )
+    running = 0.0
+    for rank, (p_value, index) in enumerate(finite):
+        adjusted = min(1.0, p_value * (len(finite) - rank))
+        running = max(running, adjusted)
+        output[index]["holm_adjusted_p"] = running
     return output
 
 
@@ -285,29 +331,42 @@ def score_records(records: Iterable[dict[str, Any]]) -> dict[str, Any]:
     for record in materialized:
         validate_record(record)
 
-    methods: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    tracks: dict[str, dict[str, list[dict[str, Any]]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
     for record in materialized:
-        methods[record["method_id"]].append(record)
+        tracks[record["evaluation_track"]][record["method_id"]].append(record)
 
-    method_reports: dict[str, Any] = {}
-    for method, method_records in sorted(methods.items()):
-        nominal = [record for record in method_records if record["protocol"] == "nominal"]
-        failure_start = [
-            record for record in method_records if record["protocol"] == "failure_start"
-        ]
-        online = [record for record in method_records if record["protocol"] == "online_failure"]
-        method_reports[method] = {
-            "episodes": len(method_records),
-            "nominal_success": _proportion([record["success"] for record in nominal]),
-            "failure_start": _recovery_summary(failure_start) if failure_start else None,
-            "online_failure": _recovery_summary(online) if online else None,
-            "detection": _detection_summary(method_records),
-        }
+    track_reports: dict[str, Any] = {}
+    for track, methods in sorted(tracks.items()):
+        method_reports: dict[str, Any] = {}
+        for method, method_records in sorted(methods.items()):
+            controller_simulator_pairs = {
+                (record["controller_id"], record["simulator_revision"])
+                for record in method_records
+            }
+            if len(controller_simulator_pairs) != 1:
+                raise ValueError(
+                    f"{track}/{method}: controller or simulator changed within one result group"
+                )
+            nominal = [record for record in method_records if record["protocol"] == "nominal"]
+            failure_start = [
+                record for record in method_records if record["protocol"] == "failure_start"
+            ]
+            online = [record for record in method_records if record["protocol"] == "online_failure"]
+            method_reports[method] = {
+                "episodes": len(method_records),
+                "nominal_success": _proportion([record["success"] for record in nominal]),
+                "failure_start": _recovery_summary(failure_start) if failure_start else None,
+                "online_failure": _recovery_summary(online) if online else None,
+                "detection": _detection_summary(method_records),
+            }
+        track_reports[track] = {"methods": method_reports}
 
     return {
         "schema_version": "1.0",
         "episode_records": len(materialized),
-        "methods": method_reports,
+        "tracks": track_reports,
         "paired_comparisons": _paired_comparisons(materialized),
     }
 

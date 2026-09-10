@@ -17,6 +17,10 @@ def episode(
         "run_id": "synthetic-test-run",
         "episode_id": f"{method}-{protocol}-{scenario}-{rollout_seed}",
         "method_id": method,
+        "evaluation_track": "end_to_end_recovery",
+        "suite_id": "synthetic-suite",
+        "suite_sha256": "a" * 64,
+        "plan_sha256": "b" * 64,
         "task_id": "synthetic-task",
         "scenario_id": scenario,
         "protocol": protocol,
@@ -42,6 +46,8 @@ def episode(
             "humanoid_axes": ["H3"],
             "severity": "medium",
             "recoverable_oracle": True,
+            "injector_id": "synthetic-injector",
+            "injector_parameters": {},
         }
     return record
 
@@ -73,9 +79,10 @@ class ScoringTests(unittest.TestCase):
             episode("b", "online_failure", False, "s2", 2, detected=False),
         ]
         report = score_records(records)
-        self.assertEqual(report["methods"]["a"]["nominal_success"]["rate"], 1.0)
-        self.assertEqual(report["methods"]["a"]["failure_start"]["micro_rsr"]["rate"], 0.5)
-        self.assertEqual(report["methods"]["a"]["online_failure"]["micro_rsr"]["rate"], 1.0)
+        methods = report["tracks"]["end_to_end_recovery"]["methods"]
+        self.assertEqual(methods["a"]["nominal_success"]["rate"], 1.0)
+        self.assertEqual(methods["a"]["failure_start"]["micro_rsr"]["rate"], 0.5)
+        self.assertEqual(methods["a"]["online_failure"]["micro_rsr"]["rate"], 1.0)
         comparisons = {item["protocol"]: item for item in report["paired_comparisons"]}
         self.assertEqual(comparisons["failure_start"]["paired_episodes"], 2)
         self.assertAlmostEqual(

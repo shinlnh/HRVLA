@@ -201,6 +201,13 @@ def parse_args() -> argparse.Namespace:
         default=(0.0, 0.0, 0.0),
         help="Viewer camera target in metres (viewer mode only)",
     )
+    parser.add_argument(
+        "--override",
+        action="append",
+        default=[],
+        metavar="+HYDRA.KEY=VALUE",
+        help="Append an explicit Hydra override; repeat for benchmark perturbations",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Validate and print the command")
     return parser.parse_args()
 
@@ -220,6 +227,8 @@ def main() -> int:
     num_envs = args.num_envs or (2 if args.mode == "metrics" else 1)
     if num_envs < 1:
         raise RuntimeError("--num-envs must be positive")
+    if any(not override.startswith("+") for override in args.override):
+        raise RuntimeError("benchmark overrides must start with '+'")
 
     command = [
         str(isaaclab_root / "isaaclab.sh"),
@@ -252,6 +261,7 @@ def main() -> int:
                 + hydra_vector(args.viewer_lookat),
             ]
         )
+    command.extend(args.override)
 
     environment = os.environ.copy()
     for variable in (
@@ -265,6 +275,7 @@ def main() -> int:
     environment.update(
         {"ACCEPT_EULA": "Y", "TERM": "xterm-256color", "PYTHONUNBUFFERED": "1"}
     )
+    environment["PYTHONPATH"] = str(REPO_ROOT / "src")
     if runtime.kind == "pip":
         environment["PATH"] = f"{runtime.python.parent}{os.pathsep}{environment['PATH']}"
         environment["VIRTUAL_ENV"] = str(runtime.python.parents[1])
