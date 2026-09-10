@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "run_date": "2026-09-09",
+  "training_performed": false,
+  "source": {
+    "repository": "https://github.com/NVIDIA/Isaac-GR00T.git",
+    "ref": "n1.7-release",
+    "revision": "23ace64f17aa5015259b8609d371eb61a357c776"
+  },
+  "model": {
+    "repo_id": "nvidia/GR00T-N1.7-3B",
+    "revision": "2fc962b973bccdd5d8ce4f67cc63b264d6886495",
+    "downloaded_files_verified": 7,
+    "local_size_gib": 6.5
+  },
+  "runtime": {
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.10.20",
+    "torch": "2.7.1+cu128",
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "gpu_memory_gib": 15.46,
+    "inference_mode": "pytorch",
+    "denoising_steps": 4,
+    "action_horizon": 8,
+    "seed": 42
+  },
+  "dataset": {
+    "path": "demo_data/droid_sample",
+    "embodiment_tag": "OXE_DROID_RELATIVE_EEF_RELATIVE_JOINT",
+    "action_dimensions": 17
+  },
+  "runs": [
+    {
+      "trajectory_id": 1,
+      "task": "Put the blue block in the green bowl",
+      "steps": 266,
+      "mse": 0.003842525227429239,
+      "rmse": 0.06198810553186183,
+      "mae": 0.038397009413163256,
+      "model_load_s": 17.9082,
+      "mean_inference_s": 0.1055,
+      "p90_inference_s": 0.1082
+    },
+    {
+      "trajectory_id": 1,
+      "task": "Put the blue block in the green bowl",
+      "steps": 200,
+      "mse": 0.0032823223264545737,
+      "rmse": 0.057291555455010766,
+      "mae": 0.03757371262933542
+    },
+    {
+      "trajectory_id": 2,
+      "task": "Move the bottom right tip of the duvet to the left",
+      "steps": 200,
+      "mse": 0.03689111421422163,
+      "mae": 0.11672806538868934
+    }
+  ],
+  "two_trajectory_200_step_summary": {
+    "average_mse": 0.020086718270338103,
+    "average_mae": 0.07715088900901237,
+    "mean_inference_s": 0.1025,
+    "p90_inference_s": 0.1063
+  },
+  "claim_limit": "Open-loop action prediction error on recorded DROID observations; not closed-loop task success and not a Unitree G1 or SONIC result"
+}
