@@ -20,15 +20,25 @@
     "sample_data/smpl_filtered/walk_forward_amateur_001__A001_M.pkl": "49cbf3c604f78952474d3bcecb6bbc0b4a136eab78dc3ab8580869594383bb4f"
   },
   "runtime": {
-    "python": "3.11.15",
-    "isaac_sim": "5.1.0.0",
     "isaac_lab_git_revision": "37ddf626871758333d6ed89cf64ad702aef127d0",
-    "torch": "2.7.0+cu128",
-    "warp_lang": "1.8.1",
-    "tensordict": "0.9.1",
-    "numpy": "1.26.4",
-    "hydra_core": "1.3.2",
-    "gear_sonic": "0.1.0"
+    "common": {
+      "torch": "2.7.0+cu128",
+      "warp_lang": "1.8.1",
+      "tensordict": "0.9.1",
+      "numpy": "1.26.4",
+      "hydra_core": "1.3.2",
+      "gear_sonic": "0.1.0"
+    },
+    "profiles": {
+      "pip": {
+        "python": "3.11.15",
+        "isaac_sim": "5.1.0.0"
+      },
+      "workstation": {
+        "python": "3.11.13",
+        "isaac_sim": "5.1.0"
+      }
+    }
   },
   "controller_contract": {
     "robot": "Unitree G1 29-DoF",

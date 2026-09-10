@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import hashlib
 import json
 import os
@@ -16,8 +17,17 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 LOCK_PATH = REPO_ROOT / "config" / "sonic-release.lock.json"
 VENDOR_ROOT = REPO_ROOT / "_vendor"
 SONIC_ROOT = VENDOR_ROOT / "GR00T-WholeBodyControl"
-RUNTIME_PYTHON = VENDOR_ROOT / "sonic-runtime" / "bin" / "python"
+PIP_RUNTIME_PYTHON = VENDOR_ROOT / "sonic-runtime" / "bin" / "python"
 ISAACLAB_CANDIDATES = (VENDOR_ROOT / "IsaacLab", VENDOR_ROOT / "IsaacLab-v2.3.2")
+
+
+@dataclass(frozen=True)
+class Runtime:
+    """Resolved simulator Python launcher and its environment contract."""
+
+    kind: str
+    python: Path
+    isaacsim_root: Path | None = None
 
 
 def sha256(path: Path) -> str:
@@ -38,9 +48,29 @@ def find_isaaclab() -> Path:
     raise RuntimeError(f"locked Isaac Lab checkout not found; checked: {expected}")
 
 
-def verify_inputs(lock: dict[str, object], isaaclab_root: Path) -> None:
-    if not RUNTIME_PYTHON.is_file():
-        raise RuntimeError(f"SONIC runtime is missing: {RUNTIME_PYTHON}")
+def resolve_runtime(kind: str, isaaclab_root: Path) -> Runtime:
+    workstation_root = Path(
+        os.environ.get("HRVLA_ISAACSIM_ROOT", str(isaaclab_root / "_isaac_sim"))
+    ).resolve()
+    workstation_python = workstation_root / "python.sh"
+
+    if kind in {"auto", "workstation"} and workstation_python.is_file():
+        return Runtime("workstation", workstation_python, workstation_root)
+    if kind == "workstation":
+        raise RuntimeError(
+            "Isaac Sim workstation runtime is missing; expected "
+            f"{workstation_python} or set HRVLA_ISAACSIM_ROOT"
+        )
+    if kind in {"auto", "pip"} and PIP_RUNTIME_PYTHON.is_file():
+        return Runtime("pip", PIP_RUNTIME_PYTHON)
+    raise RuntimeError(f"SONIC pip runtime is missing: {PIP_RUNTIME_PYTHON}")
+
+
+def verify_inputs(
+    lock: dict[str, object], isaaclab_root: Path, runtime: Runtime
+) -> None:
+    if not runtime.python.is_file():
+        raise RuntimeError(f"SONIC runtime is missing: {runtime.python}")
     if not (SONIC_ROOT / ".git").exists():
         raise RuntimeError(f"GEAR-SONIC source checkout is missing: {SONIC_ROOT}")
 
@@ -64,7 +94,8 @@ def verify_inputs(lock: dict[str, object], isaaclab_root: Path) -> None:
         capture_output=True,
         text=True,
     ).stdout.strip()
-    expected_lab = str(lock["runtime"]["isaac_lab_git_revision"])
+    runtime_lock = lock["runtime"]
+    expected_lab = str(runtime_lock["isaac_lab_git_revision"])
     if lab_revision != expected_lab:
         raise RuntimeError(f"Isaac Lab source is {lab_revision}; expected {expected_lab}")
 
@@ -73,7 +104,6 @@ import json
 import platform
 from importlib.metadata import version
 names = {
-    "isaac_sim": "isaacsim",
     "torch": "torch",
     "warp_lang": "warp-lang",
     "tensordict": "tensordict",
@@ -83,21 +113,48 @@ names = {
 }
 print(json.dumps({"python": platform.python_version(), **{k: version(v) for k, v in names.items()}}))
 """
-    actual_runtime = json.loads(
-        subprocess.run(
-            [str(RUNTIME_PYTHON), "-c", version_probe],
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout
+    version_output = subprocess.run(
+        [str(runtime.python), "-c", version_probe],
+        check=True,
+        capture_output=True,
+        text=True,
     )
-    expected_runtime = lock["runtime"]
+    output_lines = [line for line in version_output.stdout.splitlines() if line.strip()]
+    if not output_lines:
+        raise RuntimeError(f"runtime version probe returned no output: {runtime.python}")
+    actual_runtime = json.loads(output_lines[-1])
+    expected_runtime = {
+        **runtime_lock["common"],
+        **runtime_lock["profiles"][runtime.kind],
+    }
     for name, actual_version in actual_runtime.items():
         expected_version = str(expected_runtime[name])
         if actual_version != expected_version:
             raise RuntimeError(
                 f"runtime {name} is {actual_version}; expected {expected_version}"
             )
+
+    if runtime.kind == "pip":
+        isaac_sim_version = subprocess.run(
+            [
+                str(runtime.python),
+                "-c",
+                "from importlib.metadata import version; print(version('isaacsim'))",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip().splitlines()[-1]
+    else:
+        version_file = runtime.isaacsim_root / "VERSION"
+        if not version_file.is_file():
+            raise RuntimeError(f"Isaac Sim VERSION file is missing: {version_file}")
+        isaac_sim_version = version_file.read_text(encoding="utf-8").strip().split("-")[0]
+    expected_isaac_sim = str(expected_runtime["isaac_sim"])
+    if isaac_sim_version != expected_isaac_sim:
+        raise RuntimeError(
+            f"runtime isaac_sim is {isaac_sim_version}; expected {expected_isaac_sim}"
+        )
 
     mismatches = []
     for relative, expected_hash in lock["artifacts"].items():
@@ -116,6 +173,12 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("mode", choices=("metrics", "viewer"))
     parser.add_argument(
+        "--runtime",
+        choices=("auto", "pip", "workstation"),
+        default="auto",
+        help="Simulator installation to use; auto prefers the workstation binary",
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=REPO_ROOT / "_artifacts" / "sonic_eval" / "default_sample",
@@ -130,7 +193,8 @@ def main() -> int:
     args = parse_args()
     lock = json.loads(LOCK_PATH.read_text(encoding="utf-8"))
     isaaclab_root = find_isaaclab()
-    verify_inputs(lock, isaaclab_root)
+    runtime = resolve_runtime(args.runtime, isaaclab_root)
+    verify_inputs(lock, isaaclab_root, runtime)
 
     num_envs = args.num_envs or (2 if args.mode == "metrics" else 1)
     if num_envs < 1:
@@ -161,19 +225,27 @@ def main() -> int:
         )
 
     environment = os.environ.copy()
-    for variable in ("ISAAC_PATH", "ISAACLAB_PATH", "PYTHONPATH", "LD_LIBRARY_PATH"):
+    for variable in (
+        "ISAAC_PATH",
+        "ISAACLAB_PATH",
+        "PYTHONPATH",
+        "LD_LIBRARY_PATH",
+        "VIRTUAL_ENV",
+    ):
         environment.pop(variable, None)
     environment.update(
-        {
-            "ACCEPT_EULA": "Y",
-            "PATH": f"{RUNTIME_PYTHON.parent}{os.pathsep}{environment['PATH']}",
-            "TERM": "xterm-256color",
-            "PYTHONUNBUFFERED": "1",
-            "VIRTUAL_ENV": str(RUNTIME_PYTHON.parents[1]),
-        }
+        {"ACCEPT_EULA": "Y", "TERM": "xterm-256color", "PYTHONUNBUFFERED": "1"}
     )
+    if runtime.kind == "pip":
+        environment["PATH"] = f"{runtime.python.parent}{os.pathsep}{environment['PATH']}"
+        environment["VIRTUAL_ENV"] = str(runtime.python.parents[1])
+    else:
+        environment["ISAAC_PATH"] = str(runtime.isaacsim_root)
 
-    print("Validated locked SONIC source, runtime, and artifacts.", flush=True)
+    print(
+        f"Validated locked SONIC source, {runtime.kind} runtime, and artifacts.",
+        flush=True,
+    )
     print(" ".join(command), flush=True)
     if args.dry_run:
         return 0
@@ -185,6 +257,12 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except (KeyError, OSError, RuntimeError, subprocess.CalledProcessError) as exc:
+    except (
+        json.JSONDecodeError,
+        KeyError,
+        OSError,
+        RuntimeError,
+        subprocess.CalledProcessError,
+    ) as exc:
         print(f"error: {exc}", file=sys.stderr)
         sys.exit(1)
