@@ -48,6 +48,8 @@ def checkout_component(name: str, spec: dict[str, object], vendor: Path, pull_lf
     else:
         print(f"[{name}] cloning {url}")
         run(
+            "env",
+            "GIT_LFS_SKIP_SMUDGE=1",
             "git",
             "clone",
             "--filter=blob:none",
@@ -64,7 +66,21 @@ def checkout_component(name: str, spec: dict[str, object], vendor: Path, pull_lf
     if current != revision:
         print(f"[{name}] fetching {revision}")
         run("git", "fetch", "--depth", "1", "origin", revision, cwd=destination)
-        run("git", "checkout", "--detach", revision, cwd=destination)
+
+    # ``git clone --no-checkout`` still resolves HEAD to the remote's default
+    # branch.  When that commit already equals the lock, comparing only HEAD
+    # incorrectly treats the empty index and worktree as a ready checkout.
+    # Always materialize the locked tree; this is also safe and idempotent for
+    # an existing detached checkout at the same revision.
+    run(
+        "env",
+        "GIT_LFS_SKIP_SMUDGE=1",
+        "git",
+        "checkout",
+        "--detach",
+        revision,
+        cwd=destination,
+    )
 
     actual = run("git", "rev-parse", "HEAD", cwd=destination)
     if actual != revision:
