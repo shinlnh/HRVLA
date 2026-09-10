@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-09-10T13:30:16+07:00",
+  "protocol": "GEAR-SONIC official quick metrics run on bundled sample motions",
+  "release_lock": "config/sonic-release.lock.json",
+  "command": "python3 scripts/run_sonic_release.py metrics --runtime workstation --num-envs 2",
+  "fine_tuning_performed": false,
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "gpu_memory_mb": 16303,
+    "driver": "580.173.02"
+  },
+  "runtime": {
+    "isaac_sim": "5.1.0",
+    "isaac_lab": "2.3.2",
+    "python": "3.11.13",
+    "torch": "2.7.0+cu128",
+    "warp_lang": "1.8.1",
+    "tensordict": "0.9.1"
+  },
+  "sample": {
+    "motion_count": 2,
+    "frame_count": 4004,
+    "duration_seconds": 80.04,
+    "motion_keys": [
+      "walk_forward_amateur_001__A001_M",
+      "walk_forward_amateur_001__A001"
+    ]
+  },
+  "result": {
+    "success_rate": 1.0,
+    "progress_rate": 1.0,
+    "failed_motion_count": 0,
+    "mpjpe_global_mm": 205.83325301634898,
+    "mpjpe_local_mm": 23.553437566930818,
+    "mpjpe_procrustes_aligned_mm": 17.31365399889341,
+    "acceleration_error_mm_per_frame2": 0.8038144929000344,
+    "velocity_error_mm_per_frame": 2.4634064803535733
+  },
+  "scope_warning": "Two bundled walk-forward motions are a controller smoke test, not a manipulation, VLA, recovery, or paper-level benchmark."
+}

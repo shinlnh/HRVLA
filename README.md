@@ -32,3 +32,14 @@ python3 scripts/score_results.py path/to/episodes.jsonl --output outputs/summary
 
 See [`docs/BENCHMARK.md`](docs/BENCHMARK.md) for fairness rules, metrics, and the
 boundary between direct reruns and paper-reported reference results.
+
+## Validated SONIC backend
+
+This branch includes the locked GEAR-SONIC reproduction used as the benchmark
+execution backend. On the RTX 5070 Ti workstation, Isaac Sim 5.1.0 and Isaac
+Lab 2.3.2 completed both bundled walk-forward motions (`4,004` frames) without
+termination. The [machine-readable result](results/sonic-default-sample.json),
+[runtime instructions](docs/SONIC_BASELINE.md), and source/artifact lock files
+are part of the benchmark provenance.
+
+![GEAR-SONIC controlling Unitree G1 in Isaac Sim 5.1](docs/assets/sonic-isaac-sim-5.1.png)

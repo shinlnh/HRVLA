@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "platform": "linux-x86_64",
+  "isaac_sim": "5.1.0",
+  "archive": {
+    "url": "https://downloads.isaacsim.nvidia.com/isaac-sim-standalone-5.1.0-linux-x86_64.zip",
+    "size_bytes": 8768419777,
+    "sha256": "65d8bb8ac386a5a4a829ad460d68ce8e2ff6b7c9df4b26d032d4d412391f3643"
+  },
+  "isaac_lab": {
+    "repository": "https://github.com/isaac-sim/IsaacLab.git",
+    "tag": "v2.3.2",
+    "revision": "37ddf626871758333d6ed89cf64ad702aef127d0"
+  }
+}

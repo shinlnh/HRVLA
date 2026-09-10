@@ -1,0 +1,95 @@
+# SONIC release baseline
+
+This branch uses the original NVIDIA GEAR-SONIC release as the fixed whole-body
+execution baseline for Unitree G1. The source revision, Hugging Face snapshot,
+artifact hashes, runtime versions, and controller contract are recorded in
+[`config/sonic-release.lock.json`](../config/sonic-release.lock.json).
+
+## What this run proves
+
+The release smoke test loads the official 64-dimensional SONIC latent model,
+decodes it to 29 G1 joint-position actions, and executes the controller at
+50 Hz in Isaac Sim 5.1 / Isaac Lab 2.3.2. The included two walk-forward motions
+contain 4,004 frames (80.04 seconds total).
+
+This is a controller motion-tracking test. It is not an apple-grasp task, a
+DROID replay, a VLA task-success result, or a recovery benchmark. A manipulation
+task requires a GR00T checkpoint post-trained for `UNITREE_G1_SONIC` plus a
+scene/dataset with matching observations, hands, actions, and success criteria.
+The base `nvidia/GR00T-N1.7-3B` checkpoint cannot be claimed as a zero-shot G1
+manipulation policy.
+
+## Run the locked release
+
+Large upstream sources, runtimes, and checkpoints stay ignored by Git. The
+runner accepts either the isolated `_vendor/sonic-runtime` profile or an Isaac
+Sim workstation installation. It verifies the source commits, runtime versions,
+and SHA-256 artifact hashes before starting Isaac Sim.
+
+For a workstation installation, make the runtime locations explicit:
+
+```bash
+export HRVLA_ISAACSIM_ROOT=/home/shin/isaacsim
+export HRVLA_ISAACLAB_ROOT=/home/shin/IsaacLab
+python3 scripts/bootstrap_upstreams.py
+"$HRVLA_ISAACSIM_ROOT/python.sh" -m pip install \
+  -e "_vendor/GR00T-WholeBodyControl/gear_sonic[training]" huggingface_hub
+"$HRVLA_ISAACSIM_ROOT/python.sh" scripts/download_sonic_release.py
+python3 scripts/run_sonic_release.py metrics --runtime workstation
+```
+
+The artifact downloader fetches only the seven files in the release lock rather
+than NVIDIA's approximately 30 GB training bundle.
+
+Headless metrics for the two official sample motions:
+
+```bash
+python3 scripts/run_sonic_release.py metrics
+```
+
+The result is written to
+`_artifacts/sonic_eval/default_sample/metrics_eval.json`.
+
+The first validated run on this machine completed both bundled motions without
+termination: success rate `1.0`, progress rate `1.0`, local MPJPE `23.55 mm`,
+and Procrustes-aligned MPJPE `17.31 mm`. The compact, reviewable record is in
+[`results/sonic-default-sample.json`](../results/sonic-default-sample.json).
+These two walk-forward samples are a smoke result only and are not evidence of
+general task performance.
+
+Open the Isaac Sim viewer:
+
+```bash
+python3 scripts/run_sonic_release.py viewer
+```
+
+The viewer follows NVIDIA's official quick-start behavior and continues until
+`Ctrl+C`. Camera position and target can be reproduced with `--viewer-eye X Y Z`
+and `--viewer-lookat X Y Z`. The runner removes inherited `ISAAC_PATH`,
+`ISAACLAB_PATH`, `PYTHONPATH`, and `LD_LIBRARY_PATH` so another host Isaac Sim
+installation cannot silently replace the locked 5.1 runtime.
+
+### Validated host status
+
+On 2026-09-10, both headless metrics and the interactive RTX viewer completed
+on the RTX 5070 Ti workstation with NVIDIA driver `580.173.02`. The viewer
+created the G1 stage, initialized the 64-dimensional SONIC encoder/decoder,
+loaded `sonic_release/last.pt`, and rendered the controlled walk. Two GUI frames
+captured three seconds apart had different hashes and 384,291 changed pixels.
+This resolves the earlier host-specific `librtx.scenedb.plugin.so` blocker seen
+with driver `595.84`; no Isaac Sim 6.0 result is substituted into the baseline.
+
+![Validated SONIC viewer run](assets/sonic-isaac-sim-5.1.png)
+
+## Evaluation contract
+
+Use SONIC as the shared execution backend, not as the judge. In the recovery
+benchmark, all methods being compared must use the same SONIC variant,
+checkpoint, physics settings, control frequency, task initial states, event
+boundaries, and failure seeds. Report task success and recovery metrics from
+the benchmark harness separately from SONIC motion-tracking metrics.
+
+Do not compare the original, low-latency, and v1.1 checkpoints in one table
+without naming the variant. They differ in future-reference representation and
+intended deployment. This branch locks the original default release: 10 future
+frames at 20 ms spacing, approximately 200 ms of reference lookahead.
