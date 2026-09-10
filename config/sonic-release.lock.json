@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "variant": "default-sonic-original-release",
+  "source": {
+    "repository": "https://github.com/NVlabs/GR00T-WholeBodyControl.git",
+    "revision": "087f9ac01d46f6d8e4d0b73c01ae64799f292a38"
+  },
+  "huggingface": {
+    "repo_id": "nvidia/GEAR-SONIC",
+    "repo_type": "model",
+    "revision": "6733128a3d8a523b1418b06bca3cdf61c8b0987f"
+  },
+  "artifacts": {
+    "config.json": "326dcc509ad93509cf262871256a74f508f43a8430f61ec6abe8034e985ce948",
+    "sonic_release/last.pt": "e6bdab3f64a39336b3d41877d4f497d05f58af275f288ec0e6746c283ded8909",
+    "sonic_release/config.yaml": "f08187795fa16a839a28bc1c18e0555d38d9420e03733744341cdcb56ab629c7",
+    "sample_data/robot_filtered/210531/walk_forward_amateur_001__A001.pkl": "005aaba3906fa6b99a8b4e89e9d01845d90c5699abf0b5072cc07b099e894f2b",
+    "sample_data/robot_filtered/210531/walk_forward_amateur_001__A001_M.pkl": "7d9ec8a24acbb952cfce2048e2d3b5c156e8ae0c43e32443eb5ea42cbb22038e",
+    "sample_data/smpl_filtered/walk_forward_amateur_001__A001.pkl": "f31a00cd23cedb9b6cc50805d912276234a35a40678529d726df3b1dec3682d8",
+    "sample_data/smpl_filtered/walk_forward_amateur_001__A001_M.pkl": "49cbf3c604f78952474d3bcecb6bbc0b4a136eab78dc3ab8580869594383bb4f"
+  },
+  "runtime": {
+    "isaac_lab_git_revision": "37ddf626871758333d6ed89cf64ad702aef127d0",
+    "common": {
+      "torch": "2.7.0+cu128",
+      "warp_lang": "1.8.1",
+      "tensordict": "0.9.1",
+      "numpy": "1.26.4",
+      "hydra_core": "1.3.2",
+      "gear_sonic": "0.1.0"
+    },
+    "profiles": {
+      "pip": {
+        "python": "3.11.15",
+        "isaac_sim": "5.1.0.0"
+      },
+      "workstation": {
+        "python": "3.11.13",
+        "isaac_sim": "5.1.0"
+      }
+    }
+  },
+  "controller_contract": {
+    "robot": "Unitree G1 29-DoF",
+    "latent_dimensions": 64,
+    "controller_rate_hz": 50,
+    "future_reference_frames": 10,
+    "future_reference_step_ms": 20,
+    "future_reference_horizon_ms": 200
+  }
+}

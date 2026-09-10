@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-09-09",
+  "stack_contract": {
+    "robot": "Unitree G1",
+    "embodiment_tag": "UNITREE_G1_SONIC",
+    "vla_model": "nvidia/GR00T-N1.7-3B",
+    "vla_runtime_python": ">=3.12,<3.13",
+    "controller": "GEAR-SONIC",
+    "controller_action": "64-dimensional SONIC latent",
+    "controller_rate_hz": 50,
+    "simulation_runtime_python": "3.11",
+    "isaac_sim": "5.1.0",
+    "isaac_lab": "2.3.2",
+    "cuda": "12.x"
+  },
+  "git": {
+    "gr00t_whole_body_control": {
+      "role": "Official GEAR-SONIC whole-body controller and VLA integration",
+      "url": "https://github.com/NVlabs/GR00T-WholeBodyControl.git",
+      "ref": "main",
+      "revision": "087f9ac01d46f6d8e4d0b73c01ae64799f292a38",
+      "destination": "GR00T-WholeBodyControl"
+    },
+    "isaac_gr00t": {
+      "role": "Official GR00T N1.7 implementation containing UNITREE_G1_SONIC integration",
+      "url": "https://github.com/NVIDIA/Isaac-GR00T.git",
+      "ref": "main",
+      "revision": "51d4c89f72fda44cbf77285c6a8114b52676b8a1",
+      "destination": "Isaac-GR00T"
+    },
+    "unitree_sim_isaaclab": {
+      "role": "Official Unitree G1 Isaac Lab simulator and DDS reference",
+      "url": "https://github.com/unitreerobotics/unitree_sim_isaaclab.git",
+      "ref": "main",
+      "revision": "e30c25b1dffdf92ada1d6c8c1fe9a47bdde0fecc",
+      "destination": "unitree_sim_isaaclab"
+    },
+    "isaac_lab": {
+      "role": "Official stable simulator framework satisfying GEAR-SONIC Isaac Lab 2.3+",
+      "url": "https://github.com/isaac-sim/IsaacLab.git",
+      "ref": "v2.3.2",
+      "revision": "37ddf626871758333d6ed89cf64ad702aef127d0",
+      "destination": "IsaacLab"
+    }
+  },
+  "evaluation_profiles": {
+    "zero_shot_base": {
+      "source_ref": "n1.7-release",
+      "source_revision": "23ace64f17aa5015259b8609d371eb61a357c776",
+      "python": "3.10",
+      "model": "nvidia/GR00T-N1.7-3B",
+      "allowed_embodiments": "pretrain tags baked into the base checkpoint",
+      "training_allowed": false
+    },
+    "unitree_g1_sonic": {
+      "source_component": "isaac_gr00t",
+      "python": ">=3.12,<3.13",
+      "model": "nvidia/GR00T-N1.7-3B plus a task-specific post-trained checkpoint",
+      "embodiment": "UNITREE_G1_SONIC",
+      "training_required": true
+    }
+  },
+  "huggingface": {
+    "gr00t_n1_7": {
+      "role": "Official GR00T N1.7 3B base model",
+      "repo_type": "model",
+      "repo_id": "nvidia/GR00T-N1.7-3B",
+      "revision": "2fc962b973bccdd5d8ce4f67cc63b264d6886495"
+    },
+    "gear_sonic": {
+      "role": "Official SONIC checkpoints and training artifacts",
+      "repo_type": "model",
+      "repo_id": "nvidia/GEAR-SONIC",
+      "revision": "6733128a3d8a523b1418b06bca3cdf61c8b0987f"
+    }
+  },
+  "project_artifact_remotes": {
+    "large_files_and_benchmark_artifacts": "https://huggingface.co/shin0412/HRVLA",
+    "benchmark_dataset": "https://huggingface.co/datasets/shin0412/HRVLA"
+  }
+}
