@@ -50,3 +50,13 @@ and locked artifacts are present, run either:
 python3 scripts/run_sonic_release.py metrics
 python3 scripts/run_sonic_release.py viewer
 ```
+
+## Verified Isaac Sim demo
+
+The official SONIC checkpoint was validated on an RTX 5070 Ti with Isaac Sim
+5.1.0, Isaac Lab 2.3.2, and NVIDIA driver 580.173.02. The G1 completed both
+bundled walk-forward motions (`4,004` frames) without termination. See the
+[machine-readable result](results/sonic-default-sample.json) and the full
+[reproduction notes](docs/SONIC_BASELINE.md).
+
+![GEAR-SONIC controlling Unitree G1 in Isaac Sim 5.1](docs/assets/sonic-isaac-sim-5.1.png)

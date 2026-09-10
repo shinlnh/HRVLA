@@ -185,8 +185,29 @@ def parse_args() -> argparse.Namespace:
         help="Metrics JSON output directory (metrics mode only)",
     )
     parser.add_argument("--num-envs", type=int, help="Override the mode default")
+    parser.add_argument(
+        "--viewer-eye",
+        type=float,
+        nargs=3,
+        metavar=("X", "Y", "Z"),
+        default=(4.5, 0.0, 4.0),
+        help="Viewer camera position in metres (viewer mode only)",
+    )
+    parser.add_argument(
+        "--viewer-lookat",
+        type=float,
+        nargs=3,
+        metavar=("X", "Y", "Z"),
+        default=(0.0, 0.0, 0.0),
+        help="Viewer camera target in metres (viewer mode only)",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Validate and print the command")
     return parser.parse_args()
+
+
+def hydra_vector(values: tuple[float, float, float] | list[float]) -> str:
+    """Serialize a three-dimensional vector without shell quoting."""
+    return "[" + ",".join(format(value, "g") for value in values) + "]"
 
 
 def main() -> int:
@@ -221,6 +242,14 @@ def main() -> int:
                 "+manager_env/terminations=tracking/eval",
                 "++manager_env.commands.motion.motion_lib_cfg.max_unique_motions=2",
                 f"+eval_output_dir={args.output_dir.resolve()}",
+            ]
+        )
+    else:
+        command.extend(
+            [
+                "++manager_env.config.viewer.eye=" + hydra_vector(args.viewer_eye),
+                "++manager_env.config.viewer.lookat="
+                + hydra_vector(args.viewer_lookat),
             ]
         )
 

@@ -21,9 +21,25 @@ manipulation policy.
 
 ## Run the locked release
 
-The local simulator environment lives under `_vendor/sonic-runtime`; large
-upstream sources and checkpoints stay ignored by Git. The runner verifies the
-source commits and SHA-256 hashes before starting Isaac Sim.
+Large upstream sources, runtimes, and checkpoints stay ignored by Git. The
+runner accepts either the isolated `_vendor/sonic-runtime` profile or an Isaac
+Sim workstation installation. It verifies the source commits, runtime versions,
+and SHA-256 artifact hashes before starting Isaac Sim.
+
+For a workstation installation, make the runtime locations explicit:
+
+```bash
+export HRVLA_ISAACSIM_ROOT=/home/shin/isaacsim
+export HRVLA_ISAACLAB_ROOT=/home/shin/IsaacLab
+python3 scripts/bootstrap_upstreams.py
+"$HRVLA_ISAACSIM_ROOT/python.sh" -m pip install \
+  -e "_vendor/GR00T-WholeBodyControl/gear_sonic[training]" huggingface_hub
+"$HRVLA_ISAACSIM_ROOT/python.sh" scripts/download_sonic_release.py
+python3 scripts/run_sonic_release.py metrics --runtime workstation
+```
+
+The artifact downloader fetches only the seven files in the release lock rather
+than NVIDIA's approximately 30 GB training bundle.
 
 Headless metrics for the two official sample motions:
 
@@ -48,28 +64,22 @@ python3 scripts/run_sonic_release.py viewer
 ```
 
 The viewer follows NVIDIA's official quick-start behavior and continues until
-`Ctrl+C`. The runner removes inherited `ISAAC_PATH`, `ISAACLAB_PATH`,
-`PYTHONPATH`, and `LD_LIBRARY_PATH` so the host's Isaac Sim 6.0 installation
-cannot silently replace the locked 5.1 runtime.
+`Ctrl+C`. Camera position and target can be reproduced with `--viewer-eye X Y Z`
+and `--viewer-lookat X Y Z`. The runner removes inherited `ISAAC_PATH`,
+`ISAACLAB_PATH`, `PYTHONPATH`, and `LD_LIBRARY_PATH` so another host Isaac Sim
+installation cannot silently replace the locked 5.1 runtime.
 
-### Current host rendering status
+### Validated host status
 
-On the current RTX 5070 Ti host (driver `595.84`), the locked physics-only
-headless evaluation is validated, but both the GUI viewer and headless camera
-recorder crash in Isaac Sim's native `librtx.scenedb.plugin.so` before the G1
-stage is created. Isaac Sim's compatibility checker passes the GPU, driver,
-VRAM, OS, CPU, RAM, storage, and display checks. Selecting GPU 0 explicitly,
-disabling automatic and explicit multi-GPU rendering, disabling asynchronous
-rendering, and resetting the user configuration do not remove the crash.
+On 2026-09-10, both headless metrics and the interactive RTX viewer completed
+on the RTX 5070 Ti workstation with NVIDIA driver `580.173.02`. The viewer
+created the G1 stage, initialized the 64-dimensional SONIC encoder/decoder,
+loaded `sonic_release/last.pt`, and rendered the controlled walk. Two GUI frames
+captured three seconds apart had different hashes and 384,291 changed pixels.
+This resolves the earlier host-specific `librtx.scenedb.plugin.so` blocker seen
+with driver `595.84`; no Isaac Sim 6.0 result is substituted into the baseline.
 
-Treat this as an Isaac Sim 5.1 rendering-runtime blocker, not as a SONIC policy
-failure. Do not substitute results from the host's Isaac Sim 6.0 installation
-into this locked baseline. Resolve or migrate the renderer separately while
-keeping the 5.1/2.3.2 physics result as the reference until parity is measured.
-Isaac Sim 5.1 is now marked unsupported upstream; NVIDIA only ships fixes in
-newer releases. See the official
-[requirements](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/installation/requirements.html)
-and [known issues](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/overview/known_issues.html).
+![Validated SONIC viewer run](assets/sonic-isaac-sim-5.1.png)
 
 ## Evaluation contract
 
