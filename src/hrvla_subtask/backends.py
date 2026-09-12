@@ -202,7 +202,6 @@ class CosmosReasonBackend:
         )
         inputs = self._processor(text=[text], return_tensors="pt").to(self._device)
         do_sample = count > 1
-        generator = torch.Generator(device=self._device).manual_seed(seed)
         kwargs: dict[str, object] = {
             "max_new_tokens": self._max_new_tokens,
             "do_sample": do_sample,
@@ -211,9 +210,16 @@ class CosmosReasonBackend:
             "output_scores": True,
         }
         if do_sample:
-            kwargs.update({"temperature": 0.65, "top_p": 0.9, "generator": generator})
-        with torch.inference_mode():
-            generated = self._model.generate(**inputs, **kwargs)
+            kwargs.update({"temperature": 0.65, "top_p": 0.9})
+        cuda_rng_devices = (
+            [torch.cuda.current_device()]
+            if torch.cuda.is_available() and self._device.startswith("cuda")
+            else []
+        )
+        with torch.random.fork_rng(devices=cuda_rng_devices):
+            torch.manual_seed(seed)
+            with torch.inference_mode():
+                generated = self._model.generate(**inputs, **kwargs)
         prompt_length = inputs.input_ids.shape[1]
         transition = self._model.compute_transition_scores(
             generated.sequences, generated.scores, normalize_logits=True
