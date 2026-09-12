@@ -158,14 +158,26 @@ class CosmosReasonBackend:
             }
             for skill in task.skills
         ]
+        executable = [
+            {
+                "id": skill.skill_id,
+                "instruction": skill.instruction,
+                "priority": skill.priority,
+            }
+            for skill in task.skills
+            if skill.applicable(state) and skill.useful(state)
+        ]
         return (
-            "Select the immediate next executable robot subtask. Respect preconditions, observed "
-            "state, completed milestones, and the large task goal. Do not invent skills. "
+            "Select the immediate next executable robot subtask. The skill_id MUST be one of "
+            "EXECUTABLE_NOW; other skills are context for future steps only. Prefer prerequisite "
+            "order and the lowest priority number when several choices make equal goal progress. "
+            "Respect observed state and completed milestones. Do not invent skills. "
             f"Return JSON only as {{\"skill_id\":\"id\",\"confidence\":0..1,"
             "\"reason\":\"short\"}}.\n"
             f"GOAL: {task.goal_instruction}\n"
             f"OBSERVED_STATE: {json.dumps(sorted(state))}\n"
             f"MEMORY: {json.dumps(memory.to_dict(), sort_keys=True)}\n"
+            f"EXECUTABLE_NOW: {json.dumps(executable, sort_keys=True)}\n"
             f"AVAILABLE_SKILLS: {json.dumps(skills, sort_keys=True)}\n"
             f"Generate candidate {count} of an independent proposal set."
         )

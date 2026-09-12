@@ -87,6 +87,11 @@ observed precondition. Otherwise it uses the fast path. Irrespective of route, t
 final affordance shield rejects invented, inapplicable, or already-completed skills
 and selects the best valid fallback.
 
+The proposal prompt also exposes an `EXECUTABLE_NOW` action mask derived from current
+observed preconditions. The full catalog remains available for look-ahead, but only
+masked IDs may be emitted for the immediate step. The shield is still authoritative;
+prompt compliance is never treated as a safety guarantee.
+
 Memory is reconciled from persistent observed milestones at every decision. It may
 catch up, roll back, or repair itself; simulated predictions never become execution
 facts. Every search branch owns a clone, preventing hypothetical outcomes from
