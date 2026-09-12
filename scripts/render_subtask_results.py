@@ -141,12 +141,15 @@ def main() -> int:
     for threshold, (cpu_path, gpu_path) in threshold_sources.items():
         for domain, path in (("symbolic_cpu", cpu_path), ("cosmos_gpu", gpu_path)):
             values = load_json(path)["methods"]["adaptive_ttc"]
+            calls = values.get("mean_model_calls_per_decision", values.get("mean_model_calls"))
+            if calls is None:
+                raise KeyError(f"model-call metric is missing from {path}")
             threshold_rows.append(
                 {
                     "domain": domain,
                     "confidence_threshold": threshold,
                     "next_subtask_accuracy": values["next_subtask_accuracy"],
-                    "mean_model_calls_per_decision": values["mean_model_calls_per_decision"],
+                    "mean_model_calls_per_decision": calls,
                     "ttc_route_rate": values["ttc_route_rate"],
                     "safety_fallback_rate": values["safety_fallback_rate"],
                 }
