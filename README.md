@@ -88,3 +88,5 @@ _vendor/Isaac-GR00T/.venv/bin/python scripts/subtask_planner.py gpu-eval \
 
 See [`docs/SUBTASK_PLANNER.md`](docs/SUBTASK_PLANNER.md) for the algorithm,
 paper comparison, metric definitions, integration contract, and limitations.
+Measured CPU/GPU/SONIC results and negative findings are in
+[`docs/SUBTASK_RESULTS.md`](docs/SUBTASK_RESULTS.md).
