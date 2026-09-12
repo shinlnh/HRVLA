@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime, timezone
+import gzip
 import json
 import os
 from pathlib import Path
@@ -101,15 +102,11 @@ def command_simulate(args: argparse.Namespace) -> int:
     raw_dir = output / "raw"
     raw_dir.mkdir(exist_ok=True)
     for method in args.methods:
-        path = raw_dir / f"{method}.jsonl"
-        path.write_text(
-            "".join(
-                json.dumps(record, sort_keys=True) + "\n"
-                for record in records
-                if record["method"] == method
-            ),
-            encoding="utf-8",
-        )
+        path = raw_dir / f"{method}.jsonl.gz"
+        with gzip.open(path, "wt", encoding="utf-8", compresslevel=6) as stream:
+            for record in records:
+                if record["method"] == method:
+                    stream.write(json.dumps(record, sort_keys=True) + "\n")
     summary = summarize(records)
     write_summary(summary, output / "summary.json")
     write_chart_data(summary, output / "chart_data.csv")

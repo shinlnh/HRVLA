@@ -121,7 +121,8 @@ The CPU stress matrix uses identical seeds at proposal error rates `0.15`, `0.28
 and `0.45`, covering nominal, standard, and adverse proposal quality. Each cell runs
 all five methods across every task. `--workers 0` maps to every logical CPU. Raw
 episode traces, exact arguments, Git revision, platform, chart tables, and rendered
-charts remain under `results/subtask/`; they are not deleted after aggregation.
+charts remain under `results/subtask/`; raw traces use lossless `jsonl.gz`
+compression and are not deleted after aggregation.
 
 The GPU experiment loads the locked Cosmos-Reason2-2B snapshot in BF16, enables TF32
 matrix operations, and evaluates the same canonical task states for every method.
@@ -179,7 +180,7 @@ _vendor/Isaac-GR00T/.venv/bin/python scripts/subtask_planner.py gpu-eval \
 
 The result manifest records the actual Git revision and hardware. Results must not be
 interpreted from filenames alone; inspect each `manifest.json`, `summary.json`, raw
-JSONL trace, and chart CSV together.
+JSONL/JSONL.GZ trace, and chart CSV together.
 
 ## Deployment gates
 
