@@ -234,23 +234,12 @@ class WorldModelGuidedPlanner:
                 latency_ms=(time.perf_counter() - started) * 1000,
             )
 
-        direct = self.backend.propose(task, state, memory, 1, seed)[0]
-        candidates: tuple[Candidate, ...] = (direct,)
-        selected: Candidate | None = direct
-        path: tuple[str, ...] = (direct.skill_id,)
-        nodes = 1
-        route = "plan_once"
-
-        should_search = self.config.method == "ttc"
+        route = self.config.method
         if self.config.method == "ttc":
-            route = "ttc"
-        elif self.config.method == "adaptive_ttc":
-            should_search = direct.confidence < self.config.confidence_threshold or not self._valid(
-                task, state, direct
+            selected, candidates, path, nodes = self._search(
+                task, state, memory, seed + 31, self.config.search_depth
             )
-            route = "ttc" if should_search else "fast"
         elif self.config.method == "best_of_n":
-            route = "best_of_n"
             proposals = self.backend.propose(
                 task, state, memory, self.config.branching_factor, seed + 17
             )
@@ -263,16 +252,28 @@ class WorldModelGuidedPlanner:
                 ranked.append((self.value_model.score(task, state, predicted, skill), proposal))
             selected = max(ranked, key=lambda item: item[0])[1] if ranked else None
             path = (selected.skill_id,) if selected else ()
-        elif self.config.method == "recursive":
-            route = "recursive"
-            candidates, path, nodes = self._recursive_rollout(
-                task, state, memory, direct, seed + 23
-            )
-
-        if should_search:
-            selected, candidates, path, nodes = self._search(
-                task, state, memory, seed + 31, self.config.search_depth
-            )
+        else:
+            direct = self.backend.propose(task, state, memory, 1, seed)[0]
+            candidates = (direct,)
+            selected = direct
+            path = (direct.skill_id,)
+            nodes = 1
+            route = "plan_once"
+            if self.config.method == "adaptive_ttc":
+                should_search = (
+                    direct.confidence < self.config.confidence_threshold
+                    or not self._valid(task, state, direct)
+                )
+                route = "ttc" if should_search else "fast"
+                if should_search:
+                    selected, candidates, path, nodes = self._search(
+                        task, state, memory, seed + 31, self.config.search_depth
+                    )
+            elif self.config.method == "recursive":
+                route = "recursive"
+                candidates, path, nodes = self._recursive_rollout(
+                    task, state, memory, direct, seed + 23
+                )
 
         selected, safety_fallback = self._shield(task, state, selected)
         if selected is not None:

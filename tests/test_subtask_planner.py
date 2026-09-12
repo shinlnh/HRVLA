@@ -49,6 +49,7 @@ class PlannerTest(unittest.TestCase):
         decision = planner.decide(self.task, self.task.initial_state, ExecutionMemory())
         self.assertEqual(decision.selected.skill_id, "grasp_apple")
         self.assertFalse(decision.safety_fallback)
+        self.assertEqual(decision.model_calls, 1)
 
     def test_adaptive_router_invokes_search_when_direct_proposal_is_uncertain(self) -> None:
         backend = FixedBackend([Candidate("grasp_apple", 0.20)])
