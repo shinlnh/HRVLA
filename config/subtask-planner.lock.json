@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "method": "world-model-guided-adaptive-subtask-ttc",
+  "implementation_status": "independent_algorithmic_reproduction",
+  "reference_date": "2026-09-12",
+  "primary_reference": {
+    "title": "tau_0-VLA: a Hierarchical Robot Foundation Model with World-Model-Guided Test-Time Computation",
+    "arxiv": "2608.16885v1",
+    "url": "https://arxiv.org/abs/2608.16885"
+  },
+  "related_references": [
+    {
+      "title": "Vesta: A Generalist Embodied Reasoning Model",
+      "arxiv": "2606.20905v1",
+      "url": "https://arxiv.org/abs/2606.20905"
+    },
+    {
+      "title": "Anticipation-VLA: Solving Long-Horizon Embodied Tasks via Anticipation-based Subgoal Generation",
+      "arxiv": "2605.01772v1",
+      "url": "https://arxiv.org/abs/2605.01772"
+    },
+    {
+      "title": "STEP Planner: Constructing cross-hierarchical subgoal tree as an embodied long-horizon task planner",
+      "arxiv": "2506.21030v2",
+      "url": "https://arxiv.org/abs/2506.21030"
+    },
+    {
+      "title": "Hi Robot: Open-Ended Instruction Following with Hierarchical Vision-Language-Action Models",
+      "venue": "ICML 2025",
+      "url": "https://proceedings.mlr.press/v267/shi25a.html"
+    }
+  ],
+  "proposal_model": {
+    "repo_id": "nvidia/Cosmos-Reason2-2B",
+    "revision": "9ce19a195e423419c349abfc86fd07178b230561",
+    "role": "open physical-AI reasoning proposal model; not a tau_0-VLA checkpoint"
+  },
+  "planner": {
+    "branching_factor": 4,
+    "beam_width": 3,
+    "search_depth": 3,
+    "confidence_threshold": 0.72,
+    "memory_reconciliation": true,
+    "affordance_shield": true,
+    "low_level_interface": "bounded natural-language subtask"
+  },
+  "claim_boundary": "The official tau_0-VLA high-level proposal, world, value, and reflection model weights were not public as of the reference date. This repository reproduces the published inference algorithm with explicit pluggable interfaces and Cosmos-Reason2 proposals."
+}

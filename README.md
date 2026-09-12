@@ -60,3 +60,31 @@ bundled walk-forward motions (`4,004` frames) without termination. See the
 [reproduction notes](docs/SONIC_BASELINE.md).
 
 ![GEAR-SONIC controlling Unitree G1 in Isaac Sim 5.1](docs/assets/sonic-isaac-sim-5.1.png)
+
+## Long-horizon subtask planning
+
+This branch adds an independent implementation of a selective, world-model-guided
+test-time-compute planner. It decomposes a large instruction into one executable
+language subtask at a time, verifies it against observed affordances, and sends that
+bounded instruction through GR00T's existing language input. The 64-dimensional
+GR00T/SONIC action contract is not changed.
+
+Validate the benchmark and run all five algorithm variants:
+
+```bash
+python3 scripts/subtask_planner.py validate
+python3 scripts/subtask_planner.py simulate \
+  --output-dir results/subtask/cpu-noise-028 \
+  --episodes-per-task 1000 --workers 0 --proposal-error-rate 0.28
+```
+
+Evaluate real NVIDIA Cosmos-Reason2-2B proposals on GPU with a local snapshot:
+
+```bash
+_vendor/Isaac-GR00T/.venv/bin/python scripts/subtask_planner.py gpu-eval \
+  --model-path "$COSMOS_REASON2_SNAPSHOT" \
+  --output-dir results/subtask/cosmos-reason2
+```
+
+See [`docs/SUBTASK_PLANNER.md`](docs/SUBTASK_PLANNER.md) for the algorithm,
+paper comparison, metric definitions, integration contract, and limitations.

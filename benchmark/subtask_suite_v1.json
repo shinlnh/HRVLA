@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "suite_id": "hrvla-subtask-v1",
+  "description": "Symbolic long-horizon planning suite with deterministic recoverable failures.",
+  "tasks": [
+    {
+      "task_id": "fruit_bowl_and_drawer",
+      "goal_instruction": "Put the red apple in the green bowl, close the drawer, then return home.",
+      "initial_state": ["robot_at_table", "apple_on_table", "bowl_empty", "drawer_open", "home_clear"],
+      "goal_state": ["apple_in_bowl", "drawer_closed", "robot_home"],
+      "max_steps": 18,
+      "skills": [
+        {"id": "grasp_apple", "instruction": "Grasp the red apple from the table.", "requires": ["robot_at_table", "apple_on_table"], "adds": ["holding_apple"], "deletes": ["apple_on_table"], "priority": 10, "risk": 0.2, "success_probability": 0.97},
+        {"id": "recover_apple", "instruction": "Recover and grasp the dropped red apple from the floor.", "requires": ["apple_on_floor"], "adds": ["holding_apple"], "deletes": ["apple_on_floor"], "priority": 15, "risk": 0.4, "success_probability": 0.94, "required": false},
+        {"id": "place_apple", "instruction": "Place the held red apple into the green bowl.", "requires": ["holding_apple", "bowl_empty"], "adds": ["apple_in_bowl"], "deletes": ["holding_apple", "bowl_empty"], "priority": 20, "risk": 0.25, "success_probability": 0.96},
+        {"id": "close_drawer", "instruction": "Close the open drawer completely.", "requires": ["drawer_open"], "adds": ["drawer_closed"], "deletes": ["drawer_open"], "priority": 30, "success_probability": 0.98},
+        {"id": "return_home", "instruction": "Move to the designated home pose.", "requires": ["apple_in_bowl", "drawer_closed", "home_clear"], "adds": ["robot_home"], "priority": 40, "success_probability": 0.99}
+      ],
+      "failures": [
+        {"skill_id": "place_apple", "attempt": 1, "adds": ["apple_on_floor"], "deletes": ["holding_apple"], "recovered_when": ["apple_in_bowl"], "label": "dropped_object"}
+      ]
+    },
+    {
+      "task_id": "set_breakfast_table",
+      "goal_instruction": "Set a breakfast place with a plate, cup, and spoon, close the drawer, then return home.",
+      "initial_state": ["robot_at_counter", "plate_on_shelf", "cup_on_shelf", "spoon_in_drawer", "drawer_closed", "table_clear", "home_clear"],
+      "goal_state": ["plate_set", "cup_set", "spoon_set", "drawer_closed", "robot_home"],
+      "max_steps": 28,
+      "skills": [
+        {"id": "pick_plate", "instruction": "Pick up the plate from the shelf.", "requires": ["robot_at_counter", "plate_on_shelf"], "adds": ["holding_plate"], "deletes": ["plate_on_shelf"], "priority": 10, "success_probability": 0.98},
+        {"id": "place_plate", "instruction": "Place the plate at the breakfast setting.", "requires": ["holding_plate", "table_clear"], "adds": ["plate_set"], "deletes": ["holding_plate", "table_clear"], "priority": 20, "success_probability": 0.97},
+        {"id": "pick_cup", "instruction": "Pick up the cup from the shelf.", "requires": ["robot_at_counter", "cup_on_shelf"], "adds": ["holding_cup"], "deletes": ["cup_on_shelf"], "priority": 30, "success_probability": 0.96},
+        {"id": "recover_cup", "instruction": "Stabilize and regrasp the tipped cup.", "requires": ["cup_tipped"], "adds": ["holding_cup"], "deletes": ["cup_tipped"], "priority": 35, "risk": 0.3, "success_probability": 0.94, "required": false},
+        {"id": "place_cup", "instruction": "Place the cup to the upper right of the plate.", "requires": ["holding_cup", "plate_set"], "adds": ["cup_set"], "deletes": ["holding_cup"], "priority": 40, "success_probability": 0.97},
+        {"id": "open_drawer", "instruction": "Open the utensil drawer.", "requires": ["drawer_closed"], "adds": ["drawer_open"], "deletes": ["drawer_closed"], "priority": 50, "success_probability": 0.98},
+        {"id": "pick_spoon", "instruction": "Pick up the spoon from the open drawer.", "requires": ["drawer_open", "spoon_in_drawer"], "adds": ["holding_spoon"], "deletes": ["spoon_in_drawer"], "priority": 60, "success_probability": 0.96},
+        {"id": "place_spoon", "instruction": "Place the spoon to the right of the plate.", "requires": ["holding_spoon", "plate_set"], "adds": ["spoon_set"], "deletes": ["holding_spoon"], "priority": 70, "success_probability": 0.97},
+        {"id": "close_drawer", "instruction": "Close the utensil drawer.", "requires": ["drawer_open", "spoon_set"], "adds": ["drawer_closed"], "deletes": ["drawer_open"], "priority": 80, "success_probability": 0.98},
+        {"id": "return_home", "instruction": "Return to the home pose without disturbing the place setting.", "requires": ["plate_set", "cup_set", "spoon_set", "drawer_closed", "home_clear"], "adds": ["robot_home"], "priority": 90, "success_probability": 0.99}
+      ],
+      "failures": [
+        {"skill_id": "pick_cup", "attempt": 1, "adds": ["cup_tipped"], "deletes": ["holding_cup"], "recovered_when": ["holding_cup"], "label": "empty_or_unstable_grasp"}
+      ]
+    },
+    {
+      "task_id": "clean_desk",
+      "goal_instruction": "Clear trash, organize the pens, wipe the desk, close the bin, and return home.",
+      "initial_state": ["robot_at_desk", "trash_on_desk", "pens_scattered", "cloth_on_rack", "bin_closed", "home_clear"],
+      "goal_state": ["trash_disposed", "pens_organized", "desk_wiped", "bin_closed", "robot_home"],
+      "max_steps": 26,
+      "skills": [
+        {"id": "open_bin", "instruction": "Open the trash bin lid.", "requires": ["bin_closed"], "adds": ["bin_open"], "deletes": ["bin_closed"], "priority": 10, "success_probability": 0.98},
+        {"id": "grasp_trash", "instruction": "Gather and grasp the trash from the desk.", "requires": ["trash_on_desk"], "adds": ["holding_trash"], "deletes": ["trash_on_desk"], "priority": 20, "success_probability": 0.96},
+        {"id": "recover_trash", "instruction": "Pick up the trash that fell beside the desk.", "requires": ["trash_on_floor"], "adds": ["holding_trash"], "deletes": ["trash_on_floor"], "priority": 25, "risk": 0.3, "success_probability": 0.94, "required": false},
+        {"id": "discard_trash", "instruction": "Place the held trash inside the open bin.", "requires": ["holding_trash", "bin_open"], "adds": ["trash_disposed"], "deletes": ["holding_trash"], "priority": 30, "success_probability": 0.97},
+        {"id": "organize_pens", "instruction": "Place all scattered pens in the desk organizer.", "requires": ["pens_scattered", "trash_disposed"], "adds": ["pens_organized"], "deletes": ["pens_scattered"], "priority": 40, "success_probability": 0.95},
+        {"id": "grasp_cloth", "instruction": "Take the cleaning cloth from its rack.", "requires": ["cloth_on_rack"], "adds": ["holding_cloth"], "deletes": ["cloth_on_rack"], "priority": 50, "success_probability": 0.98},
+        {"id": "wipe_desk", "instruction": "Wipe the cleared desk surface with the cloth.", "requires": ["holding_cloth", "pens_organized", "trash_disposed"], "adds": ["desk_wiped"], "priority": 60, "success_probability": 0.95},
+        {"id": "close_bin", "instruction": "Close the trash bin lid.", "requires": ["bin_open", "trash_disposed"], "adds": ["bin_closed"], "deletes": ["bin_open"], "priority": 70, "success_probability": 0.98},
+        {"id": "return_home", "instruction": "Return to the designated home pose.", "requires": ["desk_wiped", "pens_organized", "bin_closed", "home_clear"], "adds": ["robot_home"], "priority": 80, "success_probability": 0.99}
+      ],
+      "failures": [
+        {"skill_id": "discard_trash", "attempt": 1, "adds": ["trash_on_floor"], "deletes": ["holding_trash"], "recovered_when": ["trash_disposed"], "label": "dropped_trash"}
+      ]
+    },
+    {
+      "task_id": "make_tea",
+      "goal_instruction": "Prepare a cup of tea, clean any spill, serve it, and return home.",
+      "initial_state": ["robot_at_counter", "cup_on_tray", "teabag_available", "kettle_ready", "cloth_available", "serving_area_clear", "home_clear"],
+      "goal_state": ["tea_served", "counter_clean", "robot_home"],
+      "max_steps": 28,
+      "skills": [
+        {"id": "place_cup", "instruction": "Move the empty cup to the preparation area.", "requires": ["cup_on_tray"], "adds": ["cup_ready"], "deletes": ["cup_on_tray"], "priority": 10, "success_probability": 0.98},
+        {"id": "insert_teabag", "instruction": "Insert one teabag into the prepared cup.", "requires": ["cup_ready", "teabag_available"], "adds": ["teabag_in_cup"], "deletes": ["teabag_available"], "priority": 20, "success_probability": 0.97},
+        {"id": "pour_water", "instruction": "Pour hot water from the kettle into the cup.", "requires": ["cup_ready", "teabag_in_cup", "kettle_ready"], "adds": ["tea_brewing"], "priority": 30, "risk": 0.4, "success_probability": 0.94},
+        {"id": "wipe_spill", "instruction": "Wipe the spilled water from the counter before continuing.", "requires": ["water_spilled", "cloth_available"], "adds": ["counter_clean"], "deletes": ["water_spilled"], "priority": 25, "success_probability": 0.96, "required": false},
+        {"id": "wait_brew", "instruction": "Wait until the tea has brewed sufficiently.", "requires": ["tea_brewing"], "adds": ["tea_brewed"], "priority": 40, "success_probability": 1.0},
+        {"id": "remove_teabag", "instruction": "Remove the teabag and place it in the waste dish.", "requires": ["tea_brewed", "teabag_in_cup"], "adds": ["teabag_removed"], "deletes": ["teabag_in_cup"], "priority": 50, "success_probability": 0.96},
+        {"id": "serve_tea", "instruction": "Move the finished tea to the serving area.", "requires": ["tea_brewed", "teabag_removed", "serving_area_clear"], "adds": ["tea_served", "counter_clean"], "priority": 60, "success_probability": 0.95},
+        {"id": "return_home", "instruction": "Return to the home pose after serving the tea.", "requires": ["tea_served", "counter_clean", "home_clear"], "adds": ["robot_home"], "priority": 70, "success_probability": 0.99}
+      ],
+      "failures": [
+        {"skill_id": "pour_water", "attempt": 1, "adds": ["water_spilled"], "deletes": ["tea_brewing"], "recovered_when": ["counter_clean"], "label": "liquid_spill"}
+      ]
+    },
+    {
+      "task_id": "pack_lunch",
+      "goal_instruction": "Pack the sandwich, fruit, and napkin into the lunchbox, put it in the bag, and return home.",
+      "initial_state": ["lunchbox_closed", "sandwich_ready", "fruit_on_counter", "napkin_available", "bag_open", "home_clear"],
+      "goal_state": ["lunchbox_in_bag", "bag_closed", "robot_home"],
+      "max_steps": 26,
+      "skills": [
+        {"id": "open_lunchbox", "instruction": "Open the empty lunchbox.", "requires": ["lunchbox_closed"], "adds": ["lunchbox_open"], "deletes": ["lunchbox_closed"], "priority": 10, "success_probability": 0.99},
+        {"id": "pack_sandwich", "instruction": "Place the sandwich into the open lunchbox.", "requires": ["lunchbox_open", "sandwich_ready"], "adds": ["sandwich_packed"], "deletes": ["sandwich_ready"], "priority": 20, "success_probability": 0.97},
+        {"id": "pack_fruit", "instruction": "Place the fruit into the open lunchbox.", "requires": ["lunchbox_open", "fruit_on_counter"], "adds": ["fruit_packed"], "deletes": ["fruit_on_counter"], "priority": 30, "success_probability": 0.95},
+        {"id": "recover_fruit", "instruction": "Recover the fruit that rolled off the counter.", "requires": ["fruit_on_floor"], "adds": ["fruit_on_counter"], "deletes": ["fruit_on_floor"], "priority": 25, "risk": 0.3, "success_probability": 0.94, "required": false},
+        {"id": "pack_napkin", "instruction": "Place the napkin into the lunchbox.", "requires": ["lunchbox_open", "napkin_available"], "adds": ["napkin_packed"], "deletes": ["napkin_available"], "priority": 40, "success_probability": 0.98},
+        {"id": "close_lunchbox", "instruction": "Close and latch the packed lunchbox.", "requires": ["lunchbox_open", "sandwich_packed", "fruit_packed", "napkin_packed"], "adds": ["lunchbox_closed", "lunchbox_packed"], "deletes": ["lunchbox_open"], "priority": 50, "success_probability": 0.97},
+        {"id": "bag_lunchbox", "instruction": "Place the closed lunchbox inside the open bag.", "requires": ["lunchbox_packed", "bag_open"], "adds": ["lunchbox_in_bag"], "priority": 60, "success_probability": 0.96},
+        {"id": "close_bag", "instruction": "Close the bag containing the lunchbox.", "requires": ["lunchbox_in_bag", "bag_open"], "adds": ["bag_closed"], "deletes": ["bag_open"], "priority": 70, "success_probability": 0.98},
+        {"id": "return_home", "instruction": "Return to the home pose.", "requires": ["lunchbox_in_bag", "bag_closed", "home_clear"], "adds": ["robot_home"], "priority": 80, "success_probability": 0.99}
+      ],
+      "failures": [
+        {"skill_id": "pack_fruit", "attempt": 1, "adds": ["fruit_on_floor"], "deletes": ["fruit_on_counter"], "recovered_when": ["fruit_packed"], "label": "rolling_object"}
+      ]
+    },
+    {
+      "task_id": "prepare_ingredients",
+      "goal_instruction": "Prepare chopped tomato and onion in separate bowls, store the knife safely, and return home.",
+      "initial_state": ["board_stored", "tomato_available", "onion_available", "knife_stored", "tomato_bowl_empty", "onion_bowl_empty", "home_clear"],
+      "goal_state": ["tomato_in_bowl", "onion_in_bowl", "knife_stored", "robot_home"],
+      "max_steps": 30,
+      "skills": [
+        {"id": "place_board", "instruction": "Place the cutting board in the preparation area.", "requires": ["board_stored"], "adds": ["board_ready"], "deletes": ["board_stored"], "priority": 10, "success_probability": 0.98},
+        {"id": "retrieve_knife", "instruction": "Retrieve the knife using a safe handle grasp.", "requires": ["knife_stored", "board_ready"], "adds": ["holding_knife"], "deletes": ["knife_stored"], "priority": 20, "risk": 0.5, "success_probability": 0.96},
+        {"id": "place_tomato", "instruction": "Place the tomato on the cutting board.", "requires": ["tomato_available", "board_ready"], "adds": ["tomato_on_board"], "deletes": ["tomato_available"], "priority": 30, "success_probability": 0.97},
+        {"id": "chop_tomato", "instruction": "Chop the tomato while keeping the other hand clear.", "requires": ["tomato_on_board", "holding_knife"], "adds": ["tomato_chopped"], "deletes": ["tomato_on_board"], "priority": 40, "risk": 0.7, "success_probability": 0.94},
+        {"id": "bowl_tomato", "instruction": "Move the chopped tomato into the tomato bowl.", "requires": ["tomato_chopped", "tomato_bowl_empty"], "adds": ["tomato_in_bowl"], "deletes": ["tomato_bowl_empty"], "priority": 50, "success_probability": 0.96},
+        {"id": "place_onion", "instruction": "Place the onion on the cleared cutting board.", "requires": ["onion_available", "tomato_in_bowl", "board_ready"], "adds": ["onion_on_board"], "deletes": ["onion_available"], "priority": 60, "success_probability": 0.97},
+        {"id": "chop_onion", "instruction": "Chop the onion while keeping the other hand clear.", "requires": ["onion_on_board", "holding_knife"], "adds": ["onion_chopped"], "deletes": ["onion_on_board"], "priority": 70, "risk": 0.7, "success_probability": 0.94},
+        {"id": "bowl_onion", "instruction": "Move the chopped onion into the onion bowl.", "requires": ["onion_chopped", "onion_bowl_empty"], "adds": ["onion_in_bowl"], "deletes": ["onion_bowl_empty"], "priority": 80, "success_probability": 0.96},
+        {"id": "store_knife", "instruction": "Return the knife safely to its storage slot.", "requires": ["holding_knife", "tomato_in_bowl", "onion_in_bowl"], "adds": ["knife_stored"], "deletes": ["holding_knife"], "priority": 90, "risk": 0.4, "success_probability": 0.98},
+        {"id": "return_home", "instruction": "Return to the home pose after preparation.", "requires": ["tomato_in_bowl", "onion_in_bowl", "knife_stored", "home_clear"], "adds": ["robot_home"], "priority": 100, "success_probability": 0.99}
+      ],
+      "failures": [
+        {"skill_id": "bowl_tomato", "attempt": 1, "adds": ["tomato_chopped"], "deletes": [], "recovered_when": ["tomato_in_bowl"], "label": "incomplete_transfer"}
+      ]
+    }
+  ]
+}
