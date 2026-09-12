@@ -1,0 +1,74 @@
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+{
+  "backend": "nvidia/Cosmos-Reason2-2B",
+  "methods": {
+    "adaptive_ttc": {
+      "decision_points": 12,
+      "generated_tokens": 1621,
+      "mean_confidence": 0.3925497766075903,
+      "mean_latency_ms": 3558.555569916583,
+      "mean_model_calls": 5.083333333333333,
+      "mean_search_nodes": 16.75,
+      "next_subtask_accuracy": 0.9166666666666666,
+      "p95_latency_ms": 8294.056049000574,
+      "safety_fallback_rate": 0.5,
+      "ttc_route_rate": 0.5833333333333334,
+      "valid_selection_rate": 1.0
+    },
+    "best_of_n": {
+      "decision_points": 12,
+      "generated_tokens": 441,
+      "mean_confidence": 0.19315694278126838,
+      "mean_latency_ms": 997.6828047500325,
+      "mean_model_calls": 1.0,
+      "mean_search_nodes": 4.0,
+      "next_subtask_accuracy": 0.5,
+      "p95_latency_ms": 1757.9010800000106,
+      "safety_fallback_rate": 0.6666666666666666,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    "plan_once": {
+      "decision_points": 12,
+      "generated_tokens": 577,
+      "mean_confidence": 0.4482572327901297,
+      "mean_latency_ms": 625.6914621666662,
+      "mean_model_calls": 1.0,
+      "mean_search_nodes": 1.0,
+      "next_subtask_accuracy": 0.9166666666666666,
+      "p95_latency_ms": 988.805283000147,
+      "safety_fallback_rate": 0.3333333333333333,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    "recursive": {
+      "decision_points": 12,
+      "generated_tokens": 2018,
+      "mean_confidence": 0.4482572327901297,
+      "mean_latency_ms": 2060.3614209167063,
+      "mean_model_calls": 3.0,
+      "mean_search_nodes": 3.0,
+      "next_subtask_accuracy": 0.9166666666666666,
+      "p95_latency_ms": 3009.687560000202,
+      "safety_fallback_rate": 0.3333333333333333,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    "ttc": {
+      "decision_points": 12,
+      "generated_tokens": 1695,
+      "mean_confidence": 0.13141406215227527,
+      "mean_latency_ms": 4883.771515166548,
+      "mean_model_calls": 7.0,
+      "mean_search_nodes": 28.0,
+      "next_subtask_accuracy": 0.5833333333333334,
+      "p95_latency_ms": 7224.3074919997525,
+      "safety_fallback_rate": 0.75,
+      "ttc_route_rate": 1.0,
+      "valid_selection_rate": 1.0
+    }
+  },
+  "model_path": "/home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561",
+  "peak_vram_gib": 6.077132225036621,
+  "schema_version": 1
+}

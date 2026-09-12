@@ -1,0 +1,27 @@
+{
+  "arguments": {
+    "beam_width": 3,
+    "branching_factor": 4,
+    "confidence_threshold": 0.72,
+    "max_points_per_task": 2,
+    "methods": [
+      "plan_once",
+      "recursive",
+      "best_of_n",
+      "ttc",
+      "adaptive_ttc"
+    ],
+    "model_path": "/home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561",
+    "search_depth": 3,
+    "seed": 42,
+    "suite": "/HELIOS/Robotics/HRVLA/benchmark/subtask_suite_v1.json"
+  },
+  "git_revision": "2e3f5891b9e4bf0680d6426a9c0255be5045cb37",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti",
+  "kind": "cosmos_gpu_next_subtask",
+  "logical_cpu_count": 32,
+  "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+  "python": "3.10.20 (main, Aug  7 2026, 02:25:15) [Clang 22.1.3 ]",
+  "recorded_at": "2026-09-12T13:55:21.468472+00:00",
+  "schema_version": 1
+}

@@ -1,0 +1,21 @@
+{
+  "backend": "nvidia/Cosmos-Reason2-2B",
+  "methods": {
+    "adaptive_ttc": {
+      "decision_points": 46,
+      "generated_tokens": 4567,
+      "mean_confidence": 0.8093446919572039,
+      "mean_latency_ms": 2203.135920130377,
+      "mean_model_calls": 2.6739130434782608,
+      "mean_search_nodes": 7.282608695652174,
+      "next_subtask_accuracy": 0.8913043478260869,
+      "p95_latency_ms": 7545.101632000296,
+      "safety_fallback_rate": 0.043478260869565216,
+      "ttc_route_rate": 0.41304347826086957,
+      "valid_selection_rate": 1.0
+    }
+  },
+  "model_path": "/home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561",
+  "peak_vram_gib": 6.118167400360107,
+  "schema_version": 1
+}
