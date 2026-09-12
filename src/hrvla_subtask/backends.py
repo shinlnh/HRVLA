@@ -228,7 +228,6 @@ class CosmosReasonBackend:
             generated.sequences[:, prompt_length:], skip_special_tokens=True
         )
         self._calls += 1
-        self._generated_tokens += int(sum(row.numel() for row in transition))
         if torch.cuda.is_available():
             self.peak_vram_bytes = max(self.peak_vram_bytes, torch.cuda.max_memory_allocated())
 
@@ -239,7 +238,12 @@ class CosmosReasonBackend:
             skill_id = str(payload.get("skill_id", "")).strip()
             if not skill_id:
                 skill_id = next((item for item in known if item in raw_text), "unknown")
-            token_confidence = float(torch.exp(transition[index].mean()).item())
+            row_scores = transition[index]
+            valid_scores = row_scores[torch.isfinite(row_scores) & row_scores.ne(0)]
+            self._generated_tokens += int(valid_scores.numel())
+            token_confidence = (
+                float(torch.exp(valid_scores.mean()).item()) if valid_scores.numel() else 0.0
+            )
             stated = payload.get("confidence", token_confidence)
             try:
                 stated_confidence = float(stated)
