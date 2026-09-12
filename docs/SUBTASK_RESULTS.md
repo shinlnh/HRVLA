@@ -43,7 +43,7 @@ Canonical next-subtask accuracy:
 | Full TTC | 99.68% | 99.43% | 98.93% |
 | Adaptive TTC | 99.61% | 99.22% | 98.55% |
 
-![CPU robustness and compute](../results/subtask/comparison/cpu_robustness.png)
+![CPU robustness and compute](../results/subtask/comparison-final/cpu_robustness.png)
 
 At error 0.28, the direct and recursive variants produce the same immediate action;
 recursive rollout therefore adds calls without changing immediate accuracy. Best-of-N
@@ -70,7 +70,7 @@ method-independent per-state seeds, BF16, TF32, and the same skill mask.
 | Full TTC | 82.61% | 100% | 8.70% | 4.43 | 4,032 ms |
 | Adaptive TTC | 89.13% | 100% | 4.35% | 1.83 | 1,194 ms |
 
-![GPU method comparison](../results/subtask/comparison/gpu_method_comparison.png)
+![GPU method comparison](../results/subtask/comparison-final/gpu_method_comparison.png)
 
 The action-mask revision reduced Plan Once fallback from 63.04% to 21.74% and
 Adaptive TTC fallback from 56.52% to 4.35%. Canonical accuracy moved from 93.48% to
@@ -91,7 +91,7 @@ framebuffer allocation 8,389 MiB. PyTorch's peak tensor allocation was 6.13 GiB.
 | 0.72 | 99.22% | 3.61 | 89.13% | 1.83 | 26.09% |
 | 0.85 | 99.35% | 5.38 | 89.13% | 2.67 | 41.30% |
 
-![Router threshold ablation](../results/subtask/comparison/threshold_ablation.png)
+![Router threshold ablation](../results/subtask/comparison-final/threshold_ablation.png)
 
 Threshold 0.72 is retained: relative to 0.50 it improves adverse/noisy proposal
 selection substantially, while moving to 0.85 buys only 0.13 additional CPU accuracy
