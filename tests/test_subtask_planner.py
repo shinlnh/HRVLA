@@ -31,6 +31,13 @@ class FixedBackend:
         return [self.candidates[index % len(self.candidates)] for index in range(count)]
 
 
+class DirectThenInvalidBackend(FixedBackend):
+    def propose(self, task, state, memory, count, seed):
+        self._calls += 1
+        candidate = self.candidates[0] if self._calls == 1 else self.candidates[1]
+        return [candidate for _ in range(count)]
+
+
 class PlannerTest(unittest.TestCase):
     def setUp(self) -> None:
         self.task = load_suite(REPO_ROOT / "benchmark" / "subtask_suite_v1.json")[0]
@@ -75,6 +82,24 @@ class PlannerTest(unittest.TestCase):
         )
         decision = planner.decide(self.task, self.task.initial_state, ExecutionMemory())
         self.assertTrue(decision.route.startswith("ttc"))
+
+    def test_adaptive_search_keeps_valid_direct_candidate(self) -> None:
+        backend = DirectThenInvalidBackend(
+            [Candidate("grasp_apple", 0.20), Candidate("place_apple", 0.99)]
+        )
+        planner = WorldModelGuidedPlanner(
+            backend,
+            PlannerConfig(
+                method="adaptive_ttc",
+                branching_factor=2,
+                beam_width=2,
+                search_depth=1,
+                confidence_threshold=0.7,
+            ),
+        )
+        decision = planner.decide(self.task, self.task.initial_state, ExecutionMemory())
+        self.assertEqual(decision.selected.skill_id, "grasp_apple")
+        self.assertFalse(decision.safety_fallback)
 
     def test_closed_loop_recovers_declared_drop(self) -> None:
         result = run_episode(

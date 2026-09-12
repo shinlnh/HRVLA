@@ -138,6 +138,7 @@ class WorldModelGuidedPlanner:
         memory: ExecutionMemory,
         seed: int,
         depth: int,
+        root_candidates: tuple[Candidate, ...] = (),
     ) -> tuple[Candidate | None, tuple[Candidate, ...], tuple[str, ...], int]:
         beam = [SearchBranch(state=state, path=(), score=0.0, memory=memory.clone())]
         all_candidates: list[Candidate] = []
@@ -145,17 +146,29 @@ class WorldModelGuidedPlanner:
         for level in range(depth):
             expanded: list[SearchBranch] = []
             for branch_index, branch in enumerate(beam):
-                proposals = self.backend.propose(
-                    task,
-                    branch.state,
-                    branch.memory,
-                    self.config.branching_factor,
-                    seed + level * 1009 + branch_index * 97,
-                )
+                proposals = list(root_candidates) if level == 0 and branch_index == 0 else []
+                missing = self.config.branching_factor - len(proposals)
+                if missing > 0:
+                    proposals.extend(
+                        self.backend.propose(
+                            task,
+                            branch.state,
+                            branch.memory,
+                            missing,
+                            seed + level * 1009 + branch_index * 97,
+                        )
+                    )
+                proposals = proposals[: self.config.branching_factor]
                 all_candidates.extend(proposals)
                 for candidate in proposals:
                     nodes += 1
                     skill = task.skill_map.get(candidate.skill_id)
+                    if (
+                        skill is None
+                        or not skill.applicable(branch.state)
+                        or not skill.useful(branch.state)
+                    ):
+                        continue
                     predicted = self.world_model.predict(task, branch.state, candidate.skill_id)
                     local = self.value_model.score(task, branch.state, predicted, skill)
                     confidence_bonus = math.log(max(candidate.confidence, 1e-6)) * 0.15
@@ -241,7 +254,7 @@ class WorldModelGuidedPlanner:
             )
         elif self.config.method == "best_of_n":
             proposals = self.backend.propose(
-                task, state, memory, self.config.branching_factor, seed + 17
+                task, state, memory, self.config.branching_factor, seed + 31
             )
             candidates = tuple(proposals)
             nodes = len(proposals)
@@ -267,7 +280,12 @@ class WorldModelGuidedPlanner:
                 route = "ttc" if should_search else "fast"
                 if should_search:
                     selected, candidates, path, nodes = self._search(
-                        task, state, memory, seed + 31, self.config.search_depth
+                        task,
+                        state,
+                        memory,
+                        seed + 31,
+                        self.config.search_depth,
+                        root_candidates=(direct,),
                     )
             elif self.config.method == "recursive":
                 route = "recursive"
