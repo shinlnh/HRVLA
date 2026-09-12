@@ -38,7 +38,7 @@ def evaluate_cosmos(
     backend = CosmosReasonBackend(model_path)
     records: list[dict[str, Any]] = []
     overrides = config_overrides or {}
-    for method_index, method in enumerate(methods):
+    for method in methods:
         planner = WorldModelGuidedPlanner(backend, PlannerConfig(method=method, **overrides))
         for task_index, task in enumerate(tasks):
             memory = ExecutionMemory()
@@ -49,7 +49,7 @@ def evaluate_cosmos(
                     task,
                     state,
                     memory,
-                    seed=seed + method_index * 100_000 + task_index * 1_000 + point_index,
+                    seed=seed + task_index * 1_000 + point_index,
                 )
                 selected = decision.selected.skill_id if decision.selected else None
                 records.append(

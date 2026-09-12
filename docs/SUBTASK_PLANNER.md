@@ -125,7 +125,8 @@ charts remain under `results/subtask/`; raw traces use lossless `jsonl.gz`
 compression and are not deleted after aggregation.
 
 The GPU experiment loads the locked Cosmos-Reason2-2B snapshot in BF16, enables TF32
-matrix operations, and evaluates the same canonical task states for every method.
+matrix operations, and evaluates the same canonical task states with method-independent
+per-point seeds. Best-of-N and TTC therefore receive the same sampled root candidates.
 Confidence is the geometric mean of the model-stated confidence and mean generated
 token probability. Raw model text is retained for audit.
 
