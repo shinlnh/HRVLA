@@ -1,0 +1,73 @@
+{
+  "backend": "nvidia/Cosmos-Reason2-2B",
+  "methods": {
+    "adaptive_ttc": {
+      "decision_points": 12,
+      "generated_tokens": 904,
+      "mean_confidence": 0.4482572327901297,
+      "mean_latency_ms": 1729.5538556664571,
+      "mean_model_calls": 2.5,
+      "mean_search_nodes": 6.416666666666667,
+      "next_subtask_accuracy": 0.9166666666666666,
+      "p95_latency_ms": 3609.398570999474,
+      "safety_fallback_rate": 0.3333333333333333,
+      "ttc_route_rate": 0.5833333333333334,
+      "valid_selection_rate": 1.0
+    },
+    "best_of_n": {
+      "decision_points": 12,
+      "generated_tokens": 334,
+      "mean_confidence": 0.20353367801906921,
+      "mean_latency_ms": 813.7688820831196,
+      "mean_model_calls": 1.0,
+      "mean_search_nodes": 4.0,
+      "next_subtask_accuracy": 0.5,
+      "p95_latency_ms": 1417.0250990000568,
+      "safety_fallback_rate": 0.6666666666666666,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    "plan_once": {
+      "decision_points": 12,
+      "generated_tokens": 577,
+      "mean_confidence": 0.4482572327901297,
+      "mean_latency_ms": 625.8942848333694,
+      "mean_model_calls": 1.0,
+      "mean_search_nodes": 1.0,
+      "next_subtask_accuracy": 0.9166666666666666,
+      "p95_latency_ms": 985.5321430004551,
+      "safety_fallback_rate": 0.3333333333333333,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    "recursive": {
+      "decision_points": 12,
+      "generated_tokens": 2018,
+      "mean_confidence": 0.4482572327901297,
+      "mean_latency_ms": 2065.5368910002685,
+      "mean_model_calls": 3.0,
+      "mean_search_nodes": 3.0,
+      "next_subtask_accuracy": 0.9166666666666666,
+      "p95_latency_ms": 3018.8827689999016,
+      "safety_fallback_rate": 0.3333333333333333,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    "ttc": {
+      "decision_points": 12,
+      "generated_tokens": 541,
+      "mean_confidence": 0.20353367801906921,
+      "mean_latency_ms": 1558.2715940002647,
+      "mean_model_calls": 2.5,
+      "mean_search_nodes": 10.0,
+      "next_subtask_accuracy": 0.5,
+      "p95_latency_ms": 3482.739558000503,
+      "safety_fallback_rate": 0.6666666666666666,
+      "ttc_route_rate": 1.0,
+      "valid_selection_rate": 1.0
+    }
+  },
+  "model_path": "/home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561",
+  "peak_vram_gib": 5.355118751525879,
+  "schema_version": 1
+}

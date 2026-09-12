@@ -1,0 +1,22 @@
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+{
+  "backend": "nvidia/Cosmos-Reason2-2B",
+  "methods": {
+    "adaptive_ttc": {
+      "decision_points": 46,
+      "generated_tokens": 2546,
+      "mean_confidence": 0.8093446919572039,
+      "mean_latency_ms": 1102.0613551304846,
+      "mean_model_calls": 1.673913043478261,
+      "mean_search_nodes": 3.4565217391304346,
+      "next_subtask_accuracy": 0.8913043478260869,
+      "p95_latency_ms": 4256.849991999843,
+      "safety_fallback_rate": 0.043478260869565216,
+      "ttc_route_rate": 0.2391304347826087,
+      "valid_selection_rate": 1.0
+    }
+  },
+  "model_path": "/home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561",
+  "peak_vram_gib": 6.126555919647217,
+  "schema_version": 1
+}

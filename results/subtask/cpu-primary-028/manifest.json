@@ -1,0 +1,28 @@
+{
+  "arguments": {
+    "beam_width": 3,
+    "branching_factor": 4,
+    "confidence_threshold": 0.72,
+    "episodes_per_task": 5000,
+    "methods": [
+      "plan_once",
+      "recursive",
+      "best_of_n",
+      "ttc",
+      "adaptive_ttc"
+    ],
+    "proposal_error_rate": 0.28,
+    "search_depth": 3,
+    "seed": 42,
+    "suite": "/HELIOS/Robotics/HRVLA/benchmark/subtask_suite_v1.json",
+    "workers": 32
+  },
+  "git_revision": "30e63943e4c8bfb6fc0b84ff3d8fdebb027b6f2a",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti",
+  "kind": "symbolic_cpu_simulation",
+  "logical_cpu_count": 32,
+  "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "recorded_at": "2026-09-12T13:41:18.864050+00:00",
+  "schema_version": 1
+}

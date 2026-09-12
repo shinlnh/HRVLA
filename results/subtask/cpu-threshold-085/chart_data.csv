@@ -1,0 +1,2 @@
+method,episodes,generated_tokens,hallucinated_candidates_per_decision,injected_failure_recovery_rate,mean_model_calls_per_decision,mean_planner_latency_ms,mean_progress,mean_search_nodes_per_decision,mean_steps,next_subtask_accuracy,p95_episode_mean_latency_ms,repeated_action_rate,safety_fallback_rate,task_success_rate,ttc_route_rate,valid_selection_rate
+adaptive_ttc,30000,62672712,0.0,1.0,5.384589691241679,1.021792282526271,1.0,17.800641442939867,9.780033333333334,0.9934969546797727,2.0122371816713978,0.061891404596439686,0.00027607267868889337,1.0,0.7377173220268506,1.0
