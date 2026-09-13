@@ -15,7 +15,7 @@ try:
 except ModuleNotFoundError:
     np = None
     phase_labels = None
-split_episode_ids = None
+    split_episode_ids = None
 
 
 class VLARetrainingLockTest(unittest.TestCase):
