@@ -72,6 +72,30 @@ def phase_statistics(base_rows: list[dict], tuned_rows: list[dict]) -> dict:
     return output
 
 
+def write_paired_csv(path: Path, paired: dict) -> None:
+    fieldnames = [
+        "condition",
+        "trajectories",
+        "base_mse",
+        "tuned_mse",
+        "mse_reduction",
+        "mse_reduction_percent",
+        "improved_trajectories",
+        "sign_test_two_sided_p",
+        "paired_effect_dz",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fieldnames)
+        writer.writeheader()
+        for condition, metrics in paired.items():
+            writer.writerow(
+                {
+                    "condition": condition,
+                    **{key: metrics[key] for key in fieldnames[1:]},
+                }
+            )
+
+
 def parse_gpu_log(path: Path) -> dict:
     rows = []
     for line in path.read_text(encoding="utf-8").splitlines():
@@ -120,10 +144,14 @@ def parse_cpu_log(path: Path) -> dict:
 
 def render_charts(
     paired: dict,
+    reference_paired: dict | None,
     training_rows: list[dict],
     gpu_log: Path,
     checkpoint_rows: list[dict],
     phase_rows: dict,
+    base_label: str,
+    reference_label: str,
+    tuned_label: str,
     output_dir: Path,
 ) -> None:
     import matplotlib
@@ -133,19 +161,49 @@ def render_charts(
 
     conditions = list(paired)
     x = np.arange(len(conditions))
-    width = 0.38
+    width = 0.25 if reference_paired else 0.38
     figure, axes = plt.subplots(1, 2, figsize=(13, 4.8), constrained_layout=True)
     base = [paired[c]["base_mse"] for c in conditions]
     tuned = [paired[c]["tuned_mse"] for c in conditions]
-    axes[0].bar(x - width / 2, base, width, label="base N1.7", color="#718096")
-    axes[0].bar(x + width / 2, tuned, width, label="post-trained", color="#2b6cb0")
+    base_x = x - width if reference_paired else x - width / 2
+    tuned_x = x + width if reference_paired else x + width / 2
+    axes[0].bar(base_x, base, width, label=base_label, color="#718096")
+    if reference_paired:
+        axes[0].bar(
+            x,
+            [reference_paired[c]["base_mse"] for c in conditions],
+            width,
+            label=reference_label,
+            color="#805ad5",
+        )
+    axes[0].bar(tuned_x, tuned, width, label=tuned_label, color="#2b6cb0")
     axes[0].set_xticks(x, [condition.replace("_", "\n") for condition in conditions])
     axes[0].set_ylabel("held-out action MSE")
     axes[0].set_title("Paired robustness evaluation")
     axes[0].legend()
     axes[0].grid(axis="y", alpha=0.25)
     reductions = [paired[c]["mse_reduction_percent"] for c in conditions]
-    bars = axes[1].bar([c.replace("_", "\n") for c in conditions], reductions, color="#2f855a")
+    reduction_labels = [c.replace("_", "\n") for c in conditions]
+    if reference_paired:
+        bars = axes[1].bar(
+            x - width / 2,
+            reductions,
+            width,
+            label=f"vs {base_label}",
+            color="#2f855a",
+        )
+        reference_bars = axes[1].bar(
+            x + width / 2,
+            [reference_paired[c]["mse_reduction_percent"] for c in conditions],
+            width,
+            label=f"vs {reference_label}",
+            color="#805ad5",
+        )
+        axes[1].bar_label(reference_bars, fmt="%.2f%%")
+        axes[1].set_xticks(x, reduction_labels)
+        axes[1].legend()
+    else:
+        bars = axes[1].bar(reduction_labels, reductions, color="#2f855a")
     axes[1].axhline(0, color="black", linewidth=0.8)
     axes[1].set_ylabel("MSE reduction (%)")
     axes[1].set_title("Post-training improvement")
@@ -220,17 +278,25 @@ def render_charts(
         x = np.arange(len(labels))
         figure, axis = plt.subplots(figsize=(9, 5.2), constrained_layout=True)
         axis.bar(
-            x - width / 2,
+            x - width if "reference_mse" in next(iter(phase_rows.values())) else x - width / 2,
             [phase_rows[label]["base_mse"] for label in labels],
             width,
-            label="base N1.7",
+            label=base_label,
             color="#718096",
         )
+        if "reference_mse" in next(iter(phase_rows.values())):
+            axis.bar(
+                x,
+                [phase_rows[label]["reference_mse"] for label in labels],
+                width,
+                label=reference_label,
+                color="#805ad5",
+            )
         axis.bar(
-            x + width / 2,
+            x + width if "reference_mse" in next(iter(phase_rows.values())) else x + width / 2,
             [phase_rows[label]["tuned_mse"] for label in labels],
             width,
-            label="post-trained",
+            label=tuned_label,
             color="#2b6cb0",
         )
         axis.set_xticks(x, short_labels)
@@ -246,6 +312,10 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-metrics", type=Path, required=True)
     parser.add_argument("--tuned-metrics", type=Path, required=True)
+    parser.add_argument("--reference-metrics", type=Path)
+    parser.add_argument("--base-label", default="base N1.7")
+    parser.add_argument("--reference-label", default="subtask post-trained")
+    parser.add_argument("--tuned-label", default="recovery post-trained")
     parser.add_argument("--trainer-state", type=Path, required=True)
     parser.add_argument("--gpu-log", type=Path, required=True)
     parser.add_argument("--cpu-log", type=Path, required=True)
@@ -267,9 +337,24 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     base = json.loads(args.base_metrics.read_text(encoding="utf-8"))
     tuned = json.loads(args.tuned_metrics.read_text(encoding="utf-8"))
+    reference = (
+        json.loads(args.reference_metrics.read_text(encoding="utf-8"))
+        if args.reference_metrics
+        else None
+    )
     trainer = json.loads(args.trainer_state.read_text(encoding="utf-8"))
     paired = paired_statistics(base["rows"], tuned["rows"])
+    reference_paired = (
+        paired_statistics(reference["rows"], tuned["rows"]) if reference else None
+    )
     phases = phase_statistics(base["rows"], tuned["rows"])
+    if reference:
+        reference_phases = phase_statistics(reference["rows"], tuned["rows"])
+        for phase, metrics in phases.items():
+            metrics["reference_mse"] = reference_phases[phase]["base_mse"]
+            metrics["reference_to_tuned_reduction_percent"] = reference_phases[phase][
+                "mse_reduction_percent"
+            ]
     losses = [row["loss"] for row in trainer["log_history"] if "loss" in row]
     checkpoint_rows = [{"step": 0, "clean_mse": base["aggregates"]["clean"]["mse"]}]
     for path in args.checkpoint_metrics:
@@ -291,7 +376,13 @@ def main() -> None:
     )
     summary = {
         "schema_version": 1,
+        "labels": {
+            "base": args.base_label,
+            "reference": args.reference_label if reference else None,
+            "tuned": args.tuned_label,
+        },
         "paired_evaluation": paired,
+        "reference_to_tuned_evaluation": reference_paired,
         "phase_evaluation": phases,
         "training": {
             "optimizer_steps": trainer["global_step"],
@@ -324,35 +415,21 @@ def main() -> None:
     (args.output_dir / "summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
-    with (args.output_dir / "paired_metrics.csv").open("w", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(
-            stream,
-            fieldnames=[
-                "condition",
-                "trajectories",
-                "base_mse",
-                "tuned_mse",
-                "mse_reduction",
-                "mse_reduction_percent",
-                "improved_trajectories",
-                "sign_test_two_sided_p",
-                "paired_effect_dz",
-            ],
+    write_paired_csv(args.output_dir / "paired_metrics.csv", paired)
+    if reference_paired:
+        write_paired_csv(
+            args.output_dir / "reference_paired_metrics.csv", reference_paired
         )
-        writer.writeheader()
-        for condition, metrics in paired.items():
-            writer.writerow(
-                {
-                    "condition": condition,
-                    **{key: metrics[key] for key in writer.fieldnames[1:]},
-                }
-            )
     render_charts(
         paired,
+        reference_paired,
         trainer["log_history"],
         args.gpu_log,
         checkpoint_rows,
         phases,
+        args.base_label,
+        args.reference_label,
+        args.tuned_label,
         args.output_dir,
     )
     print(json.dumps(summary, indent=2, sort_keys=True))

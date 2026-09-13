@@ -1,0 +1,1374 @@
+{
+  "aggregates": {
+    "clean": {
+      "mae": 0.18803722021125613,
+      "mean_inference_ms": 54.43079408725304,
+      "mse": 0.10075852718381655,
+      "trajectories": 42,
+      "within_0_1_rate": 0.5366209662159437
+    }
+  },
+  "conditions": [
+    "clean"
+  ],
+  "dataset_path": "/HELIOS/Robotics/HRVLA/_artifacts/datasets/arena-g1-recovery-split/heldout",
+  "denoising_steps": 4,
+  "execution_horizon": 40,
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "peak_vram_gib": 5.931015968322754,
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39"
+  },
+  "model_path": "/HELIOS/Robotics/HRVLA/_artifacts/retraining/str-action-decoder-b16-ga1-s300/checkpoints/checkpoint-100",
+  "rows": [
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.17998112738132477,
+      "mean_inference_ms": 127.07157566668077,
+      "mse": 0.09230764210224152,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 256.0134322997328,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 12,
+          "mae": 0.1628795862197876,
+          "mse": 0.07944028824567795
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 18,
+          "mae": 0.22103527188301086,
+          "mse": 0.13038843870162964
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.18541847169399261,
+          "mse": 0.09556221961975098
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 51,
+          "mae": 0.16535738110542297,
+          "mse": 0.07940617948770523
+        }
+      },
+      "rmse": 0.30382171273231506,
+      "trajectory_id": 0,
+      "within_0_1_rate": 0.5436046511627907
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1930999457836151,
+      "mean_inference_ms": 51.655883999652964,
+      "mse": 0.10535173863172531,
+      "p95_absolute_error": 0.7188143610954288,
+      "p95_inference_ms": 53.02710199975991,
+      "phase_metrics": {
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 24,
+          "mae": 0.22293910384178162,
+          "mse": 0.1326178014278412
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.19587582349777222,
+          "mse": 0.10651524364948273
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 57,
+          "mae": 0.1786368489265442,
+          "mse": 0.0930752158164978
+        }
+      },
+      "rmse": 0.3245793282985687,
+      "trajectory_id": 1,
+      "within_0_1_rate": 0.5281007751937985
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19152893126010895,
+      "mean_inference_ms": 51.91975400005807,
+      "mse": 0.11017952859401703,
+      "p95_absolute_error": 0.7795835345983508,
+      "p95_inference_ms": 53.16432130039175,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 24,
+          "mae": 0.1710308939218521,
+          "mse": 0.09221967309713364
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 16,
+          "mae": 0.24648915231227875,
+          "mse": 0.17926068603992462
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.20620107650756836,
+          "mse": 0.11941397935152054
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 41,
+          "mae": 0.16812346875667572,
+          "mse": 0.08495008200407028
+        }
+      },
+      "rmse": 0.33193302154541016,
+      "trajectory_id": 2,
+      "within_0_1_rate": 0.536046511627907
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18194635212421417,
+      "mean_inference_ms": 51.3897620003263,
+      "mse": 0.09308814257383347,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.892028300448146,
+      "phase_metrics": {
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 26,
+          "mae": 0.21171848475933075,
+          "mse": 0.12183142453432083
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.19095677137374878,
+          "mse": 0.09940020740032196
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 55,
+          "mae": 0.1614830642938614,
+          "mse": 0.07502458244562149
+        }
+      },
+      "rmse": 0.30510348081588745,
+      "trajectory_id": 3,
+      "within_0_1_rate": 0.5395348837209303
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18685883283615112,
+      "mean_inference_ms": 51.22160300015821,
+      "mse": 0.10225594788789749,
+      "p95_absolute_error": 0.753894993662835,
+      "p95_inference_ms": 51.60601870047685,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 49,
+          "mae": 0.18624906241893768,
+          "mse": 0.10431178659200668
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 27,
+          "mae": 0.2178780883550644,
+          "mse": 0.1311480700969696
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 44,
+          "mae": 0.16850335896015167,
+          "mse": 0.08223724365234375
+        }
+      },
+      "rmse": 0.3197748363018036,
+      "trajectory_id": 4,
+      "within_0_1_rate": 0.5422480620155039
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1896868348121643,
+      "mean_inference_ms": 52.63458199988236,
+      "mse": 0.10893257707357407,
+      "p95_absolute_error": 0.7507314622402194,
+      "p95_inference_ms": 53.80095890022858,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 21,
+          "mae": 0.18196313083171844,
+          "mse": 0.10208038985729218
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 33,
+          "mae": 0.22520360350608826,
+          "mse": 0.14374376833438873
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 66,
+          "mae": 0.17438599467277527,
+          "mse": 0.09370722621679306
+        }
+      },
+      "rmse": 0.3300493657588959,
+      "trajectory_id": 5,
+      "within_0_1_rate": 0.5521317829457364
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19709214568138123,
+      "mean_inference_ms": 51.57623999972808,
+      "mse": 0.11337806284427643,
+      "p95_absolute_error": 0.7816602885723115,
+      "p95_inference_ms": 52.20702780006832,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 32,
+          "mae": 0.18630923330783844,
+          "mse": 0.1054343730211258
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 2,
+          "mae": 0.1944725513458252,
+          "mse": 0.10732932388782501
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.22453680634498596,
+          "mse": 0.13826027512550354
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 47,
+          "mae": 0.18177193403244019,
+          "mse": 0.09839700907468796
+        }
+      },
+      "rmse": 0.33671659231185913,
+      "trajectory_id": 6,
+      "within_0_1_rate": 0.5366279069767442
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19143611192703247,
+      "mean_inference_ms": 55.22255533317851,
+      "mse": 0.10850879549980164,
+      "p95_absolute_error": 0.7590754479169849,
+      "p95_inference_ms": 59.57700900007694,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 33,
+          "mae": 0.18631379306316376,
+          "mse": 0.1006900742650032
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 30,
+          "mae": 0.2219429612159729,
+          "mse": 0.1349608600139618
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 57,
+          "mae": 0.17834541201591492,
+          "mse": 0.09911330044269562
+        }
+      },
+      "rmse": 0.32940673828125,
+      "trajectory_id": 7,
+      "within_0_1_rate": 0.5401162790697674
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18971940875053406,
+      "mean_inference_ms": 50.96290733308706,
+      "mse": 0.10662242025136948,
+      "p95_absolute_error": 0.7423644959926606,
+      "p95_inference_ms": 52.12671689960189,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 32,
+          "mae": 0.18175914883613586,
+          "mse": 0.09772279858589172
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 29,
+          "mae": 0.2171141356229782,
+          "mse": 0.13090777397155762
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 59,
+          "mae": 0.18057160079479218,
+          "mse": 0.09951246529817581
+        }
+      },
+      "rmse": 0.3265308737754822,
+      "trajectory_id": 8,
+      "within_0_1_rate": 0.5428294573643411
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19165173172950745,
+      "mean_inference_ms": 50.84353799975361,
+      "mse": 0.10135088860988617,
+      "p95_absolute_error": 0.7009624004364018,
+      "p95_inference_ms": 51.568852799846354,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 53,
+          "mae": 0.1856788545846939,
+          "mse": 0.09521853923797607
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 34,
+          "mae": 0.2226833999156952,
+          "mse": 0.1300705522298813
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 33,
+          "mae": 0.1692725270986557,
+          "mse": 0.08160985261201859
+        }
+      },
+      "rmse": 0.31835654377937317,
+      "trajectory_id": 9,
+      "within_0_1_rate": 0.5261627906976745
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18460385501384735,
+      "mean_inference_ms": 51.76766866710144,
+      "mse": 0.09632088989019394,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.60263490044963,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 39,
+          "mae": 0.1712007373571396,
+          "mse": 0.08097738027572632
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 36,
+          "mae": 0.21904878318309784,
+          "mse": 0.1311020702123642
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 45,
+          "mae": 0.16866396367549896,
+          "mse": 0.0817936509847641
+        }
+      },
+      "rmse": 0.310356080532074,
+      "trajectory_id": 10,
+      "within_0_1_rate": 0.5374031007751938
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1834660768508911,
+      "mean_inference_ms": 51.885370000187926,
+      "mse": 0.09492548555135727,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 54.17158130039752,
+      "phase_metrics": {
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 4,
+          "mae": 0.2356121987104416,
+          "mse": 0.1439402550458908
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.2064734846353531,
+          "mse": 0.11857885867357254
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 77,
+          "mae": 0.16910406947135925,
+          "mse": 0.08039896935224533
+        }
+      },
+      "rmse": 0.30809980630874634,
+      "trajectory_id": 11,
+      "within_0_1_rate": 0.5420542635658915
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1857604682445526,
+      "mean_inference_ms": 51.61269799979588,
+      "mse": 0.096485435962677,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 53.07665169975735,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 1,
+          "mae": 0.1720460057258606,
+          "mse": 0.0769115462899208
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 25,
+          "mae": 0.23035851120948792,
+          "mse": 0.14461174607276917
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.19156022369861603,
+          "mse": 0.10011617839336395
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 55,
+          "mae": 0.1616254299879074,
+          "mse": 0.07239120453596115
+        }
+      },
+      "rmse": 0.310621052980423,
+      "trajectory_id": 12,
+      "within_0_1_rate": 0.5381782945736434
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1897001564502716,
+      "mean_inference_ms": 51.159188333561666,
+      "mse": 0.10238250344991684,
+      "p95_absolute_error": 0.7608996808528902,
+      "p95_inference_ms": 52.493149200472544,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 27,
+          "mae": 0.18496964871883392,
+          "mse": 0.09701202809810638
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 36,
+          "mae": 0.22103993594646454,
+          "mse": 0.13307395577430725
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 57,
+          "mae": 0.17214737832546234,
+          "mse": 0.08554232120513916
+        }
+      },
+      "rmse": 0.3199726641178131,
+      "trajectory_id": 13,
+      "within_0_1_rate": 0.5358527131782945
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1835545003414154,
+      "mean_inference_ms": 51.14175733342563,
+      "mse": 0.09612669795751572,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.52673530003449,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 17,
+          "mae": 0.17341911792755127,
+          "mse": 0.0879601538181305
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 1,
+          "mae": 0.2425014078617096,
+          "mse": 0.1369207352399826
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.20687152445316315,
+          "mse": 0.11976845562458038
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 63,
+          "mae": 0.17091943323612213,
+          "mse": 0.08304746448993683
+        }
+      },
+      "rmse": 0.310043066740036,
+      "trajectory_id": 14,
+      "within_0_1_rate": 0.546124031007752
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18507450819015503,
+      "mean_inference_ms": 51.97693966662579,
+      "mse": 0.09681819379329681,
+      "p95_absolute_error": 0.7053959131240846,
+      "p95_inference_ms": 54.59135540022544,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 36,
+          "mae": 0.1790013611316681,
+          "mse": 0.09117410331964493
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 35,
+          "mae": 0.2167895883321762,
+          "mse": 0.1265249252319336
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 49,
+          "mae": 0.16688275337219238,
+          "mse": 0.07974579185247421
+        }
+      },
+      "rmse": 0.3111562132835388,
+      "trajectory_id": 15,
+      "within_0_1_rate": 0.5304263565891473
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19217835366725922,
+      "mean_inference_ms": 53.32278099983038,
+      "mse": 0.10564792901277542,
+      "p95_absolute_error": 0.7516898185014727,
+      "p95_inference_ms": 54.459679999854416,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 17,
+          "mae": 0.18125483393669128,
+          "mse": 0.09346930682659149
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 34,
+          "mae": 0.21318717300891876,
+          "mse": 0.12653778493404388
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 69,
+          "mae": 0.1845174878835678,
+          "mse": 0.09835491329431534
+        }
+      },
+      "rmse": 0.3250352740287781,
+      "trajectory_id": 16,
+      "within_0_1_rate": 0.5364341085271318
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19824030995368958,
+      "mean_inference_ms": 54.59305866679642,
+      "mse": 0.11155807971954346,
+      "p95_absolute_error": 0.7796062439680099,
+      "p95_inference_ms": 59.254863900605415,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 10,
+          "mae": 0.19294078648090363,
+          "mse": 0.10767369717359543
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 1,
+          "mae": 0.28123486042022705,
+          "mse": 0.19373485445976257
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.22359955310821533,
+          "mse": 0.13581639528274536
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 70,
+          "mae": 0.18368300795555115,
+          "mse": 0.09742370992898941
+        }
+      },
+      "rmse": 0.33400312066078186,
+      "trajectory_id": 17,
+      "within_0_1_rate": 0.5315891472868217
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18429841101169586,
+      "mean_inference_ms": 52.64526799965097,
+      "mse": 0.09649021923542023,
+      "p95_absolute_error": 0.7131740480661394,
+      "p95_inference_ms": 53.27488619941505,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 28,
+          "mae": 0.17990203201770782,
+          "mse": 0.09145303070545197
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.21396833658218384,
+          "mse": 0.1263815313577652
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 53,
+          "mae": 0.16478846967220306,
+          "mse": 0.07715588063001633
+        }
+      },
+      "rmse": 0.310628741979599,
+      "trajectory_id": 18,
+      "within_0_1_rate": 0.541860465116279
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18184736371040344,
+      "mean_inference_ms": 51.94298899975062,
+      "mse": 0.09027347713708878,
+      "p95_absolute_error": 0.695968741178513,
+      "p95_inference_ms": 52.83980320009505,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 36,
+          "mae": 0.1695256382226944,
+          "mse": 0.08022751659154892
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 35,
+          "mae": 0.20673130452632904,
+          "mse": 0.11094161868095398
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 49,
+          "mae": 0.17312580347061157,
+          "mse": 0.08289123326539993
+        }
+      },
+      "rmse": 0.3004554510116577,
+      "trajectory_id": 19,
+      "within_0_1_rate": 0.5350775193798449
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18861891329288483,
+      "mean_inference_ms": 64.41079433322254,
+      "mse": 0.09860606491565704,
+      "p95_absolute_error": 0.7104717612266542,
+      "p95_inference_ms": 67.34560669983694,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 37,
+          "mae": 0.17753075063228607,
+          "mse": 0.09153168648481369
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 36,
+          "mae": 0.21723663806915283,
+          "mse": 0.1244780644774437
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 47,
+          "mae": 0.17542792856693268,
+          "mse": 0.08435840904712677
+        }
+      },
+      "rmse": 0.3140160143375397,
+      "trajectory_id": 20,
+      "within_0_1_rate": 0.5325581395348837
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1877112239599228,
+      "mean_inference_ms": 54.37114299941944,
+      "mse": 0.10084880143404007,
+      "p95_absolute_error": 0.749093633890152,
+      "p95_inference_ms": 56.70014459929007,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 30,
+          "mae": 0.17088820040225983,
+          "mse": 0.08581983298063278
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 34,
+          "mae": 0.21955138444900513,
+          "mse": 0.13063211739063263
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 56,
+          "mae": 0.17739200592041016,
+          "mse": 0.09081732481718063
+        }
+      },
+      "rmse": 0.31756699085235596,
+      "trajectory_id": 21,
+      "within_0_1_rate": 0.5366279069767442
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18301460146903992,
+      "mean_inference_ms": 61.955359666778044,
+      "mse": 0.09465224295854568,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 68.30486330018175,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 31,
+          "mae": 0.1680024266242981,
+          "mse": 0.08139992505311966
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 35,
+          "mae": 0.2138623744249344,
+          "mse": 0.12306229770183563
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 54,
+          "mae": 0.17163875699043274,
+          "mse": 0.08384612947702408
+        }
+      },
+      "rmse": 0.30765604972839355,
+      "trajectory_id": 22,
+      "within_0_1_rate": 0.5430232558139535
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19322438538074493,
+      "mean_inference_ms": 55.535647333575376,
+      "mse": 0.10522901266813278,
+      "p95_absolute_error": 0.7054522573947908,
+      "p95_inference_ms": 58.35379400041347,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 68,
+          "mae": 0.18645179271697998,
+          "mse": 0.09925320744514465
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 36,
+          "mae": 0.21644818782806396,
+          "mse": 0.12801122665405273
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 16,
+          "mae": 0.1697542369365692,
+          "mse": 0.07936618477106094
+        }
+      },
+      "rmse": 0.3243902027606964,
+      "trajectory_id": 23,
+      "within_0_1_rate": 0.5251937984496124
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18844027817249298,
+      "mean_inference_ms": 53.81298799996633,
+      "mse": 0.10436706244945526,
+      "p95_absolute_error": 0.7563040226697926,
+      "p95_inference_ms": 56.63732520015401,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 16,
+          "mae": 0.16275720298290253,
+          "mse": 0.08361700177192688
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 31,
+          "mae": 0.21334268152713776,
+          "mse": 0.12958601117134094
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.19926714897155762,
+          "mse": 0.11290692538022995
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 34,
+          "mae": 0.16540224850177765,
+          "mse": 0.08134233951568604
+        }
+      },
+      "rmse": 0.3230589032173157,
+      "trajectory_id": 24,
+      "within_0_1_rate": 0.5496124031007752
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1798485517501831,
+      "mean_inference_ms": 53.358784000314095,
+      "mse": 0.09195420145988464,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 54.82011159992908,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 27,
+          "mae": 0.16612829267978668,
+          "mse": 0.07862143218517303
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 14,
+          "mae": 0.22049081325531006,
+          "mse": 0.13205169141292572
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.19761084020137787,
+          "mse": 0.10667218267917633
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 40,
+          "mae": 0.15756672620773315,
+          "mse": 0.07256966829299927
+        }
+      },
+      "rmse": 0.30323952436447144,
+      "trajectory_id": 25,
+      "within_0_1_rate": 0.5403100775193799
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1801014393568039,
+      "mean_inference_ms": 52.246635666657916,
+      "mse": 0.09160053730010986,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 53.94908519992896,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 39,
+          "mae": 0.16431672871112823,
+          "mse": 0.07681163400411606
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 6,
+          "mae": 0.22421300411224365,
+          "mse": 0.1281687468290329
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.2008954882621765,
+          "mse": 0.11049807071685791
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 36,
+          "mae": 0.16732275485992432,
+          "mse": 0.08105482906103134
+        }
+      },
+      "rmse": 0.30265581607818604,
+      "trajectory_id": 26,
+      "within_0_1_rate": 0.537984496124031
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18375124037265778,
+      "mean_inference_ms": 51.06246566659441,
+      "mse": 0.0947514995932579,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.337669000007736,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 26,
+          "mae": 0.15668366849422455,
+          "mse": 0.07205529510974884
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 18,
+          "mae": 0.21569673717021942,
+          "mse": 0.1290738433599472
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.20503000915050507,
+          "mse": 0.1119796559214592
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 37,
+          "mae": 0.1648016721010208,
+          "mse": 0.07584339380264282
+        }
+      },
+      "rmse": 0.3078173100948334,
+      "trajectory_id": 27,
+      "within_0_1_rate": 0.5414728682170543
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18685148656368256,
+      "mean_inference_ms": 51.234476333168764,
+      "mse": 0.09743503481149673,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.673583699743176,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 30,
+          "mae": 0.17151357233524323,
+          "mse": 0.08335799723863602
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 14,
+          "mae": 0.22817786037921906,
+          "mse": 0.13508635759353638
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.20637942850589752,
+          "mse": 0.11593902856111526
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 37,
+          "mae": 0.16306714713573456,
+          "mse": 0.07509817183017731
+        }
+      },
+      "rmse": 0.312145859003067,
+      "trajectory_id": 28,
+      "within_0_1_rate": 0.5323643410852713
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1866527497768402,
+      "mean_inference_ms": 51.85615866624479,
+      "mse": 0.09763294458389282,
+      "p95_absolute_error": 0.7010881036520008,
+      "p95_inference_ms": 52.960345299743494,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 11,
+          "mae": 0.17791420221328735,
+          "mse": 0.08864859491586685
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 15,
+          "mae": 0.2196889966726303,
+          "mse": 0.1303243637084961
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.20858599245548248,
+          "mse": 0.11815670877695084
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 55,
+          "mae": 0.16383789479732513,
+          "mse": 0.07596074044704437
+        }
+      },
+      "rmse": 0.312462717294693,
+      "trajectory_id": 29,
+      "within_0_1_rate": 0.5346899224806202
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19408321380615234,
+      "mean_inference_ms": 51.43460433312915,
+      "mse": 0.10878179967403412,
+      "p95_absolute_error": 0.7345977127552037,
+      "p95_inference_ms": 52.984984199338214,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 61,
+          "mae": 0.18995700776576996,
+          "mse": 0.10681002587080002
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 34,
+          "mae": 0.21377338469028473,
+          "mse": 0.12705716490745544
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 25,
+          "mae": 0.17737261950969696,
+          "mse": 0.08873847126960754
+        }
+      },
+      "rmse": 0.3298208713531494,
+      "trajectory_id": 30,
+      "within_0_1_rate": 0.5341085271317829
+    },
+    {
+      "condition": "clean",
+      "frames": 119,
+      "mae": 0.19569236040115356,
+      "mean_inference_ms": 51.335956666359074,
+      "mse": 0.10781289637088776,
+      "p95_absolute_error": 0.7228813886642449,
+      "p95_inference_ms": 52.726328099561215,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 62,
+          "mae": 0.19091810286045074,
+          "mse": 0.10468783974647522
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 37,
+          "mae": 0.21898531913757324,
+          "mse": 0.1288502961397171
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 20,
+          "mae": 0.16740047931671143,
+          "mse": 0.07858137786388397
+        }
+      },
+      "rmse": 0.3283487558364868,
+      "trajectory_id": 31,
+      "within_0_1_rate": 0.5231581004494821
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19111022353172302,
+      "mean_inference_ms": 51.327536666576634,
+      "mse": 0.1019754558801651,
+      "p95_absolute_error": 0.7087171554565432,
+      "p95_inference_ms": 52.95263340049132,
+      "phase_metrics": {
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 24,
+          "mae": 0.2089483141899109,
+          "mse": 0.11816927045583725
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.2057010680437088,
+          "mse": 0.11421988904476166
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 57,
+          "mae": 0.1736162006855011,
+          "mse": 0.08677922189235687
+        }
+      },
+      "rmse": 0.3193359673023224,
+      "trajectory_id": 32,
+      "within_0_1_rate": 0.5155038759689923
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19425900280475616,
+      "mean_inference_ms": 52.328718666709996,
+      "mse": 0.09940585494041443,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 53.09655159990143,
+      "phase_metrics": {
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 32,
+          "mae": 0.213168203830719,
+          "mse": 0.11807648837566376
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.20381614565849304,
+          "mse": 0.10850347578525543
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 49,
+          "mae": 0.17430342733860016,
+          "mse": 0.07997184246778488
+        }
+      },
+      "rmse": 0.31528693437576294,
+      "trajectory_id": 33,
+      "within_0_1_rate": 0.5122093023255814
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18629051744937897,
+      "mean_inference_ms": 52.944565333442974,
+      "mse": 0.09935072064399719,
+      "p95_absolute_error": 0.7182720154523854,
+      "p95_inference_ms": 55.13873700047043,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 35,
+          "mae": 0.17051945626735687,
+          "mse": 0.08653542399406433
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 1,
+          "mae": 0.19527630507946014,
+          "mse": 0.11570413410663605
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.21986591815948486,
+          "mse": 0.1328064352273941
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 45,
+          "mae": 0.16925852000713348,
+          "mse": 0.07995982468128204
+        }
+      },
+      "rmse": 0.31519949436187744,
+      "trajectory_id": 34,
+      "within_0_1_rate": 0.5403100775193799
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18196725845336914,
+      "mean_inference_ms": 51.07812400001421,
+      "mse": 0.0918598622083664,
+      "p95_absolute_error": 0.6895846247673036,
+      "p95_inference_ms": 52.294879100008984,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 8,
+          "mae": 0.15970294177532196,
+          "mse": 0.07497433573007584
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 21,
+          "mae": 0.20353607833385468,
+          "mse": 0.1096177026629448
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.1943024843931198,
+          "mse": 0.10359540581703186
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 52,
+          "mae": 0.16743062436580658,
+          "mse": 0.07848452031612396
+        }
+      },
+      "rmse": 0.3030839264392853,
+      "trajectory_id": 35,
+      "within_0_1_rate": 0.5350775193798449
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18382549285888672,
+      "mean_inference_ms": 51.29104700002548,
+      "mse": 0.09712722897529602,
+      "p95_absolute_error": 0.7340822935104376,
+      "p95_inference_ms": 52.665027899820416,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 32,
+          "mae": 0.16947674751281738,
+          "mse": 0.08489784598350525
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 35,
+          "mae": 0.21969808638095856,
+          "mse": 0.1294352412223816
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 53,
+          "mae": 0.16879945993423462,
+          "mse": 0.08317550271749496
+        }
+      },
+      "rmse": 0.31165242195129395,
+      "trajectory_id": 36,
+      "within_0_1_rate": 0.549031007751938
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18302685022354126,
+      "mean_inference_ms": 51.50471299990992,
+      "mse": 0.09539800882339478,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.910702399822185,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 1,
+          "mae": 0.17916983366012573,
+          "mse": 0.08617047220468521
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 26,
+          "mae": 0.21755973994731903,
+          "mse": 0.1308295875787735
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.19003942608833313,
+          "mse": 0.09970072656869888
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 54,
+          "mae": 0.1614067107439041,
+          "mse": 0.07540169358253479
+        }
+      },
+      "rmse": 0.30886566638946533,
+      "trajectory_id": 37,
+      "within_0_1_rate": 0.5434108527131783
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19693729281425476,
+      "mean_inference_ms": 52.07296166675709,
+      "mse": 0.11249405145645142,
+      "p95_absolute_error": 0.7802699446678164,
+      "p95_inference_ms": 52.78297510012635,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 9,
+          "mae": 0.16975483298301697,
+          "mse": 0.08644014596939087
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 15,
+          "mae": 0.23903681337833405,
+          "mse": 0.15671886503696442
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.21316319704055786,
+          "mse": 0.12531423568725586
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 57,
+          "mae": 0.17904850840568542,
+          "mse": 0.09619800746440887
+        }
+      },
+      "rmse": 0.335401326417923,
+      "trajectory_id": 38,
+      "within_0_1_rate": 0.5317829457364341
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19176605343818665,
+      "mean_inference_ms": 51.615462333453856,
+      "mse": 0.10637784004211426,
+      "p95_absolute_error": 0.7379651099443437,
+      "p95_inference_ms": 53.09626140015098,
+      "phase_metrics": {
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 24,
+          "mae": 0.22261127829551697,
+          "mse": 0.1363985538482666
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.2012762874364853,
+          "mse": 0.11354205757379532
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 57,
+          "mae": 0.17227156460285187,
+          "mse": 0.0888356864452362
+        }
+      },
+      "rmse": 0.3261561691761017,
+      "trajectory_id": 39,
+      "within_0_1_rate": 0.5405038759689923
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18973028659820557,
+      "mean_inference_ms": 51.145959999909486,
+      "mse": 0.10069641470909119,
+      "p95_absolute_error": 0.7055085092782976,
+      "p95_inference_ms": 52.519371299604245,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 19,
+          "mae": 0.1625998616218567,
+          "mse": 0.07677503675222397
+        },
+        "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+          "frames": 15,
+          "mae": 0.22855903208255768,
+          "mse": 0.14185157418251038
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 39,
+          "mae": 0.2042829394340515,
+          "mse": 0.11191544681787491
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 47,
+          "mae": 0.17623017728328705,
+          "mse": 0.08792272955179214
+        }
+      },
+      "rmse": 0.31732699275016785,
+      "trajectory_id": 40,
+      "within_0_1_rate": 0.5296511627906977
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18893440067768097,
+      "mean_inference_ms": 51.62312933316571,
+      "mse": 0.10449595004320145,
+      "p95_absolute_error": 0.7528020799160005,
+      "p95_inference_ms": 53.454699899430125,
+      "phase_metrics": {
+        "Complete recovery by placing the apple on the plate and retracting safely.": {
+          "frames": 15,
+          "mae": 0.15982410311698914,
+          "mse": 0.07908141613006592
+        },
+        "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+          "frames": 20,
+          "mae": 0.23280081152915955,
+          "mse": 0.14538899064064026
+        },
+        "Stabilize the recovered apple and carry it toward the plate.": {
+          "frames": 85,
+          "mae": 0.1837499886751175,
+          "mse": 0.09935896098613739
+        }
+      },
+      "rmse": 0.32325834035873413,
+      "trajectory_id": 41,
+      "within_0_1_rate": 0.547093023255814
+    }
+  ],
+  "schema_version": 1,
+  "seed": 20260913,
+  "trajectory_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41
+  ]
+}

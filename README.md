@@ -144,3 +144,15 @@ and a fresh recorded Isaac Sim/SONIC regression.
 
 See [`docs/SUBTASK_VLA_RETRAINING.md`](docs/SUBTASK_VLA_RETRAINING.md) for the
 exact training scope, commands, metrics, plots, videos, and claim boundaries.
+
+## Recovery-conditioned VLA post-training
+
+A second GR00T N1.7 action-decoder checkpoint is trained with recovery-conditioned
+instructions on the same leakage-resistant G1 split. Across all 42 held-out
+episodes it reduces clean action MSE by 5.612% versus the calibrated base and by
+0.477% versus the subtask-post-trained model. The retained per-phase analysis
+also exposes approach/grasp regressions relative to the base.
+
+See [`docs/RECOVERY_VLA_RETRAINING.md`](docs/RECOVERY_VLA_RETRAINING.md) for the
+three-model statistics, hardware telemetry, failed probe, plots, visual evidence,
+and end-to-end claim boundary.

@@ -15,7 +15,7 @@ try:
 except ModuleNotFoundError:
     np = None
     phase_labels = None
-split_episode_ids = None
+    split_episode_ids = None
 
 
 class VLARetrainingLockTest(unittest.TestCase):
@@ -37,6 +37,24 @@ class VLARetrainingLockTest(unittest.TestCase):
             * training["gradient_accumulation_steps"],
         )
         self.assertEqual(lock["evaluation"]["trajectory_count"], 42)
+
+    def test_recovery_lock_is_consistent_when_present(self) -> None:
+        path = REPO_ROOT / "config/recovery_vla_retraining.lock.json"
+        if not path.exists():
+            self.skipTest("recovery retraining profile is not present on this branch")
+        lock = json.loads(path.read_text(encoding="utf-8"))
+        dataset = lock["dataset"]
+        training = lock["training"]
+        self.assertEqual(dataset["label_mode"], "counterfactual_recovery_conditioned")
+        self.assertEqual(
+            dataset["source_episodes"],
+            dataset["train_episodes"] + dataset["heldout_episodes"],
+        )
+        self.assertEqual(
+            training["effective_batch_size"],
+            training["physical_batch_size"]
+            * training["gradient_accumulation_steps"],
+        )
 
 
 @unittest.skipUnless(np is not None, "VLA data preparation extras are not installed")
