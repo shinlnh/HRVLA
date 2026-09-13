@@ -1,0 +1,203 @@
+{
+    "eval/success/mpjpe_g": 85.86517455557936,
+    "eval/success/mpjpe_l": 17.285216766616692,
+    "eval/success/mpjpe_pa": 11.30101355572214,
+    "eval/success/accel_dist": 0.7625906895185219,
+    "eval/success/vel_dist": 2.2415902644380936,
+    "eval/success/mpjpe_g_legs": 80.93748698567381,
+    "eval/success/mpjpe_l_legs": 21.56139378227553,
+    "eval/success/mpjpe_pa_legs": 13.160920190946195,
+    "eval/success/accel_dist_legs": 0.9422324970327336,
+    "eval/success/vel_dist_legs": 2.237255517748938,
+    "eval/success/mpjpe_g_vr_3points": 87.86056450941197,
+    "eval/success/mpjpe_l_vr_3points": 10.411981509245377,
+    "eval/success/mpjpe_pa_vr_3points": 2.8017745684449444,
+    "eval/success/accel_dist_vr_3points": 0.7094680503986288,
+    "eval/success/vel_dist_vr_3points": 2.4614206568590706,
+    "eval/success/mpjpe_g_other_upper_bodies": 90.58114380309846,
+    "eval/success/mpjpe_l_other_upper_bodies": 14.515022957271363,
+    "eval/success/mpjpe_pa_other_upper_bodies": 4.8015021785982,
+    "eval/success/accel_dist_other_upper_bodies": 0.5788940856720077,
+    "eval/success/vel_dist_other_upper_bodies": 2.114893480993878,
+    "eval/success/mpjpe_g_foot": 78.46766850949525,
+    "eval/success/mpjpe_l_foot": 18.015742128935532,
+    "eval/success/mpjpe_pa_foot": 1.5610432450560436e-05,
+    "eval/success/accel_dist_foot": 1.1072576504716392,
+    "eval/success/vel_dist_foot": 2.2854659096233134,
+    "eval/success/success_rate": 1.0,
+    "eval/success/progress_rate": 1.0,
+    "eval/all/mpjpe_g": 85.86517455557936,
+    "eval/all/mpjpe_l": 17.285216766616692,
+    "eval/all/mpjpe_pa": 11.30101355572214,
+    "eval/all/accel_dist": 0.7625906895185219,
+    "eval/all/vel_dist": 2.2415902644380936,
+    "eval/all/mpjpe_g_legs": 80.93748698567381,
+    "eval/all/mpjpe_l_legs": 21.56139378227553,
+    "eval/all/mpjpe_pa_legs": 13.160920190946195,
+    "eval/all/accel_dist_legs": 0.9422324970327336,
+    "eval/all/vel_dist_legs": 2.237255517748938,
+    "eval/all/mpjpe_g_vr_3points": 87.86056450941197,
+    "eval/all/mpjpe_l_vr_3points": 10.411981509245377,
+    "eval/all/mpjpe_pa_vr_3points": 2.8017745684449444,
+    "eval/all/accel_dist_vr_3points": 0.7094680503986288,
+    "eval/all/vel_dist_vr_3points": 2.4614206568590706,
+    "eval/all/mpjpe_g_other_upper_bodies": 90.58114380309846,
+    "eval/all/mpjpe_l_other_upper_bodies": 14.515022957271363,
+    "eval/all/mpjpe_pa_other_upper_bodies": 4.8015021785982,
+    "eval/all/accel_dist_other_upper_bodies": 0.5788940856720077,
+    "eval/all/vel_dist_other_upper_bodies": 2.114893480993878,
+    "eval/all/mpjpe_g_foot": 78.46766850949525,
+    "eval/all/mpjpe_l_foot": 18.015742128935532,
+    "eval/all/mpjpe_pa_foot": 1.5610432450560436e-05,
+    "eval/all/accel_dist_foot": 1.1072576504716392,
+    "eval/all/vel_dist_foot": 2.2854659096233134,
+    "eval/all_metrics_dict": {
+        "mpjpe_g": [
+            81.10290390519026,
+            90.62744520596846
+        ],
+        "mpjpe_l": [
+            15.208933479688726,
+            19.361500053544656
+        ],
+        "mpjpe_pa": [
+            10.86293571964018,
+            11.739091391804099
+        ],
+        "accel_dist": [
+            0.7491123212807659,
+            0.7760690577562781
+        ],
+        "vel_dist": [
+            2.26463428442029,
+            2.218546244455897
+        ],
+        "mpjpe_g_legs": [
+            79.27273863068466,
+            82.602235340663
+        ],
+        "mpjpe_l_legs": [
+            20.48385442695319,
+            22.63893313759787
+        ],
+        "mpjpe_pa_legs": [
+            13.955455865817092,
+            12.366384516075296
+        ],
+        "accel_dist_legs": [
+            0.9341758564077336,
+            0.9502891376577336
+        ],
+        "vel_dist_legs": [
+            2.2699263161388057,
+            2.2045847193590706
+        ],
+        "mpjpe_g_vr_3points": [
+            81.8741046143595,
+            93.84702440446443
+        ],
+        "mpjpe_l_vr_3points": [
+            7.984281296851575,
+            12.839681721639181
+        ],
+        "mpjpe_pa_vr_3points": [
+            2.3488913095535566,
+            3.254657827336332
+        ],
+        "accel_dist_vr_3points": [
+            0.6734479439967517,
+            0.745488156800506
+        ],
+        "vel_dist_vr_3points": [
+            2.3638629903798103,
+            2.558978323338331
+        ],
+        "mpjpe_g_other_upper_bodies": [
+            82.83635057471264,
+            98.32593703148426
+        ],
+        "mpjpe_l_other_upper_bodies": [
+            12.284624875062468,
+            16.74542103948026
+        ],
+        "mpjpe_pa_other_upper_bodies": [
+            3.8883148269615195,
+            5.714689530234883
+        ],
+        "accel_dist_other_upper_bodies": [
+            0.5724346078913668,
+            0.5853535634526487
+        ],
+        "vel_dist_other_upper_bodies": [
+            2.1987468179972516,
+            2.031040143990505
+        ],
+        "mpjpe_g_foot": [
+            78.14451368065967,
+            78.79082333833084
+        ],
+        "mpjpe_l_foot": [
+            16.937593703148426,
+            19.093890554722638
+        ],
+        "mpjpe_pa_foot": [
+            1.6230551794968145e-05,
+            1.4990313106152727e-05
+        ],
+        "accel_dist_foot": [
+            1.08351195496002,
+            1.1310033459832585
+        ],
+        "vel_dist_foot": [
+            2.2045886236569214,
+            2.366343195589705
+        ],
+        "terminated": [
+            false,
+            false
+        ],
+        "progress": [
+            1.0,
+            1.0
+        ],
+        "motion_keys": [
+            "walk_forward_amateur_001__A001_M",
+            "walk_forward_amateur_001__A001"
+        ],
+        "sampling_prob": [
+            0.5,
+            0.5
+        ]
+    },
+    "eval/failed_metrics_dict": {
+        "mpjpe_g": [],
+        "mpjpe_l": [],
+        "mpjpe_pa": [],
+        "accel_dist": [],
+        "vel_dist": [],
+        "mpjpe_g_legs": [],
+        "mpjpe_l_legs": [],
+        "mpjpe_pa_legs": [],
+        "accel_dist_legs": [],
+        "vel_dist_legs": [],
+        "mpjpe_g_vr_3points": [],
+        "mpjpe_l_vr_3points": [],
+        "mpjpe_pa_vr_3points": [],
+        "accel_dist_vr_3points": [],
+        "vel_dist_vr_3points": [],
+        "mpjpe_g_other_upper_bodies": [],
+        "mpjpe_l_other_upper_bodies": [],
+        "mpjpe_pa_other_upper_bodies": [],
+        "accel_dist_other_upper_bodies": [],
+        "vel_dist_other_upper_bodies": [],
+        "mpjpe_g_foot": [],
+        "mpjpe_l_foot": [],
+        "mpjpe_pa_foot": [],
+        "accel_dist_foot": [],
+        "vel_dist_foot": [],
+        "motion_keys": [],
+        "sampling_prob": []
+    },
+    "failed_keys": [],
+    "failed_idxes": []
+}

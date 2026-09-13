@@ -90,3 +90,16 @@ See [`docs/SUBTASK_PLANNER.md`](docs/SUBTASK_PLANNER.md) for the algorithm,
 paper comparison, metric definitions, integration contract, and limitations.
 Measured CPU/GPU/SONIC results and negative findings are in
 [`docs/SUBTASK_RESULTS.md`](docs/SUBTASK_RESULTS.md).
+
+## In-domain VLA post-training
+
+The subtask-conditioned GR00T N1.7 action decoder was post-trained on a
+leakage-resistant 166/42 episode split of NVIDIA's Isaac Lab G1 pick-and-place
+data. Paired evaluation across all held-out episodes and five observation
+conditions reduces clean action MSE by 4.988%; per-phase results also retain the
+approach/grasp regressions. The experiment includes immutable inputs, raw
+hardware telemetry, checkpoint trends, statistical tests, Isaac Lab evidence,
+and a fresh recorded Isaac Sim/SONIC regression.
+
+See [`docs/SUBTASK_VLA_RETRAINING.md`](docs/SUBTASK_VLA_RETRAINING.md) for the
+exact training scope, commands, metrics, plots, videos, and claim boundaries.

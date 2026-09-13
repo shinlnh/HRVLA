@@ -1,0 +1,1374 @@
+{
+  "aggregates": {
+    "clean": {
+      "mae": 0.18798977881669998,
+      "mean_inference_ms": 54.03681852383323,
+      "mse": 0.10089007055475599,
+      "trajectories": 42,
+      "within_0_1_rate": 0.537594689038406
+    }
+  },
+  "conditions": [
+    "clean"
+  ],
+  "dataset_path": "/HELIOS/Robotics/HRVLA/_artifacts/datasets/arena-g1-subtask-split/heldout",
+  "denoising_steps": 4,
+  "execution_horizon": 40,
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 5070 Ti",
+    "peak_vram_gib": 5.930886268615723,
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39"
+  },
+  "model_path": "/HELIOS/Robotics/HRVLA/_artifacts/retraining/st-action-decoder-b4-ga4-s300/checkpoints/checkpoint-200",
+  "rows": [
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.17978021502494812,
+      "mean_inference_ms": 159.94843500023612,
+      "mse": 0.09225457906723022,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 344.25398390039845,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 51,
+          "mae": 0.16412211954593658,
+          "mse": 0.0786907821893692
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 12,
+          "mae": 0.1625693142414093,
+          "mse": 0.07939811795949936
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 18,
+          "mae": 0.22145068645477295,
+          "mse": 0.1304270625114441
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.18631930649280548,
+          "mse": 0.09632961452007294
+        }
+      },
+      "rmse": 0.3037343919277191,
+      "trajectory_id": 0,
+      "within_0_1_rate": 0.5447674418604651
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19334246218204498,
+      "mean_inference_ms": 51.27026466713384,
+      "mse": 0.10581102222204208,
+      "p95_absolute_error": 0.7212677776813508,
+      "p95_inference_ms": 52.808572700632794,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 57,
+          "mae": 0.17794913053512573,
+          "mse": 0.09273388236761093
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 24,
+          "mae": 0.22420743107795715,
+          "mse": 0.13388076424598694
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.1968465894460678,
+          "mse": 0.10765008628368378
+        }
+      },
+      "rmse": 0.32528606057167053,
+      "trajectory_id": 1,
+      "within_0_1_rate": 0.5284883720930232
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19178450107574463,
+      "mean_inference_ms": 51.24028266648869,
+      "mse": 0.11054401099681854,
+      "p95_absolute_error": 0.7812523871660234,
+      "p95_inference_ms": 52.74108190005791,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 41,
+          "mae": 0.16736619174480438,
+          "mse": 0.08457736670970917
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 24,
+          "mae": 0.1710265725851059,
+          "mse": 0.0923691913485527
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 16,
+          "mae": 0.24719132483005524,
+          "mse": 0.17973564565181732
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.20749816298484802,
+          "mse": 0.12064051628112793
+        }
+      },
+      "rmse": 0.33248159289360046,
+      "trajectory_id": 2,
+      "within_0_1_rate": 0.5383720930232558
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18217965960502625,
+      "mean_inference_ms": 51.377394666815235,
+      "mse": 0.09333447366952896,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 53.18676750039231,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 55,
+          "mae": 0.1609324812889099,
+          "mse": 0.07462083548307419
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 26,
+          "mae": 0.2128978967666626,
+          "mse": 0.12294366955757141
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.19166485965251923,
+          "mse": 0.09998603165149689
+        }
+      },
+      "rmse": 0.3055069148540497,
+      "trajectory_id": 3,
+      "within_0_1_rate": 0.5397286821705426
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1862713098526001,
+      "mean_inference_ms": 51.657431999956316,
+      "mse": 0.1020580306649208,
+      "p95_absolute_error": 0.7509419888257981,
+      "p95_inference_ms": 53.50204839987782,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 44,
+          "mae": 0.16779378056526184,
+          "mse": 0.081937275826931
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 49,
+          "mae": 0.18531087040901184,
+          "mse": 0.1039012148976326
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 27,
+          "mae": 0.21812589466571808,
+          "mse": 0.1315024048089981
+        }
+      },
+      "rmse": 0.3194652199745178,
+      "trajectory_id": 4,
+      "within_0_1_rate": 0.5436046511627907
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18938873708248138,
+      "mean_inference_ms": 52.13326066677837,
+      "mse": 0.10874030739068985,
+      "p95_absolute_error": 0.7496045589447022,
+      "p95_inference_ms": 53.29206720043658,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 66,
+          "mae": 0.17378978431224823,
+          "mse": 0.09324297308921814
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 21,
+          "mae": 0.18239863216876984,
+          "mse": 0.10231407731771469
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 33,
+          "mae": 0.2250349074602127,
+          "mse": 0.14382439851760864
+        }
+      },
+      "rmse": 0.329757958650589,
+      "trajectory_id": 5,
+      "within_0_1_rate": 0.5538759689922481
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19704370200634003,
+      "mean_inference_ms": 51.36386833297971,
+      "mse": 0.11351578682661057,
+      "p95_absolute_error": 0.7822312414646155,
+      "p95_inference_ms": 52.97884129986414,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 47,
+          "mae": 0.18127287924289703,
+          "mse": 0.09807295352220535
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 32,
+          "mae": 0.18628956377506256,
+          "mse": 0.10560700297355652
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 2,
+          "mae": 0.1945141702890396,
+          "mse": 0.1070246696472168
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.2250032126903534,
+          "mse": 0.13894852995872498
+        }
+      },
+      "rmse": 0.3369210362434387,
+      "trajectory_id": 6,
+      "within_0_1_rate": 0.537015503875969
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19145363569259644,
+      "mean_inference_ms": 51.02803166664671,
+      "mse": 0.10866637527942657,
+      "p95_absolute_error": 0.7525720953941349,
+      "p95_inference_ms": 51.496050099922286,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 57,
+          "mae": 0.17819535732269287,
+          "mse": 0.09908615797758102
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 33,
+          "mae": 0.18643955886363983,
+          "mse": 0.1010940819978714
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 30,
+          "mae": 0.22215984761714935,
+          "mse": 0.13519835472106934
+        }
+      },
+      "rmse": 0.3296458423137665,
+      "trajectory_id": 7,
+      "within_0_1_rate": 0.5406976744186046
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18964426219463348,
+      "mean_inference_ms": 51.286924999961535,
+      "mse": 0.10667383670806885,
+      "p95_absolute_error": 0.7446861594915406,
+      "p95_inference_ms": 52.87823389971891,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 59,
+          "mae": 0.18027354776859283,
+          "mse": 0.09942031651735306
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 32,
+          "mae": 0.18207037448883057,
+          "mse": 0.09829198569059372
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 29,
+          "mae": 0.2170661985874176,
+          "mse": 0.13067999482154846
+        }
+      },
+      "rmse": 0.32660961151123047,
+      "trajectory_id": 8,
+      "within_0_1_rate": 0.5436046511627907
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1914895623922348,
+      "mean_inference_ms": 52.055314333301794,
+      "mse": 0.10137120634317398,
+      "p95_absolute_error": 0.7037067204713824,
+      "p95_inference_ms": 54.22444749974602,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 33,
+          "mae": 0.16851040720939636,
+          "mse": 0.0811643972992897
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 53,
+          "mae": 0.18540135025978088,
+          "mse": 0.09514141082763672
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 34,
+          "mae": 0.22328327596187592,
+          "mse": 0.13069485127925873
+        }
+      },
+      "rmse": 0.3183884620666504,
+      "trajectory_id": 9,
+      "within_0_1_rate": 0.5302325581395348
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1842569261789322,
+      "mean_inference_ms": 50.759203000173635,
+      "mse": 0.09616577625274658,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 51.48689200013905,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 45,
+          "mae": 0.1680547297000885,
+          "mse": 0.08147712051868439
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 39,
+          "mae": 0.17113764584064484,
+          "mse": 0.0810067355632782
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 36,
+          "mae": 0.2187221795320511,
+          "mse": 0.13094887137413025
+        }
+      },
+      "rmse": 0.3101060688495636,
+      "trajectory_id": 10,
+      "within_0_1_rate": 0.5377906976744186
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18328668177127838,
+      "mean_inference_ms": 51.34955933317542,
+      "mse": 0.09497927874326706,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 53.2517829002245,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 77,
+          "mae": 0.16853688657283783,
+          "mse": 0.08024502545595169
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 4,
+          "mae": 0.2364388108253479,
+          "mse": 0.14519980549812317
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.20695661008358002,
+          "mse": 0.11891915649175644
+        }
+      },
+      "rmse": 0.3081870973110199,
+      "trajectory_id": 11,
+      "within_0_1_rate": 0.5443798449612403
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18545523285865784,
+      "mean_inference_ms": 51.82158566670599,
+      "mse": 0.09645378589630127,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 53.19070180030394,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 55,
+          "mae": 0.16082587838172913,
+          "mse": 0.07187733054161072
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 1,
+          "mae": 0.17438548803329468,
+          "mse": 0.07792669534683228
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 25,
+          "mae": 0.2307855635881424,
+          "mse": 0.14529146254062653
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.19141483306884766,
+          "mse": 0.100281722843647
+        }
+      },
+      "rmse": 0.31057009100914,
+      "trajectory_id": 12,
+      "within_0_1_rate": 0.5381782945736434
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18908092379570007,
+      "mean_inference_ms": 52.217480667119766,
+      "mse": 0.10207538306713104,
+      "p95_absolute_error": 0.7583621680736542,
+      "p95_inference_ms": 52.94935680030903,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 57,
+          "mae": 0.1712302565574646,
+          "mse": 0.08492312580347061
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 27,
+          "mae": 0.1844852715730667,
+          "mse": 0.09684582054615021
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 36,
+          "mae": 0.22079125046730042,
+          "mse": 0.13315528631210327
+        }
+      },
+      "rmse": 0.319492369890213,
+      "trajectory_id": 13,
+      "within_0_1_rate": 0.5381782945736434
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18323159217834473,
+      "mean_inference_ms": 51.364581333473325,
+      "mse": 0.09607771039009094,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 53.02025869987119,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 63,
+          "mae": 0.1701640486717224,
+          "mse": 0.08265940845012665
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 17,
+          "mae": 0.17369750142097473,
+          "mse": 0.08821093291044235
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 1,
+          "mae": 0.24082203209400177,
+          "mse": 0.13580766320228577
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.2070198953151703,
+          "mse": 0.12016382813453674
+        }
+      },
+      "rmse": 0.30996406078338623,
+      "trajectory_id": 14,
+      "within_0_1_rate": 0.5468992248062016
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18450447916984558,
+      "mean_inference_ms": 51.444561000304624,
+      "mse": 0.09650325775146484,
+      "p95_absolute_error": 0.7037987649440769,
+      "p95_inference_ms": 53.171739099980186,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 49,
+          "mae": 0.1659710854291916,
+          "mse": 0.07921402901411057
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 36,
+          "mae": 0.17846857011318207,
+          "mse": 0.09090530127286911
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 35,
+          "mae": 0.2166595160961151,
+          "mse": 0.12646609544754028
+        }
+      },
+      "rmse": 0.31064972281455994,
+      "trajectory_id": 15,
+      "within_0_1_rate": 0.5319767441860465
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19136874377727509,
+      "mean_inference_ms": 51.48849666663106,
+      "mse": 0.10517720133066177,
+      "p95_absolute_error": 0.7519202798604966,
+      "p95_inference_ms": 53.284211099980894,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 69,
+          "mae": 0.1833396553993225,
+          "mse": 0.09760920703411102
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 17,
+          "mae": 0.18079356849193573,
+          "mse": 0.09326773136854172
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 34,
+          "mae": 0.21295066177845,
+          "mse": 0.126490518450737
+        }
+      },
+      "rmse": 0.3243103325366974,
+      "trajectory_id": 16,
+      "within_0_1_rate": 0.5381782945736434
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19804798066616058,
+      "mean_inference_ms": 51.198163666413166,
+      "mse": 0.11151132732629776,
+      "p95_absolute_error": 0.778921213746071,
+      "p95_inference_ms": 52.669070799856854,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 70,
+          "mae": 0.18277189135551453,
+          "mse": 0.09667636454105377
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 10,
+          "mae": 0.1935480833053589,
+          "mse": 0.10812846571207047
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 1,
+          "mae": 0.27999088168144226,
+          "mse": 0.1922186017036438
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.2245192974805832,
+          "mse": 0.13693614304065704
+        }
+      },
+      "rmse": 0.33393311500549316,
+      "trajectory_id": 17,
+      "within_0_1_rate": 0.5329457364341085
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18404966592788696,
+      "mean_inference_ms": 51.577300666394876,
+      "mse": 0.09663889557123184,
+      "p95_absolute_error": 0.7171487927436831,
+      "p95_inference_ms": 53.486271699330246,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 53,
+          "mae": 0.1642877161502838,
+          "mse": 0.077138751745224
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 28,
+          "mae": 0.1799527108669281,
+          "mse": 0.09197355806827545
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.2138470858335495,
+          "mse": 0.1264885514974594
+        }
+      },
+      "rmse": 0.31086796522140503,
+      "trajectory_id": 18,
+      "within_0_1_rate": 0.5434108527131783
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18161582946777344,
+      "mean_inference_ms": 52.99216766676788,
+      "mse": 0.09036999940872192,
+      "p95_absolute_error": 0.6937554985284805,
+      "p95_inference_ms": 53.33644020038264,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 49,
+          "mae": 0.17242179811000824,
+          "mse": 0.08254280686378479
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 36,
+          "mae": 0.16956213116645813,
+          "mse": 0.08054004609584808
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 35,
+          "mae": 0.20688553154468536,
+          "mse": 0.11143887788057327
+        }
+      },
+      "rmse": 0.3006160259246826,
+      "trajectory_id": 19,
+      "within_0_1_rate": 0.5372093023255814
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18816833198070526,
+      "mean_inference_ms": 51.14108633309419,
+      "mse": 0.09852251410484314,
+      "p95_absolute_error": 0.7046039879322064,
+      "p95_inference_ms": 52.392519699424156,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 47,
+          "mae": 0.17462795972824097,
+          "mse": 0.08404487371444702
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 37,
+          "mae": 0.17738918960094452,
+          "mse": 0.09173273295164108
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 36,
+          "mae": 0.21692462265491486,
+          "mse": 0.12440226227045059
+        }
+      },
+      "rmse": 0.313882976770401,
+      "trajectory_id": 20,
+      "within_0_1_rate": 0.5323643410852713
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18700125813484192,
+      "mean_inference_ms": 51.159501999791246,
+      "mse": 0.1004006415605545,
+      "p95_absolute_error": 0.7453203886747362,
+      "p95_inference_ms": 52.45352339961755,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 56,
+          "mae": 0.17643411457538605,
+          "mse": 0.0901905968785286
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 30,
+          "mae": 0.17022822797298431,
+          "mse": 0.08538756519556046
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 34,
+          "mae": 0.21920576691627502,
+          "mse": 0.13046401739120483
+        }
+      },
+      "rmse": 0.3168606162071228,
+      "trajectory_id": 21,
+      "within_0_1_rate": 0.5385658914728683
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18257592618465424,
+      "mean_inference_ms": 51.54721333322717,
+      "mse": 0.09438079595565796,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 53.32511420019728,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 54,
+          "mae": 0.17080703377723694,
+          "mse": 0.08326239138841629
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 31,
+          "mae": 0.1678062528371811,
+          "mse": 0.08130661398172379
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 35,
+          "mae": 0.2138153612613678,
+          "mse": 0.12311490625143051
+        }
+      },
+      "rmse": 0.3072145879268646,
+      "trajectory_id": 22,
+      "within_0_1_rate": 0.5437984496124031
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19363857805728912,
+      "mean_inference_ms": 51.84512099973896,
+      "mse": 0.10582824051380157,
+      "p95_absolute_error": 0.7062140375375748,
+      "p95_inference_ms": 53.429584599598456,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 16,
+          "mae": 0.16970504820346832,
+          "mse": 0.07950281351804733
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 68,
+          "mae": 0.18695126473903656,
+          "mse": 0.10000672191381454
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 36,
+          "mae": 0.2169073075056076,
+          "mse": 0.12852461636066437
+        }
+      },
+      "rmse": 0.3253125250339508,
+      "trajectory_id": 23,
+      "within_0_1_rate": 0.5265503875968992
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1888606995344162,
+      "mean_inference_ms": 50.72893766676619,
+      "mse": 0.10488579422235489,
+      "p95_absolute_error": 0.7608145594596866,
+      "p95_inference_ms": 51.480780000383675,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 34,
+          "mae": 0.16498926281929016,
+          "mse": 0.0812620297074318
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 16,
+          "mae": 0.16276095807552338,
+          "mse": 0.08375798165798187
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 31,
+          "mae": 0.2147207111120224,
+          "mse": 0.13085688650608063
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.19982390105724335,
+          "mse": 0.11350499838590622
+        }
+      },
+      "rmse": 0.323860764503479,
+      "trajectory_id": 24,
+      "within_0_1_rate": 0.549031007751938
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.17990411818027496,
+      "mean_inference_ms": 51.108103999771025,
+      "mse": 0.09216140955686569,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.460044599865796,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 40,
+          "mae": 0.1567397564649582,
+          "mse": 0.07208222895860672
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 27,
+          "mae": 0.16570281982421875,
+          "mse": 0.07843673974275589
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 14,
+          "mae": 0.22033043205738068,
+          "mse": 0.13168838620185852
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.1989820897579193,
+          "mse": 0.10806796699762344
+        }
+      },
+      "rmse": 0.30358096957206726,
+      "trajectory_id": 25,
+      "within_0_1_rate": 0.5424418604651163
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18010000884532928,
+      "mean_inference_ms": 51.166524333590736,
+      "mse": 0.09187629818916321,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 51.83706020015961,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 36,
+          "mae": 0.16608268022537231,
+          "mse": 0.08031967282295227
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 39,
+          "mae": 0.16427597403526306,
+          "mse": 0.07701557874679565
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 6,
+          "mae": 0.22469742596149445,
+          "mse": 0.12892736494541168
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.20200198888778687,
+          "mse": 0.11170452833175659
+        }
+      },
+      "rmse": 0.3031110465526581,
+      "trajectory_id": 26,
+      "within_0_1_rate": 0.5385658914728683
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18386630713939667,
+      "mean_inference_ms": 51.213239333568104,
+      "mse": 0.095009446144104,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.63773380029306,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 37,
+          "mae": 0.16395197808742523,
+          "mse": 0.07522373646497726
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 26,
+          "mae": 0.1562640368938446,
+          "mse": 0.07189445197582245
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 18,
+          "mae": 0.2165244221687317,
+          "mse": 0.12989115715026855
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.20608794689178467,
+          "mse": 0.11309126764535904
+        }
+      },
+      "rmse": 0.3082360327243805,
+      "trajectory_id": 27,
+      "within_0_1_rate": 0.5430232558139535
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1867324262857437,
+      "mean_inference_ms": 51.16456633307583,
+      "mse": 0.09751316159963608,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.578277599786816,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 37,
+          "mae": 0.16212044656276703,
+          "mse": 0.07454707473516464
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 30,
+          "mae": 0.17166686058044434,
+          "mse": 0.08361102640628815
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 14,
+          "mae": 0.2282543033361435,
+          "mse": 0.13497522473335266
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.20676586031913757,
+          "mse": 0.11654752492904663
+        }
+      },
+      "rmse": 0.31227096915245056,
+      "trajectory_id": 28,
+      "within_0_1_rate": 0.5329457364341085
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.186775803565979,
+      "mean_inference_ms": 51.28468533348496,
+      "mse": 0.09785055369138718,
+      "p95_absolute_error": 0.702976256608963,
+      "p95_inference_ms": 53.03594420047375,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 55,
+          "mae": 0.16316834092140198,
+          "mse": 0.0755515769124031
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 11,
+          "mae": 0.17830368876457214,
+          "mse": 0.08889269083738327
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 15,
+          "mae": 0.2208143174648285,
+          "mse": 0.1313493400812149
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.20936623215675354,
+          "mse": 0.11894024163484573
+        }
+      },
+      "rmse": 0.3128107190132141,
+      "trajectory_id": 29,
+      "within_0_1_rate": 0.5352713178294574
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19443480670452118,
+      "mean_inference_ms": 51.243988333529465,
+      "mse": 0.10923660546541214,
+      "p95_absolute_error": 0.740822070837021,
+      "p95_inference_ms": 52.71815410005729,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 25,
+          "mae": 0.17754215002059937,
+          "mse": 0.08927028626203537
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 61,
+          "mae": 0.19042031466960907,
+          "mse": 0.10743898153305054
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 34,
+          "mae": 0.21405839920043945,
+          "mse": 0.12714283168315887
+        }
+      },
+      "rmse": 0.33050960302352905,
+      "trajectory_id": 30,
+      "within_0_1_rate": 0.5335271317829458
+    },
+    {
+      "condition": "clean",
+      "frames": 119,
+      "mae": 0.19603683054447174,
+      "mean_inference_ms": 51.28834333360525,
+      "mse": 0.10816507786512375,
+      "p95_absolute_error": 0.7222954511642454,
+      "p95_inference_ms": 52.71072669993373,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 20,
+          "mae": 0.1677134484052658,
+          "mse": 0.07930787652730942
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 62,
+          "mae": 0.19123627245426178,
+          "mse": 0.10497652739286423
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 37,
+          "mae": 0.21939091384410858,
+          "mse": 0.1291065216064453
+        }
+      },
+      "rmse": 0.3288846015930176,
+      "trajectory_id": 31,
+      "within_0_1_rate": 0.5237443814735196
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1914326399564743,
+      "mean_inference_ms": 51.18993033344547,
+      "mse": 0.10232069343328476,
+      "p95_absolute_error": 0.7038203120231632,
+      "p95_inference_ms": 52.54135090035561,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 57,
+          "mae": 0.17300240695476532,
+          "mse": 0.08636311441659927
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 24,
+          "mae": 0.21005232632160187,
+          "mse": 0.1192849799990654
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.2069108933210373,
+          "mse": 0.11520374566316605
+        }
+      },
+      "rmse": 0.3198760449886322,
+      "trajectory_id": 32,
+      "within_0_1_rate": 0.5153100775193798
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19496093690395355,
+      "mean_inference_ms": 52.145501999802946,
+      "mse": 0.10009545832872391,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 53.31733209968661,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 49,
+          "mae": 0.17398667335510254,
+          "mse": 0.0798618346452713
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 32,
+          "mae": 0.2156239002943039,
+          "mse": 0.12005657702684402
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.2043590098619461,
+          "mse": 0.10913883149623871
+        }
+      },
+      "rmse": 0.316378653049469,
+      "trajectory_id": 33,
+      "within_0_1_rate": 0.5122093023255814
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1863725334405899,
+      "mean_inference_ms": 51.553652666977236,
+      "mse": 0.09960512816905975,
+      "p95_absolute_error": 0.7204495549201967,
+      "p95_inference_ms": 53.473841800132504,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 45,
+          "mae": 0.1690281182527542,
+          "mse": 0.08002018183469772
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 35,
+          "mae": 0.17057634890079498,
+          "mse": 0.08670832961797714
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 1,
+          "mae": 0.19532489776611328,
+          "mse": 0.11570054292678833
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.2203318178653717,
+          "mse": 0.1333644986152649
+        }
+      },
+      "rmse": 0.3156028091907501,
+      "trajectory_id": 34,
+      "within_0_1_rate": 0.539922480620155
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18218033015727997,
+      "mean_inference_ms": 51.18520433309944,
+      "mse": 0.09217929095029831,
+      "p95_absolute_error": 0.6868574053049092,
+      "p95_inference_ms": 52.6479340996957,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 52,
+          "mae": 0.16669711470603943,
+          "mse": 0.0779949426651001
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 8,
+          "mae": 0.16033299267292023,
+          "mse": 0.07529839873313904
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 21,
+          "mae": 0.204510897397995,
+          "mse": 0.11048959195613861
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.1952819675207138,
+          "mse": 0.10469511151313782
+        }
+      },
+      "rmse": 0.3036104142665863,
+      "trajectory_id": 35,
+      "within_0_1_rate": 0.5356589147286822
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.1837075650691986,
+      "mean_inference_ms": 51.42163533340257,
+      "mse": 0.09720732271671295,
+      "p95_absolute_error": 0.7398255497217182,
+      "p95_inference_ms": 52.98068129977764,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 53,
+          "mae": 0.16864867508411407,
+          "mse": 0.08336234092712402
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 32,
+          "mae": 0.16944466531276703,
+          "mse": 0.08513187617063522
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 35,
+          "mae": 0.21955139935016632,
+          "mse": 0.12921299040317535
+        }
+      },
+      "rmse": 0.3117808997631073,
+      "trajectory_id": 36,
+      "within_0_1_rate": 0.5519379844961241
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18387450277805328,
+      "mean_inference_ms": 51.19517299984485,
+      "mse": 0.09638545662164688,
+      "p95_absolute_error": 0.699999988079071,
+      "p95_inference_ms": 52.67980679991524,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 54,
+          "mae": 0.16082388162612915,
+          "mse": 0.07516377419233322
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 1,
+          "mae": 0.1808301955461502,
+          "mse": 0.08685512095689774
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 26,
+          "mae": 0.22068388760089874,
+          "mse": 0.13405732810497284
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.1913291960954666,
+          "mse": 0.10089913755655289
+        }
+      },
+      "rmse": 0.31046006083488464,
+      "trajectory_id": 37,
+      "within_0_1_rate": 0.5420542635658915
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19669730961322784,
+      "mean_inference_ms": 51.5339816671864,
+      "mse": 0.112469881772995,
+      "p95_absolute_error": 0.7819101721048357,
+      "p95_inference_ms": 53.47363680048147,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 57,
+          "mae": 0.1778179556131363,
+          "mse": 0.09533653408288956
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 9,
+          "mae": 0.16940894722938538,
+          "mse": 0.08638373762369156
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 15,
+          "mae": 0.23925970494747162,
+          "mse": 0.15663611888885498
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.21421733498573303,
+          "mse": 0.1265438050031662
+        }
+      },
+      "rmse": 0.33536529541015625,
+      "trajectory_id": 38,
+      "within_0_1_rate": 0.5346899224806202
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.19227632880210876,
+      "mean_inference_ms": 51.3552366667985,
+      "mse": 0.10697385668754578,
+      "p95_absolute_error": 0.7360001593828205,
+      "p95_inference_ms": 53.040836099899025,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 57,
+          "mae": 0.17168547213077545,
+          "mse": 0.08852231502532959
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 24,
+          "mae": 0.22475135326385498,
+          "mse": 0.13815942406654358
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.20238609611988068,
+          "mse": 0.11475037038326263
+        }
+      },
+      "rmse": 0.327068567276001,
+      "trajectory_id": 39,
+      "within_0_1_rate": 0.5387596899224806
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18991690874099731,
+      "mean_inference_ms": 51.74311366621017,
+      "mse": 0.10097984969615936,
+      "p95_absolute_error": 0.7125070631504059,
+      "p95_inference_ms": 52.560726299270755,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 47,
+          "mae": 0.17529989778995514,
+          "mse": 0.08731187880039215
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 19,
+          "mae": 0.16198574006557465,
+          "mse": 0.07650896161794662
+        },
+        "Move the left hand toward the apple while maintaining a stable stance.": {
+          "frames": 15,
+          "mae": 0.2295207679271698,
+          "mse": 0.14258317649364471
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 39,
+          "mae": 0.20590750873088837,
+          "mse": 0.11337194591760635
+        }
+      },
+      "rmse": 0.3177732825279236,
+      "trajectory_id": 40,
+      "within_0_1_rate": 0.5310077519379846
+    },
+    {
+      "condition": "clean",
+      "frames": 120,
+      "mae": 0.18878045678138733,
+      "mean_inference_ms": 51.75732833352716,
+      "mse": 0.104413241147995,
+      "p95_absolute_error": 0.7506136059761047,
+      "p95_inference_ms": 53.635292700528225,
+      "phase_metrics": {
+        "Lift and carry the apple toward the plate while keeping the left hand closed.": {
+          "frames": 85,
+          "mae": 0.18351170420646667,
+          "mse": 0.09929075837135315
+        },
+        "Move the apple over the plate, release it, and retract the left hand safely.": {
+          "frames": 15,
+          "mae": 0.15980544686317444,
+          "mse": 0.07909692823886871
+        },
+        "Reach to and securely grasp the apple with the left hand.": {
+          "frames": 20,
+          "mae": 0.2329038679599762,
+          "mse": 0.14517103135585785
+        }
+      },
+      "rmse": 0.32313036918640137,
+      "trajectory_id": 41,
+      "within_0_1_rate": 0.548062015503876
+    }
+  ],
+  "schema_version": 1,
+  "seed": 20260913,
+  "trajectory_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41
+  ]
+}
