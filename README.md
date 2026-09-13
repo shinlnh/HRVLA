@@ -90,3 +90,44 @@ See [`docs/SUBTASK_PLANNER.md`](docs/SUBTASK_PLANNER.md) for the algorithm,
 paper comparison, metric definitions, integration contract, and limitations.
 Measured CPU/GPU/SONIC results and negative findings are in
 [`docs/SUBTASK_RESULTS.md`](docs/SUBTASK_RESULTS.md).
+
+## Transition-aware subtask recovery
+
+The recovery coordinator catches a declared subtask failure, gates recovery on
+observed readiness, and selects a corrective primitive whose exit satisfies the
+interrupted task's handoff contract. Its BATON-inspired transition memory operates
+above the same GR00T language adapter and leaves SONIC's action interface unchanged.
+
+Validate the protocol and run the paired-seed recovery benchmark:
+
+```bash
+python3 scripts/subtask_recovery.py validate
+python3 scripts/subtask_recovery.py simulate \
+  --output-dir results/recovery/cpu-fault-015 \
+  --episodes-per-task 3000 --workers 32 --disturbance-rate 0.15
+```
+
+Evaluate 20 independent candidate sets from the locked Cosmos-Reason2-2B snapshot:
+
+```bash
+_vendor/Isaac-GR00T/.venv/bin/python scripts/subtask_recovery.py gpu-eval \
+  --model-path "$COSMOS_REASON2_SNAPSHOT" \
+  --output-dir results/recovery/cosmos-reason2-r20 \
+  --candidates-per-failure 3 --repetitions 20
+```
+
+See [`docs/SUBTASK_RECOVERY.md`](docs/SUBTASK_RECOVERY.md) for the algorithm,
+paper comparison, metric definitions, and safety boundary. The measured report,
+retained raw traces, charts, Cosmos outputs, SONIC metrics, video, and Isaac Sim
+frames are indexed by
+[`docs/SUBTASK_RECOVERY_RESULTS.md`](docs/SUBTASK_RECOVERY_RESULTS.md).
+
+Run the low-level disturbance regression and record its Isaac Sim camera output:
+
+```bash
+python3 scripts/run_sonic_release.py metrics --inject-push --num-envs 32 \
+  --output-dir results/recovery/isaacsim/sonic-push-32env
+python3 scripts/run_sonic_release.py record --inject-push \
+  --metrics-file results/recovery/isaacsim/sonic-push-32env/metrics_eval.json \
+  --output-dir results/recovery/isaacsim/push-recording
+```

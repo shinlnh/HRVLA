@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import json
 from pathlib import Path
 import sys
 import unittest
@@ -41,6 +42,16 @@ class RecoveryTest(unittest.TestCase):
         failed_state.discard("apple_on_table")
         failed_state.add("apple_on_floor")
         self.failed_state = frozenset(failed_state)
+
+    def test_recovery_lock_is_machine_readable(self) -> None:
+        lock = json.loads(
+            (REPO_ROOT / "config" / "subtask-recovery.lock.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(lock["schema_version"], 1)
+        self.assertEqual(lock["primary_reference"]["arxiv"], "2608.16889v1")
+        self.assertEqual(len(lock["proposal_model"]["revision"]), 40)
 
     def test_baton_selects_a_complete_handoff_contract(self) -> None:
         context = FailureContext(

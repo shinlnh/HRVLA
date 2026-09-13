@@ -1,0 +1,801 @@
+{
+  "artifacts": [
+    "recovery_robustness.png",
+    "recovery_pareto.png",
+    "recovery_task_heatmap.png"
+  ],
+  "cells": [
+    {
+      "arguments": {
+        "disturbance_rate": 0.05,
+        "episodes_per_task": 3000,
+        "max_extra_steps": 16,
+        "methods": [
+          "no_recovery",
+          "inner_monologue",
+          "doremi",
+          "rekep",
+          "agentchord",
+          "baton_str"
+        ],
+        "proposal_error_rate": 0.28,
+        "protocol": "/HELIOS/Robotics/HRVLA/benchmark/recovery_protocol_v1.json",
+        "seed": 42,
+        "suite": "/HELIOS/Robotics/HRVLA/benchmark/subtask_suite_v1.json",
+        "workers": 11
+      },
+      "disturbance_rate": 0.05,
+      "git_revision": "4aea89dfc27dde51352801354899f8244fa18a02",
+      "methods": {
+        "agentchord": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 1.0,
+          "failure_recovery_wilson95": [
+            0.9997885106611725,
+            1.0
+          ],
+          "handoff_contract_rate": 0.5871173808890072,
+          "handoff_failure_rate": 0.30039925472451423,
+          "mean_actions": 10.875944444444444,
+          "mean_planner_latency_ms": 4.992527973782103,
+          "mean_progress": 0.9814814814814815,
+          "mean_recovery_decision_latency_ms": 0.00871653560260941,
+          "mean_recovery_latency_actions": 3.8205947136563876,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 1.776376651982379,
+          "nominal_model_calls_per_episode": 32.542944444444444,
+          "recovery_actions_per_failure": 1.776376651982379,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 1.0,
+          "task_success_wilson95": [
+            0.9997866311570518,
+            1.0
+          ]
+        },
+        "baton_str": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 1.0,
+          "failure_recovery_wilson95": [
+            0.99978853394546,
+            0.9999999999999998
+          ],
+          "handoff_contract_rate": 1.0,
+          "handoff_failure_rate": 0.0,
+          "mean_actions": 10.245055555555556,
+          "mean_planner_latency_ms": 4.589385034446953,
+          "mean_progress": 0.9814814814814815,
+          "mean_recovery_decision_latency_ms": 0.015206322982126118,
+          "mean_recovery_latency_actions": 3.191498733619645,
+          "memory_hit_rate": 0.05589055551368056,
+          "monitor_queries_per_failure": 1.4609624490694857,
+          "nominal_model_calls_per_episode": 31.326666666666668,
+          "recovery_actions_per_failure": 1.4609624490694857,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 1.0,
+          "task_success_wilson95": [
+            0.9997866311570518,
+            1.0
+          ]
+        },
+        "doremi": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.9970813370780329,
+          "failure_recovery_wilson95": [
+            0.9961846539047818,
+            0.9977677538685432
+          ],
+          "handoff_contract_rate": 0.08416401192066592,
+          "handoff_failure_rate": 0.6628558216010687,
+          "mean_actions": 13.127444444444444,
+          "mean_planner_latency_ms": 5.987103919558245,
+          "mean_progress": 0.9787453703703705,
+          "mean_recovery_decision_latency_ms": 0.009548571409639316,
+          "mean_recovery_latency_actions": 5.989174859162708,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 8.741615727738312,
+          "nominal_model_calls_per_episode": 36.934,
+          "recovery_actions_per_failure": 2.913871909246104,
+          "recovery_model_calls_per_failure": 2.913871909246104,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.995,
+          "task_success_wilson95": [
+            0.9938586869721885,
+            0.9959300778732926
+          ]
+        },
+        "inner_monologue": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.9970813370780329,
+          "failure_recovery_wilson95": [
+            0.9961846539047818,
+            0.9977677538685432
+          ],
+          "handoff_contract_rate": 0.08416401192066592,
+          "handoff_failure_rate": 0.6628558216010687,
+          "mean_actions": 13.127444444444444,
+          "mean_planner_latency_ms": 5.799813696002641,
+          "mean_progress": 0.9787453703703705,
+          "mean_recovery_decision_latency_ms": 0.009267906185364192,
+          "mean_recovery_latency_actions": 5.989174859162708,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 2.913871909246104,
+          "nominal_model_calls_per_episode": 36.934,
+          "recovery_actions_per_failure": 2.913871909246104,
+          "recovery_model_calls_per_failure": 2.913871909246104,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.995,
+          "task_success_wilson95": [
+            0.9938586869721885,
+            0.9959300778732926
+          ]
+        },
+        "no_recovery": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.6289238902962881,
+          "failure_recovery_wilson95": [
+            0.6218707212436864,
+            0.6359225212871301
+          ],
+          "handoff_contract_rate": 0.0,
+          "handoff_failure_rate": 0.689912742335246,
+          "mean_actions": 21.956555555555557,
+          "mean_planner_latency_ms": 7.195842974837092,
+          "mean_progress": 0.7813819444444444,
+          "mean_recovery_decision_latency_ms": 0.005550160798634884,
+          "mean_recovery_latency_actions": 3.552802101576182,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 0.0,
+          "nominal_model_calls_per_episode": 59.971555555555554,
+          "recovery_actions_per_failure": 0.0,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.6256666666666667,
+          "task_success_wilson95": [
+            0.6185706677033678,
+            0.6327090389274379
+          ]
+        },
+        "rekep": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.6280363536215918,
+          "failure_recovery_wilson95": [
+            0.6209793558819694,
+            0.635039179801745
+          ],
+          "handoff_contract_rate": 0.0,
+          "handoff_failure_rate": 0.6887426252429834,
+          "mean_actions": 23.4425,
+          "mean_planner_latency_ms": 6.616867685557281,
+          "mean_progress": 0.7806783730158731,
+          "mean_recovery_decision_latency_ms": 0.005348828196870379,
+          "mean_recovery_latency_actions": 5.8637081213822135,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 8.149820985954282,
+          "nominal_model_calls_per_episode": 46.431,
+          "recovery_actions_per_failure": 8.149820985954282,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 8.22,
+          "task_success_rate": 0.6240555555555556,
+          "task_success_wilson95": [
+            0.6169538324969487,
+            0.631104339433462
+          ]
+        }
+      },
+      "path": "/HELIOS/Robotics/HRVLA/results/recovery/cpu-fault-005"
+    },
+    {
+      "arguments": {
+        "disturbance_rate": 0.15,
+        "episodes_per_task": 3000,
+        "max_extra_steps": 16,
+        "methods": [
+          "no_recovery",
+          "inner_monologue",
+          "doremi",
+          "rekep",
+          "agentchord",
+          "baton_str"
+        ],
+        "proposal_error_rate": 0.28,
+        "protocol": "/HELIOS/Robotics/HRVLA/benchmark/recovery_protocol_v1.json",
+        "seed": 42,
+        "suite": "/HELIOS/Robotics/HRVLA/benchmark/subtask_suite_v1.json",
+        "workers": 11
+      },
+      "disturbance_rate": 0.15,
+      "git_revision": "4aea89dfc27dde51352801354899f8244fa18a02",
+      "methods": {
+        "agentchord": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 1.0,
+          "failure_recovery_wilson95": [
+            0.9997927774477289,
+            1.0
+          ],
+          "handoff_contract_rate": 0.5869554810914313,
+          "handoff_failure_rate": 0.30047869794159887,
+          "mean_actions": 11.198611111111111,
+          "mean_planner_latency_ms": 5.117178926774993,
+          "mean_progress": 0.9814814814814815,
+          "mean_recovery_decision_latency_ms": 0.008624481779534445,
+          "mean_recovery_latency_actions": 4.059512247760872,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 1.9218733139095716,
+          "nominal_model_calls_per_episode": 33.105111111111114,
+          "recovery_actions_per_failure": 1.9218733139095716,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 1.0,
+          "task_success_wilson95": [
+            0.9997866311570518,
+            1.0
+          ]
+        },
+        "baton_str": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 1.0,
+          "failure_recovery_wilson95": [
+            0.9997928221514985,
+            1.0
+          ],
+          "handoff_contract_rate": 1.0,
+          "handoff_failure_rate": 0.0,
+          "mean_actions": 10.498833333333334,
+          "mean_planner_latency_ms": 4.450200232171685,
+          "mean_progress": 0.9814814814814815,
+          "mean_recovery_decision_latency_ms": 0.014827844592757643,
+          "mean_recovery_latency_actions": 3.3750134858129246,
+          "memory_hit_rate": 0.1032632837860926,
+          "monitor_queries_per_failure": 1.5786492609774516,
+          "nominal_model_calls_per_episode": 31.76061111111111,
+          "recovery_actions_per_failure": 1.5786492609774516,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 1.0,
+          "task_success_wilson95": [
+            0.9997866311570518,
+            1.0
+          ]
+        },
+        "doremi": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.994497194648252,
+          "failure_recovery_wilson95": [
+            0.99332496550827,
+            0.9954645039549755
+          ],
+          "handoff_contract_rate": 0.08404663859714061,
+          "handoff_failure_rate": 0.6625873316985148,
+          "mean_actions": 13.684833333333334,
+          "mean_planner_latency_ms": 6.073462119336593,
+          "mean_progress": 0.9765231481481482,
+          "mean_recovery_decision_latency_ms": 0.009561872232065952,
+          "mean_recovery_latency_actions": 6.3449603992622325,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 9.471299093655588,
+          "nominal_model_calls_per_episode": 37.91711111111111,
+          "recovery_actions_per_failure": 3.1570996978851964,
+          "recovery_model_calls_per_failure": 3.1570996978851964,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.9915555555555555,
+          "task_success_wilson95": [
+            0.9901099392855669,
+            0.9927914065452766
+          ]
+        },
+        "inner_monologue": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.994497194648252,
+          "failure_recovery_wilson95": [
+            0.99332496550827,
+            0.9954645039549755
+          ],
+          "handoff_contract_rate": 0.08404663859714061,
+          "handoff_failure_rate": 0.6625873316985148,
+          "mean_actions": 13.684833333333334,
+          "mean_planner_latency_ms": 5.88983280083063,
+          "mean_progress": 0.9765231481481482,
+          "mean_recovery_decision_latency_ms": 0.00927482761448981,
+          "mean_recovery_latency_actions": 6.3449603992622325,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 3.1570996978851964,
+          "nominal_model_calls_per_episode": 37.91711111111111,
+          "recovery_actions_per_failure": 3.1570996978851964,
+          "recovery_model_calls_per_failure": 3.1570996978851964,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.9915555555555555,
+          "task_success_wilson95": [
+            0.9901099392855669,
+            0.9927914065452766
+          ]
+        },
+        "no_recovery": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.6227324416526777,
+          "failure_recovery_wilson95": [
+            0.6157168207550814,
+            0.6296970121829562
+          ],
+          "handoff_contract_rate": 0.0,
+          "handoff_failure_rate": 0.6928892460636367,
+          "mean_actions": 22.570611111111113,
+          "mean_planner_latency_ms": 7.311885472446811,
+          "mean_progress": 0.7740396825396826,
+          "mean_recovery_decision_latency_ms": 0.005627105805864158,
+          "mean_recovery_latency_actions": 3.9343478260869564,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 0.0,
+          "nominal_model_calls_per_episode": 61.61638888888889,
+          "recovery_actions_per_failure": 0.0,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.6129444444444444,
+          "task_success_wilson95": [
+            0.6058055045778764,
+            0.6200351866601553
+          ]
+        },
+        "rekep": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.6208371690041696,
+          "failure_recovery_wilson95": [
+            0.6138150796897628,
+            0.6278089962869551
+          ],
+          "handoff_contract_rate": 0.0,
+          "handoff_failure_rate": 0.6921236768135877,
+          "mean_actions": 24.313944444444445,
+          "mean_planner_latency_ms": 7.156621473555826,
+          "mean_progress": 0.7725983465608466,
+          "mean_recovery_decision_latency_ms": 0.005561396983840768,
+          "mean_recovery_latency_actions": 6.5801133885739205,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 8.491904478258515,
+          "nominal_model_calls_per_episode": 47.59961111111111,
+          "recovery_actions_per_failure": 8.491904478258515,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 8.712222222222222,
+          "task_success_rate": 0.6097777777777778,
+          "task_success_wilson95": [
+            0.6026289481610235,
+            0.6168797610796802
+          ]
+        }
+      },
+      "path": "/HELIOS/Robotics/HRVLA/results/recovery/cpu-fault-015"
+    },
+    {
+      "arguments": {
+        "disturbance_rate": 0.35,
+        "episodes_per_task": 3000,
+        "max_extra_steps": 16,
+        "methods": [
+          "no_recovery",
+          "inner_monologue",
+          "doremi",
+          "rekep",
+          "agentchord",
+          "baton_str"
+        ],
+        "proposal_error_rate": 0.28,
+        "protocol": "/HELIOS/Robotics/HRVLA/benchmark/recovery_protocol_v1.json",
+        "seed": 42,
+        "suite": "/HELIOS/Robotics/HRVLA/benchmark/subtask_suite_v1.json",
+        "workers": 11
+      },
+      "disturbance_rate": 0.35,
+      "git_revision": "4aea89dfc27dde51352801354899f8244fa18a02",
+      "methods": {
+        "agentchord": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.9998477002741395,
+          "failure_recovery_wilson95": [
+            0.9995522772269635,
+            0.9999482030280794
+          ],
+          "handoff_contract_rate": 0.5872144112478032,
+          "handoff_failure_rate": 0.30173550087873463,
+          "mean_actions": 12.196777777777777,
+          "mean_planner_latency_ms": 5.2254170026131606,
+          "mean_progress": 0.9813314814814815,
+          "mean_recovery_decision_latency_ms": 0.008713998304883577,
+          "mean_recovery_latency_actions": 4.728611322670728,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 2.3358208955223883,
+          "nominal_model_calls_per_episode": 34.71977777777778,
+          "recovery_actions_per_failure": 2.3358208955223883,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.9996666666666667,
+          "task_success_wilson95": [
+            0.9992728850630943,
+            0.9998472216731862
+          ]
+        },
+        "baton_str": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 1.0,
+          "failure_recovery_wilson95": [
+            0.9998050005210081,
+            1.0
+          ],
+          "handoff_contract_rate": 1.0,
+          "handoff_failure_rate": 0.0,
+          "mean_actions": 11.267833333333334,
+          "mean_planner_latency_ms": 3.578978956833491,
+          "mean_progress": 0.9814703703703704,
+          "mean_recovery_decision_latency_ms": 0.011673148841762343,
+          "mean_recovery_latency_actions": 3.882514216084484,
+          "memory_hit_rate": 0.20651333848572875,
+          "monitor_queries_per_failure": 1.9051076360682373,
+          "nominal_model_calls_per_episode": 32.95483333333333,
+          "recovery_actions_per_failure": 1.9051076360682373,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.9999444444444444,
+          "task_success_wilson95": [
+            0.9996853507406248,
+            0.999990193012965
+          ]
+        },
+        "doremi": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.9833917415815938,
+          "failure_recovery_wilson95": [
+            0.981510036029575,
+            0.9850848578461366
+          ],
+          "handoff_contract_rate": 0.08688674083530913,
+          "handoff_failure_rate": 0.6590552617180375,
+          "mean_actions": 15.218777777777778,
+          "mean_planner_latency_ms": 6.41029498288842,
+          "mean_progress": 0.9663731481481481,
+          "mean_recovery_decision_latency_ms": 0.009285254344441513,
+          "mean_recovery_latency_actions": 7.09193265158558,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 11.319975620905074,
+          "nominal_model_calls_per_episode": 40.53772222222222,
+          "recovery_actions_per_failure": 3.773325206968358,
+          "recovery_model_calls_per_failure": 3.773325206968358,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.9752222222222222,
+          "task_success_wilson95": [
+            0.97284792074734,
+            0.9773937284657068
+          ]
+        },
+        "inner_monologue": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.9833917415815938,
+          "failure_recovery_wilson95": [
+            0.981510036029575,
+            0.9850848578461366
+          ],
+          "handoff_contract_rate": 0.08688674083530913,
+          "handoff_failure_rate": 0.6590552617180375,
+          "mean_actions": 15.218777777777778,
+          "mean_planner_latency_ms": 6.464803720224116,
+          "mean_progress": 0.9663731481481481,
+          "mean_recovery_decision_latency_ms": 0.00947992520074558,
+          "mean_recovery_latency_actions": 7.09193265158558,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 3.773325206968358,
+          "nominal_model_calls_per_episode": 40.53772222222222,
+          "recovery_actions_per_failure": 3.773325206968358,
+          "recovery_model_calls_per_failure": 3.773325206968358,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.9752222222222222,
+          "task_success_wilson95": [
+            0.97284792074734,
+            0.9773937284657068
+          ]
+        },
+        "no_recovery": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.6084656084656085,
+          "failure_recovery_wilson95": [
+            0.6015204089370749,
+            0.6153671616705416
+          ],
+          "handoff_contract_rate": 0.0,
+          "handoff_failure_rate": 0.6982898843803579,
+          "mean_actions": 24.076944444444443,
+          "mean_planner_latency_ms": 7.9967815740552,
+          "mean_progress": 0.7576416446208113,
+          "mean_recovery_decision_latency_ms": 0.005314817580615553,
+          "mean_recovery_latency_actions": 4.995436934997848,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 0.0,
+          "nominal_model_calls_per_episode": 65.892,
+          "recovery_actions_per_failure": 0.0,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 0.0,
+          "task_success_rate": 0.5846111111111111,
+          "task_success_wilson95": [
+            0.5773947926290233,
+            0.5917913228434422
+          ]
+        },
+        "rekep": {
+          "episodes": 18000,
+          "escalations_per_episode": 0.0,
+          "failure_recovery_rate": 0.6003666841278156,
+          "failure_recovery_wilson95": [
+            0.5933987699688266,
+            0.6072942130678449
+          ],
+          "handoff_contract_rate": 0.0,
+          "handoff_failure_rate": 0.697718036886527,
+          "mean_actions": 26.446555555555555,
+          "mean_planner_latency_ms": 7.705140763611541,
+          "mean_progress": 0.7513374559082893,
+          "mean_recovery_decision_latency_ms": 0.005495921855554871,
+          "mean_recovery_latency_actions": 8.298752290376058,
+          "memory_hit_rate": 0.0,
+          "monitor_queries_per_failure": 9.343216343635412,
+          "nominal_model_calls_per_episode": 50.58844444444444,
+          "recovery_actions_per_failure": 9.343216343635412,
+          "recovery_model_calls_per_failure": 0.0,
+          "rollback_actions_per_episode": 9.909,
+          "task_success_rate": 0.5725555555555556,
+          "task_success_wilson95": [
+            0.5653137883496522,
+            0.5797663605715824
+          ]
+        }
+      },
+      "path": "/HELIOS/Robotics/HRVLA/results/recovery/cpu-fault-035"
+    }
+  ],
+  "git_revisions": [
+    "4aea89dfc27dde51352801354899f8244fa18a02"
+  ],
+  "paired_comparisons": [
+    {
+      "actions_delta": -0.6308888888888889,
+      "actions_delta_normal95_high": -0.6066365785851638,
+      "actions_delta_normal95_low": -0.655141199192614,
+      "baseline": "agentchord",
+      "baseline_success_only": 0,
+      "baton_success_only": 0,
+      "disturbance_rate": 0.05,
+      "mcnemar_exact_p": 1.0,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.0,
+      "success_delta_normal95_high": 0.0,
+      "success_delta_normal95_low": 0.0
+    },
+    {
+      "actions_delta": -2.882388888888889,
+      "actions_delta_normal95_high": -2.8026294235852847,
+      "actions_delta_normal95_low": -2.962148354192493,
+      "baseline": "doremi",
+      "baseline_success_only": 0,
+      "baton_success_only": 90,
+      "disturbance_rate": 0.05,
+      "mcnemar_exact_p": 1.6155871338926365e-27,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.005,
+      "success_delta_normal95_high": 0.006030434628593334,
+      "success_delta_normal95_low": 0.003969565371406666
+    },
+    {
+      "actions_delta": -2.882388888888889,
+      "actions_delta_normal95_high": -2.8026294235852847,
+      "actions_delta_normal95_low": -2.962148354192493,
+      "baseline": "inner_monologue",
+      "baseline_success_only": 0,
+      "baton_success_only": 90,
+      "disturbance_rate": 0.05,
+      "mcnemar_exact_p": 1.6155871338926365e-27,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.005,
+      "success_delta_normal95_high": 0.006030434628593334,
+      "success_delta_normal95_low": 0.003969565371406666
+    },
+    {
+      "actions_delta": -11.7115,
+      "actions_delta_normal95_high": -11.498426317118955,
+      "actions_delta_normal95_low": -11.924573682881043,
+      "baseline": "no_recovery",
+      "baseline_success_only": 0,
+      "baton_success_only": 6738,
+      "disturbance_rate": 0.05,
+      "mcnemar_exact_p": 0.0,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.37433333333333335,
+      "success_delta_normal95_high": 0.38140341877504763,
+      "success_delta_normal95_low": 0.36726324789161907
+    },
+    {
+      "actions_delta": -13.197444444444445,
+      "actions_delta_normal95_high": -12.995413999454206,
+      "actions_delta_normal95_low": -13.399474889434684,
+      "baseline": "rekep",
+      "baseline_success_only": 0,
+      "baton_success_only": 6767,
+      "disturbance_rate": 0.05,
+      "mcnemar_exact_p": 0.0,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.37594444444444447,
+      "success_delta_normal95_high": 0.38302059989661935,
+      "success_delta_normal95_low": 0.3688682889922696
+    },
+    {
+      "actions_delta": -0.6997777777777778,
+      "actions_delta_normal95_high": -0.6716454625944301,
+      "actions_delta_normal95_low": -0.7279100929611255,
+      "baseline": "agentchord",
+      "baseline_success_only": 0,
+      "baton_success_only": 0,
+      "disturbance_rate": 0.15,
+      "mcnemar_exact_p": 1.0,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.0,
+      "success_delta_normal95_high": 0.0,
+      "success_delta_normal95_low": 0.0
+    },
+    {
+      "actions_delta": -3.186,
+      "actions_delta_normal95_high": -3.0981499781225845,
+      "actions_delta_normal95_low": -3.2738500218774154,
+      "baseline": "doremi",
+      "baseline_success_only": 0,
+      "baton_success_only": 152,
+      "disturbance_rate": 0.15,
+      "mcnemar_exact_p": 3.503246160812046e-46,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.008444444444444444,
+      "success_delta_normal95_high": 0.009781249163668654,
+      "success_delta_normal95_low": 0.007107639725220233
+    },
+    {
+      "actions_delta": -3.186,
+      "actions_delta_normal95_high": -3.0981499781225845,
+      "actions_delta_normal95_low": -3.2738500218774154,
+      "baseline": "inner_monologue",
+      "baseline_success_only": 0,
+      "baton_success_only": 152,
+      "disturbance_rate": 0.15,
+      "mcnemar_exact_p": 3.503246160812046e-46,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.008444444444444444,
+      "success_delta_normal95_high": 0.009781249163668654,
+      "success_delta_normal95_low": 0.007107639725220233
+    },
+    {
+      "actions_delta": -12.071777777777777,
+      "actions_delta_normal95_high": -11.859759770607893,
+      "actions_delta_normal95_low": -12.283795784947662,
+      "baseline": "no_recovery",
+      "baseline_success_only": 0,
+      "baton_success_only": 6967,
+      "disturbance_rate": 0.15,
+      "mcnemar_exact_p": 0.0,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.38705555555555554,
+      "success_delta_normal95_high": 0.39417131260626026,
+      "success_delta_normal95_low": 0.3799397985048508
+    },
+    {
+      "actions_delta": -13.815111111111111,
+      "actions_delta_normal95_high": -13.614908701730396,
+      "actions_delta_normal95_low": -14.015313520491826,
+      "baseline": "rekep",
+      "baseline_success_only": 0,
+      "baton_success_only": 7024,
+      "disturbance_rate": 0.15,
+      "mcnemar_exact_p": 0.0,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.39022222222222225,
+      "success_delta_normal95_high": 0.39734854842597034,
+      "success_delta_normal95_low": 0.38309589601847416
+    },
+    {
+      "actions_delta": -0.9289444444444445,
+      "actions_delta_normal95_high": -0.8890342310269062,
+      "actions_delta_normal95_low": -0.9688546578619828,
+      "baseline": "agentchord",
+      "baseline_success_only": 0,
+      "baton_success_only": 5,
+      "disturbance_rate": 0.35,
+      "mcnemar_exact_p": 0.0625,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.0002777777777777778,
+      "success_delta_normal95_high": 0.0005212292051001153,
+      "success_delta_normal95_low": 3.432635045544027e-05
+    },
+    {
+      "actions_delta": -3.9509444444444446,
+      "actions_delta_normal95_high": -3.8444395506112263,
+      "actions_delta_normal95_low": -4.057449338277663,
+      "baseline": "doremi",
+      "baseline_success_only": 0,
+      "baton_success_only": 445,
+      "disturbance_rate": 0.35,
+      "mcnemar_exact_p": 2.2013136429276345e-134,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.024722222222222222,
+      "success_delta_normal95_high": 0.026990685847832138,
+      "success_delta_normal95_low": 0.022453758596612305
+    },
+    {
+      "actions_delta": -3.9509444444444446,
+      "actions_delta_normal95_high": -3.8444395506112263,
+      "actions_delta_normal95_low": -4.057449338277663,
+      "baseline": "inner_monologue",
+      "baseline_success_only": 0,
+      "baton_success_only": 445,
+      "disturbance_rate": 0.35,
+      "mcnemar_exact_p": 2.2013136429276345e-134,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.024722222222222222,
+      "success_delta_normal95_high": 0.026990685847832138,
+      "success_delta_normal95_low": 0.022453758596612305
+    },
+    {
+      "actions_delta": -12.809111111111111,
+      "actions_delta_normal95_high": -12.599756721391158,
+      "actions_delta_normal95_low": -13.018465500831065,
+      "baseline": "no_recovery",
+      "baseline_success_only": 1,
+      "baton_success_only": 7477,
+      "disturbance_rate": 0.35,
+      "mcnemar_exact_p": 0.0,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.41533333333333333,
+      "success_delta_normal95_high": 0.4225340512764296,
+      "success_delta_normal95_low": 0.40813261539023704
+    },
+    {
+      "actions_delta": -15.178722222222222,
+      "actions_delta_normal95_high": -14.982844490967162,
+      "actions_delta_normal95_low": -15.374599953477281,
+      "baseline": "rekep",
+      "baseline_success_only": 1,
+      "baton_success_only": 7694,
+      "disturbance_rate": 0.35,
+      "mcnemar_exact_p": 0.0,
+      "method": "baton_str",
+      "pairs": 18000,
+      "success_delta": 0.4273888888888889,
+      "success_delta_normal95_high": 0.4346176515900709,
+      "success_delta_normal95_low": 0.4201601261877069
+    }
+  ],
+  "schema_version": 1
+}

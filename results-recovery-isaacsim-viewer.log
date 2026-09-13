@@ -1,0 +1,596 @@
+Validated locked SONIC source, workstation runtime, and artifacts.
+/HELIOS/Robotics/HRVLA/_vendor/IsaacLab/isaaclab.sh -p gear_sonic/eval_agent_trl.py +checkpoint=sonic_release/last.pt +headless=False ++num_envs=1 ++manager_env.observations.policy.enable_corruption=False ++manager_env.observations.tokenizer.enable_corruption=False ++manager_env.commands.motion.motion_lib_cfg.motion_file=sample_data/robot_filtered ++manager_env.commands.motion.motion_lib_cfg.smpl_motion_file=sample_data/smpl_filtered ++manager_env.config.viewer.eye=[4.5,0,3] ++manager_env.config.viewer.lookat=[0,0,0.8]
+[3gH    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H   [INFO] Using python from: /HELIOS/Robotics/HRVLA/_vendor/IsaacLab/_isaac_sim/python.sh
+[32m2026-09-13 12:34:37.351[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m90[0m - [1mLoading training config file from sonic_release/config.yaml[0m
+Setting seed: 0
+[WARN][AppLauncher]: There are no arguments attached to the ArgumentParser object. If you have your own arguments, please load your own arguments before calling the `AppLauncher.add_app_launcher_args` method. This allows the method to check the validity of the arguments and perform checks for argument names.
+[INFO][AppLauncher]: Using device: cuda
+[INFO][AppLauncher]: Loading experience file: /home/shin/IsaacLab/apps/isaaclab.python.kit
+Loading user config located at: '/home/shin/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json'
+[0.035s] [ext: omni.kit.async_engine-0.0.3] startup
+[2026-09-13 12:34:37,810][asyncio][DEBUG] - Using selector: EpollSelector
+[0.171s] [ext: omni.metrics.core-0.0.3] startup
+[0.171s] [ext: omni.client.lib-1.1.0] startup
+[0.179s] [ext: omni.blobkey-1.1.2] startup
+[0.179s] [ext: omni.stats-1.0.1] startup
+[0.179s] [ext: omni.datastore-0.0.0] startup
+[0.182s] [ext: omni.client-1.3.0] startup
+[0.236s] [ext: omni.ujitso.default-1.0.0] startup
+[0.236s] [ext: omni.hsscclient-1.1.2] startup
+[0.239s] [ext: omni.gpu_foundation.shadercache.vulkan-1.0.0] startup
+[0.240s] [ext: omni.assets.plugins-0.0.0] startup
+[0.240s] [ext: omni.gpu_foundation-0.0.0] startup
+[0.244s] [ext: carb.windowing.plugins-1.0.0] startup
+[0.268s] [ext: omni.kit.renderer.init-0.0.0] startup
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.173.02    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 5070 Ti       | Yes: 0 |     | 16303   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2c05      | da696980.. |
+|     |                                  |        |     |            | 1         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (RPL-S)        |        |     | 23847   MB | 8086      | 0          |
+|     |                                  |        |     |            | a780      | 868080a7.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 24.04.5 LTS (Noble Numbat) ubuntu, Version: 24.04.5, Kernel: 7.0.0-31-generic
+| XServer Vendor: The X.Org Foundation, XServer Version: 12101011 (1.21.1.11)
+| Processor: Intel(R) Core(TM) i9-14900K
+| Bare Metal Cores: 24 | Bare Metal Logical Cores: 48
+| Available Cores:  32 
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31796 | Free Memory: 22758
+| Total Page/Swap (MB): 8191 | Free Page/Swap: 8166
+|---------------------------------------------------------------------------------------------|
+Unidirectional P2P=Enabled Bandwidth (P2P Writes) Matrix (GB/s)
+   D\D     0 
+     0 764.42 
+P2P=Enabled Latency (P2P Writes) Matrix (us)
+   GPU     0 
+     0   2.08 
+
+   CPU     0 
+     0   2.51 
+[0.805s] [ext: omni.kit.pipapi-0.0.0] startup
+[0.806s] [ext: omni.kit.pip_archive-0.0.0] startup
+[0.806s] [ext: omni.pip.compute-1.6.3] startup
+[0.806s] [ext: omni.pip.cloud-1.4.3] startup
+[0.808s] [ext: omni.isaac.core_archive-3.0.0] startup
+[0.808s] [ext: omni.materialx.libs-1.0.7] startup
+[0.823s] [ext: omni.kit.loop-isaac-1.3.7] startup
+[0.823s] [ext: omni.kit.test-2.0.1] startup
+[0.839s] [ext: omni.kit.telemetry-0.5.2] startup
+[0.863s] [ext: omni.isaac.ml_archive-3.0.4] startup
+[0.863s] [ext: omni.usd.config-1.0.6] startup
+[0.865s] [ext: omni.gpucompute.plugins-0.0.0] startup
+[0.865s] [ext: omni.usd.libs-1.0.1] startup
+[0.918s] [ext: omni.mdl-56.0.3] startup
+[0.933s] [ext: omni.iray.libs-0.0.0] startup
+[0.936s] [ext: omni.mdl.neuraylib-0.2.12] startup
+[0.937s] [ext: omni.kit.usd.mdl-1.1.5] startup
+[0.994s] [ext: omni.appwindow-1.1.10] startup
+[1.887s] [ext: omni.kit.renderer.core-1.1.0] startup
+[4.421s] [ext: omni.kit.renderer.capture-0.0.0] startup
+[4.423s] [ext: omni.kit.renderer.imgui-2.0.5] startup
+[4.463s] [ext: omni.ui-2.27.1] startup
+[4.469s] [ext: omni.kit.mainwindow-1.0.3] startup
+[4.469s] [ext: carb.audio-0.1.0] startup
+[4.472s] [ext: omni.uiaudio-1.0.0] startup
+[4.472s] [ext: omni.kit.uiapp-0.0.0] startup
+[4.472s] [ext: omni.usd.schema.metrics.assembler-107.3.1] startup
+[4.474s] [ext: omni.usd.schema.anim-0.0.0] startup
+[4.486s] [ext: omni.usd.schema.physx-107.3.26] startup
+[4.506s] [ext: omni.usd.schema.geospatial-0.0.0] startup
+[4.510s] [ext: omni.usd.schema.omniscripting-1.0.0] startup
+[4.515s] [ext: omni.usd.schema.audio-0.0.0] startup
+[4.517s] [ext: omni.usd.schema.semantics-0.0.0] startup
+[4.519s] [ext: omni.usd_resolver-1.0.0] startup
+[4.521s] [ext: usdrt.scenegraph-7.6.1] startup
+[4.543s] [ext: omni.kit.actions.core-1.0.0] startup
+[4.545s] [ext: omni.timeline-1.0.14] startup
+[4.546s] [ext: omni.usd.core-1.5.3] startup
+[4.547s] [ext: omni.resourcemonitor-107.0.1] startup
+[4.548s] [ext: omni.activity.core-1.0.3] startup
+[4.549s] [ext: omni.kit.audiodeviceenum-1.0.2] startup
+[4.550s] [ext: omni.hydra.usdrt_delegate-7.5.1] startup
+[4.554s] [ext: omni.graph.exec-0.9.6] startup
+[4.554s] [ext: omni.kit.window.popup_dialog-2.0.24] startup
+[4.556s] [ext: omni.kit.exec.core-0.13.4] startup
+[4.557s] [ext: omni.kit.widget.nucleus_connector-2.0.1] startup
+[4.558s] [ext: omni.kit.usd_undo-0.1.8] startup
+[4.558s] [ext: omni.kit.commands-1.4.10] startup
+[4.560s] [ext: omni.hydra.scene_delegate-0.3.4] startup
+[4.566s] [ext: omni.usd-1.13.10] startup
+[4.614s] [ext: omni.kit.asset_converter-5.0.17] startup
+[4.621s] [ext: omni.usd.schema.omni_lens_distortion-0.0.0] startup
+[4.622s] [ext: omni.usd.schema.omni_sensors-0.0.0] startup
+[4.622s] [ext: omni.usd.schema.render_settings.rtx-0.0.0] startup
+[4.623s] [ext: omni.usd.schema.omnigraph-1.0.0] startup
+[4.627s] [ext: isaacsim.robot.schema-3.6.0] startup
+[4.632s] [ext: omni.kit.property.adapter.core-1.0.2] startup
+[4.633s] [ext: omni.kit.menu.core-1.1.2] startup
+[4.634s] [ext: omni.kit.property.adapter.fabric-1.0.3] startup
+[4.634s] [ext: omni.kit.usd.layers-2.2.11] startup
+[4.639s] [ext: omni.kit.clipboard-1.0.5] startup
+[4.639s] [ext: omni.kit.widget.context_menu-1.2.5] startup
+[4.640s] [ext: omni.kit.hotkeys.core-1.3.10] startup
+[4.642s] [ext: omni.kit.widget.path_field-2.0.11] startup
+[4.643s] [ext: omni.kit.context_menu-1.8.6] startup
+[4.645s] [ext: omni.index.libs-380600.8087.0] startup
+[4.645s] [ext: omni.kit.widget.browser_bar-2.0.10] startup
+[4.646s] [ext: omni.kit.widget.options_menu-1.1.6] startup
+[4.647s] [ext: omni.kit.helper.file_utils-0.1.9] startup
+[4.648s] [ext: omni.index-1.0.1] startup
+[4.650s] [ext: omni.hydra.rtx.shadercache.vulkan-1.0.0] startup
+[4.651s] [ext: omni.kit.widget.options_button-1.0.3] startup
+[4.652s] [ext: omni.kit.widget.filebrowser-2.12.3] startup
+[4.654s] [ext: omni.volume-0.5.2] startup
+[4.665s] [ext: omni.ujitso.client-0.0.0] startup
+[4.666s] [ext: omni.kit.notification_manager-1.0.10] startup
+[4.667s] [ext: omni.hydra.rtx-1.0.0] startup
+[4.789s] [ext: omni.ui.scene-1.11.5] startup
+[4.792s] [ext: omni.kit.widget.searchable_combobox-1.0.6] startup
+[4.793s] [ext: omni.kit.window.filepicker-2.13.4] startup
+[4.800s] [ext: omni.kit.widget.searchfield-1.1.8] startup
+[4.800s] [ext: omni.kit.widget.settings-1.2.6] startup
+[4.802s] [ext: omni.kit.menu.utils-2.0.5] startup
+[4.805s] [ext: omni.kit.window.file_exporter-1.0.33] startup
+[4.806s] [ext: omni.kit.widget.filter-1.1.4] startup
+[4.807s] [ext: omni.hydra.engine.stats-1.0.3] startup
+[4.809s] [ext: omni.kit.window.preferences-1.8.0] startup
+[4.814s] [ext: omni.kit.widget.stage-3.1.4] startup
+[4.820s] [ext: omni.kit.window.file_importer-1.1.18] startup
+[4.820s] [ext: omni.kit.raycast.query-1.1.0] startup
+[4.826s] [ext: omni.kit.viewport.registry-104.0.6] startup
+[4.826s] [ext: omni.kit.viewport.legacy_gizmos-1.0.19] startup
+[4.829s] [ext: omni.kit.material.library-2.0.7] startup
+[4.835s] [ext: omni.kit.property.adapter.usd-1.0.2] startup
+[4.836s] [ext: omni.kit.viewport.scene_camera_model-1.0.6] startup
+[4.840s] [ext: omni.kit.hydra_texture-1.4.6] startup
+[4.845s] [ext: omni.kit.window.drop_support-1.0.5] startup
+[4.845s] [ext: omni.kit.widget.viewport-107.1.3] startup
+[4.849s] [ext: omni.kit.primitive.mesh-1.0.17] startup
+[4.850s] [ext: omni.kit.viewport.window-107.2.0] startup
+[4.865s] [ext: omni.kit.manipulator.transform-107.0.0] startup
+[4.869s] [ext: omni.kit.stage_template.core-1.1.22] startup
+[4.870s] [ext: omni.kit.widget.toolbar-2.0.1] startup
+[4.876s] [ext: omni.kit.viewport.utility-1.1.2] startup
+[4.877s] [ext: omni.kit.window.content_browser_registry-0.0.6] startup
+[4.877s] [ext: omni.kit.widget.highlight_label-1.0.3] startup
+[4.877s] [ext: omni.kit.window.file-2.0.5] startup
+[4.879s] [ext: omni.kit.manipulator.tool.snap-1.5.13] startup
+[4.882s] [ext: omni.kit.manipulator.selector-1.1.3] startup
+[4.884s] [ext: omni.kit.window.property-1.12.1] startup
+[4.885s] [ext: omni.kit.window.content_browser-3.1.3] startup
+[4.892s] [ext: omni.kit.viewport.manipulator.transform-107.0.4] startup
+[4.894s] [ext: omni.kit.manipulator.viewport-107.0.1] startup
+[4.894s] [ext: omni.kit.property.usd-4.5.12] startup
+[4.900s] [ext: omni.kit.manipulator.selection-106.0.1] startup
+[4.901s] [ext: omni.fabric.commands-1.1.6] startup
+[4.905s] [ext: omni.kvdb-107.3.26] startup
+[4.906s] [ext: omni.kit.manipulator.prim.core-107.0.8] startup
+[4.913s] [ext: omni.convexdecomposition-107.3.26] startup
+[4.914s] [ext: omni.physx.foundation-107.3.26] startup
+[4.915s] [ext: omni.localcache-107.3.26] startup
+[4.916s] [ext: omni.kit.manipulator.prim.fabric-107.0.4] startup
+[4.917s] [ext: omni.kit.viewport.menubar.core-107.2.1] startup
+[4.930s] [ext: omni.kit.viewport.actions-107.0.2] startup
+[4.933s] [ext: omni.usdphysics-107.3.26] startup
+[4.934s] [ext: omni.kit.widget.prompt-1.0.7] startup
+[4.935s] [ext: omni.kit.manipulator.prim.usd-107.0.3] startup
+[4.936s] [ext: omni.kit.viewport.menubar.display-107.0.3] startup
+[4.937s] [ext: omni.physx.cooking-107.3.26] startup
+[4.939s] [ext: omni.inspect-1.0.2] startup
+[4.941s] [ext: omni.kit.widget.layers-1.8.6] startup
+[4.952s] [ext: omni.kit.manipulator.prim-107.0.0] startup
+[4.952s] [ext: omni.debugdraw-0.1.4] startup
+[4.956s] [ext: omni.physx-107.3.26] startup
+[4.962s] [ext: omni.physics-107.3.26] startup
+[4.964s] [ext: omni.graph.core-2.184.5] startup
+[4.965s] [ext: omni.usdphysics.ui-107.3.26] startup
+[4.984s] [ext: omni.physx.commands-107.3.26] startup
+[4.988s] [ext: omni.physics.stageupdate-107.3.26] startup
+[4.989s] [ext: isaacsim.core.deprecation_manager-0.2.7] startup
+[4.989s] [ext: omni.physx.ui-107.3.26] startup
+[5.021s] [ext: isaacsim.core.version-2.0.6] startup
+[5.021s] [ext: omni.physics.physx-107.3.26] startup
+[5.023s] [ext: isaacsim.storage.native-1.5.1] startup
+[5.024s] [ext: omni.usd.metrics.assembler-107.3.1] startup
+[5.027s] [ext: omni.kit.numpy.common-0.1.3] startup
+[5.028s] [ext: omni.physics.tensors-107.3.26] startup
+[5.031s] [ext: omni.warp.core-1.8.2] startup
+[5.161s] [ext: omni.usd.metrics.assembler.physics-107.3.26] startup
+[5.162s] [ext: omni.isaac.dynamic_control-2.0.7] startup
+[5.166s] [ext: omni.physx.tensors-107.3.26] startup
+[5.169s] [ext: isaacsim.core.utils-3.5.1] startup
+[5.171s] [ext: isaacsim.core.simulation_manager-1.4.4] startup
+[5.326s] [ext: omni.kit.widget.stage_icons-1.0.8] startup
+[5.327s] [ext: omni.kit.stagerecorder.core-107.0.3] startup
+[5.332s] [ext: omni.kit.window.stage-2.6.1] startup
+[5.335s] [ext: omni.kit.menu.create-2.0.1] startup
+[5.336s] [ext: omni.kit.widget.zoombar-1.0.6] startup
+[5.337s] [ext: omni.kit.scripting-107.3.2] startup
+[5.342s] [ext: omni.kit.browser.core-2.3.13] startup
+[5.344s] [ext: isaacsim.replicator.behavior-1.1.16] startup
+[5.344s] [ext: omni.kit.browser.folder.core-1.10.9] startup
+[5.347s] [ext: omni.kit.usd.collect-2.4.5] startup
+[5.348s] [ext: omni.graph.tools-1.79.2] startup
+[2026-09-13 12:34:42,999][AutoNode][DEBUG] - Defining data type 'any' as 'Any'
+[2026-09-13 12:34:42,999][AutoNode][DEBUG] - Defining data type 'bool' as 'Bool' and array 'BoolArray
+[2026-09-13 12:34:42,999][AutoNode][DEBUG] - Defining data type 'bundle' as 'Bundle'
+[2026-09-13 12:34:42,999][AutoNode][DEBUG] - Defining data type 'colord[3]' as 'Color3d' and array 'Color3dArray
+[2026-09-13 12:34:42,999][AutoNode][DEBUG] - Defining data type 'colorf[3]' as 'Color3f' and array 'Color3fArray
+[2026-09-13 12:34:42,999][AutoNode][DEBUG] - Defining data type 'colorh[3]' as 'Color3h' and array 'Color3hArray
+[2026-09-13 12:34:42,999][AutoNode][DEBUG] - Defining data type 'colord[4]' as 'Color4d' and array 'Color4dArray
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'colorf[4]' as 'Color4f' and array 'Color4fArray
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'colorh[4]' as 'Color4h' and array 'Color4hArray
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'double' as 'Double' and array 'DoubleArray
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'double[2]' as 'Double2' and array 'Double2Array
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'double[3]' as 'Double3' and array 'Double3Array
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'double[4]' as 'Double4' and array 'Double4Array
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'execution' as 'Execution'
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'float' as 'Float' and array 'FloatArray
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'float[2]' as 'Float2' and array 'Float2Array
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'float[3]' as 'Float3' and array 'Float3Array
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'float[4]' as 'Float4' and array 'Float4Array
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'frame[4]' as 'Frame' and array 'FrameArray
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'half' as 'Half' and array 'HalfArray
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'half[2]' as 'Half2' and array 'Half2Array
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'half[3]' as 'Half3' and array 'Half3Array
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'half[4]' as 'Half4' and array 'Half4Array
+[2026-09-13 12:34:43,000][AutoNode][DEBUG] - Defining data type 'int' as 'Int' and array 'IntArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'int[2]' as 'Int2' and array 'Int2Array
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'int[3]' as 'Int3' and array 'Int3Array
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'int[4]' as 'Int4' and array 'Int4Array
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'int64' as 'Int64' and array 'Int64Array
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'matrixd[2]' as 'Matrix2d' and array 'Matrix2dArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'matrixd[3]' as 'Matrix3d' and array 'Matrix3dArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'matrixd[4]' as 'Matrix4d' and array 'Matrix4dArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'normald[3]' as 'Normal3d' and array 'Normal3dArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'normalf[3]' as 'Normal3f' and array 'Normal3fArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'normalh[3]' as 'Normal3h' and array 'Normal3hArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'objectId' as 'ObjectId' and array 'ObjectIdArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'path' as 'Path'
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'pointd[3]' as 'Point3d' and array 'Point3dArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'pointf[3]' as 'Point3f' and array 'Point3fArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'pointh[3]' as 'Point3h' and array 'Point3hArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'quatd[4]' as 'Quatd' and array 'QuatdArray
+[2026-09-13 12:34:43,001][AutoNode][DEBUG] - Defining data type 'quatf[4]' as 'Quatf' and array 'QuatfArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'quath[4]' as 'Quath' and array 'QuathArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'string' as 'String'
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'target' as 'Target'
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'texcoordd[2]' as 'TexCoord2d' and array 'TexCoord2dArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'texcoordf[2]' as 'TexCoord2f' and array 'TexCoord2fArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'texcoordh[2]' as 'TexCoord2h' and array 'TexCoord2hArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'texcoordd[3]' as 'TexCoord3d' and array 'TexCoord3dArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'texcoordf[3]' as 'TexCoord3f' and array 'TexCoord3fArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'texcoordh[3]' as 'TexCoord3h' and array 'TexCoord3hArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'timecode' as 'Timecode' and array 'TimecodeArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'token' as 'Token' and array 'TokenArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'uchar' as 'UChar' and array 'UCharArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'uint' as 'UInt' and array 'UIntArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'uint64' as 'UInt64' and array 'UInt64Array
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'vectord[3]' as 'Vector3d' and array 'Vector3dArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'vectorf[3]' as 'Vector3f' and array 'Vector3fArray
+[2026-09-13 12:34:43,002][AutoNode][DEBUG] - Defining data type 'vectorh[3]' as 'Vector3h' and array 'Vector3hArray
+[5.365s] [ext: omni.kit.usdz_export-1.0.9] startup
+[5.366s] [ext: omni.graph.action_core-1.1.7] startup
+[5.367s] [ext: omni.graph-1.141.2] startup
+[5.393s] [ext: omni.kit.tool.asset_importer-4.3.2] startup
+[5.396s] [ext: omni.graph.action_nodes-1.50.4] startup
+[5.398s] [ext: omni.kit.widget.text_editor-1.1.1] startup
+[5.403s] [ext: omni.ui_query-1.1.8] startup
+[5.403s] [ext: omni.graph.action-1.130.0] startup
+[5.404s] [ext: omni.kit.window.extensions-1.4.27] startup
+[5.412s] [ext: omni.kit.ui_test-1.3.7] startup
+[5.414s] [ext: omni.graph.visualization.nodes-2.1.3] startup
+[5.422s] [ext: omni.kit.tool.collect-2.2.18] startup
+[5.428s] [ext: omni.kit.menu.stage-1.2.7] startup
+[5.430s] [ext: isaacsim.gui.components-1.2.1] startup
+[5.436s] [ext: isaacsim.examples.browser-0.2.1] startup
+[5.440s] [ext: isaacsim.asset.importer.urdf-2.4.31] startup
+[5.499s] [ext: isaacsim.core.cloner-1.4.10] startup
+[5.501s] [ext: omni.kit.stagerecorder.ui-107.0.1] startup
+[5.510s] [ext: isaacsim.asset.browser-1.3.23] startup
+[5.513s] [ext: semantics.schema.editor-2.0.2] startup
+[5.520s] [ext: omni.kit.stagerecorder.bundle-105.0.2] startup
+[5.520s] [ext: omni.kit.window.status_bar-0.1.9] startup
+[5.523s] [ext: omni.kit.widget.graph-2.0.0] startup
+[5.529s] [ext: omni.kit.stage_templates-2.0.0] startup
+[5.531s] [ext: omni.graph.image.core-0.6.1] startup
+[5.532s] [ext: omni.kit.graph.delegate.default-1.2.3] startup
+[5.533s] [ext: isaacsim.core.experimental.utils-0.3.0] startup
+[5.534s] [ext: omni.graph.image.nodes-1.3.1] startup
+[5.537s] [ext: omni.kit.graph.editor.core-1.5.3] startup
+[5.539s] [ext: omni.kit.graph.usd.commands-1.3.1] startup
+[5.540s] [ext: omni.graph.nodes-1.170.10] startup
+[5.580s] [ext: omni.graph.ui_nodes-1.50.5] startup
+[5.586s] [ext: omni.kit.widget.material_preview-1.0.16] startup
+[5.591s] [ext: omni.syntheticdata-0.6.13] startup
+[5.618s] [ext: omni.videoencoding-0.1.2] startup
+[5.623s] [ext: omni.warp-1.8.2] startup
+[5.635s] [ext: omni.kit.window.material_graph-1.9.1] startup
+[5.651s] [ext: omni.graph.scriptnode-1.50.0] startup
+[5.654s] [ext: isaacsim.core.prims-0.6.1] startup
+[5.673s] [ext: isaacsim.test.docstring-1.1.0] startup
+[5.680s] [ext: omni.replicator.core-1.12.27] startup
+[5.827s] [ext: isaacsim.core.api-4.8.0] startup
+[5.840s] [ext: isaacsim.core.experimental.prims-0.8.1] startup
+[5.878s] [ext: isaacsim.core.nodes-3.4.3] startup
+[5.891s] [ext: isaacsim.robot.surface_gripper-3.3.1] startup
+[5.900s] [ext: isaacsim.util.debug_draw-3.1.0] startup
+[5.909s] [ext: omni.sensors.nv.common-3.0.0] startup
+[6.028s] [ext: isaacsim.robot.manipulators-3.3.6] startup
+[6.039s] [ext: isaacsim.sensors.physx-2.3.2] startup
+[6.097s] [ext: omni.sensors.nv.materials-2.0.0] startup
+[6.138s] [ext: omni.sensors.net-1.0.0] startup
+[6.149s] [ext: isaacsim.app.about-2.0.11] startup
+[6.210s] [ext: isaacsim.simulation_app-2.12.2] startup
+[6.210s] [ext: omni.sensors.nv.ids-2.0.0] startup
+[6.256s] [ext: omni.sensors.nv.lidar-3.0.0] startup
+[6.290s] [ext: omni.kit.property.audio-1.0.16] startup
+[6.301s] [ext: omni.kit.property.camera-1.0.10] startup
+[6.304s] [ext: omni.kit.property.geometry-2.0.4] startup
+[6.308s] [ext: omni.hydra.scene_api-0.1.2] startup
+[6.318s] [ext: omni.kit.property.light-1.0.12] startup
+[6.333s] [ext: omni.sensors.nv.wpm-3.0.0] startup
+[6.342s] [ext: omni.kit.selection-0.1.6] startup
+[6.345s] [ext: omni.kit.property.material-1.11.9] startup
+[6.363s] [ext: omni.kit.property.transform-1.5.13] startup
+[6.371s] [ext: omni.kit.property.render-1.2.1] startup
+[6.374s] [ext: omni.sensors.nv.radar-3.0.0] startup
+[6.385s] [ext: isaacsim.gui.menu-2.4.4] startup
+[6.396s] [ext: omni.kit.manipulator.camera-106.0.4] startup
+[6.401s] [ext: isaacsim.gui.property-1.1.3] startup
+[6.404s] [ext: omni.kit.property.bundle-1.4.1] startup
+[6.405s] [ext: isaacsim.sensors.rtx-15.8.4] startup
+[6.415s] [ext: isaacsim.sensors.physics-0.4.3] startup
+[6.424s] [ext: omni.kit.viewport.menubar.camera-107.0.6] startup
+[6.435s] [ext: omni.kit.viewport.menubar.lighting-107.3.1] startup
+[6.438s] [ext: omni.kit.viewport.menubar.settings-107.0.3] startup
+[6.443s] [ext: omni.kit.viewport.menubar.render-107.0.10] startup
+[6.446s] [ext: isaacsim.robot.policy.examples-4.1.11] startup
+[6.447s] [ext: isaacsim.asset.importer.mjcf-2.5.13] startup
+[6.455s] [ext: omni.kit.window.console-1.1.4] startup
+[6.459s] [ext: omni.rtx.window.settings-0.6.19] startup
+[6.464s] [ext: omni.ocio-0.1.1] startup
+[6.467s] [ext: omni.physx.demos-107.3.26] startup
+[6.487s] [ext: omni.kit.property.physx-107.3.26] startup
+[6.504s] [ext: omni.replicator.replicator_yaml-2.0.11] startup
+[6.508s] [ext: omni.asset_validator.core-1.1.6] startup
+[6.552s] [ext: omni.rtx.settings.core-0.6.5] startup
+[6.556s] [ext: omni.physx.vehicle-107.3.26] startup
+[6.574s] [ext: omni.usd.metrics.assembler.ui-107.3.1] startup
+[6.581s] [ext: omni.kit.window.script_editor-2.0.1] startup
+[6.586s] [ext: isaacsim.robot.wheeled_robots-4.0.24] startup
+[6.598s] [ext: omni.physx.asset_validator-107.3.26] startup
+[6.612s] [ext: omni.kit.window.toolbar-2.0.0] startup
+[6.617s] [ext: omni.physx.camera-107.3.26] startup
+[6.628s] [ext: omni.anim.curve.core-1.3.1] startup
+[6.639s] [ext: omni.physx.cct-107.3.26] startup
+[6.650s] [ext: omni.physx.graph-107.3.26] startup
+[6.667s] [ext: omni.physx.supportui-107.3.26] startup
+[6.682s] [ext: omni.physx.telemetry-107.3.26] startup
+[6.684s] [ext: isaaclab-0.54.2] startup
+[6.811s] [ext: isaaclab_contrib-0.0.2] startup
+[6.812s] [ext: isaacsim.core.throttling-2.2.2] startup
+[6.815s] [ext: omni.kit.ui.actions-1.0.5] startup
+[6.817s] [ext: semantics.schema.property-2.0.1] startup
+[6.819s] [ext: omni.physx.bundle-107.3.26] startup
+[6.819s] [ext: isaacsim.sensors.camera-1.3.6] startup
+[6.824s] [ext: isaaclab_assets-0.2.4] startup
+[7.025s] [ext: isaaclab_tasks-0.11.12] startup
+[2026-09-13 12:34:44,683][h5py._conv][DEBUG] - Creating converter from 7 to 5
+[2026-09-13 12:34:44,683][h5py._conv][DEBUG] - Creating converter from 5 to 7
+[2026-09-13 12:34:44,683][h5py._conv][DEBUG] - Creating converter from 7 to 5
+[2026-09-13 12:34:44,683][h5py._conv][DEBUG] - Creating converter from 5 to 7
+[2026-09-13 12:34:44,733][matplotlib][DEBUG] - matplotlib data path: /home/shin/isaacsim/exts/omni.isaac.core_archive/pip_prebundle/matplotlib/mpl-data
+[2026-09-13 12:34:44,739][matplotlib][DEBUG] - CONFIGDIR=/home/shin/.config/matplotlib
+[2026-09-13 12:34:44,740][matplotlib][DEBUG] - interactive is False
+[2026-09-13 12:34:44,740][matplotlib][DEBUG] - platform is linux
+[7.144s] [ext: omni.kit.menu.common-2.0.1] startup
+[7.146s] [ext: isaaclab_rl-0.4.7] startup
+[7.147s] [ext: isaaclab_mimic-1.0.16] startup
+[7.147s] [ext: isaaclab.python-2.3.2] startup
+[7.149s] Simulation App Starting
+[7.420s] app ready
+[9.591s] Simulation App Startup Complete
+[2026-09-13 12:34:47,231][filelock][DEBUG] - Attempting to release lock 127005028603088 on /tmp/isaaclab_app_launcher.lock
+[2026-09-13 12:34:47,232][filelock][DEBUG] - Lock 127005028603088 released on /tmp/isaaclab_app_launcher.lock
+[32m2026-09-13 12:34:48.314[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.torch_humanoid_batch[0m:[36m<module>[0m:[36m40[0m - [1mUsing Humanoid Batch[0m
+[DEBUG] Instantiated events: EventCfg(physics_material=EventTermCfg(func='gear_sonic.envs.manager_env.mdp:randomize_rigid_body_material', params={'asset_cfg': SceneEntityCfg(name='robot', joint_names=None, joint_ids=slice(None, None, None), fixed_tendon_names=None, fixed_tendon_ids=slice(None, None, None), body_names='.*', body_ids=slice(None, None, None), object_collection_names=None, object_collection_ids=slice(None, None, None), preserve_order=False), 'static_friction_range': [0.3, 1.6], 'dynamic_friction_range': [0.3, 1.2], 'restitution_range': [0.0, 0.5], 'num_buckets': 64}, mode='startup', interval_range_s=None, is_global_time=False, min_step_count_between_reset=0), add_joint_default_pos=EventTermCfg(func='gear_sonic.envs.manager_env.mdp:randomize_joint_default_pos', params={'asset_cfg': SceneEntityCfg(name='robot', joint_names=['.*'], joint_ids=slice(None, None, None), fixed_tendon_names=None, fixed_tendon_ids=slice(None, None, None), body_names=None, body_ids=slice(None, None, None), object_collection_names=None, object_collection_ids=slice(None, None, None), preserve_order=False), 'pos_distribution_params': [-0.01, 0.01], 'operation': 'add'}, mode='startup', interval_range_s=None, is_global_time=False, min_step_count_between_reset=0), add_hand_joint_default_pos=None, base_com=EventTermCfg(func='gear_sonic.envs.manager_env.mdp:randomize_rigid_body_com', params={'asset_cfg': SceneEntityCfg(name='robot', joint_names=None, joint_ids=slice(None, None, None), fixed_tendon_names=None, fixed_tendon_ids=slice(None, None, None), body_names='torso_link', body_ids=slice(None, None, None), object_collection_names=None, object_collection_ids=slice(None, None, None), preserve_order=False), 'com_range': {'x': [-0.025, 0.025], 'y': [-0.05, 0.05], 'z': [-0.05, 0.05]}}, mode='startup', interval_range_s=None, is_global_time=False, min_step_count_between_reset=0), push_robot=None, randomize_rigid_body_mass=EventTermCfg(func='gear_sonic.envs.manager_env.mdp:randomize_rigid_body_mass', params={'asset_cfg': SceneEntityCfg(name='robot', joint_names=None, joint_ids=slice(None, None, None), fixed_tendon_names=None, fixed_tendon_ids=slice(None, None, None), body_names='.*wrist_yaw.*|torso_link', body_ids=slice(None, None, None), object_collection_names=None, object_collection_ids=slice(None, None, None), preserve_order=False), 'mass_distribution_params': [0.8, 1.5], 'operation': 'scale'}, mode='startup', interval_range_s=None, is_global_time=False, min_step_count_between_reset=0))
+[DEBUG]   Event 'physics_material': EventTermCfg
+[DEBUG]   Event 'add_joint_default_pos': EventTermCfg
+[DEBUG]   Event 'base_com': EventTermCfg
+[DEBUG]   Event 'randomize_rigid_body_mass': EventTermCfg
+
+[36m======================================================================================[0m
+[36m[1m[INFO][IsaacLab]: Logging to file: /tmp/isaaclab/logs/isaaclab_2026-09-13_12-34-48.log[0m
+[36m======================================================================================[0m
+
+[10.733s] [ext: omni.physx.fabric-107.3.26] startup
+[33m12:34:48 [simulation_context.py] WARNING: The `enable_external_forces_every_iteration` parameter in the PhysxCfg is set to False. If you are experiencing noisy velocities, consider enabling this flag. You may need to slightly increase the number of velocity iterations (setting it to 1 or 2 rather than 0), together with this flag, to improve the accuracy of velocity updates.[0m
+[INFO]: Base environment:
+	Environment device    : cuda:0
+	Environment seed      : 0
+	Physics step-size     : 0.005
+	Rendering step-size   : 0.02
+	Environment step-size : 0.02
+[INFO] Generating terrains randomly took : 1.630403 seconds
+[INFO]: Time taken for scene creation : 3.439133 seconds
+[INFO]: Scene manager:  <class InteractiveScene>
+	Number of environments: 1
+	Environment spacing   : 2.0
+	Source prim name      : /World/envs/env_0
+	Global prim paths     : []
+	Replicate physics     : True
+[INFO]: Starting the simulation. This may take a few seconds. Please wait...
+[INFO]: Time taken for simulation start : 2.947024 seconds
+[32m2026-09-13 12:34:54.879[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36m__init__[0m:[36m235[0m - [1mLoaded skeleton from gear_sonic/data/assets/robot_description/mjcf/g1_29dof_rev_1_0.xml[0m
+[32m2026-09-13 12:34:54.879[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36m__init__[0m:[36m236[0m - [1mLoading motion data from sample_data/robot_filtered...[0m
+Loaded 2 motion files
+[32m2026-09-13 12:34:54.879[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_data[0m:[36m472[0m - [1mLoaded 2 motions[0m
+Loading Meshes ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Loading Geoms... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[32m2026-09-13 12:34:55.201[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1091[0m - [1mLoading 1 motions...[0m
+[32m2026-09-13 12:34:55.202[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1092[0m - [1mSampling motion: tensor([1], device='cuda:0'), ....[0m
+[32m2026-09-13 12:34:55.202[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1093[0m - [1mCurrent motion keys: ['walk_forward_amateur_001__A001'], ....[0m
+[32m2026-09-13 12:34:55.202[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1120[0m - [1mIncreased file descriptor limits from 2450/1048576 to 1048576/1048576[0m
+[32m2026-09-13 12:34:55.257[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1140[0m - [1mLoading motions with 1 jobs...[0m
+Loading motions... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Gathering results for non-navigation dataset... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  
+Processing motions... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[32m2026-09-13 12:34:55.374[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1577[0m - [1mLoaded 1 motions with a total length of 40.020s and 2002 frames.[0m
+[INFO] Command Manager:  <CommandManager> contains 1 active terms.
++----------------------------------+
+|       Active Command Terms       |
++-------+--------+-----------------+
+| Index | Name   |       Type      |
++-------+--------+-----------------+
+|   0   | motion | TrackingCommand |
++-------+--------+-----------------+
+
+[INFO] Event Manager:  <EventManager> contains 1 active terms.
++----------------------------------------+
+| Active Event Terms in Mode: 'startup'  |
++--------+-------------------------------+
+| Index  | Name                          |
++--------+-------------------------------+
+|   0    | physics_material              |
+|   1    | add_joint_default_pos         |
+|   2    | base_com                      |
+|   3    | randomize_rigid_body_mass     |
++--------+-------------------------------+
+
+[INFO] Recorder Manager:  <RecorderManager> contains 0 active terms.
++---------------------+
+| Active Recorder Terms |
++-----------+---------+
+|   Index   | Name    |
++-----------+---------+
++-----------+---------+
+
+[INFO] Action Manager:  <ActionManager> contains 1 active terms.
++------------------------------------+
+|  Active Action Terms (shape: 29)   |
++--------+-------------+-------------+
+| Index  | Name        |   Dimension |
++--------+-------------+-------------+
+|   0    | joint_pos   |          29 |
++--------+-------------+-------------+
+
+[INFO] Observation Manager: <ObservationManager> contains 3 groups.
++---------------------------------------------------------+
+| Active Observation Terms in Group: 'policy' (shape: (930,)) |
++-------------+---------------------------+---------------+
+|    Index    | Name                      |     Shape     |
++-------------+---------------------------+---------------+
+|      0      | base_ang_vel              |     (30,)     |
+|      1      | joint_pos                 |     (290,)    |
+|      2      | joint_vel                 |     (290,)    |
+|      3      | actions                   |     (290,)    |
+|      4      | gravity_dir               |     (30,)     |
++-------------+---------------------------+---------------+
++------------------------------------------------------------+
+| Active Observation Terms in Group: 'critic' (shape: (1645,)) |
++-----------+-----------------------------------+------------+
+|   Index   | Name                              |   Shape    |
++-----------+-----------------------------------+------------+
+|     0     | command_multi_future              |   (580,)   |
+|     1     | motion_anchor_pos_b               |    (3,)    |
+|     2     | motion_anchor_ori_b               |    (6,)    |
+|     3     | body_pos                          |   (42,)    |
+|     4     | body_ori                          |   (84,)    |
+|     5     | base_lin_vel                      |   (30,)    |
+|     6     | base_ang_vel                      |   (30,)    |
+|     7     | joint_pos                         |   (290,)   |
+|     8     | joint_vel                         |   (290,)   |
+|     9     | actions                           |   (290,)   |
++-----------+-----------------------------------+------------+
++-----------------------------------------------------------+
+|       Active Observation Terms in Group: 'tokenizer'      |
++-------+----------------------------------------+----------+
+| Index | Name                                   |  Shape   |
++-------+----------------------------------------+----------+
+|   0   | encoder_index                          |   (3,)   |
+|   1   | command_multi_future_nonflat           | (10, 58) |
+|   2   | command_z_multi_future_nonflat         | (10, 1)  |
+|   3   | command_z                              |   (1,)   |
+|   4   | motion_anchor_ori_b                    |   (6,)   |
+|   5   | motion_anchor_ori_b_mf_nonflat         | (10, 6)  |
+|   6   | command_multi_future_lower_body        |  (240,)  |
+|   7   | vr_3point_local_target                 |   (9,)   |
+|   8   | vr_3point_local_orn_target             |  (12,)   |
+|   9   | smpl_joints_multi_future_local_nonflat | (10, 72) |
+|   10  | smpl_root_ori_b_multi_future           | (10, 6)  |
+|   11  | joint_pos_multi_future_wrist_for_smpl  | (10, 6)  |
++-------+----------------------------------------+----------+
+
+[INFO] Termination Manager:  <TerminationManager> contains 5 active terms.
++------------------------------------+
+|      Active Termination Terms      |
++-------+-----------------+----------+
+| Index | Name            | Time Out |
++-------+-----------------+----------+
+|   0   | time_out        |   True   |
+|   1   | anchor_pos      |  False   |
+|   2   | anchor_ori_full |  False   |
+|   3   | ee_body_pos     |  False   |
+|   4   | foot_pos_xyz    |  False   |
++-------+-----------------+----------+
+
+[INFO] Reward Manager:  <RewardManager> contains 12 active terms.
++-----------------------------------------------+
+|              Active Reward Terms              |
++-------+----------------------------+----------+
+| Index | Name                       |   Weight |
++-------+----------------------------+----------+
+|   0   | tracking_anchor_pos        |      0.5 |
+|   1   | tracking_anchor_ori        |      0.5 |
+|   2   | tracking_relative_body_pos |      1.0 |
+|   3   | tracking_relative_body_ori |      1.0 |
+|   4   | tracking_body_linvel       |      1.0 |
+|   5   | tracking_body_angvel       |      1.0 |
+|   6   | action_rate_l2             |     -0.1 |
+|   7   | joint_limit                |    -10.0 |
+|   8   | undesired_contacts         |     -0.1 |
+|   9   | anti_shake_ang_vel         |   -0.005 |
+|   10  | tracking_vr_5point_local   |      2.0 |
+|   11  | feet_acc                   | -2.5e-06 |
++-------+----------------------------+----------+
+
+[INFO] Curriculum Manager:  <CurriculumManager> contains 0 active terms.
++----------------------+
+| Active Curriculum Terms |
++-----------+----------+
+|   Index   | Name     |
++-----------+----------+
++-----------+----------+
+
+Creating window for environment.
+[INFO]: Completed setting up the environment...
+[32m2026-09-13 12:34:57.439[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m250[0m - [1mMotion Encoder and Quantizer initialized with embedding dim: 64 (num_tokens=2, token_dim=32)[0m
+[32m2026-09-13 12:34:57.528[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m319[0m - [1mInitialized g1 encoder with input features: ['command_multi_future_nonflat', 'motion_anchor_ori_b_mf_nonflat'][0m
+[32m2026-09-13 12:34:57.541[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m319[0m - [1mInitialized teleop encoder with input features: ['command_multi_future_lower_body', 'vr_3point_local_target', 'vr_3point_local_orn_target', 'motion_anchor_ori_b'][0m
+[32m2026-09-13 12:34:57.557[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m319[0m - [1mInitialized smpl encoder with input features: ['smpl_joints_multi_future_local_nonflat', 'smpl_root_ori_b_multi_future', 'joint_pos_multi_future_wrist_for_smpl'][0m
+[32m2026-09-13 12:34:57.587[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m409[0m - [1mInitialized g1_dyn decoder with input features: ['token_flattened', 'proprioception'] and output features: ['action'][0m
+[32m2026-09-13 12:34:57.599[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m409[0m - [1mInitialized g1_kin decoder with input features: ['token'] and output features: ['command_multi_future_nonflat', 'motion_anchor_ori_b_mf_nonflat'][0m
+RunningMeanStd:  (1645,)
+[32m2026-09-13 12:34:58.496[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m433[0m - [1mLoading checkpoint from sonic_release/last.pt[0m
+[32m2026-09-13 12:34:58.583[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m449[0m - [1mModel parameterization: std[0m
+[32m2026-09-13 12:34:58.583[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m450[0m - [1mCheckpoint parameterization: std[0m
+[32m2026-09-13 12:34:58.584[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m462[0m - [1mSuccessfully loaded policy state dict[0m
+[32m2026-09-13 12:34:58.585[0m | [1mINFO    [0m | [36mgear_sonic.envs.wrapper.manager_env_wrapper[0m:[36mbegin_seq_motion_samples[0m:[36m1022[0m - [1mLoading motions for evaluation[0m
+[32m2026-09-13 12:34:58.585[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1091[0m - [1mLoading 1 motions...[0m
+[32m2026-09-13 12:34:58.586[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1092[0m - [1mSampling motion: tensor([0], device='cuda:0'), ....[0m
+[32m2026-09-13 12:34:58.586[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1093[0m - [1mCurrent motion keys: ['walk_forward_amateur_001__A001_M'], ....[0m
+[32m2026-09-13 12:34:58.636[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1140[0m - [1mLoading motions with 1 jobs...[0m
+Loading motions... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Gathering results... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   
+Processing motions... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[32m2026-09-13 12:34:58.763[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1577[0m - [1mLoaded 1 motions with a total length of 40.020s and 2002 frames.[0m

@@ -1,0 +1,33 @@
+2026-09-13 12:37:42.523 | WARNING  | gear_sonic.utils.config_utils:register_rl_resolvers:20 - Warning: Some resolvers already registered: resolver 'eval' is already registered
+/HELIOS/Robotics/HRVLA/_vendor/GR00T-WholeBodyControl/gear_sonic/eval_agent_trl.py:61: UserWarning: 
+The version_base parameter is not specified.
+Please specify a compatability version level, or None.
+Will assume defaults for version 1.1
+  @hydra.main(config_path="config", config_name="base_eval")
+Multiple values for manager_env/recorders. To override a value use 'override manager_env/recorders: render'
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
+Command exited with non-zero status 1
+	Command being timed: "python3 scripts/run_sonic_release.py record --metrics-file results/recovery/isaacsim/sonic-metrics-32env/metrics_eval.json --output-dir results/recovery/isaacsim/recording --num-envs 1 --render-width 960 --render-height 540"
+	User time (seconds): 2.32
+	System time (seconds): 1.98
+	Percent of CPU this job got: 198%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.16
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 586684
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 2608
+	Minor (reclaiming a frame) page faults: 97795
+	Voluntary context switches: 2747
+	Involuntary context switches: 132651
+	Swaps: 0
+	File system inputs: 237080
+	File system outputs: 24
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1

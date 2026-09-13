@@ -1,0 +1,28 @@
+{
+  "arguments": {
+    "disturbance_rate": 0.35,
+    "episodes_per_task": 3000,
+    "max_extra_steps": 16,
+    "methods": [
+      "no_recovery",
+      "inner_monologue",
+      "doremi",
+      "rekep",
+      "agentchord",
+      "baton_str"
+    ],
+    "proposal_error_rate": 0.28,
+    "protocol": "/HELIOS/Robotics/HRVLA/benchmark/recovery_protocol_v1.json",
+    "seed": 42,
+    "suite": "/HELIOS/Robotics/HRVLA/benchmark/subtask_suite_v1.json",
+    "workers": 11
+  },
+  "git_revision": "4aea89dfc27dde51352801354899f8244fa18a02",
+  "gpu": "NVIDIA GeForce RTX 5070 Ti",
+  "kind": "symbolic_transition_recovery",
+  "logical_cpu_count": 32,
+  "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "recorded_at": "2026-09-13T05:23:18.941084+00:00",
+  "schema_version": 1
+}
