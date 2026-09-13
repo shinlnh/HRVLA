@@ -5,7 +5,9 @@ from __future__ import annotations
 import csv
 import gzip
 import json
+import math
 from pathlib import Path
+import statistics
 from typing import Any, Iterable
 
 
@@ -77,6 +79,78 @@ def _scalar_rows(cells: list[dict[str, Any]]) -> list[dict[str, Any]]:
             }
             rows.append(row)
     return rows
+
+
+def _mean_ci95(values: list[float]) -> list[float]:
+    mean = statistics.fmean(values)
+    if len(values) < 2:
+        return [mean, mean]
+    margin = 1.959963984540054 * statistics.stdev(values) / math.sqrt(len(values))
+    return [mean - margin, mean + margin]
+
+
+def _mcnemar_exact(wins: int, losses: int) -> float:
+    discordant = wins + losses
+    if not discordant:
+        return 1.0
+    tail_limit = min(wins, losses)
+    log_terms = [
+        math.lgamma(discordant + 1)
+        - math.lgamma(value + 1)
+        - math.lgamma(discordant - value + 1)
+        - discordant * math.log(2.0)
+        for value in range(tail_limit + 1)
+    ]
+    largest = max(log_terms)
+    one_sided = math.exp(largest) * sum(math.exp(item - largest) for item in log_terms)
+    return min(1.0, 2.0 * one_sided)
+
+
+def _paired_comparisons(cells: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    comparisons: list[dict[str, Any]] = []
+    for cell in cells:
+        indexed: dict[str, dict[tuple[str, int], tuple[bool, int]]] = {}
+        for row in _read_raw_rows(cell):
+            method = str(row["method"])
+            key = (str(row["task_id"]), int(row["seed"]))
+            indexed.setdefault(method, {})[key] = (
+                bool(row["success"]),
+                int(row["actions"]),
+            )
+        baton = indexed["baton_str"]
+        for baseline, baseline_rows in sorted(indexed.items()):
+            if baseline == "baton_str":
+                continue
+            if set(baton) != set(baseline_rows):
+                raise ValueError(f"{cell['path']}: unpaired rows for {baseline}")
+            success_deltas = [
+                float(baton[key][0]) - float(baseline_rows[key][0])
+                for key in baton
+            ]
+            action_deltas = [
+                float(baton[key][1]) - float(baseline_rows[key][1])
+                for key in baton
+            ]
+            wins = sum(value > 0.0 for value in success_deltas)
+            losses = sum(value < 0.0 for value in success_deltas)
+            comparisons.append(
+                {
+                    "disturbance_rate": cell["disturbance_rate"],
+                    "method": "baton_str",
+                    "baseline": baseline,
+                    "pairs": len(success_deltas),
+                    "success_delta": statistics.fmean(success_deltas),
+                    "success_delta_normal95_low": _mean_ci95(success_deltas)[0],
+                    "success_delta_normal95_high": _mean_ci95(success_deltas)[1],
+                    "baton_success_only": wins,
+                    "baseline_success_only": losses,
+                    "mcnemar_exact_p": _mcnemar_exact(wins, losses),
+                    "actions_delta": statistics.fmean(action_deltas),
+                    "actions_delta_normal95_low": _mean_ci95(action_deltas)[0],
+                    "actions_delta_normal95_high": _mean_ci95(action_deltas)[1],
+                }
+            )
+    return comparisons
 
 
 def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -215,15 +289,18 @@ def aggregate_recovery_cells(
     revisions = sorted({str(cell["git_revision"]) for cell in cells})
     task_rows = _task_rates(cells)
     scalar_rows = _scalar_rows(cells)
+    paired = _paired_comparisons(cells)
     output = Path(output_dir).resolve()
     output.mkdir(parents=True, exist_ok=True)
     _write_csv(output / "recovery_robustness.csv", scalar_rows)
     _write_csv(output / "recovery_per_task.csv", task_rows)
+    _write_csv(output / "recovery_paired_comparisons.csv", paired)
     charts = _plot(cells, task_rows, output)
     result = {
         "schema_version": 1,
         "git_revisions": revisions,
         "cells": cells,
+        "paired_comparisons": paired,
         "artifacts": [path.name for path in charts],
     }
     (output / "recovery_comparison.json").write_text(

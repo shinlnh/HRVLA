@@ -171,7 +171,7 @@ print(json.dumps({"python": platform.python_version(), **{k: version(v) for k, v
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=("metrics", "viewer"))
+    parser.add_argument("mode", choices=("metrics", "record", "viewer"))
     parser.add_argument(
         "--runtime",
         choices=("auto", "pip", "workstation"),
@@ -182,8 +182,15 @@ def parse_args() -> argparse.Namespace:
         "--output-dir",
         type=Path,
         default=REPO_ROOT / "_artifacts" / "sonic_eval" / "default_sample",
-        help="Metrics JSON output directory (metrics mode only)",
+        help="Metrics or recording output directory",
     )
+    parser.add_argument(
+        "--metrics-file",
+        type=Path,
+        help="Completed metrics_eval.json used to select motions in record mode",
+    )
+    parser.add_argument("--render-width", type=int, default=960)
+    parser.add_argument("--render-height", type=int, default=540)
     parser.add_argument("--num-envs", type=int, help="Override the mode default")
     parser.add_argument(
         "--viewer-eye",
@@ -220,13 +227,19 @@ def main() -> int:
     num_envs = args.num_envs or (2 if args.mode == "metrics" else 1)
     if num_envs < 1:
         raise RuntimeError("--num-envs must be positive")
+    if args.mode == "record" and (
+        args.metrics_file is None or not args.metrics_file.is_file()
+    ):
+        raise RuntimeError("record mode requires an existing --metrics-file")
+    if args.render_width < 1 or args.render_height < 1:
+        raise RuntimeError("render dimensions must be positive")
 
     command = [
         str(isaaclab_root / "isaaclab.sh"),
         "-p",
         "gear_sonic/eval_agent_trl.py",
         "+checkpoint=sonic_release/last.pt",
-        f"+headless={args.mode == 'metrics'}",
+        f"+headless={args.mode != 'viewer'}",
         f"++num_envs={num_envs}",
         "++manager_env.observations.policy.enable_corruption=False",
         "++manager_env.observations.tokenizer.enable_corruption=False",
@@ -242,6 +255,22 @@ def main() -> int:
                 "+manager_env/terminations=tracking/eval",
                 "++manager_env.commands.motion.motion_lib_cfg.max_unique_motions=2",
                 f"+eval_output_dir={args.output_dir.resolve()}",
+            ]
+        )
+    elif args.mode == "record":
+        recording_dir = args.output_dir.resolve() / "render_results"
+        command.extend(
+            [
+                "++eval_callbacks=im_eval",
+                "++run_eval_loop=False",
+                f"++metrics_file={args.metrics_file.resolve()}",
+                f"++manager_env.config.save_rendering_dir={recording_dir}",
+                "++manager_env.config.render_results=True",
+                "++manager_env.config.env_spacing=10.0",
+                f"++manager_env.config.render_width={args.render_width}",
+                f"++manager_env.config.render_height={args.render_height}",
+                "++manager_env.config.render_frame_skip=4",
+                "+manager_env/recorders=render",
             ]
         )
     else:
