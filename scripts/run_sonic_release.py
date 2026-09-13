@@ -191,6 +191,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--render-width", type=int, default=960)
     parser.add_argument("--render-height", type=int, default=540)
+    parser.add_argument(
+        "--inject-push",
+        action="store_true",
+        help="retain SONIC's configured interval velocity-push event during evaluation",
+    )
     parser.add_argument("--num-envs", type=int, help="Override the mode default")
     parser.add_argument(
         "--viewer-eye",
@@ -246,6 +251,11 @@ def main() -> int:
         "++manager_env.commands.motion.motion_lib_cfg.motion_file=sample_data/robot_filtered",
         "++manager_env.commands.motion.motion_lib_cfg.smpl_motion_file=sample_data/smpl_filtered",
     ]
+    if args.inject_push:
+        # The release config classifies push_robot as train-only. Clearing that
+        # removal list retains its deterministic seeded interval event for a
+        # disturbance-recovery regression without editing vendored source.
+        command.append("++manager_env.config.train_only_events=[]")
 
     if args.mode == "metrics":
         command.extend(
