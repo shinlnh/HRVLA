@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "protocol_id": "hrvla-transition-recovery-v1-v1",
+  "base_suite": "subtask_suite_v1.json",
+  "description": "Paired-seed recovery protocol with explicit invocation and handoff contracts.",
+  "scenarios": [
+    {
+      "task_id": "fruit_bowl_and_drawer",
+      "failure_label": "dropped_object",
+      "failed_skill_id": "place_apple",
+      "handoff_requires": ["apple_grasp_verified", "wrist_above_bowl"],
+      "handoff_failure_probability": 0.72,
+      "recovery_primitives": [
+        {
+          "id": "quick_regrasp_apple",
+          "instruction": "Quickly regrasp the dropped apple and resume the interrupted placement.",
+          "requires": ["apple_on_floor"],
+          "adds": ["holding_apple"],
+          "deletes": ["apple_on_floor"],
+          "cost": 1.0,
+          "risk": 0.36,
+          "success_probability": 0.96
+        },
+        {
+          "id": "forward_regrasp_apple",
+          "instruction": "Regrasp the apple and verify retention before resuming the placement.",
+          "requires": ["apple_on_floor"],
+          "adds": ["holding_apple", "apple_grasp_verified"],
+          "deletes": ["apple_on_floor"],
+          "cost": 1.25,
+          "risk": 0.24,
+          "success_probability": 0.95,
+          "precompiled": true
+        },
+        {
+          "id": "transition_regrasp_apple",
+          "instruction": "Regrasp the apple, verify the grasp, and stage the wrist above the bowl before resuming.",
+          "requires": ["apple_on_floor"],
+          "adds": ["holding_apple", "apple_grasp_verified", "wrist_above_bowl"],
+          "deletes": ["apple_on_floor"],
+          "cost": 1.55,
+          "risk": 0.16,
+          "success_probability": 0.94
+        }
+      ]
+    },
+    {
+      "task_id": "set_breakfast_table",
+      "failure_label": "empty_or_unstable_grasp",
+      "failed_skill_id": "pick_cup",
+      "handoff_requires": ["cup_grasp_verified", "cup_upright"],
+      "handoff_failure_probability": 0.68,
+      "recovery_primitives": [
+        {
+          "id": "quick_stabilize_cup",
+          "instruction": "Stabilize and immediately regrasp the tipped cup.",
+          "requires": ["cup_tipped"],
+          "adds": ["holding_cup"],
+          "deletes": ["cup_tipped", "cup_on_shelf"],
+          "cost": 1.0,
+          "risk": 0.32,
+          "success_probability": 0.96
+        },
+        {
+          "id": "forward_stabilize_cup",
+          "instruction": "Set the cup upright and regrasp it before resuming placement.",
+          "requires": ["cup_tipped"],
+          "adds": ["holding_cup", "cup_upright"],
+          "deletes": ["cup_tipped", "cup_on_shelf"],
+          "cost": 1.30,
+          "risk": 0.21,
+          "success_probability": 0.95,
+          "precompiled": true
+        },
+        {
+          "id": "transition_stabilize_cup",
+          "instruction": "Set the cup upright, regrasp it, verify retention, and align for placement beside the plate.",
+          "requires": ["cup_tipped"],
+          "adds": ["holding_cup", "cup_grasp_verified", "cup_upright"],
+          "deletes": ["cup_tipped", "cup_on_shelf"],
+          "cost": 1.65,
+          "risk": 0.12,
+          "success_probability": 0.93
+        }
+      ]
+    },
+    {
+      "task_id": "clean_desk",
+      "failure_label": "dropped_trash",
+      "failed_skill_id": "discard_trash",
+      "handoff_requires": ["trash_grasp_verified", "wrist_over_bin"],
+      "handoff_failure_probability": 0.70,
+      "recovery_primitives": [
+        {
+          "id": "quick_regrasp_trash",
+          "instruction": "Pick up the fallen trash and immediately retry disposal.",
+          "requires": ["trash_on_floor"],
+          "adds": ["holding_trash"],
+          "deletes": ["trash_on_floor"],
+          "cost": 0.95,
+          "risk": 0.34,
+          "success_probability": 0.96
+        },
+        {
+          "id": "forward_regrasp_trash",
+          "instruction": "Secure the fallen trash and verify retention before retrying disposal.",
+          "requires": ["trash_on_floor"],
+          "adds": ["holding_trash", "trash_grasp_verified"],
+          "deletes": ["trash_on_floor"],
+          "cost": 1.25,
+          "risk": 0.22,
+          "success_probability": 0.95,
+          "precompiled": true
+        },
+        {
+          "id": "transition_regrasp_trash",
+          "instruction": "Secure the fallen trash, verify the grasp, and stage the wrist above the open bin.",
+          "requires": ["trash_on_floor"],
+          "adds": ["holding_trash", "trash_grasp_verified", "wrist_over_bin"],
+          "deletes": ["trash_on_floor"],
+          "cost": 1.50,
+          "risk": 0.14,
+          "success_probability": 0.94
+        }
+      ]
+    },
+    {
+      "task_id": "make_tea",
+      "failure_label": "liquid_spill",
+      "failed_skill_id": "pour_water",
+      "handoff_requires": ["counter_clean", "kettle_regrasp_verified"],
+      "handoff_failure_probability": 0.78,
+      "recovery_primitives": [
+        {
+          "id": "quick_wipe_spill",
+          "instruction": "Wipe the visible spill before retrying the pour.",
+          "requires": ["water_spilled", "cloth_available"],
+          "adds": ["counter_clean"],
+          "deletes": ["water_spilled"],
+          "cost": 1.0,
+          "risk": 0.20,
+          "success_probability": 0.97
+        },
+        {
+          "id": "forward_wipe_spill",
+          "instruction": "Wipe the spill and verify the counter before retrying the pour.",
+          "requires": ["water_spilled", "cloth_available"],
+          "adds": ["counter_clean"],
+          "deletes": ["water_spilled"],
+          "cost": 1.25,
+          "risk": 0.14,
+          "success_probability": 0.96,
+          "precompiled": true
+        },
+        {
+          "id": "transition_wipe_and_restabilize",
+          "instruction": "Wipe the spill, re-stabilize the kettle grasp, and verify the pouring pose before resuming.",
+          "requires": ["water_spilled", "cloth_available"],
+          "adds": ["counter_clean", "kettle_regrasp_verified"],
+          "deletes": ["water_spilled"],
+          "cost": 1.70,
+          "risk": 0.10,
+          "success_probability": 0.94
+        }
+      ]
+    },
+    {
+      "task_id": "pack_lunch",
+      "failure_label": "rolling_object",
+      "failed_skill_id": "pack_fruit",
+      "handoff_requires": ["fruit_pose_verified", "wrist_over_lunchbox"],
+      "handoff_failure_probability": 0.74,
+      "recovery_primitives": [
+        {
+          "id": "quick_recover_fruit",
+          "instruction": "Return the rolled fruit to the counter and retry packing.",
+          "requires": ["fruit_on_floor"],
+          "adds": ["fruit_on_counter"],
+          "deletes": ["fruit_on_floor"],
+          "cost": 1.0,
+          "risk": 0.31,
+          "success_probability": 0.97
+        },
+        {
+          "id": "forward_recover_fruit",
+          "instruction": "Recover the fruit and verify its pose before retrying packing.",
+          "requires": ["fruit_on_floor"],
+          "adds": ["fruit_on_counter", "fruit_pose_verified"],
+          "deletes": ["fruit_on_floor"],
+          "cost": 1.25,
+          "risk": 0.21,
+          "success_probability": 0.95,
+          "precompiled": true
+        },
+        {
+          "id": "transition_recover_fruit",
+          "instruction": "Recover the fruit, verify its pose, and stage the wrist over the lunchbox opening.",
+          "requires": ["fruit_on_floor"],
+          "adds": ["fruit_on_counter", "fruit_pose_verified", "wrist_over_lunchbox"],
+          "deletes": ["fruit_on_floor"],
+          "cost": 1.60,
+          "risk": 0.12,
+          "success_probability": 0.94
+        }
+      ]
+    },
+    {
+      "task_id": "prepare_ingredients",
+      "failure_label": "incomplete_transfer",
+      "failed_skill_id": "bowl_tomato",
+      "handoff_requires": ["board_clear", "knife_pose_verified"],
+      "handoff_failure_probability": 0.66,
+      "recovery_primitives": [
+        {
+          "id": "quick_regather_tomato",
+          "instruction": "Regather the chopped tomato at the board edge before retrying the transfer.",
+          "requires": ["tomato_chopped"],
+          "adds": ["tomato_regathered"],
+          "deletes": [],
+          "cost": 0.9,
+          "risk": 0.27,
+          "success_probability": 0.97
+        },
+        {
+          "id": "forward_regather_tomato",
+          "instruction": "Regather the chopped tomato and clear the board before retrying transfer.",
+          "requires": ["tomato_chopped"],
+          "adds": ["board_clear"],
+          "deletes": [],
+          "cost": 1.25,
+          "risk": 0.16,
+          "success_probability": 0.95,
+          "precompiled": true
+        },
+        {
+          "id": "transition_regather_tomato",
+          "instruction": "Regather the tomato, clear the board boundary, and verify a safe knife pose before retrying.",
+          "requires": ["tomato_chopped"],
+          "adds": ["tomato_regathered", "board_clear", "knife_pose_verified"],
+          "deletes": [],
+          "cost": 1.55,
+          "risk": 0.10,
+          "success_probability": 0.94
+        }
+      ]
+    }
+  ]
+}
