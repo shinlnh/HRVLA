@@ -15,6 +15,7 @@ plots = ["matplotlib>=3.8"]
 
 [project.scripts]
 hrvla-subtask = "hrvla_subtask.cli:main"
+hrvla-recovery = "hrvla_subtask.recovery_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

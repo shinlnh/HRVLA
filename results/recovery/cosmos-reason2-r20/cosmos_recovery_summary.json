@@ -1,0 +1,45 @@
+{
+  "backend": "nvidia/Cosmos-Reason2-2B",
+  "methods": {
+    "cosmos_baton_str": {
+      "decision_points": 120,
+      "full_handoff_contract_rate": 1.0,
+      "generated_tokens": 2198,
+      "mean_confidence": 0.27798783954172435,
+      "mean_handoff_contract_fraction": 1.0,
+      "mean_latency_ms": 772.3562477583508,
+      "optimal_selection_rate": 1.0,
+      "p95_latency_ms": 1563.4313900000052,
+      "safety_fallback_rate": 0.5333333333333333,
+      "valid_selection_rate": 1.0
+    },
+    "cosmos_best_of_n": {
+      "decision_points": 120,
+      "full_handoff_contract_rate": 0.3333333333333333,
+      "generated_tokens": 2198,
+      "mean_confidence": 0.666430230575595,
+      "mean_handoff_contract_fraction": 0.3333333333333333,
+      "mean_latency_ms": 772.3562477583508,
+      "optimal_selection_rate": 0.3333333333333333,
+      "p95_latency_ms": 1563.4313900000052,
+      "safety_fallback_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    "cosmos_direct": {
+      "decision_points": 120,
+      "full_handoff_contract_rate": 0.38333333333333336,
+      "generated_tokens": 2198,
+      "mean_confidence": 0.6011700210199863,
+      "mean_handoff_contract_fraction": 0.3875,
+      "mean_latency_ms": 772.3562477583508,
+      "optimal_selection_rate": 0.38333333333333336,
+      "p95_latency_ms": 1563.4313900000052,
+      "safety_fallback_rate": 0.0,
+      "valid_selection_rate": 0.9916666666666667
+    }
+  },
+  "model_path": "/home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561",
+  "peak_vram_gib": 5.439901828765869,
+  "schema_version": 1,
+  "shared_candidate_sets": true
+}

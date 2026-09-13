@@ -8,6 +8,7 @@ from typing import Any, Callable, Protocol
 
 from .model import Decision, ExecutionMemory, TaskSpec
 from .planner import WorldModelGuidedPlanner
+from .recovery import RecoveryPrimitive
 
 
 class ActionPolicy(Protocol):
@@ -49,3 +50,20 @@ class Gr00tSubtaskAdapter:
     def mark_execution_failure(self) -> None:
         if self.last_decision and self.last_decision.selected:
             self.memory.mark_failure(self.last_decision.selected.skill_id)
+
+
+@dataclass
+class Gr00tRecoveryAdapter:
+    """Send a bounded recovery instruction through the unchanged GR00T input contract."""
+
+    policy: ActionPolicy
+    language_key: str = "annotation.human.task_description"
+
+    def get_action(
+        self, observation: dict[str, Any], primitive: RecoveryPrimitive
+    ) -> Any:
+        recovery_observation = deepcopy(observation)
+        recovery_observation.setdefault("language", {})[self.language_key] = [
+            [primitive.instruction]
+        ]
+        return self.policy.get_action(recovery_observation)

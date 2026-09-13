@@ -1,0 +1,316 @@
+Validated locked SONIC source, workstation runtime, and artifacts.
+/HELIOS/Robotics/HRVLA/_vendor/IsaacLab/isaaclab.sh -p gear_sonic/eval_agent_trl.py +checkpoint=sonic_release/last.pt +headless=True ++num_envs=1 ++manager_env.observations.policy.enable_corruption=False ++manager_env.observations.tokenizer.enable_corruption=False ++manager_env.commands.motion.motion_lib_cfg.motion_file=sample_data/robot_filtered ++manager_env.commands.motion.motion_lib_cfg.smpl_motion_file=sample_data/smpl_filtered ++manager_env.config.train_only_events=[] ++eval_callbacks=im_eval ++run_eval_loop=False ++metrics_file=/HELIOS/Robotics/HRVLA/results/recovery/isaacsim/sonic-push-32env/metrics_eval.json ++manager_env.config.save_rendering_dir=/HELIOS/Robotics/HRVLA/results/recovery/isaacsim/push-recording/render_results ++manager_env.config.render_results=True ++manager_env.config.env_spacing=10.0 ++manager_env.config.render_width=960 ++manager_env.config.render_height=544 ++manager_env.config.render_frame_skip=4 manager_env/recorders=render
+[3gH    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H    H   [INFO] Using python from: /HELIOS/Robotics/HRVLA/_vendor/IsaacLab/_isaac_sim/python.sh
+[32m2026-09-13 12:43:40.036[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m90[0m - [1mLoading training config file from sonic_release/config.yaml[0m
+Setting seed: 0
+[WARN][AppLauncher]: There are no arguments attached to the ArgumentParser object. If you have your own arguments, please load your own arguments before calling the `AppLauncher.add_app_launcher_args` method. This allows the method to check the validity of the arguments and perform checks for argument names.
+[INFO][AppLauncher]: Using device: cuda
+[INFO][AppLauncher]: Loading experience file: /home/shin/IsaacLab/apps/isaaclab.python.headless.rendering.kit
+Loading user config located at: '/home/shin/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json'
+[2026-09-13 12:43:40,408][asyncio][DEBUG] - Using selector: EpollSelector
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.173.02    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 5070 Ti       | Yes: 0 |     | 16303   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2c05      | da696980.. |
+|     |                                  |        |     |            | 1         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (RPL-S)        |        |     | 23847   MB | 8086      | 0          |
+|     |                                  |        |     |            | a780      | 868080a7.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 24.04.5 LTS (Noble Numbat) ubuntu, Version: 24.04.5, Kernel: 7.0.0-31-generic
+| Processor: Intel(R) Core(TM) i9-14900K
+| Bare Metal Cores: 24 | Bare Metal Logical Cores: 48
+| Available Cores:  32 
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31796 | Free Memory: 21601
+| Total Page/Swap (MB): 8191 | Free Page/Swap: 8168
+|---------------------------------------------------------------------------------------------|
+Unidirectional P2P=Enabled Bandwidth (P2P Writes) Matrix (GB/s)
+   D\D     0 
+     0 764.81 
+P2P=Enabled Latency (P2P Writes) Matrix (us)
+   GPU     0 
+     0   2.08 
+
+   CPU     0 
+     0   1.28 
+[2026-09-13 12:43:41,472][AutoNode][DEBUG] - Defining data type 'any' as 'Any'
+[2026-09-13 12:43:41,472][AutoNode][DEBUG] - Defining data type 'bool' as 'Bool' and array 'BoolArray
+[2026-09-13 12:43:41,472][AutoNode][DEBUG] - Defining data type 'bundle' as 'Bundle'
+[2026-09-13 12:43:41,472][AutoNode][DEBUG] - Defining data type 'colord[3]' as 'Color3d' and array 'Color3dArray
+[2026-09-13 12:43:41,472][AutoNode][DEBUG] - Defining data type 'colorf[3]' as 'Color3f' and array 'Color3fArray
+[2026-09-13 12:43:41,472][AutoNode][DEBUG] - Defining data type 'colorh[3]' as 'Color3h' and array 'Color3hArray
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'colord[4]' as 'Color4d' and array 'Color4dArray
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'colorf[4]' as 'Color4f' and array 'Color4fArray
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'colorh[4]' as 'Color4h' and array 'Color4hArray
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'double' as 'Double' and array 'DoubleArray
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'double[2]' as 'Double2' and array 'Double2Array
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'double[3]' as 'Double3' and array 'Double3Array
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'double[4]' as 'Double4' and array 'Double4Array
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'execution' as 'Execution'
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'float' as 'Float' and array 'FloatArray
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'float[2]' as 'Float2' and array 'Float2Array
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'float[3]' as 'Float3' and array 'Float3Array
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'float[4]' as 'Float4' and array 'Float4Array
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'frame[4]' as 'Frame' and array 'FrameArray
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'half' as 'Half' and array 'HalfArray
+[2026-09-13 12:43:41,473][AutoNode][DEBUG] - Defining data type 'half[2]' as 'Half2' and array 'Half2Array
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'half[3]' as 'Half3' and array 'Half3Array
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'half[4]' as 'Half4' and array 'Half4Array
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'int' as 'Int' and array 'IntArray
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'int[2]' as 'Int2' and array 'Int2Array
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'int[3]' as 'Int3' and array 'Int3Array
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'int[4]' as 'Int4' and array 'Int4Array
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'int64' as 'Int64' and array 'Int64Array
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'matrixd[2]' as 'Matrix2d' and array 'Matrix2dArray
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'matrixd[3]' as 'Matrix3d' and array 'Matrix3dArray
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'matrixd[4]' as 'Matrix4d' and array 'Matrix4dArray
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'normald[3]' as 'Normal3d' and array 'Normal3dArray
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'normalf[3]' as 'Normal3f' and array 'Normal3fArray
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'normalh[3]' as 'Normal3h' and array 'Normal3hArray
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'objectId' as 'ObjectId' and array 'ObjectIdArray
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'path' as 'Path'
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'pointd[3]' as 'Point3d' and array 'Point3dArray
+[2026-09-13 12:43:41,474][AutoNode][DEBUG] - Defining data type 'pointf[3]' as 'Point3f' and array 'Point3fArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'pointh[3]' as 'Point3h' and array 'Point3hArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'quatd[4]' as 'Quatd' and array 'QuatdArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'quatf[4]' as 'Quatf' and array 'QuatfArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'quath[4]' as 'Quath' and array 'QuathArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'string' as 'String'
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'target' as 'Target'
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'texcoordd[2]' as 'TexCoord2d' and array 'TexCoord2dArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'texcoordf[2]' as 'TexCoord2f' and array 'TexCoord2fArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'texcoordh[2]' as 'TexCoord2h' and array 'TexCoord2hArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'texcoordd[3]' as 'TexCoord3d' and array 'TexCoord3dArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'texcoordf[3]' as 'TexCoord3f' and array 'TexCoord3fArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'texcoordh[3]' as 'TexCoord3h' and array 'TexCoord3hArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'timecode' as 'Timecode' and array 'TimecodeArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'token' as 'Token' and array 'TokenArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'uchar' as 'UChar' and array 'UCharArray
+[2026-09-13 12:43:41,475][AutoNode][DEBUG] - Defining data type 'uint' as 'UInt' and array 'UIntArray
+[2026-09-13 12:43:41,476][AutoNode][DEBUG] - Defining data type 'uint64' as 'UInt64' and array 'UInt64Array
+[2026-09-13 12:43:41,476][AutoNode][DEBUG] - Defining data type 'vectord[3]' as 'Vector3d' and array 'Vector3dArray
+[2026-09-13 12:43:41,476][AutoNode][DEBUG] - Defining data type 'vectorf[3]' as 'Vector3f' and array 'Vector3fArray
+[2026-09-13 12:43:41,476][AutoNode][DEBUG] - Defining data type 'vectorh[3]' as 'Vector3h' and array 'Vector3hArray
+[2026-09-13 12:43:42,917][h5py._conv][DEBUG] - Creating converter from 7 to 5
+[2026-09-13 12:43:42,917][h5py._conv][DEBUG] - Creating converter from 5 to 7
+[2026-09-13 12:43:42,918][h5py._conv][DEBUG] - Creating converter from 7 to 5
+[2026-09-13 12:43:42,918][h5py._conv][DEBUG] - Creating converter from 5 to 7
+[2026-09-13 12:43:42,995][matplotlib][DEBUG] - matplotlib data path: /home/shin/isaacsim/exts/omni.isaac.core_archive/pip_prebundle/matplotlib/mpl-data
+[2026-09-13 12:43:42,999][matplotlib][DEBUG] - CONFIGDIR=/home/shin/.config/matplotlib
+[2026-09-13 12:43:43,001][matplotlib][DEBUG] - interactive is False
+[2026-09-13 12:43:43,001][matplotlib][DEBUG] - platform is linux
+[2026-09-13 12:43:44,716][filelock][DEBUG] - Attempting to release lock 124046995751184 on /tmp/isaaclab_app_launcher.lock
+[2026-09-13 12:43:44,716][filelock][DEBUG] - Lock 124046995751184 released on /tmp/isaaclab_app_launcher.lock
+[32m2026-09-13 12:43:45.781[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.torch_humanoid_batch[0m:[36m<module>[0m:[36m40[0m - [1mUsing Humanoid Batch[0m
+[DEBUG] Instantiated events: EventCfg(physics_material=EventTermCfg(func='gear_sonic.envs.manager_env.mdp:randomize_rigid_body_material', params={'asset_cfg': SceneEntityCfg(name='robot', joint_names=None, joint_ids=slice(None, None, None), fixed_tendon_names=None, fixed_tendon_ids=slice(None, None, None), body_names='.*', body_ids=slice(None, None, None), object_collection_names=None, object_collection_ids=slice(None, None, None), preserve_order=False), 'static_friction_range': [0.3, 1.6], 'dynamic_friction_range': [0.3, 1.2], 'restitution_range': [0.0, 0.5], 'num_buckets': 64}, mode='startup', interval_range_s=None, is_global_time=False, min_step_count_between_reset=0), add_joint_default_pos=EventTermCfg(func='gear_sonic.envs.manager_env.mdp:randomize_joint_default_pos', params={'asset_cfg': SceneEntityCfg(name='robot', joint_names=['.*'], joint_ids=slice(None, None, None), fixed_tendon_names=None, fixed_tendon_ids=slice(None, None, None), body_names=None, body_ids=slice(None, None, None), object_collection_names=None, object_collection_ids=slice(None, None, None), preserve_order=False), 'pos_distribution_params': [-0.01, 0.01], 'operation': 'add'}, mode='startup', interval_range_s=None, is_global_time=False, min_step_count_between_reset=0), add_hand_joint_default_pos=None, base_com=EventTermCfg(func='gear_sonic.envs.manager_env.mdp:randomize_rigid_body_com', params={'asset_cfg': SceneEntityCfg(name='robot', joint_names=None, joint_ids=slice(None, None, None), fixed_tendon_names=None, fixed_tendon_ids=slice(None, None, None), body_names='torso_link', body_ids=slice(None, None, None), object_collection_names=None, object_collection_ids=slice(None, None, None), preserve_order=False), 'com_range': {'x': [-0.025, 0.025], 'y': [-0.05, 0.05], 'z': [-0.05, 0.05]}}, mode='startup', interval_range_s=None, is_global_time=False, min_step_count_between_reset=0), push_robot=EventTermCfg(func='gear_sonic.envs.manager_env.mdp:push_by_setting_velocity', params={'velocity_range': {'x': [-0.5, 0.5], 'y': [-0.5, 0.5], 'z': [-0.2, 0.2], 'roll': [-0.52, 0.52], 'pitch': [-0.52, 0.52], 'yaw': [-0.78, 0.78]}}, mode='interval', interval_range_s=[4.0, 6.0], is_global_time=False, min_step_count_between_reset=0), randomize_rigid_body_mass=EventTermCfg(func='gear_sonic.envs.manager_env.mdp:randomize_rigid_body_mass', params={'asset_cfg': SceneEntityCfg(name='robot', joint_names=None, joint_ids=slice(None, None, None), fixed_tendon_names=None, fixed_tendon_ids=slice(None, None, None), body_names='.*wrist_yaw.*|torso_link', body_ids=slice(None, None, None), object_collection_names=None, object_collection_ids=slice(None, None, None), preserve_order=False), 'mass_distribution_params': [0.8, 1.5], 'operation': 'scale'}, mode='startup', interval_range_s=None, is_global_time=False, min_step_count_between_reset=0))
+[DEBUG]   Event 'physics_material': EventTermCfg
+[DEBUG]   Event 'add_joint_default_pos': EventTermCfg
+[DEBUG]   Event 'base_com': EventTermCfg
+[DEBUG]   Event 'push_robot': EventTermCfg
+[DEBUG]   Event 'randomize_rigid_body_mass': EventTermCfg
+
+[36m======================================================================================[0m
+[36m[1m[INFO][IsaacLab]: Logging to file: /tmp/isaaclab/logs/isaaclab_2026-09-13_12-43-45.log[0m
+[36m======================================================================================[0m
+
+[33m12:43:45 [simulation_context.py] WARNING: The `enable_external_forces_every_iteration` parameter in the PhysxCfg is set to False. If you are experiencing noisy velocities, consider enabling this flag. You may need to slightly increase the number of velocity iterations (setting it to 1 or 2 rather than 0), together with this flag, to improve the accuracy of velocity updates.[0m
+[INFO]: Base environment:
+	Environment device    : cuda:0
+	Environment seed      : 0
+	Physics step-size     : 0.005
+	Rendering step-size   : 0.02
+	Environment step-size : 0.02
+[INFO] Generating terrains randomly took : 1.896238 seconds
+[INFO]: Time taken for scene creation : 3.423768 seconds
+[INFO]: Scene manager:  <class InteractiveScene>
+	Number of environments: 1
+	Environment spacing   : 10.0
+	Source prim name      : /World/envs/env_0
+	Global prim paths     : []
+	Replicate physics     : True
+[INFO]: Starting the simulation. This may take a few seconds. Please wait...
+[INFO]: Time taken for simulation start : 3.221132 seconds
+[32m2026-09-13 12:43:52.527[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36m__init__[0m:[36m235[0m - [1mLoaded skeleton from gear_sonic/data/assets/robot_description/mjcf/g1_29dof_rev_1_0.xml[0m
+[32m2026-09-13 12:43:52.527[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36m__init__[0m:[36m236[0m - [1mLoading motion data from sample_data/robot_filtered...[0m
+Loaded 2 motion files
+[32m2026-09-13 12:43:52.527[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_data[0m:[36m472[0m - [1mLoaded 1 motions[0m
+Loading Meshes ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Loading Geoms... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[32m2026-09-13 12:43:52.835[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1091[0m - [1mLoading 1 motions...[0m
+[32m2026-09-13 12:43:52.835[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1092[0m - [1mSampling motion: tensor([0], device='cuda:0'), ....[0m
+[32m2026-09-13 12:43:52.835[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1093[0m - [1mCurrent motion keys: ['walk_forward_amateur_001__A001'], ....[0m
+[32m2026-09-13 12:43:52.835[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1120[0m - [1mIncreased file descriptor limits from 2450/1048576 to 1048576/1048576[0m
+[32m2026-09-13 12:43:52.892[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1140[0m - [1mLoading motions with 1 jobs...[0m
+Loading motions... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Gathering results for non-navigation dataset... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  
+Processing motions... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[32m2026-09-13 12:43:53.023[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1577[0m - [1mLoaded 1 motions with a total length of 40.020s and 2002 frames.[0m
+[INFO] Command Manager:  <CommandManager> contains 1 active terms.
++----------------------------------+
+|       Active Command Terms       |
++-------+--------+-----------------+
+| Index | Name   |       Type      |
++-------+--------+-----------------+
+|   0   | motion | TrackingCommand |
++-------+--------+-----------------+
+
+[INFO] Event Manager:  <EventManager> contains 2 active terms.
++----------------------------------------+
+| Active Event Terms in Mode: 'startup'  |
++--------+-------------------------------+
+| Index  | Name                          |
++--------+-------------------------------+
+|   0    | physics_material              |
+|   1    | add_joint_default_pos         |
+|   2    | base_com                      |
+|   3    | randomize_rigid_body_mass     |
++--------+-------------------------------+
++----------------------------------------------+
+|    Active Event Terms in Mode: 'interval'    |
++-------+------------+-------------------------+
+| Index | Name       | Interval time range (s) |
++-------+------------+-------------------------+
+|   0   | push_robot |        [4.0, 6.0]       |
++-------+------------+-------------------------+
+
+[32m2026-09-13 12:43:53.370[0m | [1mINFO    [0m | [36mgear_sonic.envs.manager_env.mdp.recorders[0m:[36m__init__[0m:[36m44[0m - [1m=== Start recording video to /HELIOS/Robotics/HRVLA/results/recovery/isaacsim/push-recording/render_results ===[0m
+[INFO] Recorder Manager:  <RecorderManager> contains 1 active terms.
++------------------------+
+| Active Recorder Terms  |
++--------+---------------+
+| Index  | Name          |
++--------+---------------+
+|   0    | render_envs   |
++--------+---------------+
+
+[INFO] Action Manager:  <ActionManager> contains 1 active terms.
++------------------------------------+
+|  Active Action Terms (shape: 29)   |
++--------+-------------+-------------+
+| Index  | Name        |   Dimension |
++--------+-------------+-------------+
+|   0    | joint_pos   |          29 |
++--------+-------------+-------------+
+
+[INFO] Observation Manager: <ObservationManager> contains 3 groups.
++---------------------------------------------------------+
+| Active Observation Terms in Group: 'policy' (shape: (930,)) |
++-------------+---------------------------+---------------+
+|    Index    | Name                      |     Shape     |
++-------------+---------------------------+---------------+
+|      0      | base_ang_vel              |     (30,)     |
+|      1      | joint_pos                 |     (290,)    |
+|      2      | joint_vel                 |     (290,)    |
+|      3      | actions                   |     (290,)    |
+|      4      | gravity_dir               |     (30,)     |
++-------------+---------------------------+---------------+
++------------------------------------------------------------+
+| Active Observation Terms in Group: 'critic' (shape: (1645,)) |
++-----------+-----------------------------------+------------+
+|   Index   | Name                              |   Shape    |
++-----------+-----------------------------------+------------+
+|     0     | command_multi_future              |   (580,)   |
+|     1     | motion_anchor_pos_b               |    (3,)    |
+|     2     | motion_anchor_ori_b               |    (6,)    |
+|     3     | body_pos                          |   (42,)    |
+|     4     | body_ori                          |   (84,)    |
+|     5     | base_lin_vel                      |   (30,)    |
+|     6     | base_ang_vel                      |   (30,)    |
+|     7     | joint_pos                         |   (290,)   |
+|     8     | joint_vel                         |   (290,)   |
+|     9     | actions                           |   (290,)   |
++-----------+-----------------------------------+------------+
++-----------------------------------------------------------+
+|       Active Observation Terms in Group: 'tokenizer'      |
++-------+----------------------------------------+----------+
+| Index | Name                                   |  Shape   |
++-------+----------------------------------------+----------+
+|   0   | encoder_index                          |   (3,)   |
+|   1   | command_multi_future_nonflat           | (10, 58) |
+|   2   | command_z_multi_future_nonflat         | (10, 1)  |
+|   3   | command_z                              |   (1,)   |
+|   4   | motion_anchor_ori_b                    |   (6,)   |
+|   5   | motion_anchor_ori_b_mf_nonflat         | (10, 6)  |
+|   6   | command_multi_future_lower_body        |  (240,)  |
+|   7   | vr_3point_local_target                 |   (9,)   |
+|   8   | vr_3point_local_orn_target             |  (12,)   |
+|   9   | smpl_joints_multi_future_local_nonflat | (10, 72) |
+|   10  | smpl_root_ori_b_multi_future           | (10, 6)  |
+|   11  | joint_pos_multi_future_wrist_for_smpl  | (10, 6)  |
++-------+----------------------------------------+----------+
+
+[INFO] Termination Manager:  <TerminationManager> contains 5 active terms.
++------------------------------------+
+|      Active Termination Terms      |
++-------+-----------------+----------+
+| Index | Name            | Time Out |
++-------+-----------------+----------+
+|   0   | time_out        |   True   |
+|   1   | anchor_pos      |  False   |
+|   2   | anchor_ori_full |  False   |
+|   3   | ee_body_pos     |  False   |
+|   4   | foot_pos_xyz    |  False   |
++-------+-----------------+----------+
+
+[INFO] Reward Manager:  <RewardManager> contains 12 active terms.
++-----------------------------------------------+
+|              Active Reward Terms              |
++-------+----------------------------+----------+
+| Index | Name                       |   Weight |
++-------+----------------------------+----------+
+|   0   | tracking_anchor_pos        |      0.5 |
+|   1   | tracking_anchor_ori        |      0.5 |
+|   2   | tracking_relative_body_pos |      1.0 |
+|   3   | tracking_relative_body_ori |      1.0 |
+|   4   | tracking_body_linvel       |      1.0 |
+|   5   | tracking_body_angvel       |      1.0 |
+|   6   | action_rate_l2             |     -0.1 |
+|   7   | joint_limit                |    -10.0 |
+|   8   | undesired_contacts         |     -0.1 |
+|   9   | anti_shake_ang_vel         |   -0.005 |
+|   10  | tracking_vr_5point_local   |      2.0 |
+|   11  | feet_acc                   | -2.5e-06 |
++-------+----------------------------+----------+
+
+[INFO] Curriculum Manager:  <CurriculumManager> contains 0 active terms.
++----------------------+
+| Active Curriculum Terms |
++-----------+----------+
+|   Index   | Name     |
++-----------+----------+
++-----------+----------+
+
+[INFO]: Completed setting up the environment...
+[32m2026-09-13 12:43:54.967[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m250[0m - [1mMotion Encoder and Quantizer initialized with embedding dim: 64 (num_tokens=2, token_dim=32)[0m
+[32m2026-09-13 12:43:55.059[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m319[0m - [1mInitialized g1 encoder with input features: ['command_multi_future_nonflat', 'motion_anchor_ori_b_mf_nonflat'][0m
+[32m2026-09-13 12:43:55.071[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m319[0m - [1mInitialized teleop encoder with input features: ['command_multi_future_lower_body', 'vr_3point_local_target', 'vr_3point_local_orn_target', 'motion_anchor_ori_b'][0m
+[32m2026-09-13 12:43:55.087[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m319[0m - [1mInitialized smpl encoder with input features: ['smpl_joints_multi_future_local_nonflat', 'smpl_root_ori_b_multi_future', 'joint_pos_multi_future_wrist_for_smpl'][0m
+[32m2026-09-13 12:43:55.118[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m409[0m - [1mInitialized g1_dyn decoder with input features: ['token_flattened', 'proprioception'] and output features: ['action'][0m
+[32m2026-09-13 12:43:55.130[0m | [1mINFO    [0m | [36mgear_sonic.trl.modules.universal_token_modules[0m:[36m__init__[0m:[36m409[0m - [1mInitialized g1_kin decoder with input features: ['token'] and output features: ['command_multi_future_nonflat', 'motion_anchor_ori_b_mf_nonflat'][0m
+RunningMeanStd:  (1645,)
+[32m2026-09-13 12:43:56.262[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m433[0m - [1mLoading checkpoint from sonic_release/last.pt[0m
+[32m2026-09-13 12:43:56.354[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m449[0m - [1mModel parameterization: std[0m
+[32m2026-09-13 12:43:56.354[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m450[0m - [1mCheckpoint parameterization: std[0m
+[32m2026-09-13 12:43:56.355[0m | [1mINFO    [0m | [36m__main__[0m:[36mmain[0m:[36m462[0m - [1mSuccessfully loaded policy state dict[0m
+[32m2026-09-13 12:43:56.357[0m | [1mINFO    [0m | [36mgear_sonic.envs.wrapper.manager_env_wrapper[0m:[36mbegin_seq_motion_samples[0m:[36m1022[0m - [1mLoading motions for evaluation[0m
+[32m2026-09-13 12:43:56.358[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1091[0m - [1mLoading 1 motions...[0m
+[32m2026-09-13 12:43:56.358[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1092[0m - [1mSampling motion: tensor([0], device='cuda:0'), ....[0m
+[32m2026-09-13 12:43:56.358[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1093[0m - [1mCurrent motion keys: ['walk_forward_amateur_001__A001'], ....[0m
+[32m2026-09-13 12:43:56.410[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1140[0m - [1mLoading motions with 1 jobs...[0m
+Loading motions... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+Gathering results... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━   
+Processing motions... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+[32m2026-09-13 12:43:56.531[0m | [1mINFO    [0m | [36mgear_sonic.utils.motion_lib.motion_lib_base[0m:[36mload_motions[0m:[36m1577[0m - [1mLoaded 1 motions with a total length of 40.020s and 2002 frames.[0m
+============================================Evaluating policy============================================
+[32m2026-09-13 12:43:57.103[0m | [1mINFO    [0m | [36mgear_sonic.envs.manager_env.mdp.recorders[0m:[36m_initialize_writers[0m:[36m57[0m - [1mSaving rendering to /HELIOS/Robotics/HRVLA/results/recovery/isaacsim/push-recording/render_results[0m
+Rendering only. Reached the end of the evaluation loop.
+[32m2026-09-13 12:45:46.618[0m | [1mINFO    [0m | [36mgear_sonic.envs.manager_env.mdp.recorders[0m:[36mclose_writers[0m:[36m168[0m - [1mClosed video writer 0[0m
+[32m2026-09-13 12:45:46.618[0m | [1mINFO    [0m | [36mgear_sonic.envs.manager_env.mdp.recorders[0m:[36mclose_writers[0m:[36m177[0m - [1m=== All video writers closed ===[0m

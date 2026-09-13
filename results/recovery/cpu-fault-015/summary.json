@@ -1,0 +1,167 @@
+{
+  "methods": {
+    "agentchord": {
+      "episodes": 18000,
+      "escalations_per_episode": 0.0,
+      "failure_recovery_rate": 1.0,
+      "failure_recovery_wilson95": [
+        0.9997927774477289,
+        1.0
+      ],
+      "handoff_contract_rate": 0.5869554810914313,
+      "handoff_failure_rate": 0.30047869794159887,
+      "mean_actions": 11.198611111111111,
+      "mean_planner_latency_ms": 5.117178926774993,
+      "mean_progress": 0.9814814814814815,
+      "mean_recovery_decision_latency_ms": 0.008624481779534445,
+      "mean_recovery_latency_actions": 4.059512247760872,
+      "memory_hit_rate": 0.0,
+      "monitor_queries_per_failure": 1.9218733139095716,
+      "nominal_model_calls_per_episode": 33.105111111111114,
+      "recovery_actions_per_failure": 1.9218733139095716,
+      "recovery_model_calls_per_failure": 0.0,
+      "rollback_actions_per_episode": 0.0,
+      "task_success_rate": 1.0,
+      "task_success_wilson95": [
+        0.9997866311570518,
+        1.0
+      ]
+    },
+    "baton_str": {
+      "episodes": 18000,
+      "escalations_per_episode": 0.0,
+      "failure_recovery_rate": 1.0,
+      "failure_recovery_wilson95": [
+        0.9997928221514985,
+        1.0
+      ],
+      "handoff_contract_rate": 1.0,
+      "handoff_failure_rate": 0.0,
+      "mean_actions": 10.498833333333334,
+      "mean_planner_latency_ms": 4.450200232171685,
+      "mean_progress": 0.9814814814814815,
+      "mean_recovery_decision_latency_ms": 0.014827844592757643,
+      "mean_recovery_latency_actions": 3.3750134858129246,
+      "memory_hit_rate": 0.1032632837860926,
+      "monitor_queries_per_failure": 1.5786492609774516,
+      "nominal_model_calls_per_episode": 31.76061111111111,
+      "recovery_actions_per_failure": 1.5786492609774516,
+      "recovery_model_calls_per_failure": 0.0,
+      "rollback_actions_per_episode": 0.0,
+      "task_success_rate": 1.0,
+      "task_success_wilson95": [
+        0.9997866311570518,
+        1.0
+      ]
+    },
+    "doremi": {
+      "episodes": 18000,
+      "escalations_per_episode": 0.0,
+      "failure_recovery_rate": 0.994497194648252,
+      "failure_recovery_wilson95": [
+        0.99332496550827,
+        0.9954645039549755
+      ],
+      "handoff_contract_rate": 0.08404663859714061,
+      "handoff_failure_rate": 0.6625873316985148,
+      "mean_actions": 13.684833333333334,
+      "mean_planner_latency_ms": 6.073462119336593,
+      "mean_progress": 0.9765231481481482,
+      "mean_recovery_decision_latency_ms": 0.009561872232065952,
+      "mean_recovery_latency_actions": 6.3449603992622325,
+      "memory_hit_rate": 0.0,
+      "monitor_queries_per_failure": 9.471299093655588,
+      "nominal_model_calls_per_episode": 37.91711111111111,
+      "recovery_actions_per_failure": 3.1570996978851964,
+      "recovery_model_calls_per_failure": 3.1570996978851964,
+      "rollback_actions_per_episode": 0.0,
+      "task_success_rate": 0.9915555555555555,
+      "task_success_wilson95": [
+        0.9901099392855669,
+        0.9927914065452766
+      ]
+    },
+    "inner_monologue": {
+      "episodes": 18000,
+      "escalations_per_episode": 0.0,
+      "failure_recovery_rate": 0.994497194648252,
+      "failure_recovery_wilson95": [
+        0.99332496550827,
+        0.9954645039549755
+      ],
+      "handoff_contract_rate": 0.08404663859714061,
+      "handoff_failure_rate": 0.6625873316985148,
+      "mean_actions": 13.684833333333334,
+      "mean_planner_latency_ms": 5.88983280083063,
+      "mean_progress": 0.9765231481481482,
+      "mean_recovery_decision_latency_ms": 0.00927482761448981,
+      "mean_recovery_latency_actions": 6.3449603992622325,
+      "memory_hit_rate": 0.0,
+      "monitor_queries_per_failure": 3.1570996978851964,
+      "nominal_model_calls_per_episode": 37.91711111111111,
+      "recovery_actions_per_failure": 3.1570996978851964,
+      "recovery_model_calls_per_failure": 3.1570996978851964,
+      "rollback_actions_per_episode": 0.0,
+      "task_success_rate": 0.9915555555555555,
+      "task_success_wilson95": [
+        0.9901099392855669,
+        0.9927914065452766
+      ]
+    },
+    "no_recovery": {
+      "episodes": 18000,
+      "escalations_per_episode": 0.0,
+      "failure_recovery_rate": 0.6227324416526777,
+      "failure_recovery_wilson95": [
+        0.6157168207550814,
+        0.6296970121829562
+      ],
+      "handoff_contract_rate": 0.0,
+      "handoff_failure_rate": 0.6928892460636367,
+      "mean_actions": 22.570611111111113,
+      "mean_planner_latency_ms": 7.311885472446811,
+      "mean_progress": 0.7740396825396826,
+      "mean_recovery_decision_latency_ms": 0.005627105805864158,
+      "mean_recovery_latency_actions": 3.9343478260869564,
+      "memory_hit_rate": 0.0,
+      "monitor_queries_per_failure": 0.0,
+      "nominal_model_calls_per_episode": 61.61638888888889,
+      "recovery_actions_per_failure": 0.0,
+      "recovery_model_calls_per_failure": 0.0,
+      "rollback_actions_per_episode": 0.0,
+      "task_success_rate": 0.6129444444444444,
+      "task_success_wilson95": [
+        0.6058055045778764,
+        0.6200351866601553
+      ]
+    },
+    "rekep": {
+      "episodes": 18000,
+      "escalations_per_episode": 0.0,
+      "failure_recovery_rate": 0.6208371690041696,
+      "failure_recovery_wilson95": [
+        0.6138150796897628,
+        0.6278089962869551
+      ],
+      "handoff_contract_rate": 0.0,
+      "handoff_failure_rate": 0.6921236768135877,
+      "mean_actions": 24.313944444444445,
+      "mean_planner_latency_ms": 7.156621473555826,
+      "mean_progress": 0.7725983465608466,
+      "mean_recovery_decision_latency_ms": 0.005561396983840768,
+      "mean_recovery_latency_actions": 6.5801133885739205,
+      "memory_hit_rate": 0.0,
+      "monitor_queries_per_failure": 8.491904478258515,
+      "nominal_model_calls_per_episode": 47.59961111111111,
+      "recovery_actions_per_failure": 8.491904478258515,
+      "recovery_model_calls_per_failure": 0.0,
+      "rollback_actions_per_episode": 8.712222222222222,
+      "task_success_rate": 0.6097777777777778,
+      "task_success_wilson95": [
+        0.6026289481610235,
+        0.6168797610796802
+      ]
+    }
+  },
+  "schema_version": 1
+}

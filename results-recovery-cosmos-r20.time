@@ -1,0 +1,23 @@
+	Command being timed: "_vendor/Isaac-GR00T/.venv/bin/python scripts/subtask_recovery.py gpu-eval --model-path /home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561 --output-dir results/recovery/cosmos-reason2-r20 --candidates-per-failure 3 --repetitions 20"
+	User time (seconds): 95.36
+	System time (seconds): 5.93
+	Percent of CPU this job got: 105%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:35.95
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5570612
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 7
+	Minor (reclaiming a frame) page faults: 428105
+	Voluntary context switches: 1409
+	Involuntary context switches: 2500
+	Swaps: 0
+	File system inputs: 2160
+	File system outputs: 1464
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

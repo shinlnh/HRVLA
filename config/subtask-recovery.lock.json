@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "method": "BATON-STR transition-aware subtask recovery",
+  "implementation_status": "independent_algorithmic adaptation",
+  "reference_date": "2026-09-13",
+  "primary_reference": {
+    "title": "Don't Drop the BATON: Long-Horizon Robot Manipulation via Agentic Subtask Exploration and Transition-aware Memory",
+    "arxiv": "2608.16889v1",
+    "url": "https://arxiv.org/abs/2608.16889"
+  },
+  "related_references": [
+    {
+      "title": "From Reaction to Anticipation: Proactive Failure Recovery through Agentic Task Graph for Robotic Manipulation",
+      "arxiv": "2605.11951v2",
+      "url": "https://arxiv.org/abs/2605.11951"
+    },
+    {
+      "title": "Recover, Discover, Plan: Learning Skills and Concepts from Robot Failures",
+      "arxiv": "2606.18328v1",
+      "url": "https://arxiv.org/abs/2606.18328"
+    },
+    {
+      "title": "Learning Actionable Manipulation Recovery via Counterfactual Failure Synthesis",
+      "arxiv": "2603.13528v1",
+      "url": "https://arxiv.org/abs/2603.13528"
+    },
+    {
+      "title": "ReKep: Spatio-Temporal Reasoning of Relational Keypoint Constraints for Robotic Manipulation",
+      "arxiv": "2409.01652v2",
+      "url": "https://arxiv.org/abs/2409.01652"
+    },
+    {
+      "title": "DoReMi: Grounding Language Model by Detecting and Recovering from Plan-Execution Misalignment",
+      "arxiv": "2307.00329v2",
+      "url": "https://arxiv.org/abs/2307.00329"
+    },
+    {
+      "title": "Inner Monologue: Embodied Reasoning through Planning with Language Models",
+      "arxiv": "2207.05608v2",
+      "url": "https://arxiv.org/abs/2207.05608"
+    }
+  ],
+  "proposal_model": {
+    "repo_id": "nvidia/Cosmos-Reason2-2B",
+    "revision": "9ce19a195e423419c349abfc86fd07178b230561",
+    "role": "open recovery-candidate proposal model; not an official BATON checkpoint"
+  },
+  "recovery": {
+    "entry_readiness_gate": true,
+    "handoff_contract": true,
+    "successor_lookahead": true,
+    "transition_beta_memory": true,
+    "checkpoint_fallback": true,
+    "low_level_interface": "bounded natural-language recovery primitive"
+  },
+  "claim_boundary": "The implementation adapts BATON's published transition-aware design to the repository's auditable symbolic task model and GR00T language adapter. Paper baselines are mechanism-matched proxies, not official code or checkpoints. Isaac Sim SONIC results validate the unchanged whole-body execution substrate, not end-to-end object recovery."
+}
