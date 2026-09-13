@@ -270,7 +270,7 @@ def main() -> int:
                 f"++manager_env.config.render_width={args.render_width}",
                 f"++manager_env.config.render_height={args.render_height}",
                 "++manager_env.config.render_frame_skip=4",
-                "+manager_env/recorders=render",
+                "manager_env/recorders=render",
             ]
         )
     else:
