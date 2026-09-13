@@ -94,11 +94,18 @@ def evaluate_cosmos_recovery(
     *,
     model_path: str | Path,
     candidates_per_failure: int = 3,
+    repetitions: int = 1,
     seed: int = 42,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     backend = CosmosReasonBackend(model_path)
     records: list[dict[str, Any]] = []
-    for task_index, task in enumerate(tasks):
+    task_list = list(tasks)
+    evaluation_points = (
+        (repetition, task_index, task)
+        for repetition in range(repetitions)
+        for task_index, task in enumerate(task_list)
+    )
+    for repetition, task_index, task in evaluation_points:
         scenario = scenarios[task.task_id]
         augmented = _augmented_task(task, scenario)
         before, failed_state = _failure_point(task, scenario)
@@ -111,7 +118,7 @@ def evaluate_cosmos_recovery(
             failed_state,
             memory,
             candidates_per_failure,
-            seed + task_index * 1009,
+            seed + repetition * 100_003 + task_index * 1009,
         )
         latency_ms = (time.perf_counter() - started) * 1000.0
         generated_tokens = backend.generated_tokens - tokens_before
@@ -177,6 +184,7 @@ def evaluate_cosmos_recovery(
             records.append(
                 {
                     "method": method,
+                    "repetition": repetition,
                     "task_id": task.task_id,
                     "failure_label": scenario.failure_label,
                     "failed_state": sorted(failed_state),

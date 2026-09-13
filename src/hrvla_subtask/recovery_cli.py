@@ -149,6 +149,7 @@ def command_gpu_eval(args: argparse.Namespace) -> int:
         scenarios,
         model_path=args.model_path,
         candidates_per_failure=args.candidates_per_failure,
+        repetitions=args.repetitions,
         seed=args.seed,
     )
     output = args.output_dir.resolve()
@@ -160,6 +161,7 @@ def command_gpu_eval(args: argparse.Namespace) -> int:
             "protocol": str(args.protocol),
             "model_path": str(args.model_path),
             "candidates_per_failure": args.candidates_per_failure,
+            "repetitions": args.repetitions,
             "seed": args.seed,
             "shared_candidate_sets": True,
         },
@@ -196,6 +198,7 @@ def build_parser() -> argparse.ArgumentParser:
             command.add_argument("--output-dir", type=Path, required=True)
             command.add_argument("--model-path", type=Path, required=True)
             command.add_argument("--candidates-per-failure", type=int, default=3)
+            command.add_argument("--repetitions", type=int, default=1)
             command.add_argument("--seed", type=int, default=42)
     return parser
 
@@ -206,6 +209,8 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit("--episodes-per-task must be positive")
     if getattr(args, "workers", 0) < 0:
         raise SystemExit("--workers cannot be negative")
+    if getattr(args, "repetitions", 1) < 1:
+        raise SystemExit("--repetitions must be positive")
     for field in ("disturbance_rate", "proposal_error_rate"):
         value = getattr(args, field, 0.0)
         if not 0.0 <= value <= 1.0:
