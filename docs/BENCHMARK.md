@@ -154,6 +154,17 @@ A syntactically valid suite is not necessarily ready to support a scientific
 claim. Before generating the final plan, run:
 
 ```bash
+PYTHONPATH=src python3 -m hrvla_bench.cli validate-methods \
+  benchmark/methods/registry.json \
+  --artifact-lock config/benchmark-artifacts.lock.json
+```
+
+The method gate fixes the meaning of ST, STR, and RT, resolves every
+implementation to a Git commit, and requires retrained checkpoints to match the
+published artifact lock. The registered ablations change one named component at
+a time; paper proxies are not registered as official runnable methods.
+
+```bash
 PYTHONPATH=src python3 -m hrvla_bench.cli claim-readiness \
   benchmark/suites/hrvla_recovery_v0.json \
   --output outputs/claim-readiness.json

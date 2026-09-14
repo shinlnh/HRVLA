@@ -73,6 +73,11 @@ Hugging Face locations in [`docs/ARTIFACTS.md`](docs/ARTIFACTS.md). The checked-
 artifact lock provides file size and SHA-256 verification for the selected ST-RT
 and STR-RT step-300 checkpoints and both deterministic dataset splits.
 
+The runnable baseline matrix is frozen in
+[`benchmark/methods/registry.json`](benchmark/methods/registry.json). It preserves
+the project taxonomy (`ST`, `STR`, and `RT`) and predeclares the four controlled
+comparisons used to isolate planning, recovery, and retraining contributions.
+
 ## Validated SONIC backend
 
 This branch includes the locked GEAR-SONIC reproduction used as the benchmark

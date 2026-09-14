@@ -9,6 +9,7 @@ import sys
 
 from .evidence import audit_evidence, claim_readiness
 from .execution import RunIdentity, load_adapter, run_plan
+from .methods import validate_method_registry
 from .plan import build_plan, load_json, validate_suite, write_plan
 from .provenance import collect_provenance, write_manifest
 from .score import load_jsonl, score_records, validate_record
@@ -24,6 +25,10 @@ def _parser() -> argparse.ArgumentParser:
 
     validate = sub.add_parser("validate-suite", help="Validate suite invariants")
     validate.add_argument("suite", type=Path)
+
+    methods = sub.add_parser("validate-methods", help="Validate ST/STR/RT baselines")
+    methods.add_argument("registry", type=Path)
+    methods.add_argument("--artifact-lock", type=Path, required=True)
 
     readiness = sub.add_parser(
         "claim-readiness", help="Audit whether a suite can produce claim-bearing evidence"
@@ -96,6 +101,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "validate-suite":
             validate_suite(load_json(args.suite))
             print("suite: valid")
+        elif args.command == "validate-methods":
+            validate_method_registry(
+                load_json(args.registry), load_json(args.artifact_lock), REPO_ROOT
+            )
+            print("method registry: valid")
         elif args.command == "claim-readiness":
             report = claim_readiness(load_json(args.suite))
             rendered = json.dumps(report, indent=2, sort_keys=True) + "\n"
