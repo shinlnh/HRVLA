@@ -5,6 +5,10 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .coverage
+dist/
+build/
+*.egg-info/
 outputs/
 logs/
 wandb/
+.vscode/

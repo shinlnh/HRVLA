@@ -1,0 +1,1 @@
+{"environment_ids": [0, 1], "episode_steps": [101, 101], "event": "push_once_by_setting_velocity", "velocity_range": {"pitch": [0.0, 0.0], "roll": [0.0, 0.0], "x": [0.0, 0.0], "y": [0.35, 0.35], "yaw": [0.0, 0.0], "z": [0.0, 0.0]}}

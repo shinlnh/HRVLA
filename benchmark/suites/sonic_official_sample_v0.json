@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "suite_id": "sonic_official_sample_v0",
+  "status": "executed_nominal_and_disturbance_pilots",
+  "evaluation_tracks": [
+    "controller_tracking_pilot",
+    "controller_disturbance_pilot"
+  ],
+  "method_id": "gear_sonic_original_release",
+  "implementation": "feat(GR00T)/reproduce-gr00t-sonic-whole-body@5638698",
+  "checkpoint_sha256": "e6bdab3f64a39336b3d41877d4f497d05f58af275f288ec0e6746c283ded8909",
+  "scope": "Two official walk-forward motions; not VLA manipulation or recovery",
+  "motions": [
+    "walk_forward_amateur_001__A001",
+    "walk_forward_amateur_001__A001_M"
+  ],
+  "frames_per_run": 4004,
+  "results": {
+    "nominal": "results/benchmark/sonic-official-sample-v0.json",
+    "h1_diagnostic": "results/benchmark/sonic-h1-push-pilot-v0.json",
+    "raw": "results/benchmark/raw"
+  },
+  "disturbance_probe": {
+    "admission_status": "diagnostic_only_unadmitted",
+    "protocol": "online_failure_probe",
+    "humanoid_axis": "H1",
+    "event_boundary": "2.0 s after motion initialization (gait-settle timer proxy)",
+    "injector": "Isaac Lab root-velocity setter wrapped as a one-shot audited event",
+    "velocity_delta_mps": {"x": 0.0, "y": 0.35, "z": 0.0}
+  }
+}

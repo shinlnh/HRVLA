@@ -1,0 +1,264 @@
+{
+  "schema_version": "1.0",
+  "suite_id": "hrvla_recovery_v0",
+  "status": "specification_ready_artifacts_pending",
+  "robot": "Unitree G1",
+  "reference_stack": {
+    "vla": "NVIDIA GR00T N1.7 with a task-specific UNITREE_G1_SONIC checkpoint",
+    "whole_body_controller": "GEAR-SONIC original release",
+    "simulator": "Isaac Lab 2.3.2 / Isaac Sim 5.1",
+    "baseline_branch": "feat(GR00T)/reproduce-gr00t-sonic-whole-body@5638698"
+  },
+  "controller_contract": {
+    "embodiment_tag": "UNITREE_G1_SONIC",
+    "action_interface": "64-dimensional SONIC latent",
+    "joint_actions": 29,
+    "control_rate_hz": 50,
+    "checkpoint_sha256": "e6bdab3f64a39336b3d41877d4f497d05f58af275f288ec0e6746c283ded8909",
+    "source_revision": "087f9ac01d46f6d8e4d0b73c01ae64799f292a38",
+    "isaac_lab_revision": "37ddf626871758333d6ed89cf64ad702aef127d0"
+  },
+  "protocols": {
+    "nominal": {
+      "failure_injection": false,
+      "purpose": "Measure ordinary task success and recovery-module regression"
+    },
+    "failure_start": {
+      "failure_injection": false,
+      "start_state": "shared immutable post-failure simulator snapshot",
+      "purpose": "Isolate recovery competence from pre-failure execution quality"
+    },
+    "online_failure": {
+      "failure_injection": true,
+      "trigger": "shared semantic event or sub-task boundary",
+      "purpose": "Evaluate detection, diagnosis, recovery, and continuation end to end"
+    }
+  },
+  "recovery_levels": {
+    "L1": "Action retry; task state is materially unchanged",
+    "L2": "Action adaptation; object state changed but remains directly usable",
+    "L3": "Object-state restoration before the original task can continue",
+    "L4": "Environment restoration involving a blocking non-target state or object"
+  },
+  "humanoid_axes": {
+    "H1": "Body-state recovery: support, balance, foot placement, or recoverable fall state",
+    "H2": "Policy-tracker failure: valid high-level intent is not realized by the tracker",
+    "H3": "Coupled failure: body-state and task/object-state disruption co-occur"
+  },
+  "replication": {
+    "training_seeds": [0, 1, 2],
+    "rollouts_per_seed_per_cell": 20,
+    "paired_rollout_seeds_across_methods": true
+  },
+  "artifact_policy": {
+    "dataset_remote": "https://huggingface.co/datasets/shin0412/HRVLA",
+    "required_before_admission": [
+      "immutable initial and failure snapshot hashes",
+      "injector implementation revision",
+      "oracle checkpoint and 20/20 recovery trials",
+      "task and safety predicate tests"
+    ],
+    "draft_execution": "forbidden in claim-bearing reports"
+  },
+  "tasks": [
+    {
+      "id": "pick_and_place_box",
+      "coverage_source": "HumanoidArena",
+      "initial_snapshot_id": "pending:pick_and_place_box/initial",
+      "success_predicate": "target box is stably inside the marked receptacle for 1.0 s",
+      "horizon_s": 90,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "box-missed-grasp-retry",
+          "protocol": "online_failure",
+          "event_id": "after-first-grasp-close",
+          "event_boundary": "after the first commanded hand closure",
+          "level": "L1",
+          "humanoid_axes": [],
+          "severity": "low",
+          "injector": {"id": "release-grasp-contact", "parameters": {"duration_s": 0.2}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        },
+        {
+          "id": "box-drop-and-body-push",
+          "protocol": "failure_start",
+          "failure_snapshot_id": "pending:pick_and_place_box/box-drop-and-body-push",
+          "event_id": "after-stable-grasp",
+          "event_boundary": "after box grasp is stable for 0.5 s",
+          "level": "L3",
+          "humanoid_axes": ["H3"],
+          "severity": "medium",
+          "injector": {"id": "drop-object-and-root-velocity", "parameters": {"lateral_mps": 0.35}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "open_door",
+      "coverage_source": "HumanoidArena",
+      "initial_snapshot_id": "pending:open_door/initial",
+      "success_predicate": "pelvis crosses the doorway plane and both feet regain support",
+      "horizon_s": 90,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "door-handle-pose-shift",
+          "protocol": "online_failure",
+          "event_id": "before-handle-contact",
+          "event_boundary": "when the wrist enters the handle approach volume",
+          "level": "L2",
+          "humanoid_axes": [],
+          "severity": "medium",
+          "injector": {"id": "shift-door-handle", "parameters": {"translation_m": 0.04}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        },
+        {
+          "id": "doorway-obstruction",
+          "protocol": "failure_start",
+          "failure_snapshot_id": "pending:open_door/doorway-obstruction",
+          "event_id": "after-door-open",
+          "event_boundary": "after door angle first exceeds 60 degrees",
+          "level": "L4",
+          "humanoid_axes": [],
+          "severity": "high",
+          "injector": {"id": "place-doorway-obstacle", "parameters": {"mass_kg": 1.0}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "double_desk",
+      "coverage_source": "HumanoidArena",
+      "initial_snapshot_id": "pending:double_desk/initial",
+      "success_predicate": "all specified desk transfers complete without fall or safety termination",
+      "horizon_s": 120,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "tracker-underexecution",
+          "protocol": "online_failure",
+          "event_id": "before-second-transfer",
+          "event_boundary": "after the first transfer success predicate becomes true",
+          "level": "L2",
+          "humanoid_axes": ["H2"],
+          "severity": "medium",
+          "injector": {"id": "attenuate-sonic-latent", "parameters": {"scale": 0.55, "duration_s": 0.6}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "football",
+      "coverage_source": "HumanoidArena",
+      "initial_snapshot_id": "pending:football/initial",
+      "success_predicate": "ball crosses the goal plane while robot remains upright",
+      "horizon_s": 60,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "support-state-push",
+          "protocol": "online_failure",
+          "event_id": "after-kick-plant",
+          "event_boundary": "after support foot is planted before swing-foot acceleration",
+          "level": "L1",
+          "humanoid_axes": ["H1"],
+          "severity": "medium",
+          "injector": {"id": "root-velocity-impulse", "parameters": {"lateral_mps": 0.45}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "sit_sofa",
+      "coverage_source": "HumanoidArena",
+      "initial_snapshot_id": "pending:sit_sofa/initial",
+      "success_predicate": "pelvis remains in the sofa target region with stable contact for 2.0 s",
+      "horizon_s": 60,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "sofa-approach-slip",
+          "protocol": "failure_start",
+          "failure_snapshot_id": "pending:sit_sofa/sofa-approach-slip",
+          "event_id": "before-seat-contact",
+          "event_boundary": "when pelvis enters the final seating approach volume",
+          "level": "L2",
+          "humanoid_axes": ["H1"],
+          "severity": "medium",
+          "injector": {"id": "support-foot-slip", "parameters": {"displacement_m": 0.08}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "boxing",
+      "coverage_source": "HumanoidArena",
+      "initial_snapshot_id": "pending:boxing/initial",
+      "success_predicate": "required strike sequence completes while balance and safety predicates hold",
+      "horizon_s": 60,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "contact-recoil",
+          "protocol": "online_failure",
+          "event_id": "after-first-strike-contact",
+          "event_boundary": "first valid glove-target contact",
+          "level": "L1",
+          "humanoid_axes": ["H1"],
+          "severity": "high",
+          "injector": {"id": "upper-body-contact-impulse", "parameters": {"impulse_ns": 18.0}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "visual_navigation",
+      "coverage_source": "HumanoidArena",
+      "initial_snapshot_id": "pending:visual_navigation/initial",
+      "success_predicate": "robot reaches the goal region without collision, fall, or safety termination",
+      "horizon_s": 120,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "new-blocking-obstacle",
+          "protocol": "online_failure",
+          "event_id": "after-first-waypoint",
+          "event_boundary": "first waypoint region entered for 0.5 s",
+          "level": "L4",
+          "humanoid_axes": [],
+          "severity": "medium",
+          "injector": {"id": "place-path-obstacle", "parameters": {"clearance_m": 0.0}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    }
+  ],
+  "fairness_requirements": [
+    "Identical initial and failure snapshots for every method in a comparison cell",
+    "Identical semantic boundary, perturbation parameters, and rollout seed",
+    "Identical observation permissions, action rate, horizon, and success predicate",
+    "Controller identity and revision reported; controller changes form a separate comparison",
+    "No retry outside the episode budget and no silent reset after failure",
+    "Every scored recovery scenario is independently oracle-verified recoverable",
+    "All episode records, failures, exclusions, seeds, and manifests are retained"
+  ],
+  "primary_metrics": [
+    "nominal_success_rate",
+    "macro_recovery_success_rate_by_protocol",
+    "recovery_success_rate_by_L_level",
+    "recovery_success_rate_by_H_axis",
+    "fall_rate",
+    "safety_violation_rate"
+  ],
+  "diagnostic_metrics": [
+    "detection_precision_recall_f1",
+    "detection_latency_s",
+    "successful_recovery_time_s",
+    "replans",
+    "retries",
+    "recovery_degradation",
+    "recovery_consistency",
+    "paired_mcnemar_exact"
+  ]
+}
