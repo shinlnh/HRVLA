@@ -9,6 +9,7 @@ import sys
 
 from .evidence import audit_evidence, claim_readiness
 from .execution import RunIdentity, load_adapter, run_plan
+from .humanoidarena import admission_report
 from .methods import validate_method_registry
 from .plan import build_plan, load_json, validate_suite, write_plan
 from .provenance import collect_provenance, write_manifest
@@ -29,6 +30,20 @@ def _parser() -> argparse.ArgumentParser:
     methods = sub.add_parser("validate-methods", help="Validate ST/STR/RT baselines")
     methods.add_argument("registry", type=Path)
     methods.add_argument("--artifact-lock", type=Path, required=True)
+
+    humanoid = sub.add_parser(
+        "check-humanoidarena", help="Check locked HumanoidArena admission inputs"
+    )
+    humanoid.add_argument("lock", type=Path)
+    humanoid.add_argument("--source-root", type=Path)
+    humanoid.add_argument("--model-root", type=Path)
+    humanoid.add_argument("--dataset-root", type=Path)
+    humanoid.add_argument("--asset-root", type=Path)
+    humanoid.add_argument("--sonic-policy-root", type=Path)
+    humanoid.add_argument("--oracle-evidence", type=Path)
+    humanoid.add_argument("--isaac-sim-version")
+    humanoid.add_argument("--isaac-lab-ref")
+    humanoid.add_argument("--output", type=Path)
 
     readiness = sub.add_parser(
         "claim-readiness", help="Audit whether a suite can produce claim-bearing evidence"
@@ -106,6 +121,27 @@ def main(argv: list[str] | None = None) -> int:
                 load_json(args.registry), load_json(args.artifact_lock), REPO_ROOT
             )
             print("method registry: valid")
+        elif args.command == "check-humanoidarena":
+            report = admission_report(
+                load_json(args.lock),
+                REPO_ROOT,
+                source_root=args.source_root,
+                model_root=args.model_root,
+                dataset_root=args.dataset_root,
+                asset_root=args.asset_root,
+                sonic_policy_root=args.sonic_policy_root,
+                oracle_evidence=args.oracle_evidence,
+                isaac_sim_version=args.isaac_sim_version,
+                isaac_lab_ref=args.isaac_lab_ref,
+            )
+            rendered = json.dumps(report, indent=2, sort_keys=True) + "\n"
+            if args.output:
+                args.output.parent.mkdir(parents=True, exist_ok=True)
+                args.output.write_text(rendered, encoding="utf-8")
+            else:
+                print(rendered, end="")
+            if not report["admitted"]:
+                return 3
         elif args.command == "claim-readiness":
             report = claim_readiness(load_json(args.suite))
             rendered = json.dumps(report, indent=2, sort_keys=True) + "\n"
