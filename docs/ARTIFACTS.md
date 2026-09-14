@@ -30,6 +30,15 @@ type:
 - `arena-g1-subtask-split` contains the deterministic ST training/held-out split;
 - `arena-g1-recovery-split` contains the deterministic recovery-conditioned split.
 
+Published revisions:
+
+- model repository: `5898d3177dc64322842fe1a42900cc9f952ea5e9`;
+- dataset repository: `a745b9eba09f2beac02f6f018f3c9c369b0dc5a5`.
+
+Remote verification matched all 32 checkpoint files and all 858 prepared dataset
+files against the local content. The per-group first-publication commits remain in
+the artifact lock for auditability.
+
 Local paths are recorded in
 [`benchmark-artifacts.lock.json`](../config/benchmark-artifacts.lock.json). Create
 and verify the lock with:
@@ -43,6 +52,5 @@ Only the predeclared final checkpoint at step 300 is publication-required.
 Intermediate checkpoints, smoke runs, and failed probes remain local evidence and
 must not be selected after inspecting held-out results.
 
-Publishing changes the Hub repository revision. After upload, record the returned
-model and dataset revisions in the lock, set `published` to true, regenerate the
-lock without changing the artifact files, and verify all hashes again.
+Any later replacement must publish a new Hub revision, regenerate the lock without
+changing files in place, and pass both local and remote checksum verification.

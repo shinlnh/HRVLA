@@ -25,21 +25,25 @@ PUBLICATION = {
         "repo_type": "model",
         "repo_id": "shin0412/HRVLA",
         "path_in_repo": "checkpoints/GR00T-ST-RT/checkpoint-300",
+        "published_commit": "f7ba25d113629e89c1e50757809d0f1e295bbeeb",
     },
     "GR00T-STR-RT": {
         "repo_type": "model",
         "repo_id": "shin0412/HRVLA",
         "path_in_repo": "checkpoints/GR00T-STR-RT/checkpoint-300",
+        "published_commit": "5898d3177dc64322842fe1a42900cc9f952ea5e9",
     },
     "arena-g1-subtask-split": {
         "repo_type": "dataset",
         "repo_id": "shin0412/HRVLA",
         "path_in_repo": "arena-g1-subtask-split",
+        "published_commit": "f6cc7b995ea214babc6e4f95c27202724e04df69",
     },
     "arena-g1-recovery-split": {
         "repo_type": "dataset",
         "repo_id": "shin0412/HRVLA",
         "path_in_repo": "arena-g1-recovery-split",
+        "published_commit": "a745b9eba09f2beac02f6f018f3c9c369b0dc5a5",
     },
 }
 
@@ -92,7 +96,7 @@ def build_artifact_lock(
 
     return {
         "schema_version": "1.0",
-        "status": "local_verified_publication_pending",
+        "status": "published_verified",
         "external_sources": {
             "base_vla": {
                 "repo_id": "nvidia/GR00T-N1.7-3B",
@@ -113,9 +117,15 @@ def build_artifact_lock(
         },
         "publication_targets": {
             "model_repo": "shin0412/HRVLA",
+            "model_revision": "5898d3177dc64322842fe1a42900cc9f952ea5e9",
             "dataset_repo": "shin0412/HRVLA",
+            "dataset_revision": "a745b9eba09f2beac02f6f018f3c9c369b0dc5a5",
             "required": True,
-            "published": False,
+            "published": True,
+            "remote_checksum_verification": {
+                "model_files": 32,
+                "dataset_files": 858,
+            },
         },
         "artifacts": artifacts,
     }

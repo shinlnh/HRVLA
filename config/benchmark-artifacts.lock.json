@@ -84,6 +84,7 @@
         }
       ],
       "path_in_repo": "checkpoints/GR00T-ST-RT/checkpoint-300",
+      "published_commit": "f7ba25d113629e89c1e50757809d0f1e295bbeeb",
       "repo_id": "shin0412/HRVLA",
       "repo_type": "model",
       "root": "_artifacts/retraining/st-action-decoder-b4-ga4-s300/checkpoints/checkpoint-300",
@@ -173,6 +174,7 @@
         }
       ],
       "path_in_repo": "checkpoints/GR00T-STR-RT/checkpoint-300",
+      "published_commit": "5898d3177dc64322842fe1a42900cc9f952ea5e9",
       "repo_id": "shin0412/HRVLA",
       "repo_type": "model",
       "root": "_artifacts/retraining/str-action-decoder-b16-ga1-s300/checkpoints/checkpoint-300",
@@ -2327,6 +2329,7 @@
         }
       ],
       "path_in_repo": "arena-g1-recovery-split",
+      "published_commit": "a745b9eba09f2beac02f6f018f3c9c369b0dc5a5",
       "repo_id": "shin0412/HRVLA",
       "repo_type": "dataset",
       "root": "_artifacts/datasets/arena-g1-recovery-split",
@@ -4481,6 +4484,7 @@
         }
       ],
       "path_in_repo": "arena-g1-subtask-split",
+      "published_commit": "f6cc7b995ea214babc6e4f95c27202724e04df69",
       "repo_id": "shin0412/HRVLA",
       "repo_type": "dataset",
       "root": "_artifacts/datasets/arena-g1-subtask-split",
@@ -4503,12 +4507,18 @@
   },
   "publication_targets": {
     "dataset_repo": "shin0412/HRVLA",
+    "dataset_revision": "a745b9eba09f2beac02f6f018f3c9c369b0dc5a5",
     "model_repo": "shin0412/HRVLA",
-    "published": false,
+    "model_revision": "5898d3177dc64322842fe1a42900cc9f952ea5e9",
+    "published": true,
+    "remote_checksum_verification": {
+      "dataset_files": 858,
+      "model_files": 32
+    },
     "required": true
   },
   "schema_version": "1.0",
-  "status": "local_verified_publication_pending",
+  "status": "published_verified",
   "training_provenance": {
     "GR00T-ST-RT": "9dd8a7453d34c35123fe2bbe2e8affcd61034eb9",
     "GR00T-STR-RT": "3450540160dadfce60f2100904bdf6c1a0a929e5"
