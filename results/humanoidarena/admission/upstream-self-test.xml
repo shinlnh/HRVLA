@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="10" time="0.021" timestamp="2026-09-14T23:52:16.096966" hostname="HELIOS"><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_task_runtime_profiles.TaskRuntimeProfilesTests" name="test_apply_task_runtime_profile_open_door_inference_replay_uses_replay_compat" time="0.000" /><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_task_runtime_profiles.TaskRuntimeProfilesTests" name="test_apply_task_runtime_profile_open_door_live_inference" time="0.000"><failure message="AssertionError: '0' != '1'&#10;- 0&#10;+ 1">self = &lt;test_task_runtime_profiles.TaskRuntimeProfilesTests testMethod=test_apply_task_runtime_profile_open_door_live_inference&gt;
+
+    def test_apply_task_runtime_profile_open_door_live_inference(self) -&gt; None:
+        args = SimpleNamespace(
+            task=OPEN_DOOR_TASK,
+            task_runtime_profile=TASK_RUNTIME_PROFILE_AUTO,
+            record_during_replay=False,
+            input_source="",
+            replay_file="",
+            replay_mode="",
+        )
+        env: dict[str, str] = {}
+    
+        applied = apply_task_runtime_profile(args, env=env)
+    
+        self.assertEqual(applied.context, RUNTIME_CONTEXT_LIVE_INFERENCE)
+        self.assertEqual(applied.profile, "inference")
+        self.assertEqual(env["OPEN_DOOR_LATCH_DISABLE"], "0")
+&gt;       self.assertEqual(env["OPEN_DOOR_SCENE_AS_ARTICULATION"], "1")
+E       AssertionError: '0' != '1'
+E       - 0
+E       + 1
+
+isaaclab_twist2_g1/test_task_runtime_profiles.py:74: AssertionError</failure></testcase><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_task_runtime_profiles.TaskRuntimeProfilesTests" name="test_detect_runtime_context_prefers_rerecord" time="0.000" /><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_task_runtime_profiles.TaskRuntimeProfilesTests" name="test_detect_runtime_context_resolves_replay_modes" time="0.000" /><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_task_runtime_profiles.TaskRuntimeProfilesTests" name="test_explicit_profile_on_unsupported_task_raises" time="0.000" /><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_task_runtime_profiles.TaskRuntimeProfilesTests" name="test_resolve_open_door_door_usd_path_by_variant" time="0.000"><failure message="AssertionError: False is not true">self = &lt;test_task_runtime_profiles.TaskRuntimeProfilesTests testMethod=test_resolve_open_door_door_usd_path_by_variant&gt;
+
+    def test_resolve_open_door_door_usd_path_by_variant(self) -&gt; None:
+        project_root = "/tmp/HumanoidArena"
+    
+        inference_path = resolve_open_door_door_usd_path(
+            project_root,
+            OPEN_DOOR_DOOR_ASSET_VARIANT_INFERENCE_VALI,
+        )
+        replay_path = resolve_open_door_door_usd_path(
+            project_root,
+            OPEN_DOOR_DOOR_ASSET_VARIANT_RECORDED_COMPAT,
+        )
+    
+&gt;       self.assertTrue(inference_path.endswith("model_door001_vali.usd"))
+E       AssertionError: False is not true
+
+isaaclab_twist2_g1/test_task_runtime_profiles.py:108: AssertionError</failure></testcase><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_common_env_config_loader" name="test_apply_env_config_yaml_rejects_task_name_mismatch" time="0.001" /><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_common_env_config_loader" name="test_apply_env_config_yaml_loads_open_door_deterministic_reset_config" time="0.001" /><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_common_env_config_loader" name="test_resolve_env_config_yaml_path_finds_vision_test_config" time="0.000" /><testcase classname="_vendor.HumanoidArena.isaaclab_twist2_g1.test_common_env_config_loader" name="test_apply_env_config_yaml_loads_vision_randomization_from_test_defaults" time="0.001" /></testsuite></testsuites>

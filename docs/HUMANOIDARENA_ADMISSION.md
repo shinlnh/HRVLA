@@ -42,3 +42,27 @@ evaluation modes, simulation assets, SONIC policy files, released checkpoints,
 the dataset, the isolated runtime, and independent `20/20` oracle evidence.
 Merely cloning the source or seeing a checkpoint on the Hub is not sufficient
 for a claim-bearing evaluation.
+
+## Current preflight
+
+The 2026-09-14 local preflight passes 39 of 41 checks. The exact locked source,
+seven task launchers, four evaluation modes, extracted `objects/` and `robots/`
+assets, SONIC policy files, and the selected official model and dataset inputs
+are present. The supplied runtime contract values also match Isaac Sim 5.0.0
+and Isaac Lab `release/2.2.0`; this contract check is not a substitute for a
+successful simulator launch.
+
+Two gates remain blocked:
+
+1. The latest upstream `release/open-source-prep` revision is still
+   `68479287a784a69be9ce6ad739311d2f11f75ef9`, and its own tests still report
+   8 passed and 2 failed for the OpenDoor articulation/USD mismatch described
+   above.
+2. No independent 20/20 oracle admission file exists yet. It cannot be created
+   honestly until the upstream runtime contract is consistent and the oracle
+   trials have actually run.
+
+The machine-readable preflight is retained at
+[`results/humanoidarena/admission/preflight.json`](../results/humanoidarena/admission/preflight.json),
+and the unmodified upstream test result is retained as
+[`upstream-self-test.xml`](../results/humanoidarena/admission/upstream-self-test.xml).

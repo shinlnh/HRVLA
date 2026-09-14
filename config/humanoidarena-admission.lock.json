@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "inputs_locked_runtime_pending",
+  "status": "resources_ready_upstream_and_oracle_blocked",
   "checked_at": "2026-09-14",
   "source": {
     "repository": "https://github.com/William-wAng618/HumanoidArena.git",
@@ -86,6 +86,8 @@
   "admission": {
     "required_oracle_trials": 20,
     "required_oracle_successes": 20,
-    "oracle_evidence_default_path": "_artifacts/HumanoidArena/oracle-admission.json"
+    "oracle_evidence_default_path": "_artifacts/HumanoidArena/oracle-admission.json",
+    "latest_preflight": "results/humanoidarena/admission/preflight.json",
+    "upstream_self_test_report": "results/humanoidarena/admission/upstream-self-test.xml"
   }
 }

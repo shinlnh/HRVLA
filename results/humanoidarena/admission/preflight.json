@@ -1,0 +1,219 @@
+{
+  "admitted": false,
+  "benchmark": "HumanoidArena",
+  "blockers": [
+    "upstream_self_test",
+    "oracle_admission"
+  ],
+  "checks": [
+    {
+      "detail": "actual=68479287a784a69be9ce6ad739311d2f11f75ef9 expected=68479287a784a69be9ce6ad739311d2f11f75ef9",
+      "id": "source_revision",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/batch_1_test_v31_sonic.sh",
+      "id": "source_path:isaaclab_twist2_g1/batch_test_scripts/batch_1_test_v31_sonic.sh",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/batch_1_test_v31_twist2.sh",
+      "id": "source_path:isaaclab_twist2_g1/batch_test_scripts/batch_1_test_v31_twist2.sh",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/batch_pi05_v31_sonic.sh",
+      "id": "source_path:isaaclab_twist2_g1/batch_test_scripts/batch_pi05_v31_sonic.sh",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/batch_pi05_v31_twist2.sh",
+      "id": "source_path:isaaclab_twist2_g1/batch_test_scripts/batch_pi05_v31_twist2.sh",
+      "status": "pass"
+    },
+    {
+      "detail": "TWIST2/assets/ckpts/twist2_1017_20k.onnx",
+      "id": "source_path:TWIST2/assets/ckpts/twist2_1017_20k.onnx",
+      "status": "pass"
+    },
+    {
+      "detail": "TWIST2/assets/ckpts/twist2_1017_25k.onnx",
+      "id": "source_path:TWIST2/assets/ckpts/twist2_1017_25k.onnx",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/task/batch_test_boxing.sh",
+      "id": "task_script:boxing",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/task/batch_test_doubledesk.sh",
+      "id": "task_script:doubledesk",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/task/batch_test_football.sh",
+      "id": "task_script:football",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/task/batch_test_open_door.sh",
+      "id": "task_script:open_door",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/task/batch_test_pp_box.sh",
+      "id": "task_script:pp_box",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/task/batch_test_sit_sofa.sh",
+      "id": "task_script:sit_sofa",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/batch_test_scripts/task/batch_test_vision_navi.sh",
+      "id": "task_script:vision_navi",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/tasks/common_test_config/base_test",
+      "id": "evaluation_mode:base_test",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/tasks/common_test_config/semantic",
+      "id": "evaluation_mode:semantic",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/tasks/common_test_config/vision",
+      "id": "evaluation_mode:vision",
+      "status": "pass"
+    },
+    {
+      "detail": "isaaclab_twist2_g1/tasks/common_test_config/execution",
+      "id": "evaluation_mode:execution",
+      "status": "pass"
+    },
+    {
+      "detail": "status=failing command=python3 -m pytest -q isaaclab_twist2_g1/test_task_runtime_profiles.py isaaclab_twist2_g1/test_common_env_config_loader.py",
+      "id": "upstream_self_test",
+      "status": "fail"
+    },
+    {
+      "detail": "actual=5.0.0 expected=5.0.0",
+      "id": "isaac_sim_version",
+      "status": "pass"
+    },
+    {
+      "detail": "actual=release/2.2.0 expected=release/2.2.0",
+      "id": "isaac_lab_ref",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/assets/objects",
+      "id": "asset:objects",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/assets/robots",
+      "id": "asset:robots",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/GR00T-WholeBodyControl/gear_sonic_deploy/policy/release/model_encoder.onnx",
+      "id": "sonic_policy:model_encoder.onnx",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/GR00T-WholeBodyControl/gear_sonic_deploy/policy/release/model_decoder.onnx",
+      "id": "sonic_policy:model_decoder.onnx",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/GR00T-WholeBodyControl/gear_sonic_deploy/policy/release/observation_config.yaml",
+      "id": "sonic_policy:observation_config.yaml",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/models/pi/HSI_boxing",
+      "id": "released_model:boxing",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/models/pi/HOI_double_desk",
+      "id": "released_model:doubledesk",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/models/pi/HOI_football",
+      "id": "released_model:football",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/models/pi/HSI_open_door",
+      "id": "released_model:open_door",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/models/pi/HOI_pp_box",
+      "id": "released_model:pp_box",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/models/pi/HSI_sit_sofa",
+      "id": "released_model:sit_sofa",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/models/pi/HSI_vision_navi",
+      "id": "released_model:vision_navi",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/dataset/HSI_boxing/sonic_refpose_v3_1/meta/info.json",
+      "id": "released_dataset:boxing",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/dataset/HOI_double_desk/sonic_refpose_v3_1/meta/info.json",
+      "id": "released_dataset:doubledesk",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/dataset/HOI_football/sonic_refpose_v3_1/meta/info.json",
+      "id": "released_dataset:football",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/dataset/HSI_open_door/sonic_refpose_v3_1/meta/info.json",
+      "id": "released_dataset:open_door",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/dataset/HOI_pp_box/sonic_refpose_v3_1/meta/info.json",
+      "id": "released_dataset:pp_box",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/dataset/HSI_sit_sofa/sonic_refpose_v3_1/meta/info.json",
+      "id": "released_dataset:sit_sofa",
+      "status": "pass"
+    },
+    {
+      "detail": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/dataset/HSI_vision_navi/sonic_refpose_v3_1/meta/info.json",
+      "id": "released_dataset:vision_navi",
+      "status": "pass"
+    },
+    {
+      "detail": "missing oracle evidence: /HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/oracle-admission.json",
+      "id": "oracle_admission",
+      "status": "fail"
+    }
+  ],
+  "dataset_revision": "a079beddd6b1521f762c991be8f36993f17ebeca",
+  "model_revision": "da13e072902840e2682afde360b763f1edb76d32",
+  "schema_version": 1,
+  "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9"
+}
