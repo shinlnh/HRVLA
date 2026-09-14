@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "base_model": {
+    "model_id": "nvidia/GR00T-N1.7-3B",
+    "revision": "2fc962b973bccdd5d8ce4f67cc63b264d6886495",
+    "local_path": "/HELIOS/Robotics/HRVLA/_artifacts/GR00T-N1.7-3B",
+    "config_sha256": "54c0367060cd30b3343fe72a589860a8b6e8173810164a4ffd6253f52e689"
+  },
+  "comparison_model": {
+    "name": "subtask post-trained",
+    "branch_commit": "9dd8a7453d34c35123fe2bbe2e8affcd61034eb9",
+    "checkpoint_path": "/HELIOS/Robotics/HRVLA/_artifacts/retraining/st-action-decoder-b4-ga4-s300/checkpoints/checkpoint-300"
+  },
+  "dataset": {
+    "model_id": "nvidia/Arena-G1-Static-PickNPlace-Task",
+    "revision": "37ba80a99486a4c308477854f54b4e82e77777dc",
+    "label_mode": "counterfactual_recovery_conditioned",
+    "source_episodes": 208,
+    "split_seed": 42,
+    "train_episodes": 166,
+    "heldout_episodes": 42,
+    "action_horizon": 40
+  },
+  "training": {
+    "profile": "action_decoder_only",
+    "optimizer_steps": 300,
+    "save_steps": 100,
+    "learning_rate": 0.00005,
+    "physical_batch_size": 16,
+    "gradient_accumulation_steps": 1,
+    "effective_batch_size": 16,
+    "dataloader_workers": 16,
+    "state_dropout_probability": 0.35,
+    "color_jitter": true,
+    "bf16_frozen_weights": true,
+    "fp32_trainable_decoder": true,
+    "tf32": true,
+    "seed": 42
+  },
+  "evaluation": {
+    "trajectory_count": 42,
+    "frames_per_trajectory": 120,
+    "execution_horizon": 40,
+    "denoising_steps": 4,
+    "conditions": [
+      "clean",
+      "vision_noise",
+      "occlusion",
+      "state_noise",
+      "combined"
+    ],
+    "seed": 20260913
+  },
+  "remote_artifacts": {
+    "production": "/HELIOS/Robotics/HRVLA/_artifacts/retraining/str-action-decoder-b16-ga1-s300",
+    "retained_failed_probe": "/HELIOS/Robotics/HRVLA/_artifacts/retraining/str-action-decoder-b16-probe"
+  }
+}

@@ -131,3 +131,28 @@ python3 scripts/run_sonic_release.py record --inject-push \
   --metrics-file results/recovery/isaacsim/sonic-push-32env/metrics_eval.json \
   --output-dir results/recovery/isaacsim/push-recording
 ```
+
+## In-domain VLA post-training
+
+The subtask-conditioned GR00T N1.7 action decoder was post-trained on a
+leakage-resistant 166/42 episode split of NVIDIA's Isaac Lab G1 pick-and-place
+data. Paired evaluation across all held-out episodes and five observation
+conditions reduces clean action MSE by 4.988%; per-phase results also retain the
+approach/grasp regressions. The experiment includes immutable inputs, raw
+hardware telemetry, checkpoint trends, statistical tests, Isaac Lab evidence,
+and a fresh recorded Isaac Sim/SONIC regression.
+
+See [`docs/SUBTASK_VLA_RETRAINING.md`](docs/SUBTASK_VLA_RETRAINING.md) for the
+exact training scope, commands, metrics, plots, videos, and claim boundaries.
+
+## Recovery-conditioned VLA post-training
+
+A second GR00T N1.7 action-decoder checkpoint is trained with recovery-conditioned
+instructions on the same leakage-resistant G1 split. Across all 42 held-out
+episodes it reduces clean action MSE by 5.612% versus the calibrated base and by
+0.477% versus the subtask-post-trained model. The retained per-phase analysis
+also exposes approach/grasp regressions relative to the base.
+
+See [`docs/RECOVERY_VLA_RETRAINING.md`](docs/RECOVERY_VLA_RETRAINING.md) for the
+three-model statistics, hardware telemetry, failed probe, plots, visual evidence,
+and end-to-end claim boundary.
