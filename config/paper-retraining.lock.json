@@ -1,10 +1,20 @@
 {
   "schema_version": 1,
-  "status": "replication_pending",
+  "status": "replicated_and_evaluated",
   "base_model_path": "_artifacts/GR00T-N1.7-3B",
   "modality_config_path": "config/g1_arena_subtask_config.py",
   "output_root": "_artifacts/retraining/paper-seeds",
+  "result_summary": "results/retraining/paper-seeds/summary.json",
+  "raw_evidence": "results/retraining/paper-seeds/raw/*.metrics.json",
+  "evidence_checksums": "results/retraining/paper-seeds/SHA256SUMS",
   "training_seeds": [0, 1, 2],
+  "evaluation": {
+    "seed": 20260913,
+    "trajectory_ids": "0..41",
+    "conditions": ["clean", "vision_noise", "occlusion", "state_noise", "combined"],
+    "steps_per_trajectory": 120,
+    "denoising_steps": 4
+  },
   "shared": {
     "max_steps": 300,
     "save_steps": 100,

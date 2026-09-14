@@ -189,3 +189,16 @@ also exposes approach/grasp regressions relative to the base.
 See [`docs/RECOVERY_VLA_RETRAINING.md`](docs/RECOVERY_VLA_RETRAINING.md) for the
 three-model statistics, hardware telemetry, failed probe, plots, visual evidence,
 and end-to-end claim boundary.
+
+## Multi-seed paper replication
+
+The predeclared ST-RT and STR-RT step-300 runs were repeated with training seeds
+0, 1, and 2 and evaluated on all 42 held-out trajectories under five observation
+conditions. STR-RT improves over its seed-matched ST-RT model for every seed and
+condition; clean MSE is `0.100809 ± 0.000120` for ST-RT and
+`0.100233 ± 0.000024` for STR-RT, a mean reduction of `0.571%` with a
+hierarchical-bootstrap 95% CI of `[0.000429, 0.000721]` in absolute MSE.
+
+See [`docs/PAPER_RETRAINING_REPLICATION.md`](docs/PAPER_RETRAINING_REPLICATION.md)
+for the protocol, full condition table, raw retained metrics, reproducibility
+commands, and the remaining closed-loop claim boundary.
