@@ -68,6 +68,11 @@ python3 scripts/benchmark.py audit-evidence outputs/plan.json \
 See [`docs/BENCHMARK.md`](docs/BENCHMARK.md) for fairness rules, metrics, and the
 boundary between direct reruns and paper-reported reference results.
 
+Large checkpoints and prepared dataset splits are mapped to their exact local and
+Hugging Face locations in [`docs/ARTIFACTS.md`](docs/ARTIFACTS.md). The checked-in
+artifact lock provides file size and SHA-256 verification for the selected ST-RT
+and STR-RT step-300 checkpoints and both deterministic dataset splits.
+
 ## Validated SONIC backend
 
 This branch includes the locked GEAR-SONIC reproduction used as the benchmark
