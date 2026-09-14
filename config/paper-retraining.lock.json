@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "status": "replication_pending",
+  "base_model_path": "_artifacts/GR00T-N1.7-3B",
+  "modality_config_path": "config/g1_arena_subtask_config.py",
+  "output_root": "_artifacts/retraining/paper-seeds",
+  "training_seeds": [0, 1, 2],
+  "shared": {
+    "max_steps": 300,
+    "save_steps": 100,
+    "learning_rate": 0.00005,
+    "color_jitter": true
+  },
+  "methods": {
+    "ST-RT": {
+      "dataset_path": "_artifacts/datasets/arena-g1-subtask-split/train",
+      "output_name": "st",
+      "global_batch_size": 4,
+      "gradient_accumulation_steps": 4,
+      "dataloader_num_workers": 28,
+      "state_dropout_probability": 0.2
+    },
+    "STR-RT": {
+      "dataset_path": "_artifacts/datasets/arena-g1-recovery-split/train",
+      "output_name": "str",
+      "global_batch_size": 16,
+      "gradient_accumulation_steps": 1,
+      "dataloader_num_workers": 16,
+      "state_dropout_probability": 0.35
+    }
+  }
+}
