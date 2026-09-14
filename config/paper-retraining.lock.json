@@ -7,6 +7,13 @@
   "result_summary": "results/retraining/paper-seeds/summary.json",
   "raw_evidence": "results/retraining/paper-seeds/raw/*.metrics.json",
   "evidence_checksums": "results/retraining/paper-seeds/SHA256SUMS",
+  "hugging_face": {
+    "repo_id": "shin0412/HRVLA",
+    "repo_type": "model",
+    "revision": "50ea75ab7972509c2f6827190a965484a2057bcc",
+    "checkpoint_template": "checkpoints/GR00T-{method}/seed-{seed}/checkpoint-300",
+    "evidence_path": "paper-replication/evidence"
+  },
   "training_seeds": [0, 1, 2],
   "evaluation": {
     "seed": 20260913,

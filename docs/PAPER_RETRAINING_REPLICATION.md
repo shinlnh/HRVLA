@@ -45,6 +45,9 @@ The exact training and evaluation contract is frozen in
 [`config/paper-retraining.lock.json`](../config/paper-retraining.lock.json).
 Checkpoints and large datasets remain outside Git; their Hugging Face revisions
 and local locations are recorded in [`docs/ARTIFACTS.md`](ARTIFACTS.md).
+The six final checkpoints and the compact evidence bundle are published at the
+immutable model-repository revision
+`50ea75ab7972509c2f6827190a965484a2057bcc`.
 
 ## Claim boundary
 
