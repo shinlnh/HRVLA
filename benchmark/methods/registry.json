@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0",
+  "taxonomy": {
+    "ST": "subtask planning without recovery",
+    "STR": "subtask planning with recovery",
+    "RT": "VLA post-training"
+  },
+  "artifact_lock": {
+    "path": "config/benchmark-artifacts.lock.json",
+    "sha256": "200651522487b0839ae4e1a0b34098438de27ce0624102f4f706533f5f05d715"
+  },
+  "methods": [
+    {
+      "id": "gr00t_sonic",
+      "label": "GR00T + GEAR-SONIC",
+      "features": {"subtask": false, "recovery": false, "retrained": false},
+      "implementation_revision": "95d7994887607ce2f03e023186d3dd14a567b34e",
+      "checkpoint": {
+        "kind": "official",
+        "repo_id": "nvidia/GEAR-SONIC",
+        "revision": "6733128a3d8a523b1418b06bca3cdf61c8b0987f"
+      },
+      "evidence": "docs/SONIC_BASELINE.md",
+      "claim_scope": "controller tracking and audited H1 disturbance pilot"
+    },
+    {
+      "id": "gr00t_st",
+      "label": "GR00T-ST",
+      "features": {"subtask": true, "recovery": false, "retrained": false},
+      "implementation_revision": "75e2dc952b3844bf4933d11318a0f3ef78b1205f",
+      "checkpoint": {"kind": "shared_base", "repo_id": "nvidia/GR00T-N1.7-3B", "revision": "2fc962b973bccdd5d8ce4f67cc63b264d6886495"},
+      "evidence": "docs/SUBTASK_RESULTS.md",
+      "claim_scope": "subtask selection plus unchanged SONIC regression"
+    },
+    {
+      "id": "gr00t_st_rt",
+      "label": "GR00T-ST-RT",
+      "features": {"subtask": true, "recovery": false, "retrained": true},
+      "implementation_revision": "c1daa75a7f7d27a5146cbb2c8996adf60766d1d1",
+      "checkpoint": {
+        "kind": "project",
+        "repo_id": "shin0412/HRVLA",
+        "revision": "f7ba25d113629e89c1e50757809d0f1e295bbeeb",
+        "path": "checkpoints/GR00T-ST-RT/checkpoint-300",
+        "artifact_group": "GR00T-ST-RT"
+      },
+      "evidence": "docs/SUBTASK_VLA_RETRAINING.md",
+      "claim_scope": "paired held-out action prediction; no closed-loop task-success claim"
+    },
+    {
+      "id": "gr00t_str",
+      "label": "GR00T-STR",
+      "features": {"subtask": true, "recovery": true, "retrained": false},
+      "implementation_revision": "c8732409be713b231a262410afd51f8509b0b750",
+      "checkpoint": {"kind": "shared_base", "repo_id": "nvidia/GR00T-N1.7-3B", "revision": "2fc962b973bccdd5d8ce4f67cc63b264d6886495"},
+      "evidence": "docs/SUBTASK_RECOVERY_RESULTS.md",
+      "claim_scope": "transition-aware recovery coordinator and SONIC disturbance regression"
+    },
+    {
+      "id": "gr00t_str_rt",
+      "label": "GR00T-STR-RT",
+      "features": {"subtask": true, "recovery": true, "retrained": true},
+      "implementation_revision": "3450540160dadfce60f2100904bdf6c1a0a929e5",
+      "checkpoint": {
+        "kind": "project",
+        "repo_id": "shin0412/HRVLA",
+        "revision": "5898d3177dc64322842fe1a42900cc9f952ea5e9",
+        "path": "checkpoints/GR00T-STR-RT/checkpoint-300",
+        "artifact_group": "GR00T-STR-RT"
+      },
+      "evidence": "docs/RECOVERY_VLA_RETRAINING.md",
+      "claim_scope": "paired held-out recovery-conditioned action prediction"
+    }
+  ],
+  "comparison_families": [
+    {
+      "id": "subtask_contribution",
+      "methods": ["gr00t_sonic", "gr00t_st"],
+      "controlled_difference": "add ST planning while retaining the base VLA/controller"
+    },
+    {
+      "id": "recovery_contribution",
+      "methods": ["gr00t_st", "gr00t_str"],
+      "controlled_difference": "add STR recovery while retaining the base VLA/controller"
+    },
+    {
+      "id": "subtask_retraining_contribution",
+      "methods": ["gr00t_st", "gr00t_st_rt"],
+      "controlled_difference": "add ST-RT checkpoint while retaining the ST planner"
+    },
+    {
+      "id": "recovery_retraining_contribution",
+      "methods": ["gr00t_str", "gr00t_str_rt"],
+      "controlled_difference": "add STR-RT checkpoint while retaining STR recovery"
+    }
+  ],
+  "end_to_end_status": "pending_suite_admission"
+}
