@@ -1,0 +1,31 @@
+{
+  "frozen_backbone": true,
+  "frozen_flow_matching_core": true,
+  "parameter_dtype_policy": "frozen_bf16_trainable_decoder_fp32",
+  "profile": "action_decoder_only",
+  "schema_version": 1,
+  "total_parameters": 3144016000,
+  "trainable_parameters": 37916800,
+  "trainable_tensors": [
+    {
+      "dtype": "torch.float32",
+      "name": "action_head.action_decoder.layer1.W",
+      "parameters": 33554432
+    },
+    {
+      "dtype": "torch.float32",
+      "name": "action_head.action_decoder.layer1.b",
+      "parameters": 32768
+    },
+    {
+      "dtype": "torch.float32",
+      "name": "action_head.action_decoder.layer2.W",
+      "parameters": 4325376
+    },
+    {
+      "dtype": "torch.float32",
+      "name": "action_head.action_decoder.layer2.b",
+      "parameters": 4224
+    }
+  ]
+}

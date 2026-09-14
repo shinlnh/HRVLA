@@ -1,0 +1,237 @@
+{
+  "claim_boundary": "Open-loop action prediction on held-out Isaac Lab demonstrations; not a closed-loop manipulation success rate.",
+  "hardware": {
+    "cpu": {
+      "aggregate_busy_percent_max": 83.52,
+      "aggregate_busy_percent_mean": 12.664424460431654,
+      "aggregate_busy_percent_p95": 74.32399999999998,
+      "samples": 278
+    },
+    "gpu": {
+      "framebuffer_mib_max": 7720.0,
+      "framebuffer_mib_mean": 7198.703007518797,
+      "framebuffer_mib_p95": 7647.0,
+      "memory_percent_max": 46.0,
+      "memory_percent_mean": 14.206766917293233,
+      "memory_percent_p95": 42.0,
+      "power_w_max": 214.0,
+      "power_w_mean": 64.83458646616542,
+      "power_w_p95": 212.0,
+      "samples": 266,
+      "sm_percent_max": 94.0,
+      "sm_percent_mean": 18.63533834586466,
+      "sm_percent_p95": 93.75
+    }
+  },
+  "labels": {
+    "base": "base N1.7",
+    "reference": "subtask post-trained",
+    "tuned": "recovery post-trained"
+  },
+  "paired_evaluation": {
+    "clean": {
+      "base_mse": 0.10619595256589708,
+      "bootstrap_95_ci": [
+        0.005325321941858246,
+        0.006576940364071301
+      ],
+      "improved_trajectories": 42,
+      "mse_reduction": 0.005959983382906232,
+      "mse_reduction_percent": 5.612250974638532,
+      "paired_effect_dz": 2.8298629223896032,
+      "sign_test_two_sided_p": 4.547473508864641e-13,
+      "trajectories": 42,
+      "tuned_mse": 0.10023596918299085
+    },
+    "combined": {
+      "base_mse": 0.1061863320923987,
+      "bootstrap_95_ci": [
+        0.005352532140733231,
+        0.006600284217191594
+      ],
+      "improved_trajectories": 42,
+      "mse_reduction": 0.005981251420009704,
+      "mse_reduction_percent": 5.632788422153127,
+      "paired_effect_dz": 2.8454847501249754,
+      "sign_test_two_sided_p": 4.547473508864641e-13,
+      "trajectories": 42,
+      "tuned_mse": 0.10020508067238898
+    },
+    "occlusion": {
+      "base_mse": 0.10617914742657117,
+      "bootstrap_95_ci": [
+        0.005519002746968042,
+        0.006755721985939002
+      ],
+      "improved_trajectories": 42,
+      "mse_reduction": 0.006143599926006226,
+      "mse_reduction_percent": 5.786070122907014,
+      "paired_effect_dz": 2.956693186945788,
+      "sign_test_two_sided_p": 4.547473508864641e-13,
+      "trajectories": 42,
+      "tuned_mse": 0.10003554750056494
+    },
+    "state_noise": {
+      "base_mse": 0.10619594227700006,
+      "bootstrap_95_ci": [
+        0.005328205791080282,
+        0.006578439185839324
+      ],
+      "improved_trajectories": 42,
+      "mse_reduction": 0.005962255809988294,
+      "mse_reduction_percent": 5.614391361994253,
+      "paired_effect_dz": 2.83216608293784,
+      "sign_test_two_sided_p": 4.547473508864641e-13,
+      "trajectories": 42,
+      "tuned_mse": 0.10023368646701176
+    },
+    "vision_noise": {
+      "base_mse": 0.10621288418769836,
+      "bootstrap_95_ci": [
+        0.005201946531555482,
+        0.00652026862260841
+      ],
+      "improved_trajectories": 42,
+      "mse_reduction": 0.005866628495000657,
+      "mse_reduction_percent": 5.523462186219526,
+      "paired_effect_dz": 2.641397902035748,
+      "sign_test_two_sided_p": 4.547473508864641e-13,
+      "trajectories": 42,
+      "tuned_mse": 0.1003462556926977
+    }
+  },
+  "phase_evaluation": {
+    "Complete recovery by placing the apple on the plate and retracting safely.": {
+      "base_mse": 0.10564632956084097,
+      "frames": 1024,
+      "mse_reduction_percent": 13.4426541551398,
+      "reference_mse": 0.09195316780824214,
+      "reference_to_tuned_reduction_percent": 0.5530086347048843,
+      "tuned_mse": 0.09144465885037789
+    },
+    "Recover from a missed grasp by re-approaching the apple with the left hand.": {
+      "base_mse": 0.11827060923819248,
+      "frames": 373,
+      "mse_reduction_percent": -11.046403236532903,
+      "reference_mse": 0.13196052079545909,
+      "reference_to_tuned_reduction_percent": 0.47382591910265104,
+      "tuned_mse": 0.13133525764494736
+    },
+    "Recover the grasp by aligning and securely closing the left hand around the apple.": {
+      "base_mse": 0.1084735712800029,
+      "frames": 1532,
+      "mse_reduction_percent": -9.905296221440187,
+      "reference_mse": 0.11967947661351441,
+      "reference_to_tuned_reduction_percent": 0.3854267994016847,
+      "tuned_mse": 0.11921819983726226
+    },
+    "Stabilize the recovered apple and carry it toward the plate.": {
+      "base_mse": 0.10267197174059836,
+      "frames": 2110,
+      "mse_reduction_percent": 16.998409840210385,
+      "reference_mse": 0.0856748920622595,
+      "reference_to_tuned_reduction_percent": 0.5316877070846088,
+      "tuned_mse": 0.08521936919310646
+    }
+  },
+  "reference_to_tuned_evaluation": {
+    "clean": {
+      "base_mse": 0.100716649244229,
+      "bootstrap_95_ci": [
+        0.00038178081491163803,
+        0.0005742787915681089
+      ],
+      "improved_trajectories": 38,
+      "mse_reduction": 0.00048068006123815266,
+      "mse_reduction_percent": 0.4772597826130473,
+      "paired_effect_dz": 1.481156458742083,
+      "sign_test_two_sided_p": 5.65314621780999e-08,
+      "trajectories": 42,
+      "tuned_mse": 0.10023596918299085
+    },
+    "combined": {
+      "base_mse": 0.10069563878434044,
+      "bootstrap_95_ci": [
+        0.00038784063376841093,
+        0.0005868826327579362
+      ],
+      "improved_trajectories": 38,
+      "mse_reduction": 0.0004905581119514647,
+      "mse_reduction_percent": 0.48716917423016853,
+      "paired_effect_dz": 1.469433029635836,
+      "sign_test_two_sided_p": 5.65314621780999e-08,
+      "trajectories": 42,
+      "tuned_mse": 0.10020508067238898
+    },
+    "occlusion": {
+      "base_mse": 0.10061556562071755,
+      "bootstrap_95_ci": [
+        0.0004775562013188998,
+        0.0006788442576570166
+      ],
+      "improved_trajectories": 39,
+      "mse_reduction": 0.0005800181201526097,
+      "mse_reduction_percent": 0.5764695716556001,
+      "paired_effect_dz": 1.7156270388666939,
+      "sign_test_two_sided_p": 5.631591193377972e-09,
+      "trajectories": 42,
+      "tuned_mse": 0.10003554750056494
+    },
+    "state_noise": {
+      "base_mse": 0.1007147188342753,
+      "bootstrap_95_ci": [
+        0.0003817305412320864,
+        0.0005748760842141651
+      ],
+      "improved_trajectories": 38,
+      "mse_reduction": 0.00048103236726352146,
+      "mse_reduction_percent": 0.47761873619987333,
+      "paired_effect_dz": 1.4820687393309226,
+      "sign_test_two_sided_p": 5.65314621780999e-08,
+      "trajectories": 42,
+      "tuned_mse": 0.10023368646701176
+    },
+    "vision_noise": {
+      "base_mse": 0.10079127142117136,
+      "bootstrap_95_ci": [
+        0.0003338684593992574,
+        0.0005505958572030067
+      ],
+      "improved_trajectories": 36,
+      "mse_reduction": 0.00044501572847366333,
+      "mse_reduction_percent": 0.44152209035452955,
+      "paired_effect_dz": 1.2123569567781531,
+      "sign_test_two_sided_p": 2.8288777684792876e-06,
+      "trajectories": 42,
+      "tuned_mse": 0.1003462556926977
+    }
+  },
+  "schema_version": 1,
+  "training": {
+    "checkpoint_clean_mse": [
+      {
+        "clean_mse": 0.10619595256589708,
+        "step": 0
+      },
+      {
+        "clean_mse": 0.10075852718381655,
+        "step": 100
+      },
+      {
+        "clean_mse": 0.1002377759487856,
+        "step": 200
+      },
+      {
+        "clean_mse": 0.10023596918299085,
+        "step": 300
+      }
+    ],
+    "effective_batch_size": 16,
+    "first_25_loss_mean": 1.268696,
+    "gradient_accumulation_steps": 1,
+    "last_25_loss_mean": 1.208828,
+    "loss_change_percent": -4.718860940682401,
+    "optimizer_steps": 300,
+    "physical_batch_size": 16
+  }
+}
