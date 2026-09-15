@@ -47,6 +47,10 @@ target, seed, one-shot timing, simulator provenance, and snapshot settle timing.
 The full repository suite passes at `110 passed, 11 skipped`; no row is promoted
 until the wrapper executes under the real Isaac process after the claim-bearing
 external matrix releases CUDA.
+The runtime-admission launcher is staged for that handoff: it uses one released
+policy load per task, captures all nine scenarios at the locked snapshot seed,
+records every run, preserves failed attempts, and refuses GPU overlap. Runtime
+success still leaves the independent 20/20 oracle gate closed.
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized

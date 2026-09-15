@@ -179,6 +179,19 @@ one-shot timing, and the exact failure-snapshot settle boundary. Passing this
 audit means only that the runtime injector evidence is valid; oracle admission
 and recoverability remain pending.
 
+After the external matrix releases CUDA, capture all nine runtime rows with the
+task-shared admission launcher:
+
+```bash
+python3 scripts/run_humanoidarena_recovery_admission.py \
+  --cpu-threads 24 --compile-threads 32 --interop-threads 2
+```
+
+The launcher refuses to overlap the external matrix or a busy GPU, preserves
+failed runs in monotonically numbered attempt directories, reuses one released
+policy server per task, records every episode, and independently re-audits each
+completed attempt. It never changes a draft scenario to admitted.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1
