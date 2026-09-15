@@ -156,10 +156,18 @@ def _validate_detector(detector_id: str, parameters: Any, label: str) -> None:
         _name(p["asset_name"], f"{label}.asset_name")
         _number(p["minimum_speed_mps"], f"{label}.minimum_speed_mps", low=0.01, high=10.0)
     elif detector_id == "seat-approach":
-        p = _exact_keys(parameters, {"maximum_xy_distance_m"}, label)
+        p = _exact_keys(
+            parameters,
+            {"maximum_xy_distance_m", "minimum_root_height_m", "minimum_up_axis_z"},
+            label,
+        )
         _number(
             p["maximum_xy_distance_m"], f"{label}.maximum_xy_distance_m", low=0.05, high=3.0
         )
+        _number(
+            p["minimum_root_height_m"], f"{label}.minimum_root_height_m", low=0.1, high=2.0
+        )
+        _number(p["minimum_up_axis_z"], f"{label}.minimum_up_axis_z", low=0.0, high=1.0)
     elif detector_id == "strike-approach-shell":
         p = _exact_keys(
             parameters, {"inner_margin_m", "outer_margin_m", "decreasing_samples"}, label
@@ -226,9 +234,18 @@ def _validate_injector(injector_id: str, parameters: Any, label: str) -> None:
         _number(p["lateral_mps"], f"{label}.lateral_mps", low=0.05, high=3.0)
         _choice(p["lateral_direction_robot"], {"left", "right"}, f"{label}.lateral_direction_robot")
     elif injector_id == "support-foot-slip":
-        p = _exact_keys(parameters, {"displacement_m", "lateral_direction_robot"}, label)
-        _number(p["displacement_m"], f"{label}.displacement_m", low=0.01, high=0.5)
+        p = _exact_keys(
+            parameters,
+            {"impulse_ns", "lateral_direction_robot", "body_selection"},
+            label,
+        )
+        _number(p["impulse_ns"], f"{label}.impulse_ns", low=0.1, high=100.0)
         _choice(p["lateral_direction_robot"], {"left", "right"}, f"{label}.lateral_direction_robot")
+        _choice(
+            p["body_selection"],
+            {"max-contact-ankle-roll"},
+            f"{label}.body_selection",
+        )
     elif injector_id == "upper-body-contact-impulse":
         p = _exact_keys(parameters, {"impulse_ns", "body_name", "direction"}, label)
         _number(p["impulse_ns"], f"{label}.impulse_ns", low=0.1, high=200.0)

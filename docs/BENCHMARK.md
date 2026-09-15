@@ -121,6 +121,11 @@ either at the wrong dimensional seam is a hard error. World-frame root-velocity
 events record before/after values and use per-injector, per-environment flags.
 The evaluator must call `reset_one_shot_injectors` at every episode reset so a
 persistent simulator cannot silently skip perturbations in later rollouts.
+Scene-level primitives resolve lateral deltas in the live asset frame, retain
+before/after poses and velocities, and represent a body impulse as force over
+exactly one controller interval before clearing its Isaac Lab wrench buffer.
+The support-foot event selects the ankle-roll body with the larger live contact
+force; it does not kinematically teleport an articulated foot.
 
 Every recovery event also carries a typed detector contract. Boundaries must
 be observable before the task success predicate fires. In particular,

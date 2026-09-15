@@ -210,11 +210,11 @@
           "failure_snapshot_id": "pending:sit_sofa/sofa-approach-slip",
           "event_id": "before-seat-contact",
           "event_boundary": "a pelvis or hip proxy first comes within 0.75 m XY of the live sofa-seat AABB while the seated predicate remains false and the robot is upright",
-          "event_detector": {"id": "seat-approach", "parameters": {"maximum_xy_distance_m": 0.75}},
+          "event_detector": {"id": "seat-approach", "parameters": {"maximum_xy_distance_m": 0.75, "minimum_root_height_m": 0.45, "minimum_up_axis_z": 0.6}},
           "level": "L2",
           "humanoid_axes": ["H1"],
           "severity": "medium",
-          "injector": {"id": "support-foot-slip", "parameters": {"displacement_m": 0.08, "lateral_direction_robot": "left"}},
+          "injector": {"id": "support-foot-slip", "parameters": {"impulse_ns": 12.0, "lateral_direction_robot": "left", "body_selection": "max-contact-ankle-roll"}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         }
       ]

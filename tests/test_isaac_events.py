@@ -9,7 +9,12 @@ import pytest
 
 from hrvla_bench.isaac_events import (
     apply_action_window,
+    apply_asset_local_translation_once,
+    apply_body_impulse_once,
+    apply_root_local_lateral_velocity_once,
     apply_root_velocity_delta_once,
+    clear_expired_body_impulses,
+    place_asset_relative_once,
     push_once_by_setting_velocity,
     reset_one_shot_injectors,
 )
@@ -18,17 +23,46 @@ from hrvla_bench.isaac_events import (
 class _FakeAsset:
     def __init__(self, num_envs: int, torch_module) -> None:
         self.device = torch_module.device("cpu")
-        self.data = types.SimpleNamespace(root_vel_w=torch_module.zeros((num_envs, 6)))
+        root_pose = torch_module.zeros((num_envs, 7))
+        root_pose[:, 3] = 1.0
+        self.body_names = ["torso_link", "left_foot_link", "right_foot_link"]
+        self.data = types.SimpleNamespace(
+            root_vel_w=torch_module.zeros((num_envs, 6)),
+            root_link_pose_w=root_pose,
+            body_names=self.body_names,
+        )
         self.writes = []
+        self.pose_writes = []
+        self.external_writes = []
 
     def write_root_velocity_to_sim(self, values, *, env_ids) -> None:
         self.data.root_vel_w[env_ids] = values
         self.writes.append((values.clone(), env_ids.clone()))
 
+    def write_root_pose_to_sim(self, values, *, env_ids) -> None:
+        self.data.root_link_pose_w[env_ids] = values
+        self.pose_writes.append((values.clone(), env_ids.clone()))
+
+    def set_external_force_and_torque(
+        self, forces, torques, *, body_ids, env_ids, is_global
+    ) -> None:
+        self.external_writes.append(
+            {
+                "forces": forces.clone(),
+                "torques": torques.clone(),
+                "body_ids": body_ids.clone(),
+                "env_ids": env_ids.clone(),
+                "is_global": is_global,
+            }
+        )
+
 
 class _FakeScene(dict):
     def __init__(self, num_envs: int, torch_module) -> None:
-        super().__init__(robot=_FakeAsset(num_envs, torch_module))
+        super().__init__(
+            robot=_FakeAsset(num_envs, torch_module),
+            obstacle=_FakeAsset(num_envs, torch_module),
+        )
         self.num_envs = num_envs
 
 
@@ -121,6 +155,90 @@ def test_root_velocity_delta_is_one_shot_until_explicit_reset(tmp_path) -> None:
     records = [json.loads(line) for line in audit_path.read_text().splitlines()]
     assert [record["environment_ids"] for record in records] == [[0, 2], [2]]
     assert all(record["episode_seed"] == 17 for record in records)
+
+
+def test_local_lateral_velocity_is_resolved_independently_per_environment() -> None:
+    torch = pytest.importorskip("torch")
+    env = _FakeEnv(torch, num_envs=2)
+    half = 2.0**-0.5
+    env.scene["robot"].data.root_link_pose_w[1, 3:7] = torch.tensor(
+        [half, 0.0, 0.0, half]
+    )
+    apply_root_local_lateral_velocity_once(
+        env,
+        None,
+        injector_id="local-left",
+        lateral_mps=0.4,
+        lateral_direction_robot="left",
+    )
+    torch.testing.assert_close(
+        env.scene["robot"].data.root_vel_w[:, :3],
+        torch.tensor([[0.0, 0.4, 0.0], [-0.4, 0.0, 0.0]]),
+        atol=1e-6,
+        rtol=1e-6,
+    )
+
+
+def test_asset_translation_and_relative_placement_are_one_shot() -> None:
+    torch = pytest.importorskip("torch")
+    env = _FakeEnv(torch, num_envs=1)
+    apply_asset_local_translation_once(
+        env,
+        None,
+        injector_id="door-shift",
+        asset_name="robot",
+        local_translation_m=(0.1, 0.0, 0.0),
+    )
+    apply_asset_local_translation_once(
+        env,
+        None,
+        injector_id="door-shift",
+        asset_name="robot",
+        local_translation_m=(0.1, 0.0, 0.0),
+    )
+    torch.testing.assert_close(
+        env.scene["robot"].data.root_link_pose_w[0, :3], torch.tensor([0.1, 0.0, 0.0])
+    )
+    assert len(env.scene["robot"].pose_writes) == 1
+
+    place_asset_relative_once(
+        env,
+        None,
+        injector_id="path-obstacle",
+        asset_name="obstacle",
+        reference_asset_name="robot",
+        reference_local_position_m=(1.0, 0.0, 0.2),
+    )
+    torch.testing.assert_close(
+        env.scene["obstacle"].data.root_link_pose_w[0, :3],
+        torch.tensor([1.1, 0.0, 0.2]),
+    )
+    torch.testing.assert_close(
+        env.scene["obstacle"].data.root_vel_w[0], torch.zeros(6)
+    )
+
+
+def test_body_impulse_is_cleared_after_one_control_step() -> None:
+    torch = pytest.importorskip("torch")
+    env = _FakeEnv(torch, num_envs=1)
+    env.episode_length_buf[:] = 10
+    apply_body_impulse_once(
+        env,
+        None,
+        injector_id="recoil",
+        asset_name="robot",
+        body_name="torso_link",
+        impulse_world_ns=(18.0, 0.0, 0.0),
+        control_dt_s=0.02,
+    )
+    writes = env.scene["robot"].external_writes
+    assert len(writes) == 1
+    torch.testing.assert_close(writes[0]["forces"][0, 0], torch.tensor([900.0, 0.0, 0.0]))
+    assert clear_expired_body_impulses(env) == 0
+    env.episode_length_buf[:] = 11
+    assert clear_expired_body_impulses(env) == 1
+    assert len(writes) == 2
+    torch.testing.assert_close(writes[1]["forces"], torch.zeros((1, 1, 3)))
 
 
 def test_legacy_push_wrapper_uses_resettable_registry(monkeypatch) -> None:
