@@ -37,6 +37,27 @@ def test_single_episode_contract_rejects_a_multi_episode_batch(tmp_path) -> None
         )
 
 
+def test_per_episode_output_contract_accepts_a_unique_batch(tmp_path) -> None:
+    batch = tmp_path / "batch.json"
+    batch.write_text(
+        json.dumps(
+            {
+                "episodes": [
+                    {"episode_index": 0, "episode_seed": 11},
+                    {"episode_index": 1, "episode_seed": 22},
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    task, seeds = RUNNER._episode_contract(
+        ["--task", "task-id", "--seed", "3", "--episode_batch_json", str(batch)],
+        allow_batch=True,
+    )
+    assert task == "task-id"
+    assert seeds == [11, 22]
+
+
 def test_encoder_proxy_perturbs_only_the_first_encoder_output() -> None:
     class Encoder:
         def run(self, *args, **kwargs):
