@@ -55,6 +55,11 @@ The capture-manifest compiler is also ready and fail-closed: it re-audits the
 newest valid attempt, requires 9/9 runtime traces, 7/7 task initial snapshots,
 3/3 failure snapshots, and rejects initial-state drift between two scenarios of
 the same task. It deliberately reports the oracle gate as 0/9.
+The independent-oracle contract is now frozen before observing admission
+outcomes: released PI0.5 (independent of the internal GR00T family), 20
+hash-derived policy seeds per scenario, identical snapshots/controller/horizon,
+and an exact 20/20 pass threshold. Failures are preserved and reject the row;
+infrastructure errors must be rerun and cannot be counted as trials.
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized

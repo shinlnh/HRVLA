@@ -203,6 +203,15 @@ requires all nine runtime traces, all three failure-start snapshots, and one
 identical initial-state content hash across every capture of the same task. Its
 success status still ends in `oracle_admission_pending`.
 
+The independent recoverability witness is frozen in
+`config/humanoidarena-recovery-oracle.lock.json`. It uses the released PI0.5
+task checkpoint, which is a different model family from the five internal
+GR00T rows, only to answer whether the state is behaviorally recoverable. The
+lock predeclares 20 hash-derived policy seeds per scenario, the unchanged
+upstream reward/horizon/controller, and an exact 20/20 threshold. A behavioral
+failure rejects the scenario and remains evidence; an infrastructure failure is
+not silently counted as a trial. Oracle outcomes are never method scores.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1
