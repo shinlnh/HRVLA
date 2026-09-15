@@ -85,7 +85,8 @@
           "id": "box-missed-grasp-retry",
           "protocol": "online_failure",
           "event_id": "after-first-grasp-close",
-          "event_boundary": "after the first commanded hand closure",
+          "event_boundary": "the first semantic-action40 hand bit rising edge at the locked 0.5 close threshold",
+          "event_detector": {"id": "first-hand-close", "parameters": {"close_threshold": 0.5, "hand_indices": [38, 39]}},
           "level": "L1",
           "humanoid_axes": [],
           "severity": "low",
@@ -97,11 +98,12 @@
           "protocol": "failure_start",
           "failure_snapshot_id": "pending:pick_and_place_box/box-drop-and-body-push",
           "event_id": "after-stable-grasp",
-          "event_boundary": "after box grasp is stable for 0.5 s",
+          "event_boundary": "box root is at least 0.05 m above its reset height with speed at most 0.08 m/s continuously for 0.5 s, before task success",
+          "event_detector": {"id": "stable-object-lift", "parameters": {"asset_name": "box", "minimum_lift_m": 0.05, "maximum_speed_mps": 0.08, "stable_duration_s": 0.5}},
           "level": "L3",
           "humanoid_axes": ["H3"],
           "severity": "medium",
-          "injector": {"id": "drop-object-and-root-velocity", "parameters": {"lateral_mps": 0.35}},
+          "injector": {"id": "drop-object-and-root-velocity", "parameters": {"object_asset_name": "box", "release_duration_s": 0.2, "lateral_mps": 0.35, "lateral_direction_robot": "left"}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         }
       ]
@@ -111,8 +113,9 @@
       "coverage_source": "HumanoidArena",
       "humanoidarena_task_key": "open_door",
       "initial_snapshot_id": "pending:open_door/initial",
-      "success_predicate": "HumanoidArena default strict raw reward is 1 when the robot is upright, the latch is unlocked, and absolute door-leaf angle is at least 60 degrees; the upstream OpenDoor row remains diagnostic while its locked self-tests fail",
+      "success_predicate": "HumanoidArena strict raw reward with OPEN_DOOR_STRICT_REQUIRE_GEOMETRY=1 is 1 when the robot is upright and through the live door frame, the latch is unlocked, and absolute door-leaf angle is at least 60 degrees; the upstream OpenDoor row remains diagnostic while its locked self-tests fail",
       "success_predicate_source": "tasks/g1_tasks/move_open_door_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
+      "runtime_environment": {"OPEN_DOOR_STRICT_REQUIRE_GEOMETRY": "1"},
       "horizon_s": 90,
       "admission": {"status": "draft"},
       "scenarios": [
@@ -120,11 +123,12 @@
           "id": "door-handle-pose-shift",
           "protocol": "online_failure",
           "event_id": "before-handle-contact",
-          "event_boundary": "when the wrist enters the handle approach volume",
+          "event_boundary": "a configured wrist proxy first enters 0.30 m of the live door-handle body while strict task success is false",
+          "event_detector": {"id": "wrist-handle-approach", "parameters": {"door_asset_name": "door", "maximum_distance_m": 0.3}},
           "level": "L2",
           "humanoid_axes": [],
           "severity": "medium",
-          "injector": {"id": "shift-door-handle", "parameters": {"translation_m": 0.04}},
+          "injector": {"id": "shift-door-handle", "parameters": {"door_asset_name": "door", "translation_m": 0.04, "translation_axis_door_local": "x"}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         },
         {
@@ -132,11 +136,12 @@
           "protocol": "failure_start",
           "failure_snapshot_id": "pending:open_door/doorway-obstruction",
           "event_id": "after-door-open",
-          "event_boundary": "after door angle first exceeds 60 degrees",
+          "event_boundary": "latch is unlocked and absolute live door-leaf angle first reaches 60 degrees while the geometry-required task predicate remains false",
+          "event_detector": {"id": "door-open-before-traversal", "parameters": {"minimum_leaf_angle_deg": 60.0}},
           "level": "L4",
           "humanoid_axes": [],
           "severity": "high",
-          "injector": {"id": "place-doorway-obstacle", "parameters": {"mass_kg": 1.0}},
+          "injector": {"id": "place-doorway-obstacle", "parameters": {"mass_kg": 1.0, "size_m": [0.45, 0.25, 0.55], "door_local_center_m": [0.0, 0.35, 0.275]}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         }
       ]
@@ -154,8 +159,9 @@
         {
           "id": "tracker-underexecution",
           "protocol": "online_failure",
-          "event_id": "before-second-transfer",
-          "event_boundary": "after the first transfer success predicate becomes true",
+          "event_id": "during-hammer-transport",
+          "event_boundary": "hammer CoM has moved at least 0.20 m from reset and lifted at least 0.05 m while the single-stage goal predicate remains false",
+          "event_detector": {"id": "object-in-transport", "parameters": {"asset_name": "object_l", "minimum_displacement_m": 0.2, "minimum_lift_m": 0.05}},
           "level": "L2",
           "humanoid_axes": ["H2"],
           "severity": "medium",
@@ -177,12 +183,13 @@
         {
           "id": "support-state-push",
           "protocol": "online_failure",
-          "event_id": "after-kick-plant",
-          "event_boundary": "after support foot is planted before swing-foot acceleration",
+          "event_id": "after-ball-first-motion",
+          "event_boundary": "football speed first exceeds 0.25 m/s while the goal predicate remains false",
+          "event_detector": {"id": "object-first-motion", "parameters": {"asset_name": "object", "minimum_speed_mps": 0.25}},
           "level": "L1",
           "humanoid_axes": ["H1"],
           "severity": "medium",
-          "injector": {"id": "root-velocity-impulse", "parameters": {"lateral_mps": 0.45}},
+          "injector": {"id": "root-velocity-impulse", "parameters": {"lateral_mps": 0.45, "lateral_direction_robot": "left"}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         }
       ]
@@ -202,11 +209,12 @@
           "protocol": "failure_start",
           "failure_snapshot_id": "pending:sit_sofa/sofa-approach-slip",
           "event_id": "before-seat-contact",
-          "event_boundary": "when pelvis enters the final seating approach volume",
+          "event_boundary": "a pelvis or hip proxy first comes within 0.75 m XY of the live sofa-seat AABB while the seated predicate remains false and the robot is upright",
+          "event_detector": {"id": "seat-approach", "parameters": {"maximum_xy_distance_m": 0.75}},
           "level": "L2",
           "humanoid_axes": ["H1"],
           "severity": "medium",
-          "injector": {"id": "support-foot-slip", "parameters": {"displacement_m": 0.08}},
+          "injector": {"id": "support-foot-slip", "parameters": {"displacement_m": 0.08, "lateral_direction_robot": "left"}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         }
       ]
@@ -224,12 +232,13 @@
         {
           "id": "contact-recoil",
           "protocol": "online_failure",
-          "event_id": "after-first-strike-contact",
-          "event_boundary": "first valid glove-target contact",
+          "event_id": "during-first-strike-approach",
+          "event_boundary": "a configured punch proxy approaches for three consecutive samples and enters the shell 0.08–0.20 m outside the live hit threshold while success remains false",
+          "event_detector": {"id": "strike-approach-shell", "parameters": {"inner_margin_m": 0.08, "outer_margin_m": 0.2, "decreasing_samples": 3}},
           "level": "L1",
           "humanoid_axes": ["H1"],
           "severity": "high",
-          "injector": {"id": "upper-body-contact-impulse", "parameters": {"impulse_ns": 18.0}},
+          "injector": {"id": "upper-body-contact-impulse", "parameters": {"impulse_ns": 18.0, "body_name": "torso_link", "direction": "away-from-target"}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         }
       ]
@@ -247,12 +256,13 @@
         {
           "id": "new-blocking-obstacle",
           "protocol": "online_failure",
-          "event_id": "after-first-waypoint",
-          "event_boundary": "first waypoint region entered for 0.5 s",
+          "event_id": "after-start-zone-exit",
+          "event_boundary": "robot root first moves at least 1.0 m in XY from its immutable initial snapshot while the target predicate remains false",
+          "event_detector": {"id": "root-displacement", "parameters": {"minimum_xy_displacement_m": 1.0}},
           "level": "L4",
           "humanoid_axes": [],
           "severity": "medium",
-          "injector": {"id": "place-path-obstacle", "parameters": {"clearance_m": 0.0}},
+          "injector": {"id": "place-path-obstacle", "parameters": {"clearance_m": 0.0, "asset_name": "obstacle_02_c", "distance_ahead_m": 1.0}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         }
       ]

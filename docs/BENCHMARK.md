@@ -122,6 +122,14 @@ events record before/after values and use per-injector, per-environment flags.
 The evaluator must call `reset_one_shot_injectors` at every episode reset so a
 persistent simulator cannot silently skip perturbations in later rollouts.
 
+Every recovery event also carries a typed detector contract. Boundaries must
+be observable before the task success predicate fires. In particular,
+DoubleDesk uses hammer transport rather than a nonexistent second transfer,
+Boxing uses the pre-hit approach shell rather than the terminal hit, and visual
+navigation uses displacement from the immutable start rather than a nonexistent
+waypoint. OpenDoor locks `OPEN_DOOR_STRICT_REQUIRE_GEOMETRY=1`; otherwise a
+post-open obstruction snapshot would already satisfy the default strict reward.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1

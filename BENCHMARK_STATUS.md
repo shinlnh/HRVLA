@@ -22,6 +22,12 @@ Recovery admission remains 0/9. Static provenance now resolves and hashes all
 definitions that were stronger than the simulator code. Initial/failure
 snapshots, nine runtime injectors, and independent 20/20 oracle trials remain
 unexecuted and are shown separately in the tracked admission-preflight plot.
+All 9/9 static detector/injector contracts are now fully parameterized and
+type-checked. Invalid upstream boundaries were removed: DoubleDesk has one
+hammer transfer, Boxing terminates at the first hit, and visual navigation has
+no waypoint predicate. OpenDoor recovery explicitly enables the upstream
+geometry requirement so an obstruction cannot start in an already-successful
+state. This static gate does not count as runtime admission.
 The hash-addressed Isaac Lab capture/restore implementation is now tested, but
 the gate stays at 0/10 until the seven initial and three failure snapshots are
 captured from the locked live simulator and independently replayed.

@@ -10,6 +10,7 @@ import subprocess
 from typing import Any
 
 from .plan import canonical_sha256, validate_suite
+from .recovery_injector_contract import validate_recovery_injector_contract
 
 
 EXPECTED_TASK_KEYS = {
@@ -68,6 +69,10 @@ def audit_recovery_contract(
     """Prove source identity/predicate resolution while keeping admission at zero."""
 
     validate_suite(suite)
+    injector_contract_rows = validate_recovery_injector_contract(suite)
+    injector_contract_by_scenario = {
+        row["scenario_id"]: row for row in injector_contract_rows
+    }
     revision = subprocess.run(
         ["git", "-C", str(source_root), "rev-parse", "HEAD"],
         check=True,
@@ -99,6 +104,7 @@ def audit_recovery_contract(
         for scenario in task.get("scenarios", []):
             if scenario["protocol"] == "failure_start":
                 failure_snapshot_count += 1
+            contract = injector_contract_by_scenario[scenario["id"]]
             scenarios.append(
                 {
                     "task_id": task["id"],
@@ -108,6 +114,12 @@ def audit_recovery_contract(
                     "injector_parameters_sha256": _canonical_hash(
                         scenario["injector"]["parameters"]
                     ),
+                    "event_detector_id": contract["detector_id"],
+                    "event_detector_parameters_sha256": contract[
+                        "detector_parameters_sha256"
+                    ],
+                    "interface_seam": contract["interface_seam"],
+                    "static_contract_validated": True,
                     "admission_status": scenario["admission"]["status"],
                     "runtime_validated": False,
                     "oracle_trials": 0,
@@ -129,6 +141,7 @@ def audit_recovery_contract(
         "scenarios": scenarios,
         "gates": {
             "task_predicate_sources": {"complete": 7, "required": 7},
+            "static_injector_contracts": {"complete": 9, "required": 9},
             "initial_snapshots": {"complete": 0, "required": 7},
             "failure_snapshots": {"complete": 0, "required": 3},
             "runtime_injectors": {"complete": 0, "required": 9},

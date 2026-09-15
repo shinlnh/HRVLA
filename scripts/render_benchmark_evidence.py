@@ -312,6 +312,7 @@ def _render_recovery_preflight(summary: dict[str, Any], output_path: Path) -> No
     gates = summary["gates"]
     order = (
         "task_predicate_sources",
+        "static_injector_contracts",
         "initial_snapshots",
         "failure_snapshots",
         "runtime_injectors",
