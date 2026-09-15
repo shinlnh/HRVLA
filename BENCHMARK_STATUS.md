@@ -13,14 +13,17 @@ Last audited: **2026-09-15 (Asia/Bangkok)**.
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
 | VLA retraining | 6/6 training seeds, 42 held-out trajectories × 5 conditions | Closed-loop task and recovery success; open-loop MSE is not SR/RSR |
-| External HumanoidArena | 2/84 formally complete cells; 51/1680 valid episode JSONs observed | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
+| External HumanoidArena | 2/84 formally complete cells; at least 52/1680 valid episode JSONs observed | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods in the frozen closed-loop plan | Run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
-`seed-1`. It also left 11 valid atomic episode records for seed 2. Across the 51
-observed episodes, 35 succeeded and 16 timed out. This is explicitly
-`partial_non_claim` evidence, not a result table.
+`seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized
+resumed run produced its first independently verified episode at 2026-09-15
+05:33 UTC: repeat 11 succeeded in 221 steps and retained a video, taking the
+tracked checkpoint to 52 episodes (36 success, 16 timeout). This is explicitly
+`partial_non_claim` evidence, not a result table. The mutable machine progress
+file is authoritative after this tracked checkpoint.
 
 ![Readiness by independent workstream](results/benchmark/readiness/benchmark_readiness.png)
 
@@ -132,6 +135,11 @@ serve Isaac Sim, I/O, and orchestration. See the
 - 2026-09-15: replaced cell-local server startup with task-shared server
   orchestration to reduce policy loads from at most 84 to 7 and simulator starts
   from at most 84 to 28 for a fresh full run.
+- 2026-09-15 05:28 UTC: started the optimized full-matrix resume as PID `1551582`
+  with 24 policy threads, 32 compile threads, two inter-op threads, and five-second
+  telemetry. After the first valid new result, the driver, policy server, and
+  simulator were raised from inherited `nice=5` to normal `nice=0`; future child
+  processes inherit the corrected priority. No unrelated process was reprioritized.
 
 See [the local storage cleanup ledger](docs/LOCAL_STORAGE_CLEANUP.md),
 [the benchmark protocol](docs/BENCHMARK.md), and
