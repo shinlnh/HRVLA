@@ -13,7 +13,7 @@ Last audited: **2026-09-15 (Asia/Bangkok)**.
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
 | VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena 40-D ST-RT/STR-RT: 0/6 seeds | Materialize admitted in-domain datasets, train/select/publish 3 ST-RT + 3 STR-RT checkpoints, then measure closed-loop task and recovery success; legacy open-loop MSE is not SR/RSR |
-| External HumanoidArena | 5/84 complete seed-cells plus one active batch; 109/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
+| External HumanoidArena | 6/84 complete seed-cells plus one active batch; 120/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
@@ -85,6 +85,11 @@ produced 109 valid episode records; five seed-cells were complete on disk and
 the task/mode batch was still active. The driver-level counter remains lower
 until all three seeds in that batch finish. This is explicitly
 `partial_non_claim` evidence, not a result table.
+At the tracked 2026-09-15 16:39 Asia/Bangkok audit, all three
+`semantic/boxing` seed-cells had completed, bringing the immutable snapshot to
+120/1,680 episode records and 6/84 cells. The runner then entered
+`vision/boxing` without reloading the task-shared PI0.5 checkpoint. This newer
+snapshot remains `partial_non_claim`.
 The mutable machine progress file is authoritative after this tracked checkpoint.
 
 The common GR00T adaptation inputs and 70/10/20 split are frozen in
@@ -324,6 +329,9 @@ serve Isaac Sim, I/O, and orchestration. See the
 - 2026-09-15 06:02 UTC: completed the resumed `base_test/boxing/seed-2` cell and
   entered `semantic/boxing`. The task-shared PI0.5 server remained alive across
   the mode boundary, validating the intended reload-elimination path.
+- 2026-09-15 09:39 UTC: completed all three `semantic/boxing` cells at
+  120/1,680 episodes and entered `vision/boxing`, again retaining the same
+  task-shared PI0.5 server.
 
 See [the local storage cleanup ledger](docs/LOCAL_STORAGE_CLEANUP.md),
 [the benchmark protocol](docs/BENCHMARK.md), and
