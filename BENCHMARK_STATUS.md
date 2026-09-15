@@ -12,8 +12,8 @@ Last audited: **2026-09-15 (Asia/Bangkok)**.
 | --- | --- | --- |
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
-| VLA retraining | 6/6 training seeds, 42 held-out trajectories × 5 conditions | Closed-loop task and recovery success; open-loop MSE is not SR/RSR |
-| External HumanoidArena | 4/84 formally complete cells; 98/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
+| VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena 40-D ST-RT/STR-RT: 0/6 seeds | Materialize admitted in-domain datasets, train/select/publish 3 ST-RT + 3 STR-RT checkpoints, then measure closed-loop task and recovery success; legacy open-loop MSE is not SR/RSR |
+| External HumanoidArena | 3/84 complete cells plus one active; 106/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
@@ -44,7 +44,7 @@ The single-episode upstream wrapper now connects those pieces without modifying
 the locked HumanoidArena checkout and records detector/injector/snapshot sidecars.
 The fail-closed auditor cross-checks numerical action hashes, physical magnitude,
 target, seed, one-shot timing, simulator provenance, and snapshot settle timing.
-The full repository suite passes at `143 passed, 16 skipped`; no row is promoted
+The full repository suite passes at `160 passed, 16 skipped`; no row is promoted
 until the wrapper executes under the real Isaac process after the claim-bearing
 external matrix releases CUDA.
 The runtime-admission launcher is staged for that handoff: it uses one released
@@ -80,8 +80,8 @@ The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized
 resume completed the remaining nine records, formally closed the third cell,
 and entered `semantic/boxing` at 2026-09-15 06:02 UTC without reloading its
-task-shared policy server. At the tracked 2026-09-15 08:22 UTC audit it had
-produced 98 valid episode records; three cells were finalized on disk and the
+task-shared policy server. At the tracked 2026-09-15 08:59 UTC audit it had
+produced 106 valid episode records; three cells were finalized on disk and the
 fourth was still inside its persistent 60-episode batch. This is explicitly
 `partial_non_claim` evidence, not a result table.
 The mutable machine progress file is authoritative after this tracked checkpoint.
@@ -121,6 +121,22 @@ checkpoint server across all applicable methods, batches rollout seeds per
 task/scenario, preserves failed attempts, normalizes only audited trials, and
 requires an exact complete record set before writing a method audit.
 
+The first HumanoidArena ST label audit correctly rejected materialization:
+state/action proxies still fell back on 69/490 train episodes and 11/70
+validation episodes (`0.1408` and `0.1571`, above the frozen `0.05` ceiling).
+The failure is localized to semantic OpenDoor transitions plus 11 PickPlaceBox
+episodes; lowering the threshold after observing the data is forbidden. The
+failed JSON and plot are retained as `subtask_label_audit_v2_failed.*`.
+An auditable video adjudicator is now staged for the CUDA handoff. It runs only
+on those explicit fallbacks, uses the immutable Cosmos-Reason2-2B revision,
+requires three staggered contact-sheet views, minimum per-boundary confidence
+`0.70`, maximum cross-view spread `0.08` of episode length, and phases of at
+least 40 frames. Rejected or incomplete consensus remains a fallback and keeps
+training locked. Its resource gate was exercised successfully: it refuses to
+load while the external simulator occupies CUDA. Unit/static tests pass, but
+there is no VLM adjudication result yet and therefore no in-domain RT training
+claim.
+
 ![Readiness by independent workstream](results/benchmark/readiness/benchmark_readiness.png)
 
 ## Frozen scope before `ours`
@@ -139,9 +155,12 @@ condition.
   rollouts. The six upstream-valid tasks form the primary aggregate. OpenDoor is
   a diagnostic/appendix row unless its two locked upstream contract tests pass
   before results are inspected.
-- [ ] Implement and validate the HumanoidArena 40-D action bridge for the five
+- [x] Implement and validate the HumanoidArena 40-D action bridge for the five
   GR00T/SONIC internal methods. The existing Arena G1 retrains use a different
   43-DoF/direct-action contract and cannot be presented as HumanoidArena reruns.
+- [ ] Pass the frozen ST temporal-label admission gate, materialize train and
+  validation views, and preserve the rejected-attempt audits. Video consensus
+  is training supervision only and must not be reported as simulator success.
 - [ ] Materialize the nine recovery scenarios with deterministic semantic-event
   injectors, snapshots, predicates, and exact hashes.
 - [ ] Pass independent oracle admission at 20/20 for every included scenario.
@@ -171,9 +190,9 @@ condition.
 | PI0.5 + SONIC | Released HumanoidArena task checkpoints under the locked 84-cell protocol | Running; partial non-claim |
 | GR00T + SONIC | No subtask planner, no recovery, no project retraining | Registered; closed-loop pending |
 | GR00T-ST | Adds the subtask planner only | Registered; closed-loop pending |
-| GR00T-ST-RT | Adds in-domain post-training to ST | Open-loop complete; closed-loop pending |
+| GR00T-ST-RT | Adds in-domain post-training to ST | New 40-D in-domain training pending; legacy 43-DoF open-loop evidence is context only |
 | GR00T-STR | Adds transition-aware recovery to ST | Component complete; closed-loop pending |
-| GR00T-STR-RT | Adds recovery-conditioned post-training to STR | Open-loop complete; closed-loop pending |
+| GR00T-STR-RT | Adds recovery-conditioned post-training to STR | New 40-D in-domain training pending; legacy 43-DoF open-loop evidence is context only |
 | `ours` | Future contribution against the frozen rows above | Must not start until the frozen tag exists |
 
 τ0-VLA, Vesta, Anticipation-VLA, STEP Planner, Hi Robot, BATON, AgentChord,
@@ -198,6 +217,15 @@ python3 -u scripts/run_humanoidarena_baseline_matrix_fast.py \
 python3 scripts/summarize_humanoidarena_baseline_matrix.py --allow-partial
 python3 scripts/render_benchmark_evidence.py
 PYTHONPATH=src python3 -m pytest -q
+
+# After the external matrix releases CUDA, resolve only rejected training-label
+# proxies. Inspect the report before freezing its audit hash in the RT lock.
+_vendor/Isaac-GR00T/.venv/bin/python \
+  scripts/run_humanoidarena_subtask_video_adjudication.py
+python3 scripts/prepare_humanoidarena_subtask_data.py \
+  --audit-only \
+  --audit-output results/benchmark/retraining/subtask_label_audit_v3.json \
+  --audit-plot results/benchmark/retraining/subtask_label_fallback_v3.png
 
 # After 9/9 capture and 9/9 independent oracle admission:
 python3 scripts/compile_humanoidarena_admitted_suite.py
