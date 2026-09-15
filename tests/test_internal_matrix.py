@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 import copy
+import json
+from pathlib import Path
 
 import pytest
 
+from hrvla_bench.hidden_final_gate import (
+    build_hidden_final_gate,
+    validate_hidden_final_gate,
+)
 from hrvla_bench.internal_matrix import (
     audit_internal_records,
     group_plan_cells,
@@ -233,3 +239,75 @@ def test_normalized_records_pass_the_common_schema_and_complete_audit() -> None:
     audit = audit_internal_records(plan, "gr00t_str", records)
     assert audit["complete"] is True
     assert audit["episode_records"] == len(plan["episodes"])
+    assert len(audit["record_sha256"]) == len(plan["episodes"])
+
+
+def test_hidden_final_gate_binds_complete_validation_records(tmp_path: Path) -> None:
+    protocol = json.loads(
+        (Path(__file__).resolve().parents[1] / "config/humanoidarena-internal-protocol.lock.json").read_text()
+    )
+    methods = ["gr00t_sonic", "gr00t_st", "gr00t_st_rt", "gr00t_str", "gr00t_str_rt"]
+    plan = build_plan(
+        _admitted_suite(),
+        methods,
+        rollout_seeds=protocol["splits"]["validation"]["rollout_seeds"],
+    )
+    method_programs = {"schema_version": 1, "tasks": []}
+    program_sha = canonical_sha256(method_programs)
+    checkpoint_lock = _checkpoint_lock()
+    checkpoint_lock["method_program_sha256"] = program_sha
+    checkpoint_lock["internal_protocol_sha256"] = canonical_sha256(protocol)
+    for method_id in methods:
+        records = []
+        for index, episode in enumerate(plan["episodes"]):
+            result = _result(episode, method_id)
+            result["hrvla_method"]["program_sha256"] = program_sha
+            records.append(
+                normalize_internal_record(
+                    plan,
+                    episode,
+                    result,
+                    method_id=method_id,
+                    checkpoint={"training_seed": 0, "checkpoint_id": f"{method_id}-0"},
+                    run_id="validation",
+                    episode_id=f"{method_id}-{index}",
+                    controller_id="sonic@revision",
+                    simulator_revision="e" * 40,
+                    method_program_sha256=program_sha,
+                )
+            )
+        method_root = tmp_path / method_id
+        method_root.mkdir()
+        (method_root / "records.jsonl").write_text(
+            "".join(json.dumps(row, sort_keys=True) + "\n" for row in records)
+        )
+        (method_root / "audit.json").write_text(
+            json.dumps(audit_internal_records(plan, method_id, records))
+        )
+    gate = build_hidden_final_gate(
+        validation_plan=plan,
+        protocol=protocol,
+        checkpoint_lock=checkpoint_lock,
+        method_programs=method_programs,
+        validation_root=tmp_path,
+        source_revision_before_freeze="f" * 40,
+    )
+    validate_hidden_final_gate(
+        gate,
+        validation_plan=plan,
+        protocol=protocol,
+        checkpoint_lock=checkpoint_lock,
+        method_programs=method_programs,
+        validation_root=tmp_path,
+    )
+    records_path = tmp_path / methods[0] / "records.jsonl"
+    records_path.write_text(records_path.read_text() + "{}\n")
+    with pytest.raises((KeyError, ValueError)):
+        validate_hidden_final_gate(
+            gate,
+            validation_plan=plan,
+            protocol=protocol,
+            checkpoint_lock=checkpoint_lock,
+            method_programs=method_programs,
+            validation_root=tmp_path,
+        )

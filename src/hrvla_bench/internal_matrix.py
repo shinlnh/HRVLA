@@ -344,11 +344,14 @@ def audit_internal_records(
         raise ValueError(
             f"incomplete internal records: expected={len(expected)} observed={len(observed)}"
         )
+    record_hashes = sorted(canonical_sha256(row) for row in rows)
     core = {
         "schema_version": 1,
         "method_id": method_id,
         "plan_sha256": plan["plan_sha256"],
         "episode_records": len(rows),
+        "record_sha256": record_hashes,
+        "records_sha256": canonical_sha256(record_hashes),
         "complete": True,
     }
     return {**core, "audit_sha256": canonical_sha256(core)}

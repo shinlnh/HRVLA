@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "status": "pending_validation",
+  "claim_boundary": "This tracked lock must be replaced by the audited proceed-unchanged candidate and committed before hidden-final is accessed.",
+  "decision": null,
+  "validation_plan_sha256": null,
+  "checkpoint_lock_sha256": null,
+  "method_program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "internal_protocol_sha256": "05cf235f47226968ccc3350f3e5725b5e6a81e2f22f89722a45ee92823410fa3",
+  "source_revision_before_freeze": null,
+  "methods": {},
+  "gate_sha256": null
+}

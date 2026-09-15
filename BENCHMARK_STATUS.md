@@ -138,6 +138,12 @@ planner request latency, wall time, and hardware telemetry. Failure-start,
 OpenDoor, and slice analyses remain explicitly secondary. Runtime timing is
 recorded around the existing HTTP call and does not alter policy inputs,
 outputs, precision, or control timing.
+Hidden-final access is additionally fail-closed behind
+`config/humanoidarena-hidden-final.lock.json`. After the complete development
+and validation matrices, its compiler re-audits every raw validation record,
+binds all five record-file and audit hashes, and permits only an explicit
+`proceed_unchanged` decision. The resulting candidate must be reviewed,
+committed, and pushed before the hidden-final runner will open its plan.
 
 The first HumanoidArena ST label audit correctly rejected materialization:
 state/action proxies still fell back on 69/490 train episodes and 11/70
@@ -268,7 +274,10 @@ python3 scripts/release_humanoidarena_artifacts.py compile-lock
 
 python3 scripts/run_humanoidarena_internal_matrix.py --split development --dry-run
 python3 -u scripts/run_humanoidarena_internal_matrix.py --split development
-# Freeze every validation-time choice before exposing these one-shot outcomes:
+python3 -u scripts/run_humanoidarena_internal_matrix.py --split validation
+python3 scripts/compile_humanoidarena_hidden_final_gate.py
+# Review and commit the candidate as config/humanoidarena-hidden-final.lock.json;
+# only then expose these one-shot outcomes:
 python3 -u scripts/run_humanoidarena_internal_matrix.py --split hidden_final
 python3 scripts/render_humanoidarena_internal_results.py
 ```

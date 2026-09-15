@@ -36,6 +36,7 @@ from hrvla_bench.internal_matrix import (  # noqa: E402
 )
 from hrvla_bench.internal_protocol import INTERNAL_METHODS  # noqa: E402
 from hrvla_bench.humanoidarena_release import verify_release_manifest  # noqa: E402
+from hrvla_bench.hidden_final_gate import validate_hidden_final_gate  # noqa: E402
 from hrvla_bench.plan import canonical_sha256, load_json  # noqa: E402
 from hrvla_bench.recovery_restore import (  # noqa: E402
     audit_failure_start_trial,
@@ -585,6 +586,11 @@ def main() -> int:
         default=ROOT / "benchmark/humanoidarena_method_programs.json",
     )
     parser.add_argument(
+        "--hidden-final-gate",
+        type=Path,
+        default=ROOT / "config/humanoidarena-hidden-final.lock.json",
+    )
+    parser.add_argument(
         "--output-root",
         type=Path,
         default=ROOT / "_artifacts/HumanoidArena/internal-benchmark/runs",
@@ -626,6 +632,15 @@ def main() -> int:
         raise ValueError("plan suite hash differs from the admitted suite")
     if set(plan["methods"]) != set(INTERNAL_METHODS):
         raise ValueError("plan does not contain exactly the five internal methods")
+    if args.split == "hidden_final":
+        validate_hidden_final_gate(
+            load_json(args.hidden_final_gate.resolve()),
+            validation_plan=load_json(args.plans_root.resolve() / "validation.plan.json"),
+            protocol=protocol_lock,
+            checkpoint_lock=checkpoint_lock,
+            method_programs=method_programs,
+            validation_root=args.output_root.resolve() / "validation",
+        )
     cells = group_plan_cells(plan)
     device = checkpoint_lock["policy_device"]
     output_root = args.output_root.resolve()
