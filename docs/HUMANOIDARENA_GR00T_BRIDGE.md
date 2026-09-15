@@ -69,6 +69,21 @@ The training and held-out evaluation launchers install the packed-video offset
 shim automatically. Ordinary LeRobot v2 datasets have no offset field and keep
 their original behavior.
 
+## Current validation evidence
+
+The frozen view contains 560 training episodes (435,201 frames) and 140 held-out
+episodes (111,259 frames), exactly 80/20 inside each of the seven tasks. All 700
+source memberships match the manifest, all video paths are symlinks, 28 sampled
+low-dimensional endpoint rows reconstruct state64/action40 losslessly, and 14
+mid-episode frames spanning every task and both splits match direct packed-video
+decoding pixel-for-pixel. The view occupies 345,791,543 local bytes excluding
+the immutable source-video targets.
+
+See the [machine-readable validation report](../results/humanoidarena/gr00t-bridge/validation.json)
+and [dataset split plot](../results/humanoidarena/gr00t-bridge/dataset_split.png).
+This passes the dataset/interface gate only. It does not validate a GR00T
+checkpoint or contribute an episode to the internal closed-loop table.
+
 ## Required validation before training
 
 - Every released task must pass the exact state/action shape and VLA protocol
@@ -81,4 +96,3 @@ their original behavior.
 - The shared adaptation checkpoint must be trained before the ST/STR-specific RT
   checkpoints, and its immutable revision must be used by all five rows.
 - No action MSE result may be presented as task success or recovery success.
-

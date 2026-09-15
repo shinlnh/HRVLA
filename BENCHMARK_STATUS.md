@@ -15,7 +15,7 @@ Last audited: **2026-09-15 (Asia/Bangkok)**.
 | VLA retraining | 6/6 training seeds, 42 held-out trajectories × 5 conditions | Closed-loop task and recovery success; open-loop MSE is not SR/RSR |
 | External HumanoidArena | 2/84 formally complete cells; at least 52/1680 valid episode JSONs observed | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
-| Internal controlled matrix | 0/5 registered methods in the frozen closed-loop plan; HA state64/action40 bridge implemented, materialization/runtime validation pending | Run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
+| Internal controlled matrix | 0/5 registered methods; HA state64/action40 dataset bridge passed on 700 episodes, common checkpoint/server still pending | Train the shared bridge and run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized
