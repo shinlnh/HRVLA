@@ -315,6 +315,35 @@ def audit_recovery_runtime_trace(
     if int(boundary.get("control_step", -1)) != int(summary["trigger_control_step"]):
         raise ValueError("semantic boundary control step differs")
 
+    restore_report = None
+    start_snapshot_sha = summary.get("start_snapshot_sha256")
+    restore_audit_sha = summary.get("restore_audit_sha256")
+    if (start_snapshot_sha is None) != (restore_audit_sha is None):
+        raise ValueError("runtime summary has incomplete start-snapshot provenance")
+    if reset.get("start_snapshot_sha256") != start_snapshot_sha:
+        raise ValueError("episode reset start snapshot differs from runtime summary")
+    if reset.get("restore_audit_sha256") != restore_audit_sha:
+        raise ValueError("episode reset restore audit differs from runtime summary")
+    restore_path = output_dir / "restore-audit.json"
+    if start_snapshot_sha is not None:
+        restore_report = _json(restore_path)
+        claimed_restore_hash = restore_report.get("audit_sha256")
+        restore_core = {
+            key: value for key, value in restore_report.items() if key != "audit_sha256"
+        }
+        if claimed_restore_hash != canonical_sha256(restore_core):
+            raise ValueError("restore audit content hash differs")
+        if claimed_restore_hash != restore_audit_sha:
+            raise ValueError("restore audit hash differs from runtime summary")
+        if restore_report.get("snapshot_sha256") != start_snapshot_sha:
+            raise ValueError("restored snapshot hash differs from runtime summary")
+        if restore_report.get("restore_validated") is not True:
+            raise ValueError("start snapshot did not pass immediate state readback")
+        if int(restore_report.get("policy_rollout_seed", -1)) != episode_seed:
+            raise ValueError("restore audit policy seed differs from runtime summary")
+    elif restore_path.exists():
+        raise ValueError("capture-only runtime unexpectedly contains a restore audit")
+
     seam = contract["interface_seam"]
     _validate_action_audit(trace, scenario, summary, boundary)
     expected_scene_event = EXPECTED_SCENE_AUDIT_EVENT.get(contract["injector_id"])
@@ -389,6 +418,8 @@ def audit_recovery_runtime_trace(
     }
     if injector_rows:
         files["injector_audit"] = _sha256(audit_path)
+    if restore_report is not None:
+        files["restore_audit"] = _sha256(restore_path)
     core = {
         "schema_version": 1,
         "status": "runtime_trace_passed_oracle_admission_pending",

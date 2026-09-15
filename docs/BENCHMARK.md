@@ -212,6 +212,16 @@ upstream reward/horizon/controller, and an exact 20/20 threshold. A behavioral
 failure rejects the scenario and remains evidence; an infrastructure failure is
 not silently counted as a trial. Oracle outcomes are never method scores.
 
+Oracle and later method trials vary the policy seed without varying simulator
+state. The recovery wrapper resets the environment with the snapshot's capture
+seed, restores every declared root/joint state, advances Isaac kinematics, and
+immediately reads the state back before the first policy action. A state-only
+hash excludes provenance and episode counters but retains asset names, types,
+joint order, poses, and velocities. `online_failure` restores the initial state
+and then runs its semantic injector; `failure_start` restores the post-failure
+state and explicitly does not inject again. Restore-only outcomes are checked by
+`scripts/audit_humanoidarena_failure_start_trial.py`.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1

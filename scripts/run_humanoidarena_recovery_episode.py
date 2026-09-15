@@ -19,7 +19,9 @@ from hrvla_bench.humanoidarena_recovery_runtime import (  # noqa: E402
     HumanoidArenaRecoveryRuntime,
     configure_recovery_scene,
 )
-from hrvla_bench.plan import load_json  # noqa: E402
+from hrvla_bench.plan import canonical_sha256, load_json  # noqa: E402
+from hrvla_bench.isaac_snapshot import load_snapshot  # noqa: E402
+from hrvla_bench.recovery_restore import restore_snapshot_for_trial  # noqa: E402
 
 
 EVALUATOR = (
@@ -95,6 +97,9 @@ def _install_runtime_hooks(
     *,
     capture_initial_snapshot: bool,
     capture_failure_snapshot: bool,
+    start_snapshot_path: Path | None = None,
+    expected_start_snapshot_sha256: str | None = None,
+    restore_only: bool = False,
 ) -> dict[str, Any]:
     state: dict[str, Any] = {
         "runtime": None,
@@ -102,6 +107,7 @@ def _install_runtime_hooks(
         "task_success": False,
         "inside_episode": False,
         "provider_hooked": False,
+        "restore_audit": None,
     }
 
     import gymnasium as gym
@@ -127,9 +133,42 @@ def _install_runtime_hooks(
 
     original_reset = module._reset_environment_for_episode
 
+    start_snapshot = (
+        None if start_snapshot_path is None else load_snapshot(start_snapshot_path.resolve())
+    )
+
     def recovery_reset(env, env_cfg, episode_seed):
-        result = original_reset(env, env_cfg, episode_seed)
+        environment_seed = (
+            int(episode_seed)
+            if start_snapshot is None
+            else int(start_snapshot["episode_seed"])
+        )
+        result = original_reset(env, env_cfg, environment_seed)
         if not state["inside_episode"]:
+            return result
+        restore_audit = None
+        if start_snapshot is not None:
+            expected_event = scenario_id if restore_only else "initial"
+            assert start_snapshot_path is not None
+            assert expected_start_snapshot_sha256 is not None
+            restore_audit = restore_snapshot_for_trial(
+                env,
+                start_snapshot_path,
+                expected_snapshot_sha256=expected_start_snapshot_sha256,
+                expected_task_id=task_id,
+                expected_event_id=expected_event,
+                expected_simulator_revision=ISAACLAB_REVISION,
+                policy_rollout_seed=int(episode_seed),
+                audit_path=output_dir / "restore-audit.json",
+            )
+        if restore_only:
+            state.update(
+                runtime=None,
+                env=env,
+                task_success=False,
+                provider_hooked=True,
+                restore_audit=restore_audit,
+            )
             return result
         control_dt = getattr(env, "step_dt", None)
         if control_dt is None:
@@ -142,9 +181,21 @@ def _install_runtime_hooks(
             output_dir=output_dir,
             capture_initial_snapshot=capture_initial_snapshot,
             capture_failure_snapshot=capture_failure_snapshot,
+            start_snapshot_sha256=(
+                None if restore_audit is None else restore_audit["snapshot_sha256"]
+            ),
+            restore_audit_sha256=(
+                None if restore_audit is None else restore_audit["audit_sha256"]
+            ),
         )
         runtime.reset(env, episode_seed=int(episode_seed))
-        state.update(runtime=runtime, env=env, task_success=False, provider_hooked=False)
+        state.update(
+            runtime=runtime,
+            env=env,
+            task_success=False,
+            provider_hooked=False,
+            restore_audit=restore_audit,
+        )
         return result
 
     module._reset_environment_for_episode = recovery_reset
@@ -164,7 +215,11 @@ def _install_runtime_hooks(
         result = original_notify(provider)
         runtime = state.get("runtime")
         env = state.get("env")
-        if runtime is None or env is None:
+        if env is None:
+            raise RuntimeError("recovery runtime was not initialized at episode reset")
+        if restore_only:
+            return result
+        if runtime is None:
             raise RuntimeError("recovery runtime was not initialized at episode reset")
         if state["provider_hooked"]:
             return result
@@ -206,13 +261,33 @@ def _install_runtime_hooks(
     def recovery_payload(*args, **kwargs):
         payload = original_payload(*args, **kwargs)
         runtime = state.get("runtime")
-        if runtime is None:
-            raise RuntimeError("recovery runtime did not produce an episode summary")
-        recovery = runtime.summary()
+        restore_audit = state.get("restore_audit")
+        if restore_only:
+            if restore_audit is None:
+                raise RuntimeError("failure-start trial did not produce restore evidence")
+            recovery = {
+                "schema_version": 1,
+                "suite_sha256": canonical_sha256(suite),
+                "task_id": task_id,
+                "scenario_id": scenario_id,
+                "episode_seed": int(payload["episode_seed"]),
+                "protocol": "failure_start",
+                "failure_injected": False,
+                "start_snapshot_sha256": restore_audit["snapshot_sha256"],
+                "restore_audit_sha256": restore_audit["audit_sha256"],
+                "restore_validated": True,
+                "claim_boundary": "snapshot restore evidence; task success remains in the episode result",
+            }
+        else:
+            if runtime is None:
+                raise RuntimeError("recovery runtime did not produce an episode summary")
+            recovery = runtime.summary()
         payload["hrvla_recovery"] = recovery
         output_dir.mkdir(parents=True, exist_ok=True)
-        temporary = output_dir / "runtime-summary.json.tmp"
-        target = output_dir / "runtime-summary.json"
+        target = output_dir / (
+            "trial-summary.json" if restore_only else "runtime-summary.json"
+        )
+        temporary = target.with_suffix(target.suffix + ".tmp")
         temporary.write_text(
             json.dumps(recovery, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
@@ -234,6 +309,9 @@ def main() -> int:
     parser.add_argument("--recovery-output-dir", type=Path, required=True)
     parser.add_argument("--capture-initial-snapshot", action="store_true")
     parser.add_argument("--capture-failure-snapshot", action="store_true")
+    parser.add_argument("--start-snapshot", type=Path)
+    parser.add_argument("--expected-start-snapshot-sha256")
+    parser.add_argument("--restore-only", action="store_true")
     args, remaining = parser.parse_known_args()
     suite = load_json(args.recovery_suite.resolve())
     upstream_task, episode_seed = _single_episode_contract(remaining)
@@ -247,6 +325,9 @@ def main() -> int:
     )
     if task is None:
         raise ValueError(f"unknown recovery scenario: {args.recovery_scenario}")
+    scenario = next(
+        item for item in task["scenarios"] if item["id"] == args.recovery_scenario
+    )
     expected_task = TASK_IDS[task["id"]]
     if upstream_task != expected_task:
         raise ValueError(
@@ -258,6 +339,35 @@ def main() -> int:
             raise ValueError(
                 f"initial snapshot capture requires episode seed {expected_seed}, got {episode_seed}"
             )
+    if (args.start_snapshot is None) != (
+        args.expected_start_snapshot_sha256 is None
+    ):
+        raise ValueError("--start-snapshot and --expected-start-snapshot-sha256 are required together")
+    if args.start_snapshot is not None and (
+        args.capture_initial_snapshot or args.capture_failure_snapshot
+    ):
+        raise ValueError("snapshot capture and snapshot restore are mutually exclusive")
+    if args.restore_only and args.start_snapshot is None:
+        raise ValueError("--restore-only requires --start-snapshot")
+    if args.restore_only and scenario["protocol"] != "failure_start":
+        raise ValueError("--restore-only is valid only for failure_start scenarios")
+    if not args.restore_only and args.start_snapshot is not None and scenario["protocol"] != "online_failure":
+        raise ValueError("online restore-and-inject mode requires an online_failure scenario")
+    if args.start_snapshot is not None:
+        snapshot = load_snapshot(args.start_snapshot.resolve())
+        expected_event = args.recovery_scenario if args.restore_only else "initial"
+        expected_snapshot = {
+            "snapshot_sha256": args.expected_start_snapshot_sha256,
+            "task_id": task["id"],
+            "event_id": expected_event,
+            "simulator_revision": ISAACLAB_REVISION,
+            "environment_index": 0,
+        }
+        for key, expected in expected_snapshot.items():
+            if snapshot.get(key) != expected:
+                raise ValueError(f"start snapshot {key} differs from the trial contract")
+        if int(snapshot["episode_seed"]) != int(suite["admission_capture"]["snapshot_seed"]):
+            raise ValueError("start snapshot does not use the locked capture seed")
     for key, value in task.get("runtime_environment", {}).items():
         existing = os.environ.get(key)
         if existing is not None and existing != value:
@@ -274,6 +384,11 @@ def main() -> int:
         args.recovery_output_dir.resolve(),
         capture_initial_snapshot=args.capture_initial_snapshot,
         capture_failure_snapshot=args.capture_failure_snapshot,
+        start_snapshot_path=(
+            None if args.start_snapshot is None else args.start_snapshot.resolve()
+        ),
+        expected_start_snapshot_sha256=args.expected_start_snapshot_sha256,
+        restore_only=args.restore_only,
     )
     return int(module.main())
 

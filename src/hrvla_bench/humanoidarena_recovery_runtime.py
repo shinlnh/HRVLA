@@ -142,6 +142,8 @@ class HumanoidArenaRecoveryRuntime:
         output_dir: Path,
         capture_initial_snapshot: bool = False,
         capture_failure_snapshot: bool = False,
+        start_snapshot_sha256: str | None = None,
+        restore_audit_sha256: str | None = None,
         env_id: int = 0,
     ) -> None:
         contract_rows = validate_recovery_injector_contract(suite)
@@ -158,6 +160,16 @@ class HumanoidArenaRecoveryRuntime:
             raise ValueError("control_dt_s must be finite and positive")
         if not simulator_revision:
             raise ValueError("simulator_revision is required")
+        if (start_snapshot_sha256 is None) != (restore_audit_sha256 is None):
+            raise ValueError("start snapshot and restore audit hashes must be supplied together")
+        for label, value in (
+            ("start_snapshot_sha256", start_snapshot_sha256),
+            ("restore_audit_sha256", restore_audit_sha256),
+        ):
+            if value is not None and (
+                len(value) != 64 or set(value) - set("0123456789abcdef")
+            ):
+                raise ValueError(f"{label} must be a SHA-256 hash")
 
         self.suite = suite
         self.suite_sha256 = canonical_sha256(suite)
@@ -170,6 +182,8 @@ class HumanoidArenaRecoveryRuntime:
         self.output_dir = Path(output_dir)
         self.capture_initial_snapshot = bool(capture_initial_snapshot)
         self.capture_failure_snapshot = bool(capture_failure_snapshot)
+        self.start_snapshot_sha256 = start_snapshot_sha256
+        self.restore_audit_sha256 = restore_audit_sha256
         self.env_id = int(env_id)
         self.detector = SemanticEventDetector(
             scenario["event_detector"],
@@ -273,6 +287,8 @@ class HumanoidArenaRecoveryRuntime:
                 "control_dt_s": self.control_dt_s,
                 "environment_index": self.env_id,
                 "simulator_revision": self.simulator_revision,
+                "start_snapshot_sha256": self.start_snapshot_sha256,
+                "restore_audit_sha256": self.restore_audit_sha256,
             },
         )
         if self.capture_initial_snapshot:
@@ -533,6 +549,8 @@ class HumanoidArenaRecoveryRuntime:
             "injector_id": self.scenario["injector"]["id"],
             "action_samples_modified": self.action_samples_modified,
             "initial_snapshot_sha256": self.initial_snapshot_sha256,
+            "start_snapshot_sha256": self.start_snapshot_sha256,
+            "restore_audit_sha256": self.restore_audit_sha256,
             "failure_snapshot_sha256": self.failure_snapshot_sha256,
             "failure_capture_complete": self.failure_capture_complete,
             "runtime_validated": False,

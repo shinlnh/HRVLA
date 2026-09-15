@@ -81,11 +81,19 @@ def build_capture_manifest(
                 "runtime_evidence_directory": evidence_directory,
                 "initial_snapshot_sha256": initial["snapshot_sha256"],
                 "initial_snapshot_file_sha256": initial["file_sha256"],
+                "initial_snapshot_path": (
+                    f"{evidence_directory}/{initial['path']}"
+                ),
                 "failure_snapshot_sha256": (
                     None if failure is None else failure["snapshot_sha256"]
                 ),
                 "failure_snapshot_file_sha256": (
                     None if failure is None else failure["file_sha256"]
+                ),
+                "failure_snapshot_path": (
+                    None
+                    if failure is None
+                    else f"{evidence_directory}/{failure['path']}"
                 ),
             }
         )

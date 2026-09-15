@@ -60,6 +60,11 @@ outcomes: released PI0.5 (independent of the internal GR00T family), 20
 hash-derived policy seeds per scenario, identical snapshots/controller/horizon,
 and an exact 20/20 pass threshold. Failures are preserved and reject the row;
 infrastructure errors must be rerun and cannot be counted as trials.
+The same-state execution seam now supports audited readback before policy action:
+policy seeds vary independently, while the simulator is reset with the capture
+seed and the full declared state hash must match. Online trials restore initial
+state then inject once; failure-start trials restore the post-failure state and
+never reinject it.
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized

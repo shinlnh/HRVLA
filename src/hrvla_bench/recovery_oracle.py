@@ -160,12 +160,16 @@ def evaluate_oracle_trials(
             raise ValueError(f"{scenario_id}/trial-{index}: success must be boolean")
         if row["success"] != (row.get("failure_reason") == "success"):
             raise ValueError(f"{scenario_id}/trial-{index}: success/reason mismatch")
-        evidence_key = (
-            "restore_audit_sha256"
+        protocol_evidence_key = (
+            "failure_start_trial_audit_sha256"
             if scenario["protocol"] == "failure_start"
             else "runtime_audit_sha256"
         )
-        for key in ("episode_result_sha256", evidence_key):
+        for key in (
+            "episode_result_sha256",
+            "start_state_restore_audit_sha256",
+            protocol_evidence_key,
+        ):
             if not _is_sha256(row.get(key)):
                 raise ValueError(f"{scenario_id}/trial-{index}: {key} is malformed")
 

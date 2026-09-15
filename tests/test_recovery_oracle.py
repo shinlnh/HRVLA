@@ -74,10 +74,11 @@ def _records(scenario_id: str, *, successes: int = 20) -> list[dict]:
             "episode_result_sha256": f"{index + 1:064x}",
         }
         evidence_key = (
-            "restore_audit_sha256"
+            "failure_start_trial_audit_sha256"
             if scenario["protocol"] == "failure_start"
             else "runtime_audit_sha256"
         )
+        row["start_state_restore_audit_sha256"] = f"{index + 201:064x}"
         row[evidence_key] = f"{index + 101:064x}"
         records.append(row)
     return records

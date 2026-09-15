@@ -135,6 +135,13 @@ def load_snapshot(path: Path) -> dict[str, Any]:
     return snapshot
 
 
+def snapshot_state_sha256(snapshot: dict[str, Any]) -> str:
+    """Hash only restorable scene state and joint layout, excluding provenance."""
+
+    validate_snapshot(snapshot)
+    return _snapshot_hash({"assets": snapshot["assets"]})
+
+
 def restore_scene_snapshot(env: Any, snapshot: dict[str, Any]) -> None:
     """Restore a validated snapshot through Isaac Lab's public state writers."""
 
@@ -162,3 +169,12 @@ def restore_scene_snapshot(env: Any, snapshot: dict[str, Any]) -> None:
             ).reshape(1, -1)
             asset.write_joint_state_to_sim(position, velocity, env_ids=env_ids)
     env.scene.write_data_to_sim()
+    simulation = getattr(env, "sim", None)
+    forward = getattr(simulation, "forward", None)
+    if callable(forward):
+        forward()
+    has_rtx_sensors = getattr(simulation, "has_rtx_sensors", None)
+    rerender = bool(getattr(getattr(env, "cfg", None), "rerender_on_reset", False))
+    render = getattr(simulation, "render", None)
+    if callable(has_rtx_sensors) and has_rtx_sensors() and rerender and callable(render):
+        render()
