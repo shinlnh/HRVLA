@@ -13,7 +13,7 @@ Last audited: **2026-09-15 (Asia/Bangkok)**.
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
 | VLA retraining | 6/6 training seeds, 42 held-out trajectories × 5 conditions | Closed-loop task and recovery success; open-loop MSE is not SR/RSR |
-| External HumanoidArena | 4/84 formally complete cells; 83/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
+| External HumanoidArena | 4/84 formally complete cells; 98/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
@@ -44,7 +44,7 @@ The single-episode upstream wrapper now connects those pieces without modifying
 the locked HumanoidArena checkout and records detector/injector/snapshot sidecars.
 The fail-closed auditor cross-checks numerical action hashes, physical magnitude,
 target, seed, one-shot timing, simulator provenance, and snapshot settle timing.
-The full repository suite passes at `133 passed, 15 skipped`; no row is promoted
+The full repository suite passes at `143 passed, 16 skipped`; no row is promoted
 until the wrapper executes under the real Isaac process after the claim-bearing
 external matrix releases CUDA.
 The runtime-admission launcher is staged for that handoff: it uses one released
@@ -80,9 +80,10 @@ The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized
 resume completed the remaining nine records, formally closed the third cell,
 and entered `semantic/boxing` at 2026-09-15 06:02 UTC without reloading its
-task-shared policy server. At the tracked 2026-09-15 07:19 UTC audit it had
-completed `semantic/boxing/seed-0` and produced 83 valid episode records across
-4 complete cells. This is explicitly `partial_non_claim` evidence, not a result table.
+task-shared policy server. At the tracked 2026-09-15 08:22 UTC audit it had
+produced 98 valid episode records; three cells were finalized on disk and the
+fourth was still inside its persistent 60-episode batch. This is explicitly
+`partial_non_claim` evidence, not a result table.
 The mutable machine progress file is authoritative after this tracked checkpoint.
 
 The common GR00T adaptation inputs and 70/10/20 split are frozen in
@@ -107,6 +108,18 @@ assumptions, so it was increased before any internal outcomes were observed.
 Once the suite is admitted, the immutable plan compiler will produce 192 dev,
 288 validation, and 1,248 hidden-final episodes per method; the final table is
 therefore 6,240 method-episode records. Splits use disjoint hash-derived seeds.
+
+The real internal rollout path is now implemented without modifying the vendor
+evaluator. It composes exact snapshot restore, online/failure-start injection,
+source-backed ST transition routing, STR recovery prompts, and a seeded GR00T
+HTTP server in one process. Its checkpoint lock is deliberately non-runnable
+until all three checkpoint families have three immutable published revisions,
+their manifest hashes match local caches, runtime source hashes are frozen, and
+the GR00T+Isaac coexistence probe either passes below 15,500 MiB or records an
+over-limit measurement and freezes the CPU fallback. The runner shares each
+checkpoint server across all applicable methods, batches rollout seeds per
+task/scenario, preserves failed attempts, normalizes only audited trials, and
+requires an exact complete record set before writing a method audit.
 
 ![Readiness by independent workstream](results/benchmark/readiness/benchmark_readiness.png)
 
@@ -189,6 +202,13 @@ PYTHONPATH=src python3 -m pytest -q
 # After 9/9 capture and 9/9 independent oracle admission:
 python3 scripts/compile_humanoidarena_admitted_suite.py
 python3 scripts/prepare_humanoidarena_internal_plans.py
+
+# After all three checkpoint families are trained, selected, published, and
+# config/humanoidarena-internal-checkpoints.lock.json is frozen as ready:
+python3 scripts/run_humanoidarena_internal_matrix.py --split development --dry-run
+python3 -u scripts/run_humanoidarena_internal_matrix.py --split development
+# Freeze every validation-time choice before exposing these one-shot outcomes:
+python3 -u scripts/run_humanoidarena_internal_matrix.py --split hidden_final
 ```
 
 During execution, machine-live progress is written to
