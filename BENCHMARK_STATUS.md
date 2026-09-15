@@ -312,6 +312,15 @@ editing tracked locks or starting RT training, because those steps require an
 audited human/agent freeze of newly observed hashes. It never promotes partial
 results or edits a claim-bearing file.
 
+A second durable supervisor,
+`scripts/run_humanoidarena_completion_supervisor.py`, waits on that handoff and
+continues every authorized stage through RT training/publication, the
+coexistence probe, development, validation, hidden-final audit, and final
+plots. At each observed-data boundary it writes a candidate and waits for the
+reviewed lock to appear on `main`; it never edits or commits a tracked lock
+itself. Its resumable status and logs live beside the first supervisor under
+`_artifacts/HumanoidArena/benchmark-pipeline/`.
+
 ## Resource rule
 
 The RTX 5070 Ti has 16,303 MiB VRAM. Isaac Sim plus SONIC uses roughly 6–7 GiB,
