@@ -51,6 +51,10 @@ The runtime-admission launcher is staged for that handoff: it uses one released
 policy load per task, captures all nine scenarios at the locked snapshot seed,
 records every run, preserves failed attempts, and refuses GPU overlap. Runtime
 success still leaves the independent 20/20 oracle gate closed.
+The capture-manifest compiler is also ready and fail-closed: it re-audits the
+newest valid attempt, requires 9/9 runtime traces, 7/7 task initial snapshots,
+3/3 failure snapshots, and rejects initial-state drift between two scenarios of
+the same task. It deliberately reports the oracle gate as 0/9.
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized

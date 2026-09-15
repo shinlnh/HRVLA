@@ -192,6 +192,17 @@ failed runs in monotonically numbered attempt directories, reuses one released
 policy server per task, records every episode, and independently re-audits each
 completed attempt. It never changes a draft scenario to admitted.
 
+Once all traces exist, compile the capture manifest with:
+
+```bash
+python3 scripts/compile_humanoidarena_recovery_admission.py
+```
+
+The compiler re-runs every audit instead of trusting cached pass labels. It
+requires all nine runtime traces, all three failure-start snapshots, and one
+identical initial-state content hash across every capture of the same task. Its
+success status still ends in `oracle_admission_pending`.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1
