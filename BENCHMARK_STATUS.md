@@ -31,7 +31,9 @@ action-decoder-only profile. A single optimizer step is selected from
 100/200/300 by macro-per-task MSE over validation only; the 140 hidden episodes
 remain inaccessible until `selection.json` is frozen. The launcher refuses to
 start while the external matrix or more than 1 GiB of pre-existing compute VRAM
-is present.
+is present. Separate validation and hidden-evaluation launchers enforce the
+exact episode/condition cross-products, refuse partial-output overwrites, and
+cryptographically verify the frozen selection before exposing hidden data.
 
 ![Readiness by independent workstream](results/benchmark/readiness/benchmark_readiness.png)
 

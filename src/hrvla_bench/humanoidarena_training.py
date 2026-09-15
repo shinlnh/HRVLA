@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import statistics
+import subprocess
 from typing import Any
 
 
@@ -153,6 +154,109 @@ def build_validation_command(
         "--seed",
         str(20260915 + seed * 10_000 + step),
     ]
+
+
+def build_hidden_command(
+    repo_root: Path,
+    python: Path,
+    lock: dict[str, Any],
+    seed: int,
+    selected_step: int,
+) -> list[str]:
+    if selected_step not in lock["training"]["candidate_steps"]:
+        raise ValueError(f"checkpoint step {selected_step} is not locked")
+    hidden = lock["hidden_evaluation"]
+    model = (
+        seed_directory(repo_root, lock, seed)
+        / "checkpoints"
+        / f"checkpoint-{selected_step}"
+    )
+    output = repo_root / lock["output_root"] / "hidden" / f"seed-{seed}"
+    return [
+        str(python),
+        str(repo_root / "scripts/evaluate_vla_retraining.py"),
+        "--model-path",
+        str(model),
+        "--dataset-path",
+        str(repo_root / lock["dataset"]["path"] / "heldout"),
+        "--output-dir",
+        str(output),
+        "--trajectory-ids",
+        *[str(value) for value in range(140)],
+        "--conditions",
+        *hidden["conditions"],
+        "--execution-horizon",
+        str(hidden["execution_horizon"]),
+        "--steps",
+        str(hidden["frames_per_trajectory"]),
+        "--denoising-steps",
+        str(hidden["denoising_steps"]),
+        "--seed",
+        str(20260915 + seed * 10_000),
+    ]
+
+
+def resource_blockers(lock: dict[str, Any], own_script_name: str = "") -> list[str]:
+    """Return reasons exclusive-GPU work must not start."""
+
+    blockers = []
+    pattern = lock["resource_exclusion"]["blocking_process_pattern"]
+    process = subprocess.run(["pgrep", "-af", pattern], text=True, capture_output=True)
+    live = [
+        line
+        for line in process.stdout.splitlines()
+        if not own_script_name or own_script_name not in line
+    ]
+    if live:
+        blockers.append(f"blocking benchmark process is live: {live[0]}")
+    query = subprocess.run(
+        [
+            "nvidia-smi",
+            "--query-compute-apps=used_memory",
+            "--format=csv,noheader,nounits",
+        ],
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    used = sum(int(line.strip()) for line in query.stdout.splitlines() if line.strip())
+    limit = int(lock["resource_exclusion"]["maximum_preexisting_compute_vram_mib"])
+    if used > limit:
+        blockers.append(f"pre-existing compute VRAM is {used} MiB, limit is {limit} MiB")
+    return blockers
+
+
+def evaluation_complete(path: Path, expected_trajectories: int, conditions: list[str]) -> bool:
+    metrics = path / "metrics.json"
+    if not metrics.is_file():
+        return False
+    rows = json.loads(metrics.read_text(encoding="utf-8")).get("rows", [])
+    identities = {
+        (int(row.get("trajectory_id", -1)), str(row.get("condition", ""))) for row in rows
+    }
+    expected = {
+        (trajectory, condition)
+        for trajectory in range(expected_trajectories)
+        for condition in conditions
+    }
+    return len(rows) == len(expected) and identities == expected
+
+
+def validate_selection(report: dict[str, Any], lock: dict[str, Any]) -> int:
+    """Verify the immutable validation decision before exposing hidden data."""
+
+    if report.get("selection_split") != "validation" or report.get("hidden_test_accessed") is not False:
+        raise ValueError("selection report does not prove validation-only selection")
+    selected = report.get("selected_step")
+    if type(selected) is not int or selected not in lock["training"]["candidate_steps"]:
+        raise ValueError("selection report contains an unlocked checkpoint step")
+    if report.get("dataset_manifest_sha256") != lock["dataset"]["manifest_sha256"]:
+        raise ValueError("selection report uses a different dataset manifest")
+    core = {key: value for key, value in report.items() if key != "selection_sha256"}
+    encoded = json.dumps(core, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    if hashlib.sha256(encoded).hexdigest() != report.get("selection_sha256"):
+        raise ValueError("selection report hash mismatch")
+    return selected
 
 
 def select_global_checkpoint(

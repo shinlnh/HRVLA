@@ -14,34 +14,11 @@ sys.path.insert(0, str(ROOT / "src"))
 from hrvla_bench.humanoidarena_training import (  # noqa: E402
     build_training_command,
     load_training_lock,
+    resource_blockers,
     seed_directory,
     training_complete,
     verify_training_inputs,
 )
-
-
-def _resource_blockers(lock: dict) -> list[str]:
-    blockers = []
-    pattern = lock["resource_exclusion"]["blocking_process_pattern"]
-    process = subprocess.run(["pgrep", "-af", pattern], text=True, capture_output=True)
-    live = [line for line in process.stdout.splitlines() if Path(__file__).name not in line]
-    if live:
-        blockers.append(f"blocking benchmark process is live: {live[0]}")
-    query = subprocess.run(
-        [
-            "nvidia-smi",
-            "--query-compute-apps=used_memory",
-            "--format=csv,noheader,nounits",
-        ],
-        text=True,
-        capture_output=True,
-        check=True,
-    )
-    used = sum(int(line.strip()) for line in query.stdout.splitlines() if line.strip())
-    limit = int(lock["resource_exclusion"]["maximum_preexisting_compute_vram_mib"])
-    if used > limit:
-        blockers.append(f"pre-existing compute VRAM is {used} MiB, limit is {limit} MiB")
-    return blockers
 
 
 def main() -> int:
@@ -69,7 +46,7 @@ def main() -> int:
         return 0
 
     verify_training_inputs(ROOT, lock)
-    blockers = _resource_blockers(lock)
+    blockers = resource_blockers(lock, Path(__file__).name)
     if blockers:
         for blocker in blockers:
             print(f"blocked: {blocker}", file=sys.stderr)
