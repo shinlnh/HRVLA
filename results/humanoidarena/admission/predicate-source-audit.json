@@ -117,9 +117,9 @@
     {
       "admission_status": "draft",
       "event_detector_id": "seat-approach",
-      "event_detector_parameters_sha256": "48ad0ae72869feeac000bbc54385aa4bf148341c9675e40e8c76230444a72e43",
+      "event_detector_parameters_sha256": "78a24bace8f9d7f9f17d5357927e1fbf1d9b35cc311cfb3186eb8429d3c67879",
       "injector_id": "support-foot-slip",
-      "injector_parameters_sha256": "f0ae61be9ea344ecd2179f4607cfb9a27b5e8d36aaac239b724439286e270aeb",
+      "injector_parameters_sha256": "0620acede52990563a40e37aa4f2bc62bd76138e08e40789c788383714eaa7a2",
       "interface_seam": "scene",
       "oracle_trials": 0,
       "protocol": "failure_start",
@@ -160,7 +160,7 @@
   "schema_version": 1,
   "status": "predicate_sources_passed_runtime_admission_pending",
   "suite_id": "hrvla_recovery_v0",
-  "suite_sha256": "e042b649577501f28acfcb089a159aa37885a98d63e4c01d6ea214d4024f19c7",
+  "suite_sha256": "c895f8dbc30e0bb490b48c583c61dbc5775d848eab5501c9d5eb8a7d7da0f8fb",
   "tasks": [
     {
       "admission_status": "draft",
