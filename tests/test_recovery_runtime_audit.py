@@ -36,6 +36,7 @@ def _summary(scenario_id: str, task_id: str, detector_id: str, injector_id: str)
         "task_id": task_id,
         "scenario_id": scenario_id,
         "episode_seed": 17,
+        "implementation_revision": "a" * 40,
         "triggered": True,
         "trigger_control_step": 8,
         "detector_id": detector_id,
@@ -59,6 +60,7 @@ def _reset(scenario_id: str, task_id: str) -> dict:
         "control_dt_s": 0.02,
         "environment_index": 0,
         "simulator_revision": "isaac-test",
+        "implementation_revision": "a" * 40,
     }
 
 

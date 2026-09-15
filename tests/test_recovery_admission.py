@@ -38,6 +38,7 @@ def _capture_rows() -> dict[str, dict]:
                 "suite_sha256": suite_sha,
                 "task_id": task["id"],
                 "scenario_id": scenario["id"],
+                "implementation_revision": "a" * 40,
                 "runtime_trace_validated": True,
                 "snapshots": {
                     "initial": {
@@ -63,6 +64,7 @@ def test_complete_capture_manifest_locks_nine_seven_and_three() -> None:
     assert manifest["gates"]["failure_snapshots"] == {"complete": 3, "required": 3}
     assert manifest["gates"]["oracle_20_of_20"] == {"complete": 0, "required": 9}
     assert len(manifest["manifest_sha256"]) == 64
+    assert manifest["implementation_revision"] == "a" * 40
 
 
 def test_capture_manifest_rejects_initial_state_drift_within_a_task() -> None:

@@ -15,7 +15,7 @@ Last audited: **2026-09-15 (Asia/Bangkok)**.
 | VLA retraining | 6/6 training seeds, 42 held-out trajectories × 5 conditions | Closed-loop task and recovery success; open-loop MSE is not SR/RSR |
 | External HumanoidArena | 4/84 formally complete cells; 83/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
-| Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes and the HTTP inference contract is implemented, common checkpoint/real-model server validation still pending | Train the shared bridge and run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
+| Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
 Recovery admission remains 0/9. Static provenance now resolves and hashes all
 7/7 exact upstream task-reward predicates; this corrected several prose-only
@@ -70,6 +70,11 @@ scenario simulator, one task-shared PI0.5 CPU server, isolated per-trial hashes,
 and video for every trial. Resume preserves failed attempt directories. A missed
 online trigger is a recorded behavioral failure, not a reroll; any such row
 fails the frozen 20/20 gate.
+Every runtime trace now binds the exact clean Git implementation revision. The
+capture compiler rejects mixed revisions across the nine scenarios, and the
+release compiler cannot promote the draft suite unless all snapshots, source
+predicates, runtime audits, and independent oracle reports agree exactly. The
+draft suite is never edited in place.
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized
@@ -89,6 +94,19 @@ start while the external matrix or more than 1 GiB of pre-existing compute VRAM
 is present. Separate validation and hidden-evaluation launchers enforce the
 exact episode/condition cross-products, refuse partial-output overwrites, and
 cryptographically verify the frozen selection before exposing hidden data.
+
+The five-row internal experiment design is frozen in
+`config/humanoidarena-internal-protocol.lock.json`. Development uses 4 paired
+rollouts per training seed/cell, validation uses 6, and only the 26-rollout
+hidden-final split is claim-bearing. With three independently trained seeds,
+the final cell contains 78 paired observations. Its predeclared exact McNemar
+design has 0.8021 power at the conservative Bonferroni design alpha 0.0125 for
+the four Holm-corrected contribution families under `p10=0.26`, `p01=0.05`.
+The old 20-rollout design reached only about 0.629 under the same corrected
+assumptions, so it was increased before any internal outcomes were observed.
+Once the suite is admitted, the immutable plan compiler will produce 192 dev,
+288 validation, and 1,248 hidden-final episodes per method; the final table is
+therefore 6,240 method-episode records. Splits use disjoint hash-derived seeds.
 
 ![Readiness by independent workstream](results/benchmark/readiness/benchmark_readiness.png)
 
@@ -114,10 +132,13 @@ condition.
 - [ ] Materialize the nine recovery scenarios with deterministic semantic-event
   injectors, snapshots, predicates, and exact hashes.
 - [ ] Pass independent oracle admission at 20/20 for every included scenario.
-- [ ] Freeze development/validation cells and a hidden final-test plan before
-  creating or tuning `ours`.
+- [x] Freeze development/validation/hidden-final seed derivation and an
+  independently checked power design before creating or tuning `ours`.
+- [ ] Materialize the three immutable plan hashes from the admitted suite before
+  creating or tuning `ours`; the compiler rejects draft scenarios.
 - [ ] Run all five internal methods on the identical plan with 3 training seeds
-  and 20 rollout seeds per cell. Never pool `nominal`, `failure_start`, and
+  and 26 hidden-final rollout seeds per cell. Never pool `nominal`,
+  `failure_start`, and
   `online_failure`.
 - [ ] Report SR, macro RSR, RD, RC, L-level/H-axis slices, fall and safety rates,
   detection precision/recall/F1, recovery time, policy latency, wall time,
@@ -164,6 +185,10 @@ python3 -u scripts/run_humanoidarena_baseline_matrix_fast.py \
 python3 scripts/summarize_humanoidarena_baseline_matrix.py --allow-partial
 python3 scripts/render_benchmark_evidence.py
 PYTHONPATH=src python3 -m pytest -q
+
+# After 9/9 capture and 9/9 independent oracle admission:
+python3 scripts/compile_humanoidarena_admitted_suite.py
+python3 scripts/prepare_humanoidarena_internal_plans.py
 ```
 
 During execution, machine-live progress is written to

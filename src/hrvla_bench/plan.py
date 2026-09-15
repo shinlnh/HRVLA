@@ -91,6 +91,7 @@ def build_plan(
     *,
     include_draft: bool = False,
     rollouts_override: int | None = None,
+    rollout_seeds: Iterable[int] | None = None,
 ) -> dict[str, Any]:
     """Expand a suite into paired, method-independent episode specifications."""
     validate_suite(suite)
@@ -98,9 +99,21 @@ def build_plan(
     if not method_ids or any(not method for method in method_ids):
         raise ValueError("at least one non-empty method id is required")
     replication = suite["replication"]
-    rollouts = rollouts_override or replication["rollouts_per_seed_per_cell"]
-    if rollouts < 1:
-        raise ValueError("rollouts_override must be positive")
+    if rollout_seeds is not None and rollouts_override is not None:
+        raise ValueError("rollout_seeds and rollouts_override are mutually exclusive")
+    if rollout_seeds is None:
+        rollouts = rollouts_override or replication["rollouts_per_seed_per_cell"]
+        if rollouts < 1:
+            raise ValueError("rollouts_override must be positive")
+        selected_rollout_seeds = list(range(rollouts))
+    else:
+        selected_rollout_seeds = list(rollout_seeds)
+        if (
+            not selected_rollout_seeds
+            or len(selected_rollout_seeds) != len(set(selected_rollout_seeds))
+            or any(type(seed) is not int or seed < 0 for seed in selected_rollout_seeds)
+        ):
+            raise ValueError("rollout_seeds must contain unique non-negative integers")
 
     episodes: list[dict[str, Any]] = []
     for task in suite["tasks"]:
@@ -117,7 +130,7 @@ def build_plan(
             if status == "rejected" or (status == "draft" and not include_draft):
                 continue
             for training_seed in replication["training_seeds"]:
-                for rollout_seed in range(rollouts):
+                for rollout_seed in selected_rollout_seeds:
                     episode_key = (
                         f"{task['id']}::{scenario['id']}::t{training_seed}::r{rollout_seed}"
                     )

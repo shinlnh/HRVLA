@@ -8,6 +8,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 from typing import Any
 
@@ -38,6 +39,28 @@ TASK_IDS = {
     "boxing": "Isaac-Move-Boxing-Bag-G129-Dex3-Wholebody",
     "visual_navigation": "Isaac-Move-SmallWarehouse-VisionNavigation-G129-Dex3-Wholebody",
 }
+
+
+def _repository_revision() -> str:
+    revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    dirty = subprocess.run(
+        ["git", "status", "--short", "--untracked-files=no"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    if dirty:
+        raise RuntimeError("recovery evidence requires a clean tracked worktree")
+    if len(revision) != 40 or set(revision) - set("0123456789abcdef"):
+        raise RuntimeError("could not resolve a full Git implementation revision")
+    return revision
 
 
 class _EncoderProxy:
@@ -115,6 +138,7 @@ def _install_runtime_hooks(
     expected_start_snapshot_sha256: str | None = None,
     restore_only: bool = False,
     per_episode_output: bool = False,
+    implementation_revision: str,
 ) -> dict[str, Any]:
     state: dict[str, Any] = {
         "runtime": None,
@@ -207,6 +231,7 @@ def _install_runtime_hooks(
             scenario_id,
             control_dt_s=float(control_dt),
             simulator_revision=ISAACLAB_REVISION,
+            implementation_revision=implementation_revision,
             output_dir=episode_output_dir,
             capture_initial_snapshot=capture_initial_snapshot,
             capture_failure_snapshot=capture_failure_snapshot,
@@ -353,6 +378,7 @@ def main() -> int:
     parser.add_argument("--per-episode-output", action="store_true")
     args, remaining = parser.parse_known_args()
     suite = load_json(args.recovery_suite.resolve())
+    implementation_revision = _repository_revision()
     upstream_task, episode_seeds = _episode_contract(
         remaining, allow_batch=args.per_episode_output
     )
@@ -435,6 +461,7 @@ def main() -> int:
         expected_start_snapshot_sha256=args.expected_start_snapshot_sha256,
         restore_only=args.restore_only,
         per_episode_output=args.per_episode_output,
+        implementation_revision=implementation_revision,
     )
     return int(module.main())
 

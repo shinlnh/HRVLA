@@ -65,6 +65,7 @@ def test_runtime_triggers_and_modifies_the_first_close_action(tmp_path) -> None:
         "box-missed-grasp-retry",
         control_dt_s=0.02,
         simulator_revision="isaac-test",
+        implementation_revision="a" * 40,
         output_dir=tmp_path,
     )
     runtime.reset(env, episode_seed=7)
@@ -97,6 +98,7 @@ def test_runtime_applies_locked_root_velocity_when_ball_moves(tmp_path) -> None:
         "support-state-push",
         control_dt_s=0.02,
         simulator_revision="isaac-test",
+        implementation_revision="a" * 40,
         output_dir=tmp_path,
     )
     runtime.reset(env, episode_seed=9)

@@ -307,6 +307,15 @@ def audit_recovery_runtime_trace(
         raise ValueError("recovery admission requires the locked single environment index 0")
     if not isinstance(reset.get("simulator_revision"), str) or not reset["simulator_revision"]:
         raise ValueError("episode reset lacks simulator revision provenance")
+    implementation_revision = summary.get("implementation_revision")
+    if (
+        not isinstance(implementation_revision, str)
+        or len(implementation_revision) != 40
+        or set(implementation_revision) - set("0123456789abcdef")
+    ):
+        raise ValueError("runtime summary lacks a full Git implementation revision")
+    if reset.get("implementation_revision") != implementation_revision:
+        raise ValueError("episode reset implementation revision differs from runtime summary")
     if boundary.get("scenario_id") != scenario_id:
         raise ValueError("semantic boundary scenario differs")
     if boundary.get("detector_id") != contract["detector_id"]:
@@ -429,6 +438,7 @@ def audit_recovery_runtime_trace(
         "detector_id": contract["detector_id"],
         "injector_id": contract["injector_id"],
         "interface_seam": seam,
+        "implementation_revision": implementation_revision,
         "runtime_trace_validated": True,
         "action_samples_modified": int(summary.get("action_samples_modified", 0)),
         "snapshots": snapshots,

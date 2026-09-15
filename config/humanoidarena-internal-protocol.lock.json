@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "status": "frozen_before_ours",
+  "claim_boundary": "Only hidden_final is claim-bearing. Development and validation outcomes may tune infrastructure and frozen baseline components but must never enter the final table.",
+  "source_suite": {
+    "suite_id": "hrvla_recovery_v0",
+    "draft_suite_sha256": "80727fc3b8056a0e1230394ae5e1d9d981afb612c11c2d96a5ceab7b3a6626bd",
+    "admitted_suite": "_artifacts/HumanoidArena/recovery-admission/hrvla_recovery_v0.admitted.json"
+  },
+  "methods": [
+    "gr00t_sonic",
+    "gr00t_st",
+    "gr00t_st_rt",
+    "gr00t_str",
+    "gr00t_str_rt"
+  ],
+  "training_seeds": [0, 1, 2],
+  "paired_across_methods": true,
+  "splits": {
+    "development": {
+      "rollouts_per_training_seed_per_cell": 4,
+      "claim_eligible": false,
+      "purpose": "runtime integration and detector diagnostics only",
+      "rollout_seeds": [1390871579, 1919514052, 1735864944, 262949986]
+    },
+    "validation": {
+      "rollouts_per_training_seed_per_cell": 6,
+      "claim_eligible": false,
+      "purpose": "freeze planner, recovery, and checkpoint choices before final evaluation",
+      "rollout_seeds": [1266281183, 418947115, 1469356559, 1932671772, 726040538, 1965785656]
+    },
+    "hidden_final": {
+      "rollouts_per_training_seed_per_cell": 26,
+      "claim_eligible": true,
+      "purpose": "one-shot final paper comparison; never tune on these outcomes",
+      "rollout_seeds": [1866157392, 1020744416, 408044663, 680903215, 1325202135, 718282356, 2045388281, 176519697, 1787889257, 1104349695, 376920834, 1384548358, 926739061, 801258616, 233035146, 100457921, 1245660437, 360619435, 294602801, 31409227, 2035306189, 1149856493, 271821016, 1255671141, 1818879803, 1659381664]
+    }
+  },
+  "power_analysis": {
+    "test": "two-sided exact paired McNemar",
+    "multiplicity": "Holm familywise correction; Bonferroni alpha is used conservatively for design power",
+    "primary_comparison_families": [
+      "subtask_contribution",
+      "recovery_contribution",
+      "subtask_retraining_contribution",
+      "recovery_retraining_contribution"
+    ],
+    "familywise_alpha": 0.05,
+    "bonferroni_design_alpha": 0.0125,
+    "paired_observations_per_cell": 78,
+    "design_alternative": {
+      "candidate_only_success_probability": 0.26,
+      "baseline_only_success_probability": 0.05,
+      "paired_success_rate_difference": 0.21
+    },
+    "minimum_power": 0.8,
+    "exact_power": 0.8020639997462751,
+    "interpretation": "Power is conditional on the predeclared discordance model and does not remove the need to report seed-level dispersion and confidence intervals."
+  },
+  "analysis": {
+    "protocols_kept_separate": ["nominal", "failure_start", "online_failure"],
+    "primary_task_aggregate": ["pick_and_place_box", "double_desk", "football", "sit_sofa", "boxing", "visual_navigation"],
+    "diagnostic_only_tasks": ["open_door"],
+    "confidence_interval": "Wilson 95% for binary rates",
+    "paired_test": "two-sided exact McNemar with Holm correction",
+    "random_seed_unit": "paired rollout within training seed and scenario cell",
+    "training_seed_reporting": "report each seed, mean, and sample standard deviation; never hide a seed"
+  }
+}

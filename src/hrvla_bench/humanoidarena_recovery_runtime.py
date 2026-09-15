@@ -139,6 +139,7 @@ class HumanoidArenaRecoveryRuntime:
         *,
         control_dt_s: float,
         simulator_revision: str,
+        implementation_revision: str,
         output_dir: Path,
         capture_initial_snapshot: bool = False,
         capture_failure_snapshot: bool = False,
@@ -160,6 +161,11 @@ class HumanoidArenaRecoveryRuntime:
             raise ValueError("control_dt_s must be finite and positive")
         if not simulator_revision:
             raise ValueError("simulator_revision is required")
+        if (
+            len(implementation_revision) != 40
+            or set(implementation_revision) - set("0123456789abcdef")
+        ):
+            raise ValueError("implementation_revision must be a lowercase Git SHA")
         if (start_snapshot_sha256 is None) != (restore_audit_sha256 is None):
             raise ValueError("start snapshot and restore audit hashes must be supplied together")
         for label, value in (
@@ -179,6 +185,7 @@ class HumanoidArenaRecoveryRuntime:
         self.scenario_id = scenario_id
         self.control_dt_s = float(control_dt_s)
         self.simulator_revision = simulator_revision
+        self.implementation_revision = implementation_revision
         self.output_dir = Path(output_dir)
         self.capture_initial_snapshot = bool(capture_initial_snapshot)
         self.capture_failure_snapshot = bool(capture_failure_snapshot)
@@ -287,6 +294,7 @@ class HumanoidArenaRecoveryRuntime:
                 "control_dt_s": self.control_dt_s,
                 "environment_index": self.env_id,
                 "simulator_revision": self.simulator_revision,
+                "implementation_revision": self.implementation_revision,
                 "start_snapshot_sha256": self.start_snapshot_sha256,
                 "restore_audit_sha256": self.restore_audit_sha256,
             },
@@ -543,6 +551,7 @@ class HumanoidArenaRecoveryRuntime:
             "task_id": self.task["id"],
             "scenario_id": self.scenario_id,
             "episode_seed": self.episode_seed,
+            "implementation_revision": self.implementation_revision,
             "triggered": self.triggered,
             "trigger_control_step": self.trigger_step,
             "detector_id": self.scenario["event_detector"]["id"],

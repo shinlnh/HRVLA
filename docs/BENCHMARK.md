@@ -232,6 +232,26 @@ records enter the 20/20 report. An online rollout that never reaches its locked
 injection boundary is retained as `failure_not_injected` and rejects admission.
 The launcher refuses to overlap either the external matrix or runtime capture.
 
+Runtime evidence also records the exact clean Git revision of the recovery
+implementation. The capture compiler requires one identical revision across all
+nine scenarios. After every oracle report is `admitted`, promote the suite and
+materialize the pre-`ours` splits with:
+
+```bash
+python3 scripts/compile_humanoidarena_admitted_suite.py
+python3 scripts/prepare_humanoidarena_internal_plans.py
+```
+
+Neither command edits the draft suite. Both refuse to overwrite an existing
+release artifact. The internal protocol lock predeclares disjoint hash-derived
+rollout seeds: 4 development and 6 validation rollouts per training seed/cell
+are non-claim diagnostics; 26 hidden-final rollouts are the only claim-bearing
+split. Across three training seeds, each final cell has 78 paired observations.
+The design reaches exact power 0.8021 for `p10=0.26`, `p01=0.05` at the
+conservative four-comparison Bonferroni alpha 0.0125; reported inference still
+uses exact McNemar tests with Holm correction. This power statement is a locked
+design assumption, not a guarantee about the observed effect.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1

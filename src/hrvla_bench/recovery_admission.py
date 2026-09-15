@@ -35,6 +35,7 @@ def build_capture_manifest(
         raise ValueError(f"capture set differs from suite: missing={missing}, extra={extra}")
 
     initial_by_task: dict[str, list[tuple[str, dict[str, Any]]]] = defaultdict(list)
+    implementation_revisions: set[str] = set()
     scenarios = []
     for scenario_id in expected:
         task, scenario = expected[scenario_id]
@@ -50,6 +51,14 @@ def build_capture_manifest(
             raise ValueError(f"{scenario_id}: runtime trace is not validated")
         if not _is_sha256(audit.get("audit_sha256")):
             raise ValueError(f"{scenario_id}: runtime audit hash is malformed")
+        implementation_revision = audit.get("implementation_revision")
+        if (
+            not isinstance(implementation_revision, str)
+            or len(implementation_revision) != 40
+            or set(implementation_revision) - set("0123456789abcdef")
+        ):
+            raise ValueError(f"{scenario_id}: implementation revision is malformed")
+        implementation_revisions.add(implementation_revision)
         initial = audit.get("snapshots", {}).get("initial")
         if not isinstance(initial, dict):
             raise ValueError(f"{scenario_id}: initial snapshot evidence is required")
@@ -78,6 +87,7 @@ def build_capture_manifest(
                 "scenario_id": scenario_id,
                 "protocol": scenario["protocol"],
                 "runtime_audit_sha256": audit["audit_sha256"],
+                "implementation_revision": implementation_revision,
                 "runtime_evidence_directory": evidence_directory,
                 "initial_snapshot_sha256": initial["snapshot_sha256"],
                 "initial_snapshot_file_sha256": initial["file_sha256"],
@@ -116,12 +126,15 @@ def build_capture_manifest(
             }
         )
 
+    if len(implementation_revisions) != 1:
+        raise ValueError("recovery captures use different implementation revisions")
     core = {
         "schema_version": 1,
         "status": "runtime_and_snapshots_complete_oracle_admission_pending",
         "claim_boundary": "capture/runtime evidence only; oracle trials remain 0/20",
         "suite_id": suite["suite_id"],
         "suite_sha256": suite_sha256,
+        "implementation_revision": next(iter(implementation_revisions)),
         "gates": {
             "runtime_injectors": {"complete": len(scenarios), "required": len(expected)},
             "initial_snapshots": {
