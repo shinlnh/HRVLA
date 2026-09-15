@@ -22,14 +22,22 @@
       "completed": 6,
       "expected": 6,
       "percent": 100.0,
-      "scope": "held-out open-loop evaluation",
+      "scope": "context-only held-out open-loop evaluation",
       "unit": "training seeds",
-      "workstream": "VLA retraining"
+      "workstream": "Legacy 43-D retraining"
     },
     {
-      "completed": 4,
+      "completed": 0,
+      "expected": 6,
+      "percent": 0.0,
+      "scope": "in-domain ST-RT and STR-RT checkpoints",
+      "unit": "training seeds",
+      "workstream": "HA 40-D RT training"
+    },
+    {
+      "completed": 5,
       "expected": 84,
-      "percent": 4.761904761904762,
+      "percent": 5.9523809523809526,
       "scope": "direct external rerun; partial non-claim",
       "unit": "HumanoidArena cells",
       "workstream": "PI0.5 + SONIC"

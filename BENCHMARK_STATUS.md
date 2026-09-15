@@ -13,7 +13,7 @@ Last audited: **2026-09-15 (Asia/Bangkok)**.
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
 | VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena 40-D ST-RT/STR-RT: 0/6 seeds | Materialize admitted in-domain datasets, train/select/publish 3 ST-RT + 3 STR-RT checkpoints, then measure closed-loop task and recovery success; legacy open-loop MSE is not SR/RSR |
-| External HumanoidArena | 3/84 complete cells plus one active; 106/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
+| External HumanoidArena | 5/84 complete seed-cells plus one active batch; 109/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
@@ -80,9 +80,10 @@ The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized
 resume completed the remaining nine records, formally closed the third cell,
 and entered `semantic/boxing` at 2026-09-15 06:02 UTC without reloading its
-task-shared policy server. At the tracked 2026-09-15 08:59 UTC audit it had
-produced 106 valid episode records; three cells were finalized on disk and the
-fourth was still inside its persistent 60-episode batch. This is explicitly
+task-shared policy server. At the tracked 2026-09-15 09:04 UTC audit it had
+produced 109 valid episode records; five seed-cells were complete on disk and
+the task/mode batch was still active. The driver-level counter remains lower
+until all three seeds in that batch finish. This is explicitly
 `partial_non_claim` evidence, not a result table.
 The mutable machine progress file is authoritative after this tracked checkpoint.
 

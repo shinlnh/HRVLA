@@ -1,7 +1,8 @@
 workstream,completed,expected,unit,percent,scope
 Planner component,5,5,algorithm variants,100.0,symbolic/Cosmos component evidence
 Recovery component,6,6,mechanism variants,100.0,symbolic fault-injection evidence
-VLA retraining,6,6,training seeds,100.0,held-out open-loop evaluation
-PI0.5 + SONIC,4,84,HumanoidArena cells,4.761904761904762,direct external rerun; partial non-claim
+Legacy 43-D retraining,6,6,training seeds,100.0,context-only held-out open-loop evaluation
+HA 40-D RT training,0,6,training seeds,0.0,in-domain ST-RT and STR-RT checkpoints
+PI0.5 + SONIC,5,84,HumanoidArena cells,5.9523809523809526,direct external rerun; partial non-claim
 Scenario admission,0,9,recovery scenarios,0.0,oracle 20/20 plus immutable failure artifacts
 Internal closed loop,0,5,registered methods,0.0,same frozen paired HumanoidArena plan
