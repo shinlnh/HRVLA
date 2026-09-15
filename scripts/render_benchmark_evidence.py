@@ -318,7 +318,15 @@ def _render_recovery_preflight(summary: dict[str, Any], output_path: Path) -> No
         "runtime_injectors",
         "oracle_20_of_20",
     )
-    labels = [name.replace("_", "\n") for name in order]
+    label_by_gate = {
+        "task_predicate_sources": "task predicate\nsources",
+        "static_injector_contracts": "static injector\ncontracts",
+        "initial_snapshots": "initial\nsnapshots",
+        "failure_snapshots": "failure\nsnapshots",
+        "runtime_injectors": "runtime\ninjectors",
+        "oracle_20_of_20": "oracle\n20/20",
+    }
+    labels = [label_by_gate[name] for name in order]
     complete = [int(gates[name]["complete"]) for name in order]
     required = [int(gates[name]["required"]) for name in order]
     percentages = [100.0 * done / total for done, total in zip(complete, required)]
