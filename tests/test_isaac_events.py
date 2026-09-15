@@ -6,7 +6,6 @@ import types
 
 import numpy as np
 import pytest
-import torch
 
 from hrvla_bench.isaac_events import (
     apply_action_window,
@@ -17,10 +16,10 @@ from hrvla_bench.isaac_events import (
 
 
 class _FakeAsset:
-    def __init__(self, num_envs: int) -> None:
-        self.device = torch.device("cpu")
-        self.data = types.SimpleNamespace(root_vel_w=torch.zeros((num_envs, 6)))
-        self.writes: list[tuple[torch.Tensor, torch.Tensor]] = []
+    def __init__(self, num_envs: int, torch_module) -> None:
+        self.device = torch_module.device("cpu")
+        self.data = types.SimpleNamespace(root_vel_w=torch_module.zeros((num_envs, 6)))
+        self.writes = []
 
     def write_root_velocity_to_sim(self, values, *, env_ids) -> None:
         self.data.root_vel_w[env_ids] = values
@@ -28,16 +27,16 @@ class _FakeAsset:
 
 
 class _FakeScene(dict):
-    def __init__(self, num_envs: int) -> None:
-        super().__init__(robot=_FakeAsset(num_envs))
+    def __init__(self, num_envs: int, torch_module) -> None:
+        super().__init__(robot=_FakeAsset(num_envs, torch_module))
         self.num_envs = num_envs
 
 
 class _FakeEnv:
-    def __init__(self, num_envs: int = 3) -> None:
-        self.device = torch.device("cpu")
-        self.scene = _FakeScene(num_envs)
-        self.episode_length_buf = torch.arange(num_envs)
+    def __init__(self, torch_module, num_envs: int = 3) -> None:
+        self.device = torch_module.device("cpu")
+        self.scene = _FakeScene(num_envs, torch_module)
+        self.episode_length_buf = torch_module.arange(num_envs)
 
 
 def test_release_grasp_opens_only_binary_hands_inside_window() -> None:
@@ -96,7 +95,8 @@ def test_action_injector_rejects_unlocked_parameters() -> None:
 
 
 def test_root_velocity_delta_is_one_shot_until_explicit_reset(tmp_path) -> None:
-    env = _FakeEnv()
+    torch = pytest.importorskip("torch")
+    env = _FakeEnv(torch)
     audit_path = tmp_path / "velocity.jsonl"
     selected = torch.tensor([0, 2])
     kwargs = {
@@ -124,6 +124,7 @@ def test_root_velocity_delta_is_one_shot_until_explicit_reset(tmp_path) -> None:
 
 
 def test_legacy_push_wrapper_uses_resettable_registry(monkeypatch) -> None:
+    torch = pytest.importorskip("torch")
     calls = []
 
     class SceneEntityCfg:
@@ -144,7 +145,7 @@ def test_legacy_push_wrapper_uses_resettable_registry(monkeypatch) -> None:
     monkeypatch.setitem(sys.modules, "isaaclab.envs.mdp", mdp)
     monkeypatch.setitem(sys.modules, "isaaclab.managers", managers)
 
-    env = _FakeEnv(num_envs=2)
+    env = _FakeEnv(torch, num_envs=2)
     velocity_range = {"x": (0.1, 0.1)}
     push_once_by_setting_velocity(env, None, velocity_range)
     push_once_by_setting_velocity(env, None, velocity_range)
