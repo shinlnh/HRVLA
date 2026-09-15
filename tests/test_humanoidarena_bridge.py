@@ -13,6 +13,7 @@ from hrvla_bench.humanoidarena_bridge import (
     STATE_DIM,
     STATE_FIELDS,
     deterministic_split,
+    deterministic_train_validation_hidden_split,
     flatten_action,
     modality_metadata,
     split_action,
@@ -78,6 +79,21 @@ def test_split_is_per_task_deterministic_disjoint_and_complete() -> None:
     assert len(heldout) == 20
     assert not set(train) & set(heldout)
     assert set(train) | set(heldout) == set(range(100))
+
+
+def test_three_way_split_preserves_hidden_membership_and_freezes_dev() -> None:
+    train, validation, hidden = deterministic_train_validation_hidden_split(
+        range(100), 0.1, 0.2, 20260915
+    )
+    old_train, old_hidden = deterministic_split(range(100), 0.2, 20260915)
+    assert len(train) == 70
+    assert len(validation) == 10
+    assert len(hidden) == 20
+    assert hidden == old_hidden
+    assert set(train) | set(validation) == set(old_train)
+    assert not set(train) & set(validation)
+    assert not set(train) & set(hidden)
+    assert not set(validation) & set(hidden)
 
 
 def test_modality_metadata_matches_named_bridge_fields() -> None:

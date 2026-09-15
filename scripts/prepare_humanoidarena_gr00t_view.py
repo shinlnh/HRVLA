@@ -27,6 +27,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from hrvla_bench.humanoidarena_bridge import (  # noqa: E402
     canonical_json_sha256,
     deterministic_split,
+    deterministic_train_validation_hidden_split,
     modality_metadata,
     validate_release_info,
 )
@@ -106,10 +107,10 @@ def _stats(frames: list[pd.DataFrame]) -> dict[str, Any]:
     return output
 
 
-def _prepare_split_dirs(output_root: Path) -> dict[str, Path]:
+def _prepare_split_dirs(output_root: Path, split_names: tuple[str, ...]) -> dict[str, Path]:
     if output_root.exists():
         raise FileExistsError(f"refusing to overwrite existing view: {output_root}")
-    roots = {name: output_root / name for name in ("train", "heldout")}
+    roots = {name: output_root / name for name in split_names}
     for root in roots.values():
         (root / "meta").mkdir(parents=True)
     return roots
@@ -121,8 +122,14 @@ def materialize_view(
     *,
     heldout_fraction: float,
     seed: int,
+    validation_fraction: float = 0.0,
 ) -> dict[str, Any]:
-    split_roots = _prepare_split_dirs(output_root)
+    split_names = (
+        ("train", "validation", "heldout")
+        if validation_fraction > 0.0
+        else ("train", "heldout")
+    )
+    split_roots = _prepare_split_dirs(output_root, split_names)
     episode_rows: dict[str, list[dict[str, Any]]] = {name: [] for name in split_roots}
     split_frames: dict[str, list[pd.DataFrame]] = {name: [] for name in split_roots}
     task_rows: list[dict[str, Any]] = []
@@ -147,10 +154,22 @@ def materialize_view(
         task_rows.append({"task_index": task_index, "task": task_text})
         episodes = _episode_table(dataset)
         source_ids = [int(value) for value in episodes["episode_index"].tolist()]
-        train_ids, heldout_ids = deterministic_split(
-            source_ids, heldout_fraction, seed + task_index
-        )
+        if validation_fraction > 0.0:
+            train_ids, validation_ids, heldout_ids = (
+                deterministic_train_validation_hidden_split(
+                    source_ids,
+                    validation_fraction,
+                    heldout_fraction,
+                    seed + task_index,
+                )
+            )
+        else:
+            train_ids, heldout_ids = deterministic_split(
+                source_ids, heldout_fraction, seed + task_index
+            )
+            validation_ids = []
         membership = {value: "train" for value in train_ids}
+        membership.update({value: "validation" for value in validation_ids})
         membership.update({value: "heldout" for value in heldout_ids})
 
         data_cache: dict[tuple[int, int], pd.DataFrame] = {}
@@ -233,6 +252,11 @@ def materialize_view(
                 "info_sha256": _sha256(info_path),
                 "episodes": len(source_ids),
                 "train_episode_ids": train_ids,
+                **(
+                    {"validation_episode_ids": validation_ids}
+                    if validation_fraction > 0.0
+                    else {}
+                ),
                 "heldout_episode_ids": heldout_ids,
             }
         )
@@ -272,12 +296,25 @@ def materialize_view(
         _write_jsonl(destination / "meta/episodes.jsonl", episode_rows[split])
 
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2 if validation_fraction > 0.0 else 1,
         "source_revision": DATASET_REVISION,
         "source_root": str(source_root.resolve()),
         "heldout_fraction": heldout_fraction,
+        "validation_fraction": validation_fraction,
         "seed": seed,
-        "split_policy": "deterministic per task before any training or evaluation",
+        "split_policy": (
+            "deterministic per task before any training or evaluation; hidden selected "
+            "first, validation second, remaining episodes used for training"
+        ),
+        "split_roles": {
+            "train": "parameter optimization",
+            **(
+                {"validation": "checkpoint and hyperparameter selection"}
+                if validation_fraction > 0.0
+                else {}
+            ),
+            "heldout": "hidden final test; forbidden for checkpoint or hyperparameter selection",
+        },
         "video_policy": "immutable packed MP4 symlinks plus exact frame offsets; no re-encode",
         "modality_sha256": canonical_json_sha256(modality_metadata()),
         "sources": source_records,
@@ -298,12 +335,14 @@ def main() -> int:
     parser.add_argument("--source-root", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--heldout-fraction", type=float, default=0.2)
+    parser.add_argument("--validation-fraction", type=float, default=0.1)
     parser.add_argument("--seed", type=int, default=20260915)
     args = parser.parse_args()
     manifest = materialize_view(
         args.source_root.resolve(),
         args.output_root.resolve(),
         heldout_fraction=args.heldout_fraction,
+        validation_fraction=args.validation_fraction,
         seed=args.seed,
     )
     print(json.dumps(manifest["outputs"], indent=2, sort_keys=True))

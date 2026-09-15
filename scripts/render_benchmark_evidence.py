@@ -256,30 +256,36 @@ def _render_gr00t_bridge(summary: dict[str, Any], output_path: Path) -> None:
         for row in tasks
     ]
     positions = list(range(len(tasks)))
-    train_episodes = [int(row["train_episodes"]) for row in tasks]
-    heldout_episodes = [int(row["heldout_episodes"]) for row in tasks]
-    train_frames = [int(row["train_frames"]) / 1000 for row in tasks]
-    heldout_frames = [int(row["heldout_frames"]) / 1000 for row in tasks]
-    width = 0.38
+    splits = ["train"]
+    if tasks and "validation_episodes" in tasks[0]:
+        splits.append("validation")
+    splits.append("heldout")
+    colors = {
+        "train": "#2b6cb0",
+        "validation": "#805ad5",
+        "heldout": "#dd6b20",
+    }
+    display = {
+        "train": "train",
+        "validation": "validation",
+        "heldout": "hidden test",
+    }
+    width = 0.8 / len(splits)
     figure, axes = plt.subplots(1, 2, figsize=(14, 5.2), constrained_layout=True)
-    for axis, train, heldout, ylabel, title in (
-        (axes[0], train_episodes, heldout_episodes, "episodes", "Frozen per-task split"),
-        (axes[1], train_frames, heldout_frames, "frames (thousands)", "Frame coverage"),
+    for axis, suffix, scale, ylabel, title in (
+        (axes[0], "episodes", 1.0, "episodes", "Frozen per-task split"),
+        (axes[1], "frames", 1000.0, "frames (thousands)", "Frame coverage"),
     ):
-        axis.bar(
-            [position - width / 2 for position in positions],
-            train,
-            width,
-            label="train",
-            color="#2b6cb0",
-        )
-        axis.bar(
-            [position + width / 2 for position in positions],
-            heldout,
-            width,
-            label="held-out",
-            color="#dd6b20",
-        )
+        center = (len(splits) - 1) / 2
+        for split_index, split in enumerate(splits):
+            values = [int(row[f"{split}_{suffix}"]) / scale for row in tasks]
+            axis.bar(
+                [position + (split_index - center) * width for position in positions],
+                values,
+                width,
+                label=display[split],
+                color=colors[split],
+            )
         axis.set_xticks(positions, labels)
         axis.set_ylabel(ylabel)
         axis.set_title(title)

@@ -140,6 +140,41 @@ def deterministic_split(
     return train, heldout
 
 
+def deterministic_train_validation_hidden_split(
+    episode_ids: Iterable[int],
+    validation_fraction: float,
+    hidden_fraction: float,
+    seed: int,
+) -> tuple[list[int], list[int], list[int]]:
+    """Freeze disjoint per-task train/validation/hidden episode memberships.
+
+    Hidden episodes are selected first. Consequently, adding a validation
+    slice to an existing train/held-out split preserves the original held-out
+    membership for the same seed and hidden fraction.
+    """
+
+    ordered = sorted(set(int(value) for value in episode_ids))
+    if len(ordered) < 3:
+        raise ValueError("at least three episode IDs are required for a three-way split")
+    if not 0.0 < validation_fraction < 1.0:
+        raise ValueError("validation_fraction must be between zero and one")
+    if not 0.0 < hidden_fraction < 1.0:
+        raise ValueError("hidden_fraction must be between zero and one")
+    if validation_fraction + hidden_fraction >= 1.0:
+        raise ValueError("validation and hidden fractions must sum to less than one")
+
+    shuffled = ordered.copy()
+    random.Random(seed).shuffle(shuffled)
+    hidden_count = max(1, round(len(shuffled) * hidden_fraction))
+    validation_count = max(1, round(len(shuffled) * validation_fraction))
+    if hidden_count + validation_count >= len(shuffled):
+        raise ValueError("split fractions leave no training episodes")
+    hidden = sorted(shuffled[:hidden_count])
+    validation = sorted(shuffled[hidden_count : hidden_count + validation_count])
+    train = sorted(shuffled[hidden_count + validation_count :])
+    return train, validation, hidden
+
+
 def validate_release_info(info: Mapping[str, Any]) -> None:
     """Reject a dataset whose observation/action semantics differ from the bridge."""
 
@@ -206,4 +241,3 @@ def modality_metadata() -> dict[str, Any]:
 def canonical_json_sha256(payload: Mapping[str, Any]) -> str:
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return "sha256:" + hashlib.sha256(encoded).hexdigest()
-

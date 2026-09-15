@@ -62,7 +62,7 @@ _vendor/Isaac-GR00T/.venv/bin/python \
   scripts/prepare_humanoidarena_gr00t_view.py \
   --source-root _artifacts/HumanoidArena/dataset \
   --output-root _artifacts/datasets/humanoidarena-gr00t-refpose \
-  --heldout-fraction 0.2 --seed 20260915
+  --heldout-fraction 0.2 --validation-fraction 0.1 --seed 20260915
 ```
 
 The training and held-out evaluation launchers install the packed-video offset
@@ -78,6 +78,13 @@ low-dimensional endpoint rows reconstruct state64/action40 losslessly, and 14
 mid-episode frames spanning every task and both splits match direct packed-video
 decoding pixel-for-pixel. The view occupies 345,791,543 local bytes excluding
 the immutable source-video targets.
+
+Before checkpoint training, the final view builder additionally freezes a 10%
+validation slice out of the original training membership. This produces 70
+train, 10 validation, and 20 hidden-test episodes per task while preserving the
+already frozen 20 hidden IDs exactly. Validation is the only split allowed for
+checkpoint or hyperparameter selection; hidden-test actions and outcomes must
+not be inspected until the configuration is locked.
 
 See the [machine-readable validation report](../results/humanoidarena/gr00t-bridge/validation.json)
 and [dataset split plot](../results/humanoidarena/gr00t-bridge/dataset_split.png).

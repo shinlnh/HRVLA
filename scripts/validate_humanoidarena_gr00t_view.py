@@ -85,11 +85,18 @@ def validate_view(view_root: Path, config_path: Path) -> dict[str, Any]:
     if config["action"].delta_indices != list(range(40)):
         raise ValueError("GR00T action horizon differs from the frozen 40-frame contract")
 
+    output_splits = set(manifest["outputs"])
+    if output_splits == {"train", "heldout"}:
+        splits = ("train", "heldout")
+    elif output_splits == {"train", "validation", "heldout"}:
+        splits = ("train", "validation", "heldout")
+    else:
+        raise ValueError(f"unsupported view splits: {sorted(output_splits)}")
     expected: dict[tuple[str, str], set[int]] = {}
     for source in manifest["sources"]:
         dataset = str(source["dataset"])
-        expected[("train", dataset)] = set(map(int, source["train_episode_ids"]))
-        expected[("heldout", dataset)] = set(map(int, source["heldout_episode_ids"]))
+        for split in splits:
+            expected[(split, dataset)] = set(map(int, source[f"{split}_episode_ids"]))
 
     install_packed_video_offset_patch()
     observed: dict[tuple[str, str], set[int]] = {key: set() for key in expected}
@@ -98,7 +105,7 @@ def validate_view(view_root: Path, config_path: Path) -> dict[str, Any]:
     checked_lowdim = 0
     symlink_count = 0
 
-    for split in ("train", "heldout"):
+    for split in splits:
         split_root = view_root / split
         loader = LeRobotEpisodeLoader(split_root, config)
         if [int(row["episode_index"]) for row in loader.episodes_metadata] != list(
@@ -128,10 +135,8 @@ def validate_view(view_root: Path, config_path: Path) -> dict[str, Any]:
                 dataset,
                 {
                     "task": dataset.split("/", 1)[0],
-                    "train_episodes": 0,
-                    "heldout_episodes": 0,
-                    "train_frames": 0,
-                    "heldout_frames": 0,
+                    **{f"{name}_episodes": 0 for name in splits},
+                    **{f"{name}_frames": 0 for name in splits},
                 },
             )
             task[f"{split}_episodes"] += 1
@@ -201,15 +206,17 @@ def validate_view(view_root: Path, config_path: Path) -> dict[str, Any]:
         }
         raise ValueError(f"view membership differs from manifest: {differences}")
     for dataset in {dataset for _, dataset in expected}:
-        if expected[("train", dataset)] & expected[("heldout", dataset)]:
-            raise ValueError(f"train/held-out leakage in manifest: {dataset}")
+        for index, left in enumerate(splits):
+            for right in splits[index + 1 :]:
+                if expected[(left, dataset)] & expected[(right, dataset)]:
+                    raise ValueError(f"{left}/{right} leakage in manifest: {dataset}")
 
     totals = {
         split: {
             "episodes": sum(row[f"{split}_episodes"] for row in task_rows.values()),
             "frames": sum(row[f"{split}_frames"] for row in task_rows.values()),
         }
-        for split in ("train", "heldout")
+        for split in splits
     }
     if totals != manifest["outputs"]:
         raise ValueError(f"view totals differ from manifest: {totals} != {manifest['outputs']}")
@@ -230,7 +237,7 @@ def validate_view(view_root: Path, config_path: Path) -> dict[str, Any]:
         "tasks": [task_rows[key] for key in sorted(task_rows)],
         "checks": {
             "all_episode_memberships_match_manifest": True,
-            "train_heldout_disjoint_per_task": True,
+            "all_splits_disjoint_per_task": True,
             "dense_episode_ids": True,
             "packed_video_symlinks": symlink_count,
             "pixel_exact_samples": len(pixel_samples),
