@@ -33,6 +33,8 @@ SONIC_ROOT = (
 
 MODES = ("base_test", "semantic", "vision", "execution")
 DEFAULT_SEEDS = (0, 1, 2)
+DEFAULT_CPU_THREADS = len(os.sched_getaffinity(0))
+DEFAULT_COMPILE_THREADS = min(DEFAULT_CPU_THREADS, 32)
 MODEL_REVISION = "da13e072902840e2682afde360b763f1edb76d32"
 SOURCE_REVISION = "68479287a784a69be9ce6ad739311d2f11f75ef9"
 ISAACLAB_REVISION = "46dff135f44683f031edf346e544fcfd8456b2bb"
@@ -244,7 +246,7 @@ def _command(
     ]
 
 
-def _runtime_env() -> dict[str, str]:
+def _runtime_env(*, cpu_threads: int, compile_threads: int) -> dict[str, str]:
     env = os.environ.copy()
     env.update(
         {
@@ -256,9 +258,13 @@ def _runtime_env() -> dict[str, str]:
             "OMNI_KIT_ACCEPT_EULA": "YES",
             "PYTHONNOUSERSITE": "1",
             "PYTHONUNBUFFERED": "1",
-            "OMP_NUM_THREADS": "24",
-            "MKL_NUM_THREADS": "24",
-            "TORCHINDUCTOR_COMPILE_THREADS": "16",
+            "OMP_NUM_THREADS": str(cpu_threads),
+            "MKL_NUM_THREADS": str(cpu_threads),
+            "OPENBLAS_NUM_THREADS": str(cpu_threads),
+            "NUMEXPR_NUM_THREADS": str(cpu_threads),
+            "OMP_DYNAMIC": "FALSE",
+            "MKL_DYNAMIC": "FALSE",
+            "TORCHINDUCTOR_COMPILE_THREADS": str(compile_threads),
             "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
         }
     )
@@ -278,8 +284,27 @@ def _terminate_group(process: subprocess.Popen[Any]) -> None:
             pass
 
 
-def _run_cell(command: list[str], cell_dir: Path, min_runtime_ram_gib: float) -> int:
+def _run_cell(
+    command: list[str],
+    cell_dir: Path,
+    min_runtime_ram_gib: float,
+    *,
+    cpu_threads: int,
+    compile_threads: int,
+) -> int:
     cell_dir.mkdir(parents=True, exist_ok=True)
+    _write_json_atomic(
+        cell_dir / "runtime.json",
+        {
+            "schema_version": 1,
+            "available_logical_cpus": len(os.sched_getaffinity(0)),
+            "cpu_threads": cpu_threads,
+            "compile_threads": compile_threads,
+            "omp_dynamic": False,
+            "mkl_dynamic": False,
+            "started_at": time.time(),
+        },
+    )
     log_path = cell_dir / "matrix-driver.log"
     with log_path.open("a", encoding="utf-8", buffering=1) as log:
         process = subprocess.Popen(
@@ -287,7 +312,7 @@ def _run_cell(command: list[str], cell_dir: Path, min_runtime_ram_gib: float) ->
             stdout=log,
             stderr=subprocess.STDOUT,
             cwd=ROOT,
-            env=_runtime_env(),
+            env=_runtime_env(cpu_threads=cpu_threads, compile_threads=compile_threads),
             start_new_session=True,
         )
         try:
@@ -322,6 +347,8 @@ def main() -> int:
     parser.add_argument("--min-start-ram-gib", type=float, default=20.0)
     parser.add_argument("--min-runtime-ram-gib", type=float, default=3.0)
     parser.add_argument("--max-idle-gpu-mib", type=int, default=2048)
+    parser.add_argument("--cpu-threads", type=int, default=DEFAULT_CPU_THREADS)
+    parser.add_argument("--compile-threads", type=int, default=DEFAULT_COMPILE_THREADS)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -329,6 +356,14 @@ def main() -> int:
         parser.error("--repeats must be positive")
     if any(seed not in DEFAULT_SEEDS for seed in args.seeds):
         parser.error("paper baseline seeds must be selected from 0, 1, 2")
+    if args.cpu_threads < 1:
+        parser.error("--cpu-threads must be positive")
+    if args.cpu_threads > DEFAULT_CPU_THREADS:
+        parser.error(
+            f"--cpu-threads cannot exceed the {DEFAULT_CPU_THREADS} logical CPUs available"
+        )
+    if args.compile_threads < 1:
+        parser.error("--compile-threads must be positive")
 
     model_root = args.model_root.resolve()
     output_root = args.output_root.resolve()
@@ -364,7 +399,13 @@ def main() -> int:
 
         _wait_for_capacity(args.min_start_ram_gib, args.max_idle_gpu_mib)
         print(f"[matrix] start {index}/{len(cells)} {mode}/{task_name}/seed-{seed}", flush=True)
-        returncode = _run_cell(command, cell_dir, args.min_runtime_ram_gib)
+        returncode = _run_cell(
+            command,
+            cell_dir,
+            args.min_runtime_ram_gib,
+            cpu_threads=args.cpu_threads,
+            compile_threads=args.compile_threads,
+        )
         valid = returncode == 0 and cell_complete(
             cell_dir,
             seed=seed,
@@ -384,6 +425,8 @@ def main() -> int:
             "episodes_completed": completed * args.repeats,
             "last_cell": {"task": task_name, "mode": mode, "seed": seed},
             "last_returncode": returncode,
+            "cpu_threads": args.cpu_threads,
+            "compile_threads": args.compile_threads,
             "updated_at": time.time(),
         }
         _write_json_atomic(progress_path, progress)
@@ -405,6 +448,8 @@ def main() -> int:
                 "episodes_expected": len(cells) * args.repeats,
                 "episodes_completed": completed * args.repeats,
                 "complete": completed == len(cells) and failed == 0,
+                "cpu_threads": args.cpu_threads,
+                "compile_threads": args.compile_threads,
                 "updated_at": time.time(),
             },
         )
