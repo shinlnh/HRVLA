@@ -44,11 +44,18 @@ def readiness_rows(humanoid: dict[str, Any] | None) -> list[dict[str, Any]]:
             "scope": "symbolic fault-injection evidence",
         },
         {
-            "workstream": "VLA retraining",
+            "workstream": "Legacy 43-D retraining",
             "completed": 6,
             "expected": 6,
             "unit": "training seeds",
-            "scope": "held-out open-loop evaluation",
+            "scope": "context-only held-out open-loop evaluation",
+        },
+        {
+            "workstream": "HA 40-D RT training",
+            "completed": 0,
+            "expected": 6,
+            "unit": "training seeds",
+            "scope": "in-domain ST-RT and STR-RT checkpoints",
         },
         {
             "workstream": "PI0.5 + SONIC",
@@ -221,9 +228,7 @@ def _render_humanoid(summary: dict[str, Any], output_path: Path) -> None:
     axes[1].set_ylabel("matrix completion (%)")
     axes[1].set_title(f"PI0.5+SONIC: {observed}/{expected} observed episodes")
     axes[1].grid(axis="y", alpha=0.25)
-    figure.suptitle(
-        "Interrupted partial evidence — non-claim until all locked cells pass", fontsize=10
-    )
+    figure.suptitle("Running partial evidence — non-claim until all locked cells pass", fontsize=10)
     figure.savefig(output_path, dpi=180)
     plt.close(figure)
 
