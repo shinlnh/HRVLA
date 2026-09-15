@@ -35,7 +35,7 @@ def test_root_upright_uses_locked_height_and_quaternion_thresholds() -> None:
 def test_point_to_live_seat_aabb_distance_is_zero_inside() -> None:
     box = (1.0, 2.0, 3.0, 5.0, 0.2, 1.0)
     assert _point_box_xy_distance((1.5, 4.0), box) == 0.0
-    assert _point_box_xy_distance((0.4, 2.2), box) == 1.0
+    assert np.isclose(_point_box_xy_distance((0.4, 2.2), box), 1.0)
 
 
 def test_scene_only_detector_does_not_request_private_task_signals() -> None:
