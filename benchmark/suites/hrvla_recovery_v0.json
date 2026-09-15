@@ -74,8 +74,10 @@
     {
       "id": "pick_and_place_box",
       "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "pp_box",
       "initial_snapshot_id": "pending:pick_and_place_box/initial",
-      "success_predicate": "target box is stably inside the marked receptacle for 1.0 s",
+      "success_predicate": "HumanoidArena raw reward is 1 when the box center is judged on a live or fallback shelf support surface",
+      "success_predicate_source": "tasks/g1_tasks/move_pickplace_box_g1_29dof_dex3_wholedoby/mdp/rewards.py:compute_success_mask",
       "horizon_s": 90,
       "admission": {"status": "draft"},
       "scenarios": [
@@ -107,8 +109,10 @@
     {
       "id": "open_door",
       "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "open_door",
       "initial_snapshot_id": "pending:open_door/initial",
-      "success_predicate": "pelvis crosses the doorway plane and both feet regain support",
+      "success_predicate": "HumanoidArena default strict raw reward is 1 when the robot is upright, the latch is unlocked, and absolute door-leaf angle is at least 60 degrees; the upstream OpenDoor row remains diagnostic while its locked self-tests fail",
+      "success_predicate_source": "tasks/g1_tasks/move_open_door_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
       "horizon_s": 90,
       "admission": {"status": "draft"},
       "scenarios": [
@@ -140,8 +144,10 @@
     {
       "id": "double_desk",
       "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "doubledesk",
       "initial_snapshot_id": "pending:double_desk/initial",
-      "success_predicate": "all specified desk transfers complete without fall or safety termination",
+      "success_predicate": "HumanoidArena raw reward is 1 when object_l (the hammer) center of mass is inside any discovered basket goal box and is not below the ground-drop threshold",
+      "success_predicate_source": "tasks/g1_tasks/move_pickplace_doubledesk_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_reward",
       "horizon_s": 120,
       "admission": {"status": "draft"},
       "scenarios": [
@@ -161,8 +167,10 @@
     {
       "id": "football",
       "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "football",
       "initial_snapshot_id": "pending:football/initial",
-      "success_predicate": "ball crosses the goal plane while robot remains upright",
+      "success_predicate": "HumanoidArena raw reward is 1 when the football center crosses a goal-line inner edge within the goal-mouth X and height bounds; fall and safety are reported separately",
+      "success_predicate_source": "tasks/g1_tasks/move_football_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_reward",
       "horizon_s": 60,
       "admission": {"status": "draft"},
       "scenarios": [
@@ -182,8 +190,10 @@
     {
       "id": "sit_sofa",
       "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "sit_sofa",
       "initial_snapshot_id": "pending:sit_sofa/initial",
-      "success_predicate": "pelvis remains in the sofa target region with stable contact for 2.0 s",
+      "success_predicate": "HumanoidArena raw reward is 1 when a pelvis/hip proxy is in the live sofa-seat volume with at least 5 N contact, or the upstream multi-body seated-geometry fallback passes",
+      "success_predicate_source": "tasks/g1_tasks/move_sit_sofa_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
       "horizon_s": 60,
       "admission": {"status": "draft"},
       "scenarios": [
@@ -204,8 +214,10 @@
     {
       "id": "boxing",
       "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "boxing",
       "initial_snapshot_id": "pending:boxing/initial",
-      "success_predicate": "required strike sequence completes while balance and safety predicates hold",
+      "success_predicate": "HumanoidArena raw reward is 1 when any configured punch body enters the per-target hit radius; fall and safety are reported separately",
+      "success_predicate_source": "tasks/g1_tasks/move_boxing_bag_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
       "horizon_s": 60,
       "admission": {"status": "draft"},
       "scenarios": [
@@ -225,8 +237,10 @@
     {
       "id": "visual_navigation",
       "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "vision_navi",
       "initial_snapshot_id": "pending:visual_navigation/initial",
-      "success_predicate": "robot reaches the goal region without collision, fall, or safety termination",
+      "success_predicate": "HumanoidArena raw reward is 1 when all configured left- and right-foot proxy points are inside the live target region and the robot is upright; collision and safety are reported separately",
+      "success_predicate_source": "tasks/g1_tasks/move_small_warehouse_vision_navigation_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
       "horizon_s": 120,
       "admission": {"status": "draft"},
       "scenarios": [

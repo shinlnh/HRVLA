@@ -100,6 +100,12 @@ Freeze before evaluation:
 - observation fields, control rate, controller revision, and horizon;
 - allowed compute, model checkpoint, recovery memory, and reset policy.
 
+The seven task-success predicates must resolve to the exact reward source used
+by the locked evaluator. Safety/fall rates remain separate outcomes; they must
+not be silently conjoined with or removed from the upstream binary task reward.
+Run `scripts/audit_humanoidarena_recovery_contract.py` to hash those source
+files and expose the still-missing snapshot, runtime-injector, and oracle gates.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1

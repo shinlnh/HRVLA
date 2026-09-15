@@ -18,6 +18,9 @@ DEFAULT_PERFORMANCE = (
 DEFAULT_GR00T_BRIDGE = (
     ROOT / "results" / "humanoidarena" / "gr00t-bridge" / "validation.json"
 )
+DEFAULT_RECOVERY_PREFLIGHT = (
+    ROOT / "results" / "humanoidarena" / "admission" / "predicate-source-audit.json"
+)
 DEFAULT_OUTPUT = ROOT / "results" / "benchmark" / "readiness"
 
 
@@ -303,12 +306,41 @@ def _render_gr00t_bridge(summary: dict[str, Any], output_path: Path) -> None:
     plt.close(figure)
 
 
+def _render_recovery_preflight(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    gates = summary["gates"]
+    labels = [name.replace("_", "\n") for name in gates]
+    complete = [int(value["complete"]) for value in gates.values()]
+    required = [int(value["required"]) for value in gates.values()]
+    percentages = [100.0 * done / total for done, total in zip(complete, required)]
+    colors = ["#2f855a" if value == 100 else "#c53030" for value in percentages]
+    figure, axis = plt.subplots(figsize=(10.5, 5.2), constrained_layout=True)
+    bars = axis.bar(labels, percentages, color=colors)
+    axis.set_ylim(0, 110)
+    axis.set_ylabel("gate completion (%)")
+    axis.set_title(
+        "HumanoidArena recovery admission preflight\n"
+        "Static predicate provenance is not runtime/oracle admission"
+    )
+    axis.grid(axis="y", alpha=0.25)
+    axis.bar_label(
+        bars,
+        labels=[f"{done}/{total}" for done, total in zip(complete, required)],
+    )
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--retraining-summary", type=Path, default=DEFAULT_RETRAINING)
     parser.add_argument("--humanoidarena-summary", type=Path, default=DEFAULT_HUMANOID)
     parser.add_argument("--performance-summary", type=Path, default=DEFAULT_PERFORMANCE)
     parser.add_argument("--gr00t-bridge-summary", type=Path, default=DEFAULT_GR00T_BRIDGE)
+    parser.add_argument(
+        "--recovery-preflight", type=Path, default=DEFAULT_RECOVERY_PREFLIGHT
+    )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 
@@ -320,6 +352,7 @@ def main() -> int:
     retraining = _load_optional(args.retraining_summary.resolve())
     performance = _load_optional(args.performance_summary.resolve())
     gr00t_bridge = _load_optional(args.gr00t_bridge_summary.resolve())
+    recovery_preflight = _load_optional(args.recovery_preflight.resolve())
     rows = readiness_rows(humanoid)
     _write_readiness(rows, output_dir)
     _render_readiness(rows, output_dir / "benchmark_readiness.png")
@@ -337,6 +370,9 @@ def main() -> int:
     if gr00t_bridge is not None:
         bridge_output = args.gr00t_bridge_summary.resolve().parent / "dataset_split.png"
         _render_gr00t_bridge(gr00t_bridge, bridge_output)
+    if recovery_preflight is not None:
+        preflight_output = args.recovery_preflight.resolve().parent / "admission_preflight.png"
+        _render_recovery_preflight(recovery_preflight, preflight_output)
     return 0
 
 
