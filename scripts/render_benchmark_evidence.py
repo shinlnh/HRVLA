@@ -21,6 +21,7 @@ DEFAULT_GR00T_BRIDGE = (
 DEFAULT_RECOVERY_PREFLIGHT = (
     ROOT / "results" / "humanoidarena" / "admission" / "predicate-source-audit.json"
 )
+DEFAULT_STORAGE_CLEANUP = ROOT / "results" / "benchmark" / "storage" / "cleanup.json"
 DEFAULT_OUTPUT = ROOT / "results" / "benchmark" / "readiness"
 
 
@@ -353,6 +354,35 @@ def _render_recovery_preflight(summary: dict[str, Any], output_path: Path) -> No
     plt.close(figure)
 
 
+def _render_storage_cleanup(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    free = summary["free_space"]
+    footprint = summary["current_project_footprint"]
+    figure, axes = plt.subplots(1, 2, figsize=(12, 4.8), constrained_layout=True)
+    bars = axes[0].bar(
+        ["before cleanup", "after cleanup"],
+        [float(free["before"]), float(free["after"])],
+        color=["#c53030", "#2f855a"],
+    )
+    axes[0].bar_label(bars, fmt="%.0f GiB")
+    axes[0].set_ylabel("free filesystem space (GiB, rounded)")
+    axes[0].set_title(f"Local cleanup reclaimed ≈{summary['reclaimed_total']} GiB")
+    axes[0].grid(axis="y", alpha=0.25)
+
+    labels = [key.replace("_", "\n") for key in footprint]
+    values = [float(value) for value in footprint.values()]
+    bars = axes[1].bar(labels, values, color=["#4a5568", "#2b6cb0", "#805ad5"])
+    axes[1].bar_label(bars, fmt="%.1f")
+    axes[1].set_ylabel("local footprint (GiB, rounded)")
+    axes[1].set_title("Retained because required or user-owned")
+    axes[1].grid(axis="y", alpha=0.25)
+    figure.suptitle("HRVLA storage audit — operational evidence, not a paper metric", fontsize=10)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--retraining-summary", type=Path, default=DEFAULT_RETRAINING)
@@ -362,6 +392,7 @@ def main() -> int:
     parser.add_argument(
         "--recovery-preflight", type=Path, default=DEFAULT_RECOVERY_PREFLIGHT
     )
+    parser.add_argument("--storage-cleanup", type=Path, default=DEFAULT_STORAGE_CLEANUP)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 
@@ -374,6 +405,7 @@ def main() -> int:
     performance = _load_optional(args.performance_summary.resolve())
     gr00t_bridge = _load_optional(args.gr00t_bridge_summary.resolve())
     recovery_preflight = _load_optional(args.recovery_preflight.resolve())
+    storage_cleanup = _load_optional(args.storage_cleanup.resolve())
     rows = readiness_rows(humanoid)
     _write_readiness(rows, output_dir)
     _render_readiness(rows, output_dir / "benchmark_readiness.png")
@@ -394,6 +426,9 @@ def main() -> int:
     if recovery_preflight is not None:
         preflight_output = args.recovery_preflight.resolve().parent / "admission_preflight.png"
         _render_recovery_preflight(recovery_preflight, preflight_output)
+    if storage_cleanup is not None:
+        storage_output = args.storage_cleanup.resolve().parent / "storage_cleanup.png"
+        _render_storage_cleanup(storage_cleanup, storage_output)
     return 0
 
 

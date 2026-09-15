@@ -37,6 +37,8 @@ Deleted from `_artifacts/retraining`:
 Approximately **202 GiB** was reclaimed. Free filesystem space increased from
 about 189 GiB to about 391 GiB.
 
+![Storage before/after cleanup](../results/benchmark/storage/storage_cleanup.png)
+
 After the three-way HumanoidArena split passed membership, pixel, and
 state/action round-trip validation, the superseded 335 MiB two-way derived view
 was removed and the validated 70/10/20 view took its canonical path. The

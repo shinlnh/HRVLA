@@ -20,3 +20,13 @@ def test_readiness_keeps_incomparable_workstreams_separate() -> None:
     assert by_name["PI0.5 + SONIC"]["completed"] == 2
     assert by_name["Scenario admission"]["completed"] == 0
     assert "overall" not in by_name
+
+
+def test_storage_cleanup_evidence_balances_reclaimed_space() -> None:
+    import json
+
+    summary = json.loads(
+        (ROOT / "results/benchmark/storage/cleanup.json").read_text(encoding="utf-8")
+    )
+    assert summary["free_space"]["after"] - summary["free_space"]["before"] == summary["reclaimed_total"]
+    assert "not benchmark metrics" in summary["claim_boundary"]
