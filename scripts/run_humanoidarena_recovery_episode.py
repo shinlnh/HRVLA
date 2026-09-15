@@ -22,6 +22,7 @@ from hrvla_bench.humanoidarena_recovery_runtime import (  # noqa: E402
 )
 from hrvla_bench.plan import canonical_sha256, load_json  # noqa: E402
 from hrvla_bench.isaac_snapshot import load_snapshot  # noqa: E402
+from hrvla_bench.recovery_demonstration import CompactRecoveryDemonstration  # noqa: E402
 from hrvla_bench.recovery_restore import restore_snapshot_for_trial  # noqa: E402
 
 
@@ -139,6 +140,9 @@ def _install_runtime_hooks(
     restore_only: bool = False,
     per_episode_output: bool = False,
     implementation_revision: str,
+    record_recovery_demonstration: bool = False,
+    recovery_instruction: str | None = None,
+    method_program_sha256: str | None = None,
 ) -> dict[str, Any]:
     state: dict[str, Any] = {
         "runtime": None,
@@ -148,6 +152,8 @@ def _install_runtime_hooks(
         "provider_hooked": False,
         "restore_audit": None,
         "episode_output_dir": None,
+        "episode_control_step": 0,
+        "demonstration": None,
     }
 
     import gymnasium as gym
@@ -214,18 +220,33 @@ def _install_runtime_hooks(
                 policy_rollout_seed=int(episode_seed),
                 audit_path=episode_output_dir / "restore-audit.json",
             )
+        control_dt = getattr(env, "step_dt", None)
+        if control_dt is None:
+            control_dt = float(env.physics_dt) * int(env_cfg.decimation)
+        demonstration = None
+        if record_recovery_demonstration:
+            if not recovery_instruction or not method_program_sha256:
+                raise RuntimeError("recovery demonstration contract is incomplete")
+            demonstration = CompactRecoveryDemonstration(
+                scenario_id=scenario_id,
+                task_id=task_id,
+                episode_seed=int(episode_seed),
+                instruction=recovery_instruction,
+                method_program_sha256=method_program_sha256,
+                control_dt_s=float(control_dt),
+            )
+        state.update(
+            episode_control_step=0,
+            demonstration=demonstration,
+        )
         if restore_only:
             state.update(
                 runtime=None,
                 env=env,
                 task_success=False,
-                provider_hooked=True,
                 restore_audit=restore_audit,
             )
             return result
-        control_dt = getattr(env, "step_dt", None)
-        if control_dt is None:
-            control_dt = float(env.physics_dt) * int(env_cfg.decimation)
         runtime = HumanoidArenaRecoveryRuntime(
             suite,
             scenario_id,
@@ -269,10 +290,10 @@ def _install_runtime_hooks(
         env = state.get("env")
         if env is None:
             raise RuntimeError("recovery runtime was not initialized at episode reset")
-        if restore_only:
+        if restore_only and not record_recovery_demonstration:
             return result
         runtime = state.get("runtime")
-        if runtime is None:
+        if runtime is None and not restore_only:
             raise RuntimeError("recovery runtime was not initialized at episode reset")
         if state["provider_hooked"]:
             return result
@@ -281,16 +302,30 @@ def _install_runtime_hooks(
 
         def recovery_get_action(current_env):
             active_runtime = state.get("runtime")
-            if active_runtime is None:
+            if active_runtime is None and not restore_only:
                 raise RuntimeError("recovery runtime disappeared during action acquisition")
-            active_runtime.before_control_step(
-                current_env, task_success=bool(state["task_success"])
+            if active_runtime is not None:
+                active_runtime.before_control_step(
+                    current_env, task_success=bool(state["task_success"])
+                )
+            output = original_get_action(current_env)
+            demonstration = state.get("demonstration")
+            failure_active = bool(restore_only) or bool(
+                active_runtime is not None and active_runtime.triggered
             )
-            return original_get_action(current_env)
+            if demonstration is not None and failure_active:
+                demonstration.append(
+                    provider._build_lerobot_vla_observation_state(),
+                    provider._latest_vla_action,
+                    video_frame_index=int(state["episode_control_step"]),
+                    control_step=int(state["episode_control_step"]),
+                )
+            state["episode_control_step"] = int(state["episode_control_step"]) + 1
+            return output
 
         provider.get_action = recovery_get_action
 
-        seam = runtime.contract["interface_seam"]
+        seam = None if runtime is None else runtime.contract["interface_seam"]
         if seam in {"semantic-action40", "scene+semantic-action40"}:
             original_pop_action = provider._pop_lerobot_action
 
@@ -345,6 +380,22 @@ def _install_runtime_hooks(
             if runtime is None:
                 raise RuntimeError("recovery runtime did not produce an episode summary")
             recovery = runtime.summary()
+        demonstration = state.get("demonstration")
+        if demonstration is not None:
+            demonstration_manifest = demonstration.finalize(
+                episode_output_dir,
+                success=bool(payload["success"]),
+                failure_reason=str(payload["failure_reason"]),
+                video_path=str(payload.get("video_path", "")),
+            )
+            payload["hrvla_recovery_demonstration"] = {
+                "manifest_sha256": demonstration_manifest["manifest_sha256"],
+                "arrays_sha256": demonstration_manifest["arrays_sha256"],
+                "frames": demonstration_manifest["frames"],
+                "eligible_for_recovery_training": demonstration_manifest[
+                    "eligible_for_recovery_training"
+                ],
+            }
         payload["hrvla_recovery"] = recovery
         episode_output_dir.mkdir(parents=True, exist_ok=True)
         target = episode_output_dir / (
@@ -376,6 +427,12 @@ def main() -> int:
     parser.add_argument("--expected-start-snapshot-sha256")
     parser.add_argument("--restore-only", action="store_true")
     parser.add_argument("--per-episode-output", action="store_true")
+    parser.add_argument("--record-recovery-demonstration", action="store_true")
+    parser.add_argument(
+        "--recovery-demonstration-programs",
+        type=Path,
+        default=ROOT / "benchmark/humanoidarena_method_programs.json",
+    )
     args, remaining = parser.parse_known_args()
     suite = load_json(args.recovery_suite.resolve())
     implementation_revision = _repository_revision()
@@ -445,6 +502,16 @@ def main() -> int:
             raise ValueError(f"runtime environment conflict for {key}: {existing!r} != {value!r}")
         os.environ[key] = value
 
+    recovery_instruction = None
+    method_program_sha256 = None
+    if args.record_recovery_demonstration:
+        programs = load_json(args.recovery_demonstration_programs.resolve())
+        instructions = programs.get("recovery_instructions", {})
+        recovery_instruction = instructions.get(args.recovery_scenario)
+        if not isinstance(recovery_instruction, str) or not recovery_instruction.strip():
+            raise ValueError("method programs lack the recovery demonstration instruction")
+        method_program_sha256 = canonical_sha256(programs)
+
     sys.argv = [sys.argv[0], *remaining]
     module = _load_evaluator()
     _install_runtime_hooks(
@@ -462,6 +529,9 @@ def main() -> int:
         restore_only=args.restore_only,
         per_episode_output=args.per_episode_output,
         implementation_revision=implementation_revision,
+        record_recovery_demonstration=args.record_recovery_demonstration,
+        recovery_instruction=recovery_instruction,
+        method_program_sha256=method_program_sha256,
     )
     return int(module.main())
 

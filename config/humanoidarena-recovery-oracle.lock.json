@@ -24,7 +24,9 @@
     "success": "the unchanged upstream task reward reaches raw_total >= 1 within the suite horizon",
     "infrastructure_failures_are_trials": false,
     "failed_behavioral_trials_are_preserved": true,
-    "record_all_trials": true
+    "record_all_trials": true,
+    "record_recovery_demonstrations": true,
+    "recovery_demonstration_role": "training-only PI0.5 behavior after the locked failure is active; final internal rollout seeds are disjoint"
   },
   "resource_profile": {
     "policy_device": "cpu",

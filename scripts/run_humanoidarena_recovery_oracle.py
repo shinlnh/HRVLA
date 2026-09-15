@@ -128,7 +128,7 @@ def _episode_job(
         "model_label": FAST._model_label(model_path),
         "eval_model_path": str(model_path),
         "max_steps": int(spec["max_steps"]),
-        "video_fps": 30,
+        "video_fps": 50,
         "post_termination_record_steps": 10,
     }
 
@@ -165,6 +165,9 @@ def build_oracle_command(
         "--expected-start-snapshot-sha256",
         snapshot_sha256,
         "--per-episode-output",
+        "--record-recovery-demonstration",
+        "--recovery-demonstration-programs",
+        str(ROOT / "benchmark/humanoidarena_method_programs.json"),
     ]
     if row["protocol"] == "failure_start":
         recovery_arguments.append("--restore-only")
@@ -306,6 +309,26 @@ def _normalize_trial(
         "evidence_directory": str(trial_dir),
         **protocol_evidence,
     }
+    if lock["protocol"].get("record_recovery_demonstrations") is True:
+        demonstration = result.get("hrvla_recovery_demonstration")
+        if not isinstance(demonstration, dict):
+            raise ValueError("oracle trial lacks its compact recovery demonstration")
+        for key in ("manifest_sha256", "arrays_sha256"):
+            value = demonstration.get(key)
+            if not isinstance(value, str) or len(value) != 64 or set(value) - set(
+                "0123456789abcdef"
+            ):
+                raise ValueError(f"oracle recovery demonstration {key} is malformed")
+        if success and demonstration.get("eligible_for_recovery_training") is not True:
+            raise ValueError("successful oracle trial is not recovery-training eligible")
+        normalized.update(
+            recovery_demonstration_manifest_sha256=demonstration["manifest_sha256"],
+            recovery_demonstration_arrays_sha256=demonstration["arrays_sha256"],
+            recovery_demonstration_frames=int(demonstration.get("frames", 0)),
+            recovery_demonstration_eligible=bool(
+                demonstration.get("eligible_for_recovery_training")
+            ),
+        )
     if lock["protocol"].get("record_all_trials") is True and (
         not normalized["video_recorded"] or not normalized["video_path"]
     ):

@@ -71,6 +71,8 @@ def validate_oracle_lock(lock: dict[str, Any], suite: dict[str, Any]) -> None:
         raise ValueError("oracle trials must vary only the locked policy seed")
     if protocol.get("record_all_trials") is not True:
         raise ValueError("oracle admission requires video evidence for every trial")
+    if protocol.get("record_recovery_demonstrations") is not True:
+        raise ValueError("oracle trials must retain compact recovery demonstrations")
 
     scenario_ids = {
         scenario["id"] for task in suite["tasks"] for scenario in task["scenarios"]
@@ -176,9 +178,19 @@ def evaluate_oracle_trials(
             "episode_result_sha256",
             "start_state_restore_audit_sha256",
             protocol_evidence_key,
+            "recovery_demonstration_manifest_sha256",
+            "recovery_demonstration_arrays_sha256",
         ):
             if not _is_sha256(row.get(key)):
                 raise ValueError(f"{scenario_id}/trial-{index}: {key} is malformed")
+        if row["success"] and row.get("recovery_demonstration_eligible") is not True:
+            raise ValueError(
+                f"{scenario_id}/trial-{index}: successful recovery demonstration is ineligible"
+            )
+        if type(row.get("recovery_demonstration_frames")) is not int or row[
+            "recovery_demonstration_frames"
+        ] < 0:
+            raise ValueError(f"{scenario_id}/trial-{index}: demonstration frame count differs")
 
     successes = sum(row["success"] for row in ordered)
     required = int(lock["protocol"]["required_successes"])
@@ -202,6 +214,9 @@ def evaluate_oracle_trials(
             sorted(Counter(str(row["failure_reason"]) for row in ordered).items())
         ),
         "episode_result_sha256": [row["episode_result_sha256"] for row in ordered],
+        "recovery_demonstration_manifest_sha256": [
+            row["recovery_demonstration_manifest_sha256"] for row in ordered
+        ],
     }
     return {**core, "audit_sha256": canonical_sha256(core)}
 

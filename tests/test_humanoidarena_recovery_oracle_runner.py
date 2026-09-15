@@ -38,6 +38,7 @@ def test_online_oracle_command_restores_then_injects(tmp_path: Path) -> None:
         port=18444,
     )
     assert "--per-episode-output" in command
+    assert "--record-recovery-demonstration" in command
     assert "--start-snapshot" in command
     assert "--restore-only" not in command
     assert command[command.index("--record_video_every_n") + 1] == "1"
@@ -60,3 +61,7 @@ def test_failure_start_oracle_command_never_reinjects(tmp_path: Path) -> None:
     )
     assert "--restore-only" in command
     assert "--capture-failure-snapshot" not in command
+    job = RUNNER._episode_job(
+        "pp_box", tmp_path / "trial", tmp_path / "model", 0, 123
+    )
+    assert job["video_fps"] == 50

@@ -74,6 +74,10 @@ def _records(scenario_id: str, *, successes: int = 20) -> list[dict]:
             "episode_result_sha256": f"{index + 1:064x}",
             "video_recorded": True,
             "video_path": f"trial-{index:04d}.mp4",
+            "recovery_demonstration_manifest_sha256": f"{index + 301:064x}",
+            "recovery_demonstration_arrays_sha256": f"{index + 401:064x}",
+            "recovery_demonstration_frames": 100,
+            "recovery_demonstration_eligible": success,
         }
         evidence_key = (
             "failure_start_trial_audit_sha256"
