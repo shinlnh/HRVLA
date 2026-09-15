@@ -104,7 +104,7 @@ def test_hook_routes_only_str_to_recovery_after_runtime_trigger(tmp_path: Path) 
     provider = _Provider()
     env = _Env()
     module = _module(provider, env)
-    recovery_state = {"runtime": types.SimpleNamespace(triggered=True)}
+    recovery_state = {"runtime": types.SimpleNamespace(triggered=True, control_step=0)}
     install_method_hooks(
         module,
         PROGRAMS,
