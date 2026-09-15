@@ -60,6 +60,10 @@
     "rollouts_per_seed_per_cell": 20,
     "paired_rollout_seeds_across_methods": true
   },
+  "admission_capture": {
+    "snapshot_seed": 20260915,
+    "failure_snapshot_policy": "capture after the locked injector settle interval and before any recovery instruction"
+  },
   "artifact_policy": {
     "dataset_remote": "https://huggingface.co/datasets/shin0412/HRVLA",
     "required_before_admission": [
@@ -97,6 +101,7 @@
           "id": "box-drop-and-body-push",
           "protocol": "failure_start",
           "failure_snapshot_id": "pending:pick_and_place_box/box-drop-and-body-push",
+          "failure_snapshot_settle_s": 0.5,
           "event_id": "after-stable-grasp",
           "event_boundary": "box root is at least 0.05 m above its reset height with speed at most 0.08 m/s continuously for 0.5 s, before task success",
           "event_detector": {"id": "stable-object-lift", "parameters": {"asset_name": "box", "minimum_lift_m": 0.05, "maximum_speed_mps": 0.08, "stable_duration_s": 0.5}},
@@ -128,13 +133,14 @@
           "level": "L2",
           "humanoid_axes": [],
           "severity": "medium",
-          "injector": {"id": "shift-door-handle", "parameters": {"door_asset_name": "door", "translation_m": 0.04, "translation_axis_door_local": "x"}},
+          "injector": {"id": "shift-door-assembly-handle-frame", "parameters": {"door_asset_name": "door", "translation_m": 0.04, "translation_axis_door_local": "x"}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         },
         {
           "id": "doorway-obstruction",
           "protocol": "failure_start",
           "failure_snapshot_id": "pending:open_door/doorway-obstruction",
+          "failure_snapshot_settle_s": 0.1,
           "event_id": "after-door-open",
           "event_boundary": "latch is unlocked and absolute live door-leaf angle first reaches 60 degrees while the geometry-required task predicate remains false",
           "event_detector": {"id": "door-open-before-traversal", "parameters": {"minimum_leaf_angle_deg": 60.0}},
@@ -189,7 +195,7 @@
           "level": "L1",
           "humanoid_axes": ["H1"],
           "severity": "medium",
-          "injector": {"id": "root-velocity-impulse", "parameters": {"lateral_mps": 0.45, "lateral_direction_robot": "left"}},
+          "injector": {"id": "root-lateral-velocity-delta", "parameters": {"lateral_mps": 0.45, "lateral_direction_robot": "left"}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         }
       ]
@@ -208,13 +214,14 @@
           "id": "sofa-approach-slip",
           "protocol": "failure_start",
           "failure_snapshot_id": "pending:sit_sofa/sofa-approach-slip",
+          "failure_snapshot_settle_s": 0.5,
           "event_id": "before-seat-contact",
           "event_boundary": "a pelvis or hip proxy first comes within 0.75 m XY of the live sofa-seat AABB while the seated predicate remains false and the robot is upright",
           "event_detector": {"id": "seat-approach", "parameters": {"maximum_xy_distance_m": 0.75, "minimum_root_height_m": 0.45, "minimum_up_axis_z": 0.6}},
           "level": "L2",
           "humanoid_axes": ["H1"],
           "severity": "medium",
-          "injector": {"id": "support-foot-slip", "parameters": {"impulse_ns": 12.0, "lateral_direction_robot": "left", "body_selection": "max-contact-ankle-roll"}},
+          "injector": {"id": "support-foot-lateral-impulse", "parameters": {"impulse_ns": 12.0, "lateral_direction_robot": "left", "body_selection": "max-contact-ankle-roll"}},
           "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
         }
       ]

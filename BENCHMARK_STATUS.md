@@ -40,6 +40,10 @@ one-control-step body impulses with exact audit values. Geometry signals reuse
 the locked OpenDoor, SitSofa, and Boxing task internals. These implementations
 remain at the code/test gate: they do not increment runtime admission before a
 live simulator trace proves each detector and perturbation together.
+The single-episode upstream wrapper now connects those pieces without modifying
+the locked HumanoidArena checkout and records detector/injector/snapshot sidecars.
+Its code-path tests pass locally, but no row is promoted until it executes under
+the real Isaac process after the claim-bearing external matrix releases CUDA.
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized

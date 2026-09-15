@@ -33,7 +33,7 @@ SCENARIO_BINDINGS = {
         "open_door",
         "online_failure",
         "wrist-handle-approach",
-        "shift-door-handle",
+        "shift-door-assembly-handle-frame",
         "scene",
     ),
     "doorway-obstruction": (
@@ -54,14 +54,14 @@ SCENARIO_BINDINGS = {
         "football",
         "online_failure",
         "object-first-motion",
-        "root-velocity-impulse",
+        "root-lateral-velocity-delta",
         "scene",
     ),
     "sofa-approach-slip": (
         "sit_sofa",
         "failure_start",
         "seat-approach",
-        "support-foot-slip",
+        "support-foot-lateral-impulse",
         "scene",
     ),
     "contact-recoil": (
@@ -209,7 +209,7 @@ def _validate_injector(injector_id: str, parameters: Any, label: str) -> None:
         _number(p["release_duration_s"], f"{label}.release_duration_s", low=0.02, high=2.0)
         _number(p["lateral_mps"], f"{label}.lateral_mps", low=0.05, high=3.0)
         _choice(p["lateral_direction_robot"], {"left", "right"}, f"{label}.lateral_direction_robot")
-    elif injector_id == "shift-door-handle":
+    elif injector_id == "shift-door-assembly-handle-frame":
         p = _exact_keys(
             parameters, {"door_asset_name", "translation_m", "translation_axis_door_local"}, label
         )
@@ -229,11 +229,11 @@ def _validate_injector(injector_id: str, parameters: Any, label: str) -> None:
         p = _exact_keys(parameters, {"scale", "duration_s"}, label)
         _number(p["scale"], f"{label}.scale", low=0.0, high=0.999999)
         _number(p["duration_s"], f"{label}.duration_s", low=0.02, high=5.0)
-    elif injector_id == "root-velocity-impulse":
+    elif injector_id == "root-lateral-velocity-delta":
         p = _exact_keys(parameters, {"lateral_mps", "lateral_direction_robot"}, label)
         _number(p["lateral_mps"], f"{label}.lateral_mps", low=0.05, high=3.0)
         _choice(p["lateral_direction_robot"], {"left", "right"}, f"{label}.lateral_direction_robot")
-    elif injector_id == "support-foot-slip":
+    elif injector_id == "support-foot-lateral-impulse":
         p = _exact_keys(
             parameters,
             {"impulse_ns", "lateral_direction_robot", "body_selection"},
@@ -267,6 +267,14 @@ def validate_recovery_injector_contract(suite: dict[str, Any]) -> list[dict[str,
 
     if suite.get("suite_id") != "hrvla_recovery_v0":
         raise ValueError("injector contract only applies to hrvla_recovery_v0")
+    capture = _exact_keys(
+        suite.get("admission_capture"),
+        {"snapshot_seed", "failure_snapshot_policy"},
+        "admission_capture",
+    )
+    if type(capture["snapshot_seed"]) is not int or capture["snapshot_seed"] < 0:
+        raise ValueError("admission_capture.snapshot_seed must be a non-negative integer")
+    _name(capture["failure_snapshot_policy"], "admission_capture.failure_snapshot_policy")
     scenarios: dict[str, tuple[str, dict[str, Any]]] = {}
     for task in suite.get("tasks", []):
         task_id = str(task.get("id", ""))
@@ -291,6 +299,17 @@ def validate_recovery_injector_contract(suite: dict[str, Any]) -> list[dict[str,
         task_id, scenario = scenarios[scenario_id]
         if task_id != expected_task or scenario.get("protocol") != expected_protocol:
             raise ValueError(f"{scenario_id}: task or protocol differs from the locked binding")
+        if expected_protocol == "failure_start":
+            _number(
+                scenario.get("failure_snapshot_settle_s"),
+                f"{scenario_id}.failure_snapshot_settle_s",
+                low=0.02,
+                high=5.0,
+            )
+        elif "failure_snapshot_settle_s" in scenario:
+            raise ValueError(
+                f"{scenario_id}: online failure must not define a failure snapshot settle interval"
+            )
         detector = _exact_keys(scenario.get("event_detector"), {"id", "parameters"}, f"{scenario_id}.event_detector")
         injector = _exact_keys(scenario.get("injector"), {"id", "parameters"}, f"{scenario_id}.injector")
         if detector["id"] != detector_id or injector["id"] != injector_id:

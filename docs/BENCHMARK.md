@@ -135,6 +135,50 @@ navigation uses displacement from the immutable start rather than a nonexistent
 waypoint. OpenDoor locks `OPEN_DOOR_STRICT_REQUIRE_GEOMETRY=1`; otherwise a
 post-open obstruction snapshot would already satisfy the default strict reward.
 
+`scripts/run_humanoidarena_recovery_episode.py` wraps the immutable upstream
+evaluator without editing its checkout. It accepts exactly one episode, hooks
+the action40 or post-encoder latent64 seam selected by the suite, evaluates the
+source-backed detector every control step, and embeds a recovery summary in the
+ordinary episode JSON. Scene events and one-control-step forces are written to
+`injector-audit.jsonl`; detector edges and hash-linked action changes go to
+`runtime-trace.jsonl`. Optional
+initial/failure capture writes hash-addressed snapshots and refuses to replace a
+different state at the same path. Failure-start capture uses the declared settle
+interval and must run before any recovery instruction is supplied.
+
+The wrapper takes all normal upstream evaluator arguments after its recovery
+arguments. Run it with the locked Isaac Lab Python and the same SONIC/server
+flags used by the matrix runner, for example:
+
+```bash
+_vendor/IsaacLab-v2.2.0/.venv/bin/python \
+  scripts/run_humanoidarena_recovery_episode.py \
+  --recovery-scenario support-state-push \
+  --recovery-output-dir _artifacts/HumanoidArena/recovery-admission/support-state-push \
+  --task Isaac-Move-Football-Single-G129-Dex3-Wholebody \
+  --seed 0 --episode_seed 20260915 \
+  ...the locked upstream SONIC and HTTP-server arguments...
+```
+
+This command producing a trace is not itself admission. A trace auditor must
+still prove the detector edge, exactly one perturbation, compatible snapshots,
+and independent oracle success before the suite status can change from draft.
+The fail-closed runtime portion is checked separately:
+
+```bash
+python3 scripts/audit_humanoidarena_recovery_runtime.py \
+  --scenario support-state-push \
+  --runtime-dir _artifacts/HumanoidArena/recovery-admission/support-state-push \
+  --result-json /path/to/the/single/episode.json \
+  --output /path/to/runtime-audit.json
+```
+
+It verifies the suite hash, seed, simulator revision, detector edge, interface
+width, numerical before/after action hashes, physical magnitude and target,
+one-shot timing, and the exact failure-snapshot settle boundary. Passing this
+audit means only that the runtime injector evidence is valid; oracle admission
+and recoverability remain pending.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1
