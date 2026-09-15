@@ -256,6 +256,7 @@ def main() -> int:
         default=ROOT / "benchmark/humanoidarena_method_programs.json",
     )
     parser.add_argument("--split", action="append", choices=("train", "validation"))
+    parser.add_argument("--audit-only", action="store_true")
     args = parser.parse_args()
     lock = load_json(args.lock.resolve())
     programs = load_json(args.method_programs.resolve())
@@ -268,6 +269,30 @@ def main() -> int:
         raise ValueError("source dataset manifest differs from the RT training lock")
     output_root = (ROOT / lock["subtask_rt_dataset"]["path"]).resolve()
     splits = args.split or list(lock["subtask_rt_dataset"]["splits_materialized_before_selection"])
+    if args.audit_only:
+        report = {}
+        for split in splits:
+            rows, audits = _analyze_split(
+                source,
+                split,
+                programs,
+                int(lock["subtask_rt_dataset"]["minimum_phase_frames"]),
+            )
+            report[split] = {
+                "episodes": len(rows),
+                "fallback_episodes": sum(row["fallback_used"] for row in audits),
+                "fallback_rate": sum(row["fallback_used"] for row in audits) / len(audits),
+                "by_task": {
+                    task: {
+                        "episodes": len(selected),
+                        "fallback_episodes": sum(row["fallback_used"] for row in selected),
+                    }
+                    for task in sorted({row["task_key"] for row in audits})
+                    if (selected := [row for row in audits if row["task_key"] == task])
+                },
+            }
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return 0
     reports = [materialize_split(source, output_root, split, programs, lock) for split in splits]
     print(
         json.dumps(
