@@ -320,6 +320,13 @@ plots. At each observed-data boundary it writes a candidate and waits for the
 reviewed lock to appear on `main`; it never edits or commits a tracked lock
 itself. Its resumable status and logs live beside the first supervisor under
 `_artifacts/HumanoidArena/benchmark-pipeline/`.
+The final evidence bundle refuses an incomplete visual matrix. With up to 24
+CPU workers it extracts three timestamped frames from one hash-bound video for
+each of 28 external task/mode cells, nine recovery scenarios, and 15 internal
+method/protocol cells. The 52 contact sheets and their SHA-256 manifest are
+written under `results/humanoidarena/video-evidence/` for Git, while the full
+videos remain large artifacts rather than being duplicated into the source
+repository.
 
 ## Resource rule
 

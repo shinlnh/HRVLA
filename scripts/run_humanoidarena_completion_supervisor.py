@@ -324,7 +324,7 @@ def main() -> int:
             [python, "-m", "hrvla_bench.cli", "claim-readiness", "_artifacts/HumanoidArena/recovery-admission/hrvla_recovery_v0.admitted.json", "--output", "_artifacts/HumanoidArena/internal-benchmark/claim-readiness.json"],
         ),
         ("hidden_final_evidence_audit", _audit_hidden_command(python)),
-        ("internal_final_report", [python, "scripts/render_humanoidarena_internal_results.py"]),
+        ("final_evidence_bundle", [python, "scripts/render_humanoidarena_final_evidence.py"]),
     ):
         if not _stage(state, status_path, name, command):
             return 2
