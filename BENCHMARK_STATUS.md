@@ -25,6 +25,14 @@ task-shared policy server. At the last audit it had produced 65 valid episode
 records. This is explicitly `partial_non_claim` evidence, not a result table.
 The mutable machine progress file is authoritative after this tracked checkpoint.
 
+The common GR00T adaptation inputs and 70/10/20 split are frozen in
+`config/humanoidarena-gr00t-training.lock.json`. Three seeds train the same
+action-decoder-only profile. A single optimizer step is selected from
+100/200/300 by macro-per-task MSE over validation only; the 140 hidden episodes
+remain inaccessible until `selection.json` is frozen. The launcher refuses to
+start while the external matrix or more than 1 GiB of pre-existing compute VRAM
+is present.
+
 ![Readiness by independent workstream](results/benchmark/readiness/benchmark_readiness.png)
 
 ## Frozen scope before `ours`
