@@ -126,6 +126,12 @@ over-limit measurement and freezes the CPU fallback. The runner shares each
 checkpoint server across all applicable methods, batches rollout seeds per
 task/scenario, preserves failed attempts, normalizes only audited trials, and
 requires an exact complete record set before writing a method audit.
+The checkpoint release compiler now hashes the complete behavior-bearing
+runtime closure as well: server/wire adapter, state/action bridge, method and
+recovery wrappers, semantic detectors, injectors, snapshot restore, plan and
+record normalization, planner dependencies, and modality config. A changed
+runtime byte therefore invalidates the frozen checkpoint lock even when model
+weights themselves are unchanged.
 Before any hidden-final outcome existed, the four primary hypothesis endpoints
 were bound in the protocol lock: ST vs base and ST-RT vs ST on nominal SR;
 STR vs ST and STR-RT vs STR on online-failure RSR. The final reporter requires

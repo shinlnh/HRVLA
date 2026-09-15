@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from hrvla_bench.humanoidarena_release import (
+    RUNTIME_SIGNATURE_PATHS,
     build_release_manifest,
     release_receipt,
     validate_release_receipt,
@@ -13,6 +14,14 @@ from hrvla_bench.humanoidarena_release import (
 
 
 REVISION = "1" * 40
+
+
+def test_runtime_signature_closure_binds_server_simulator_and_planner() -> None:
+    paths = set(RUNTIME_SIGNATURE_PATHS)
+    assert "scripts/serve_humanoidarena_gr00t.py" in paths
+    assert "scripts/run_humanoidarena_internal_episode.py" in paths
+    assert "src/hrvla_bench/isaac_events.py" in paths
+    assert "src/hrvla_subtask/planner.py" in paths
 
 
 def _manifest(root: Path) -> dict:
