@@ -44,7 +44,7 @@ The single-episode upstream wrapper now connects those pieces without modifying
 the locked HumanoidArena checkout and records detector/injector/snapshot sidecars.
 The fail-closed auditor cross-checks numerical action hashes, physical magnitude,
 target, seed, one-shot timing, simulator provenance, and snapshot settle timing.
-The full repository suite passes at `110 passed, 11 skipped`; no row is promoted
+The full repository suite passes at `133 passed, 15 skipped`; no row is promoted
 until the wrapper executes under the real Isaac process after the claim-bearing
 external matrix releases CUDA.
 The runtime-admission launcher is staged for that handoff: it uses one released
