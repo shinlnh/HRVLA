@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -28,6 +29,28 @@ if spec is None or spec.loader is None:
     raise RuntimeError(f"Could not load upstream server: {UPSTREAM_SERVER}")
 upstream = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(upstream)
+
+
+def _configure_cpu_runtime() -> None:
+    """Apply explicit thread settings before the first policy operation."""
+
+    requested_threads = int(os.environ.get("OMP_NUM_THREADS", torch.get_num_threads()))
+    requested_interop = int(os.environ.get("HRVLA_TORCH_INTEROP_THREADS", "2"))
+    torch.set_num_threads(requested_threads)
+    torch.set_num_interop_threads(requested_interop)
+    print(
+        "[hrvla_low_memory_loader] cpu_runtime "
+        f"intraop_threads={torch.get_num_threads()} "
+        f"interop_threads={torch.get_num_interop_threads()} "
+        f"mkldnn={torch.backends.mkldnn.enabled}",
+        flush=True,
+    )
+
+
+_configure_cpu_runtime()
+
+if os.environ.get("HRVLA_VLA_DEBUG_LOGGING", "1").strip().lower() in {"0", "false", "no"}:
+    upstream.LeRobotServerState._should_log_action_debug = lambda self: False
 
 
 def _load_policy_low_memory(policy_dir: Path, device_name: str):

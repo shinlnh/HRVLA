@@ -44,6 +44,46 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
 
 
+def _read_observed_cell_rows(cell_dir: Path, seed: int) -> list[dict[str, Any]]:
+    """Return unique, finished episode rows, including an interrupted cell.
+
+    ``eval_vla_suite.py`` only refreshes ``summary.jsonl`` after an entire batch
+    exits.  The simulator writes each episode JSON atomically as it finishes,
+    however, so those records are valid resumable evidence even when the matrix
+    driver is interrupted.  Summary rows win when both sources contain the same
+    repeat because they include the evaluator return code.
+    """
+
+    by_repeat: dict[int, dict[str, Any]] = {}
+    for path in sorted((cell_dir / "episodes").glob("*.json")):
+        try:
+            row = json.loads(path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            continue
+        repeat = int(row.get("repeat_idx", -1))
+        failure_reason = str(row.get("failure_reason", ""))
+        returncode = int(row.get("returncode", 0))
+        if (
+            int(row.get("seed", -1)) == seed
+            and repeat in range(REPEATS)
+            and failure_reason not in {"interrupted", "process_error", "sim_error"}
+            and returncode == 0
+        ):
+            by_repeat[repeat] = row
+
+    for row in _read_jsonl(cell_dir / "summary.jsonl"):
+        repeat = int(row.get("repeat_idx", -1))
+        failure_reason = str(row.get("failure_reason", ""))
+        if (
+            int(row.get("seed", -1)) == seed
+            and repeat in range(REPEATS)
+            and failure_reason not in {"interrupted", "process_error", "sim_error"}
+            and int(row.get("returncode", 0)) == 0
+        ):
+            by_repeat[repeat] = row
+    return [by_repeat[index] for index in sorted(by_repeat)]
+
+
 def collect_rows(root: Path) -> tuple[list[dict[str, Any]], list[str]]:
     rows: list[dict[str, Any]] = []
     invalid_cells: list[str] = []
@@ -51,21 +91,14 @@ def collect_rows(root: Path) -> tuple[list[dict[str, Any]], list[str]]:
         for mode in MODES:
             for seed in SEEDS:
                 cell_name = f"{mode}/{task}/seed-{seed}"
-                cell_rows = _read_jsonl(root / cell_name / "summary.jsonl")
+                cell_rows = _read_observed_cell_rows(root / cell_name, seed)
                 repeat_ids = {int(row.get("repeat_idx", -1)) for row in cell_rows}
                 valid = (
                     len(cell_rows) == REPEATS
                     and repeat_ids == set(range(REPEATS))
-                    and all(
-                        int(row.get("seed", -1)) == seed
-                        and int(row.get("returncode", -1)) == 0
-                        and row.get("failure_reason") != "process_error"
-                        for row in cell_rows
-                    )
                 )
                 if not valid:
                     invalid_cells.append(cell_name)
-                    continue
                 for row in cell_rows:
                     row = dict(row)
                     row.update({"task_key": task, "mode": mode})
@@ -129,6 +162,9 @@ def summarize(root: Path, *, allow_partial: bool = False) -> dict[str, Any]:
 
     expected_episodes = len(TASKS) * len(MODES) * len(SEEDS) * REPEATS
     complete = not invalid_cells and len(rows) == expected_episodes and not duplicate_identities
+    observed_cells = len(
+        {(str(row["task_key"]), str(row["mode"]), int(row["seed"])) for row in rows}
+    )
     return {
         "schema_version": 1,
         "benchmark": "HumanoidArena",
@@ -153,6 +189,7 @@ def summarize(root: Path, *, allow_partial: bool = False) -> dict[str, Any]:
             "repeats_per_seed": REPEATS,
             "cells_expected": 84,
             "cells_complete": 84 - len(invalid_cells),
+            "cells_with_observations": observed_cells,
             "episodes_expected": expected_episodes,
             "episodes_complete": len(rows),
             "invalid_cells": invalid_cells,

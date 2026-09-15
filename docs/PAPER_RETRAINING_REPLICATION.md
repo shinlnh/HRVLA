@@ -33,11 +33,14 @@ the compact table is
 and the six raw evaluation files plus their SHA-256 values are retained under
 [`results/retraining/paper-seeds/raw/`](../results/retraining/paper-seeds/raw/).
 
+![Three-seed open-loop comparison](../results/retraining/paper-seeds/multiseed_comparison.png)
+
 ## Reproduction
 
 ```bash
 PYTHONPATH=src python3 scripts/run_paper_retraining.py
 PYTHONPATH=src python3 scripts/summarize_paper_retraining.py
+python3 scripts/render_benchmark_evidence.py
 PYTHONPATH=src pytest -q
 ```
 

@@ -5,6 +5,10 @@ baselines and integrates it with the ST/STR implementation. It intentionally
 contains no pre-filled paper results and makes no claim that unlike tasks are
 directly comparable.
 
+The live pre-`ours` completion checklist, pipeline state, and exact exit gates are
+maintained in [`BENCHMARK_STATUS.md`](BENCHMARK_STATUS.md). Read it before starting,
+stopping, or interpreting any benchmark job.
+
 The benchmark separates three questions:
 
 1. `nominal`: does adding recovery preserve normal task execution?
@@ -202,3 +206,5 @@ hierarchical-bootstrap 95% CI of `[0.000429, 0.000721]` in absolute MSE.
 See [`docs/PAPER_RETRAINING_REPLICATION.md`](docs/PAPER_RETRAINING_REPLICATION.md)
 for the protocol, full condition table, raw retained metrics, reproducibility
 commands, and the remaining closed-loop claim boundary.
+
+![Three-seed ST-RT versus STR-RT comparison](results/retraining/paper-seeds/multiseed_comparison.png)

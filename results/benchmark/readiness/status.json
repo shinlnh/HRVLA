@@ -1,0 +1,54 @@
+{
+  "claim_boundary": "workstreams are not interchangeable; do not average percentages",
+  "schema_version": 1,
+  "workstreams": [
+    {
+      "completed": 5,
+      "expected": 5,
+      "percent": 100.0,
+      "scope": "symbolic/Cosmos component evidence",
+      "unit": "algorithm variants",
+      "workstream": "Planner component"
+    },
+    {
+      "completed": 6,
+      "expected": 6,
+      "percent": 100.0,
+      "scope": "symbolic fault-injection evidence",
+      "unit": "mechanism variants",
+      "workstream": "Recovery component"
+    },
+    {
+      "completed": 6,
+      "expected": 6,
+      "percent": 100.0,
+      "scope": "held-out open-loop evaluation",
+      "unit": "training seeds",
+      "workstream": "VLA retraining"
+    },
+    {
+      "completed": 0,
+      "expected": 84,
+      "percent": 0.0,
+      "scope": "direct external rerun; partial non-claim",
+      "unit": "HumanoidArena cells",
+      "workstream": "PI0.5 + SONIC"
+    },
+    {
+      "completed": 0,
+      "expected": 9,
+      "percent": 0.0,
+      "scope": "oracle 20/20 plus immutable failure artifacts",
+      "unit": "recovery scenarios",
+      "workstream": "Scenario admission"
+    },
+    {
+      "completed": 0,
+      "expected": 5,
+      "percent": 0.0,
+      "scope": "same frozen paired HumanoidArena plan",
+      "unit": "registered methods",
+      "workstream": "Internal closed loop"
+    }
+  ]
+}
