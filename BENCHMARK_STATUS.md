@@ -160,6 +160,12 @@ training locked. Its resource gate was exercised successfully: it refuses to
 load while the external simulator occupies CUDA. Unit/static tests pass, but
 there is no VLM adjudication result yet and therefore no in-domain RT training
 claim.
+The two observed-data freeze points are now executable without hand-editing
+JSON: `compile_humanoidarena_rt_lock.py adjudication` accepts only the original
+model/threshold policy and a complete passing report; `datasets` accepts only
+490/70 ST episodes and 126/27 recovery episodes with canonical manifests. Each
+writes a candidate rather than replacing the tracked lock. Training remains
+blocked until the reviewed candidate is committed on `main`.
 
 ![Readiness by independent workstream](results/benchmark/readiness/benchmark_readiness.png)
 
@@ -247,10 +253,14 @@ PYTHONPATH=src python3 -m pytest -q
 # proxies. Inspect the report before freezing its audit hash in the RT lock.
 _vendor/Isaac-GR00T/.venv/bin/python \
   scripts/run_humanoidarena_subtask_video_adjudication.py
+python3 scripts/compile_humanoidarena_rt_lock.py adjudication
+# Review/commit the candidate lock, then materialize ST train + validation.
 python3 scripts/prepare_humanoidarena_subtask_data.py \
   --audit-only \
   --audit-output results/benchmark/retraining/subtask_label_audit_v3.json \
   --audit-plot results/benchmark/retraining/subtask_label_fallback_v3.png
+# After ST and recovery train/validation views exist:
+python3 scripts/compile_humanoidarena_rt_lock.py datasets
 
 # After 9/9 capture and 9/9 independent oracle admission:
 python3 scripts/compile_humanoidarena_admitted_suite.py
