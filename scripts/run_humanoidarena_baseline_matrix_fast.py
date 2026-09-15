@@ -295,6 +295,8 @@ def _wait_for_server(port: int, timeout: float) -> None:
 
 
 def _terminate_group(process: subprocess.Popen[Any], timeout: float = 30.0) -> None:
+    if process.poll() is not None:
+        return
     try:
         os.killpg(process.pid, signal.SIGTERM)
         process.wait(timeout=timeout)
@@ -562,6 +564,12 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
+    def request_shutdown(_signum: int, _frame: object) -> None:
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGINT, request_shutdown)
+    signal.signal(signal.SIGTERM, request_shutdown)
+
     available_cpus = len(os.sched_getaffinity(0))
     if args.repeats < 1:
         parser.error("--repeats must be positive")
@@ -662,6 +670,8 @@ def main() -> int:
                             print(f"[fast-matrix] mode complete, skip: {task_name}/{mode}")
                             continue
                         for seed in args.seeds:
+                            if not pending[seed]:
+                                continue
                             cell_dir = output_root / mode / task_name / f"seed-{seed}"
                             cell_dir.mkdir(parents=True, exist_ok=True)
                             _write_json_atomic(
@@ -702,11 +712,27 @@ def main() -> int:
                                 start_new_session=True,
                             )
                             try:
+                                last_progress_update = 0.0
                                 while simulation.poll() is None:
                                     if _mem_available_gib() < args.min_runtime_ram_gib:
                                         sim_log.write("[fast-matrix] RAM safety stop\n")
                                         _terminate_group(simulation)
                                         break
+                                    if time.time() - last_progress_update >= 30:
+                                        live_progress = _matrix_progress(
+                                            output_root,
+                                            tasks=args.tasks,
+                                            modes=args.modes,
+                                            seeds=args.seeds,
+                                            repeats=args.repeats,
+                                        )
+                                        live_progress["active"] = {
+                                            "task": task_name,
+                                            "mode": mode,
+                                            "missing_episodes_at_start": len(jobs),
+                                        }
+                                        _write_json_atomic(progress_path, live_progress)
+                                        last_progress_update = time.time()
                                     time.sleep(10)
                             except KeyboardInterrupt:
                                 _terminate_group(simulation)
@@ -717,6 +743,8 @@ def main() -> int:
                                 f"returncode={simulation.returncode}; see {sim_log_path}"
                             )
                         for seed in args.seeds:
+                            if not pending[seed]:
+                                continue
                             _finalize_cell(
                                 output_root / mode / task_name / f"seed-{seed}",
                                 seed=seed,

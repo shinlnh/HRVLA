@@ -53,3 +53,11 @@ def test_sim_command_preserves_locked_runtime_contract(tmp_path: Path) -> None:
 
 def test_default_fast_matrix_keeps_full_paper_sample_size() -> None:
     assert len(FAST.TASKS) * len(FAST.MODES) * len(FAST.SEEDS) * FAST.REPEATS == 1680
+
+
+def test_terminate_group_is_noop_after_process_exit() -> None:
+    class ExitedProcess:
+        def poll(self):
+            return 0
+
+    FAST._terminate_group(ExitedProcess())
