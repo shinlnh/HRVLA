@@ -162,8 +162,9 @@ condition.
 - [x] Register the five internal ablation rows and their exact component changes.
 - [x] Retain raw planner, recovery, multi-seed retraining, Isaac Sim, video, and
   hardware evidence with honest claim boundaries.
-- [x] Publish selected final checkpoints and datasets to immutable Hugging Face
-  revisions; keep hashes in Git.
+- [ ] Publish the new HumanoidArena common/ST-RT/STR-RT selected checkpoints and
+  in-domain datasets to immutable Hugging Face revisions; keep their hashes in
+  Git. The already-published legacy 43-DoF artifacts do not satisfy this gate.
 - [ ] Finish all 84 external PI0.5+SONIC cells: 7 tasks × 4 modes × 3 seeds × 20
   rollouts. The six upstream-valid tasks form the primary aggregate. OpenDoor is
   a diagnostic/appendix row unless its two locked upstream contract tests pass
@@ -244,8 +245,16 @@ python3 scripts/prepare_humanoidarena_subtask_data.py \
 python3 scripts/compile_humanoidarena_admitted_suite.py
 python3 scripts/prepare_humanoidarena_internal_plans.py
 
-# After all three checkpoint families are trained, selected, published, and
-# config/humanoidarena-internal-checkpoints.lock.json is frozen as ready:
+# After all three checkpoint families are trained/selected and both in-domain
+# datasets have frozen manifests, stage and publish the content-addressed set:
+python3 scripts/release_humanoidarena_artifacts.py stage
+_vendor/Isaac-GR00T/.venv/bin/python \
+  scripts/release_humanoidarena_artifacts.py publish
+# After the exclusive GR00T+Isaac VRAM probe writes coexistence-probe.json:
+python3 scripts/release_humanoidarena_artifacts.py compile-lock
+# Review the candidate, then commit it as the tracked checkpoint lock before
+# compiling or executing any internal plan.
+
 python3 scripts/run_humanoidarena_internal_matrix.py --split development --dry-run
 python3 -u scripts/run_humanoidarena_internal_matrix.py --split development
 # Freeze every validation-time choice before exposing these one-shot outcomes:

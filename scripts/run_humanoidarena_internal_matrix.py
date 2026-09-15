@@ -35,6 +35,7 @@ from hrvla_bench.internal_matrix import (  # noqa: E402
     validate_ready_checkpoint_lock,
 )
 from hrvla_bench.internal_protocol import INTERNAL_METHODS  # noqa: E402
+from hrvla_bench.humanoidarena_release import verify_release_manifest  # noqa: E402
 from hrvla_bench.plan import canonical_sha256, load_json  # noqa: E402
 from hrvla_bench.recovery_restore import (  # noqa: E402
     audit_failure_start_trial,
@@ -127,8 +128,16 @@ def verify_checkpoint_files(lock: dict[str, Any]) -> None:
                 raise FileNotFoundError(model_path)
             if not manifest_path.is_file():
                 raise FileNotFoundError(manifest_path)
-            if _file_sha256(manifest_path) != row["manifest_sha256"]:
+            manifest = load_json(manifest_path)
+            if manifest.get("manifest_sha256") != row["manifest_sha256"]:
                 raise ValueError(f"checkpoint manifest hash differs: {manifest_path}")
+            if manifest.get("root") != row["path"]:
+                raise ValueError(f"checkpoint manifest root differs: {manifest_path}")
+            errors = verify_release_manifest(manifest, ROOT)
+            if errors:
+                raise ValueError(
+                    f"checkpoint artifact differs: {manifest_path}: " + "; ".join(errors)
+                )
             checked.add(identity)
 
 
