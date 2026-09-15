@@ -134,7 +134,13 @@ def summarize(root: Path, *, allow_partial: bool = False) -> dict[str, Any]:
         "benchmark": "HumanoidArena",
         "method": "released PI0.5 task checkpoint with SONIC whole-body controller",
         "includes_ours": False,
-        "claim_status": "complete" if complete else "partial_non_claim",
+        "claim_status": (
+            "matrix_complete_admission_pending" if complete else "partial_non_claim"
+        ),
+        "admission_blockers": [
+            "locked upstream OpenDoor self-test contract mismatch",
+            "missing independent 20/20 oracle admission evidence",
+        ],
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source_revision": SOURCE_REVISION,
         "model_revision": MODEL_REVISION,

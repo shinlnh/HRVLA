@@ -21,5 +21,6 @@ def test_partial_summary_is_explicitly_non_claim(tmp_path: Path) -> None:
     report = SUMMARY.summarize(tmp_path, allow_partial=True)
     assert report["includes_ours"] is False
     assert report["claim_status"] == "partial_non_claim"
+    assert len(report["admission_blockers"]) == 2
     assert report["matrix"]["cells_complete"] == 0
     assert report["matrix"]["episodes_complete"] == 0
