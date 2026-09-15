@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "status": "pending_training_and_coexistence_probe",
+  "claim_boundary": "This lock is intentionally non-runnable until common, ST-RT, and STR-RT checkpoints are selected on validation, published immutably, and a GR00T plus Isaac Sim memory probe passes.",
+  "method_program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "internal_protocol_sha256": "9956126f3e6cb7d676563437a55fde816887667ed07372d63b4a2d148eb59763",
+  "training_seeds": [0, 1, 2],
+  "controller_id": "gear-sonic@6733128a3d8a523b1418b06bca3cdf61c8b0987f",
+  "simulator_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",
+  "method_runtime_signatures": {},
+  "policy_device": null,
+  "coexistence_probe": {
+    "status": "pending",
+    "maximum_peak_compute_vram_mib": 15500,
+    "measured_peak_compute_vram_mib": null,
+    "fallback": "run the exact checkpoint on CPU with a separately profiled thread count; execution device is not a method change"
+  },
+  "checkpoint_families": {
+    "common": {
+      "methods": ["gr00t_sonic", "gr00t_st", "gr00t_str"],
+      "training_lock": "config/humanoidarena-gr00t-training.lock.json",
+      "selection": "_artifacts/retraining/humanoidarena-common/selection.json",
+      "status": "pending"
+    },
+    "subtask_rt": {
+      "methods": ["gr00t_st_rt"],
+      "status": "pending_in_domain_dataset_and_training"
+    },
+    "recovery_rt": {
+      "methods": ["gr00t_str_rt"],
+      "status": "pending_oracle_demonstration_dataset_and_training"
+    }
+  },
+  "checkpoints": {}
+}
