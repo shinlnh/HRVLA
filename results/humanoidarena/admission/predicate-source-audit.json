@@ -17,6 +17,10 @@
       "complete": 0,
       "required": 9
     },
+    "static_injector_contracts": {
+      "complete": 9,
+      "required": 9
+    },
     "task_predicate_sources": {
       "complete": 7,
       "required": 7
@@ -28,99 +32,135 @@
   "scenarios": [
     {
       "admission_status": "draft",
+      "event_detector_id": "first-hand-close",
+      "event_detector_parameters_sha256": "dda5bb183847140eae4583da698b5a667abf77e790ce82e2c63d6da02a7b27a0",
       "injector_id": "release-grasp-contact",
       "injector_parameters_sha256": "74b2d3d77cf60bf3fe7c7dc7af0e59f6aa919d4bc3de8cd602fa06e1571429fd",
+      "interface_seam": "semantic-action40",
       "oracle_trials": 0,
       "protocol": "online_failure",
       "runtime_validated": false,
       "scenario_id": "box-missed-grasp-retry",
+      "static_contract_validated": true,
       "task_id": "pick_and_place_box"
     },
     {
       "admission_status": "draft",
+      "event_detector_id": "stable-object-lift",
+      "event_detector_parameters_sha256": "5ba2284f62d0da8db72547632f1316bf5c79e7235da4f44265447b9133c168cd",
       "injector_id": "drop-object-and-root-velocity",
-      "injector_parameters_sha256": "f4a6c0c90335f42de56b8cba4206d81da11e8030fd4784f238f42284eef79fc5",
+      "injector_parameters_sha256": "2c66dc886109098b53383a9478aecf553871e221f9fce1008c768140f7df0206",
+      "interface_seam": "scene+semantic-action40",
       "oracle_trials": 0,
       "protocol": "failure_start",
       "runtime_validated": false,
       "scenario_id": "box-drop-and-body-push",
+      "static_contract_validated": true,
       "task_id": "pick_and_place_box"
     },
     {
       "admission_status": "draft",
+      "event_detector_id": "wrist-handle-approach",
+      "event_detector_parameters_sha256": "bfe396df175ae8d7093cc0be4c1b9075fc9baff2e5c16f331441f481a8845f9e",
       "injector_id": "shift-door-handle",
-      "injector_parameters_sha256": "ad740da932462c800dac35c59d950d47bdeea6161d848b6adb4c2022dc5a5795",
+      "injector_parameters_sha256": "7e3860da5965517270af009883d2a7130f32e7996aba484e2afda4704f85f022",
+      "interface_seam": "scene",
       "oracle_trials": 0,
       "protocol": "online_failure",
       "runtime_validated": false,
       "scenario_id": "door-handle-pose-shift",
+      "static_contract_validated": true,
       "task_id": "open_door"
     },
     {
       "admission_status": "draft",
+      "event_detector_id": "door-open-before-traversal",
+      "event_detector_parameters_sha256": "a55c517d20c5cbebba9e9ef7d463beb6009ebee6b2a5552d8b58cd44c0bb15f4",
       "injector_id": "place-doorway-obstacle",
-      "injector_parameters_sha256": "09bbd96a86c4f03967c5e9e944dbe2548d3fa0062c0031966ab47d321920365b",
+      "injector_parameters_sha256": "28316cb277edf2b53b92999d827102b802a99530fb5067537a68de8614db0d61",
+      "interface_seam": "scene",
       "oracle_trials": 0,
       "protocol": "failure_start",
       "runtime_validated": false,
       "scenario_id": "doorway-obstruction",
+      "static_contract_validated": true,
       "task_id": "open_door"
     },
     {
       "admission_status": "draft",
+      "event_detector_id": "object-in-transport",
+      "event_detector_parameters_sha256": "f15897aeb771a807e504711145fe697c9a7e35238302ba5fcd002dbb912f10b8",
       "injector_id": "attenuate-sonic-latent",
       "injector_parameters_sha256": "6bc6e75f8f3e875098ab6d2407aeccf9d2c390c0d7804719795be0a17564f568",
+      "interface_seam": "post-encoder-latent64",
       "oracle_trials": 0,
       "protocol": "online_failure",
       "runtime_validated": false,
       "scenario_id": "tracker-underexecution",
+      "static_contract_validated": true,
       "task_id": "double_desk"
     },
     {
       "admission_status": "draft",
+      "event_detector_id": "object-first-motion",
+      "event_detector_parameters_sha256": "3febf408530dc1cad3d57980c04e3082f8195901a41ad8573866852c73bda76d",
       "injector_id": "root-velocity-impulse",
-      "injector_parameters_sha256": "da9ea5f67e5dbd9d7f4aba6de8fc5334a7217bffb8867efb8806e7886ced0941",
+      "injector_parameters_sha256": "f710ad167b3276d8f5692bd5875731bd1f6bc428348ebb19c802e2958122cbdf",
+      "interface_seam": "scene",
       "oracle_trials": 0,
       "protocol": "online_failure",
       "runtime_validated": false,
       "scenario_id": "support-state-push",
+      "static_contract_validated": true,
       "task_id": "football"
     },
     {
       "admission_status": "draft",
+      "event_detector_id": "seat-approach",
+      "event_detector_parameters_sha256": "48ad0ae72869feeac000bbc54385aa4bf148341c9675e40e8c76230444a72e43",
       "injector_id": "support-foot-slip",
-      "injector_parameters_sha256": "5a45ffc1cf176becf7e27af05b6968a79df7a531e472adc812d82ea21df586ae",
+      "injector_parameters_sha256": "f0ae61be9ea344ecd2179f4607cfb9a27b5e8d36aaac239b724439286e270aeb",
+      "interface_seam": "scene",
       "oracle_trials": 0,
       "protocol": "failure_start",
       "runtime_validated": false,
       "scenario_id": "sofa-approach-slip",
+      "static_contract_validated": true,
       "task_id": "sit_sofa"
     },
     {
       "admission_status": "draft",
+      "event_detector_id": "strike-approach-shell",
+      "event_detector_parameters_sha256": "45c88391fbfb4348d352b99ba78e5bf01b8d292992e343075572a26c59ba97f8",
       "injector_id": "upper-body-contact-impulse",
-      "injector_parameters_sha256": "98da3de2eb1906a7ec8f734f804ac82fa1fe99435dc0aa47b71edb747787fa13",
+      "injector_parameters_sha256": "da9a003daf4c082642e7f658c8363a8c289cf373016632bc08ccafad12591a10",
+      "interface_seam": "scene",
       "oracle_trials": 0,
       "protocol": "online_failure",
       "runtime_validated": false,
       "scenario_id": "contact-recoil",
+      "static_contract_validated": true,
       "task_id": "boxing"
     },
     {
       "admission_status": "draft",
+      "event_detector_id": "root-displacement",
+      "event_detector_parameters_sha256": "1322c078da77a2258b73042c79933a904e1b80eac48e5a9d805fe1b434ac35ef",
       "injector_id": "place-path-obstacle",
-      "injector_parameters_sha256": "6263dffb437edf22c7e159421079a387d907164af8ab5b41f13d44421cadc8ef",
+      "injector_parameters_sha256": "ec2976c25aecb5145af38d70368ad328b9a8a758fef141c91e3d993ddd3bcbb2",
+      "interface_seam": "scene",
       "oracle_trials": 0,
       "protocol": "online_failure",
       "runtime_validated": false,
       "scenario_id": "new-blocking-obstacle",
+      "static_contract_validated": true,
       "task_id": "visual_navigation"
     }
   ],
   "schema_version": 1,
   "status": "predicate_sources_passed_runtime_admission_pending",
   "suite_id": "hrvla_recovery_v0",
-  "suite_sha256": "40a1a87ed750dc511d85b484bf84b8f2b6464d6595aaf904578ef8f78c537857",
+  "suite_sha256": "e042b649577501f28acfcb089a159aa37885a98d63e4c01d6ea214d4024f19c7",
   "tasks": [
     {
       "admission_status": "draft",
@@ -137,7 +177,7 @@
     {
       "admission_status": "draft",
       "humanoidarena_task_key": "open_door",
-      "predicate": "HumanoidArena default strict raw reward is 1 when the robot is upright, the latch is unlocked, and absolute door-leaf angle is at least 60 degrees; the upstream OpenDoor row remains diagnostic while its locked self-tests fail",
+      "predicate": "HumanoidArena strict raw reward with OPEN_DOOR_STRICT_REQUIRE_GEOMETRY=1 is 1 when the robot is upright and through the live door frame, the latch is unlocked, and absolute door-leaf angle is at least 60 degrees; the upstream OpenDoor row remains diagnostic while its locked self-tests fail",
       "predicate_source": {
         "path": "tasks/g1_tasks/move_open_door_g1_29dof_dex3_wholebody/mdp/rewards.py",
         "reference": "tasks/g1_tasks/move_open_door_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
