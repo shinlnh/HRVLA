@@ -257,6 +257,8 @@ def main() -> int:
     )
     parser.add_argument("--split", action="append", choices=("train", "validation"))
     parser.add_argument("--audit-only", action="store_true")
+    parser.add_argument("--audit-output", type=Path)
+    parser.add_argument("--audit-plot", type=Path)
     args = parser.parse_args()
     lock = load_json(args.lock.resolve())
     programs = load_json(args.method_programs.resolve())
@@ -270,7 +272,7 @@ def main() -> int:
     output_root = (ROOT / lock["subtask_rt_dataset"]["path"]).resolve()
     splits = args.split or list(lock["subtask_rt_dataset"]["splits_materialized_before_selection"])
     if args.audit_only:
-        report = {}
+        split_reports = {}
         for split in splits:
             rows, audits = _analyze_split(
                 source,
@@ -278,7 +280,7 @@ def main() -> int:
                 programs,
                 int(lock["subtask_rt_dataset"]["minimum_phase_frames"]),
             )
-            report[split] = {
+            split_reports[split] = {
                 "episodes": len(rows),
                 "fallback_episodes": sum(row["fallback_used"] for row in audits),
                 "fallback_rate": sum(row["fallback_used"] for row in audits) / len(audits),
@@ -291,6 +293,62 @@ def main() -> int:
                     if (selected := [row for row in audits if row["task_key"] == task])
                 },
             }
+        core = {
+            "schema_version": 1,
+            "claim_boundary": "training-label audit only; not a closed-loop subtask score",
+            "source_manifest_sha256": lock["source_dataset"]["manifest_sha256"],
+            "method_program_sha256": canonical_sha256(programs),
+            "maximum_episode_fallback_rate": lock["subtask_rt_dataset"][
+                "maximum_episode_fallback_rate"
+            ],
+            "splits": split_reports,
+        }
+        report = {**core, "audit_sha256": canonical_sha256(core)}
+        if args.audit_output is not None:
+            _json_atomic(args.audit_output.resolve(), report)
+        if args.audit_plot is not None:
+            import matplotlib
+
+            matplotlib.use("Agg")
+            import matplotlib.pyplot as plt
+
+            task_names = sorted(
+                {
+                    task
+                    for split_report in split_reports.values()
+                    for task in split_report["by_task"]
+                }
+            )
+            width = 0.36
+            x = np.arange(len(task_names))
+            figure, axis = plt.subplots(figsize=(12, 5.5), constrained_layout=True)
+            for offset, split in enumerate(splits):
+                values = [
+                    split_reports[split]["by_task"][task]["fallback_episodes"]
+                    / split_reports[split]["by_task"][task]["episodes"]
+                    for task in task_names
+                ]
+                axis.bar(
+                    x + (offset - (len(splits) - 1) / 2) * width,
+                    values,
+                    width,
+                    label=split,
+                )
+            axis.axhline(
+                float(lock["subtask_rt_dataset"]["maximum_episode_fallback_rate"]),
+                color="#c53030",
+                linestyle="--",
+                label="frozen maximum",
+            )
+            axis.set_xticks(x, [name.replace("_", "\n") for name in task_names])
+            axis.set_ylim(0, 1)
+            axis.set_ylabel("Episode fallback rate")
+            axis.set_title("HumanoidArena ST weak-label admission audit")
+            axis.grid(axis="y", alpha=0.25)
+            axis.legend()
+            args.audit_plot.resolve().parent.mkdir(parents=True, exist_ok=True)
+            figure.savefig(args.audit_plot.resolve(), dpi=180)
+            plt.close(figure)
         print(json.dumps(report, indent=2, sort_keys=True))
         return 0
     reports = [materialize_split(source, output_root, split, programs, lock) for split in splits]
