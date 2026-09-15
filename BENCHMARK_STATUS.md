@@ -13,7 +13,7 @@ Last audited: **2026-09-15 (Asia/Bangkok)**.
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
 | VLA retraining | 6/6 training seeds, 42 held-out trajectories × 5 conditions | Closed-loop task and recovery success; open-loop MSE is not SR/RSR |
-| External HumanoidArena | 3/84 formally complete cells; 65/1680 valid episode JSONs observed | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
+| External HumanoidArena | 4/84 formally complete cells; 83/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes and the HTTP inference contract is implemented, common checkpoint/real-model server validation still pending | Train the shared bridge and run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
@@ -42,15 +42,19 @@ remain at the code/test gate: they do not increment runtime admission before a
 live simulator trace proves each detector and perturbation together.
 The single-episode upstream wrapper now connects those pieces without modifying
 the locked HumanoidArena checkout and records detector/injector/snapshot sidecars.
-Its code-path tests pass locally, but no row is promoted until it executes under
-the real Isaac process after the claim-bearing external matrix releases CUDA.
+The fail-closed auditor cross-checks numerical action hashes, physical magnitude,
+target, seed, one-shot timing, simulator provenance, and snapshot settle timing.
+The full repository suite passes at `110 passed, 11 skipped`; no row is promoted
+until the wrapper executes under the real Isaac process after the claim-bearing
+external matrix releases CUDA.
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized
 resume completed the remaining nine records, formally closed the third cell,
 and entered `semantic/boxing` at 2026-09-15 06:02 UTC without reloading its
-task-shared policy server. At the last audit it had produced 65 valid episode
-records. This is explicitly `partial_non_claim` evidence, not a result table.
+task-shared policy server. At the tracked 2026-09-15 07:19 UTC audit it had
+completed `semantic/boxing/seed-0` and produced 83 valid episode records across
+4 complete cells. This is explicitly `partial_non_claim` evidence, not a result table.
 The mutable machine progress file is authoritative after this tracked checkpoint.
 
 The common GR00T adaptation inputs and 70/10/20 split are frozen in
