@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "program_id": "humanoidarena-st-str-v1",
+  "planner": {
+    "method": "adaptive_ttc",
+    "branching_factor": 4,
+    "beam_width": 3,
+    "search_depth": 3,
+    "confidence_threshold": 0.72,
+    "proposal_backend": "deterministic-affordance-proposal",
+    "claim_boundary": "The real-model rollout uses source-backed simulator predicates as the declared high-level state observer. Component evidence with Cosmos-Reason2 is reported separately and is not relabelled as this closed-loop backend."
+  },
+  "tasks": [
+    {
+      "task_id": "pick_and_place_box",
+      "humanoidarena_task_key": "pp_box",
+      "goal_instruction": "Move the box from the table onto the shelf.",
+      "skills": [
+        {"id": "approach_and_grasp_box", "instruction": "Approach the box, align both hands, and establish a secure grasp.", "requires": [], "adds": ["box_grasp_commanded"], "priority": 10},
+        {"id": "lift_and_transport_box", "instruction": "Lift the grasped box steadily and carry it toward the shelf while maintaining balance.", "requires": ["box_grasp_commanded"], "adds": ["box_transport_stable"], "priority": 20},
+        {"id": "place_box_on_shelf", "instruction": "Align the box with the shelf support, place it fully on the shelf, and release it safely.", "requires": ["box_transport_stable"], "adds": ["box_placed"], "priority": 30}
+      ],
+      "transitions": [
+        {"completes_skill": "approach_and_grasp_box", "detector": {"id": "first-hand-close", "parameters": {"close_threshold": 0.5, "hand_indices": [38, 39]}}},
+        {"completes_skill": "lift_and_transport_box", "detector": {"id": "stable-object-lift", "parameters": {"asset_name": "box", "minimum_lift_m": 0.05, "maximum_speed_mps": 0.08, "stable_duration_s": 0.5}}}
+      ]
+    },
+    {
+      "task_id": "open_door",
+      "humanoidarena_task_key": "open_door",
+      "goal_instruction": "Open the door.",
+      "skills": [
+        {"id": "approach_door_handle", "instruction": "Approach the door and align a wrist with the handle.", "requires": [], "adds": ["handle_approached"], "priority": 10},
+        {"id": "unlatch_and_open_door", "instruction": "Grasp the handle, unlatch it, and pull the door open while staying upright.", "requires": ["handle_approached"], "adds": ["door_open"], "priority": 20},
+        {"id": "traverse_doorway", "instruction": "Release the handle and walk completely through the open doorway.", "requires": ["door_open"], "adds": ["doorway_traversed"], "priority": 30}
+      ],
+      "transitions": [
+        {"completes_skill": "approach_door_handle", "detector": {"id": "wrist-handle-approach", "parameters": {"door_asset_name": "door", "maximum_distance_m": 0.3}}},
+        {"completes_skill": "unlatch_and_open_door", "detector": {"id": "door-open-before-traversal", "parameters": {"minimum_leaf_angle_deg": 60.0}}}
+      ]
+    },
+    {
+      "task_id": "double_desk",
+      "humanoidarena_task_key": "doubledesk",
+      "goal_instruction": "Put the hammer from the right table into the basket on the left table.",
+      "skills": [
+        {"id": "approach_and_grasp_hammer", "instruction": "Approach the hammer on the right table and secure it with a stable grasp.", "requires": [], "adds": ["hammer_in_transport"], "priority": 10},
+        {"id": "carry_and_place_hammer", "instruction": "Carry the hammer to the left table, lower it inside the basket, and release it.", "requires": ["hammer_in_transport"], "adds": ["hammer_placed"], "priority": 20}
+      ],
+      "transitions": [
+        {"completes_skill": "approach_and_grasp_hammer", "detector": {"id": "object-in-transport", "parameters": {"asset_name": "object_l", "minimum_displacement_m": 0.2, "minimum_lift_m": 0.05}}}
+      ]
+    },
+    {
+      "task_id": "football",
+      "humanoidarena_task_key": "football",
+      "goal_instruction": "Kick the soccer ball into the goal.",
+      "skills": [
+        {"id": "approach_and_align_with_ball", "instruction": "Approach the ball and align the body and kicking foot toward the center of the goal.", "requires": [], "adds": ["ball_struck"], "priority": 10},
+        {"id": "complete_goal_directed_kick", "instruction": "Follow through on the goal-directed kick while recovering a stable support stance.", "requires": ["ball_struck"], "adds": ["ball_in_goal"], "priority": 20}
+      ],
+      "transitions": [
+        {"completes_skill": "approach_and_align_with_ball", "detector": {"id": "object-first-motion", "parameters": {"asset_name": "object", "minimum_speed_mps": 0.25}}}
+      ]
+    },
+    {
+      "task_id": "sit_sofa",
+      "humanoidarena_task_key": "sit_sofa",
+      "goal_instruction": "Sit on the sofa.",
+      "skills": [
+        {"id": "approach_sofa", "instruction": "Walk toward the sofa and align the pelvis with a clear seat area.", "requires": [], "adds": ["seat_approached"], "priority": 10},
+        {"id": "turn_and_sit_stably", "instruction": "Turn into the seating orientation, lower the pelvis onto the sofa, and stabilize both feet.", "requires": ["seat_approached"], "adds": ["seated"], "priority": 20}
+      ],
+      "transitions": [
+        {"completes_skill": "approach_sofa", "detector": {"id": "seat-approach", "parameters": {"maximum_xy_distance_m": 0.75, "minimum_root_height_m": 0.45, "minimum_up_axis_z": 0.6}}}
+      ]
+    },
+    {
+      "task_id": "boxing",
+      "humanoidarena_task_key": "boxing",
+      "goal_instruction": "Strike the green markers on the punching bag.",
+      "skills": [
+        {"id": "approach_strike_range", "instruction": "Approach the punching bag, face the green target, and enter a balanced striking range.", "requires": [], "adds": ["strike_range_reached"], "priority": 10},
+        {"id": "strike_green_target", "instruction": "Deliver a controlled punch to the green target and recover a balanced guard stance.", "requires": ["strike_range_reached"], "adds": ["target_struck"], "priority": 20}
+      ],
+      "transitions": [
+        {"completes_skill": "approach_strike_range", "detector": {"id": "strike-approach-shell", "parameters": {"inner_margin_m": 0.08, "outer_margin_m": 0.2, "decreasing_samples": 3}}}
+      ]
+    },
+    {
+      "task_id": "visual_navigation",
+      "humanoidarena_task_key": "vision_navi",
+      "goal_instruction": "Avoid obstacles and move to the yellow marked area.",
+      "skills": [
+        {"id": "leave_start_zone", "instruction": "Leave the start zone toward the yellow goal while maintaining safe obstacle clearance.", "requires": [], "adds": ["start_zone_left"], "priority": 10},
+        {"id": "navigate_to_yellow_goal", "instruction": "Continue around visible obstacles and place both feet fully inside the yellow marked area.", "requires": ["start_zone_left"], "adds": ["goal_region_reached"], "priority": 20}
+      ],
+      "transitions": [
+        {"completes_skill": "leave_start_zone", "detector": {"id": "root-displacement", "parameters": {"minimum_xy_displacement_m": 1.0}}}
+      ]
+    }
+  ],
+  "recovery_instructions": {
+    "box-missed-grasp-retry": "Open both hands, re-align around the box, establish a secure grasp, then resume lifting and shelf placement.",
+    "box-drop-and-body-push": "First regain a stable stance, visually reacquire the dropped box, regrasp it securely, then complete shelf placement.",
+    "door-handle-pose-shift": "Stop the stale reach, visually reacquire the shifted handle, re-align the wrist, unlatch the door, and continue through.",
+    "doorway-obstruction": "Maintain balance, avoid the new doorway obstruction, choose the clear side of the opening, and continue completely through.",
+    "tracker-underexecution": "Re-align the whole body with the hammer transport direction, restore deliberate motion, and finish placing the hammer in the basket.",
+    "support-state-push": "Recover a stable support stance, reorient to the ball and goal, then resume the goal-directed kick.",
+    "sofa-approach-slip": "Recover upright balance, reposition both feet, re-approach the clear sofa seat, and complete a controlled sit.",
+    "contact-recoil": "Absorb the recoil, recover a balanced guard stance, reacquire the green target, and deliver a controlled strike.",
+    "new-blocking-obstacle": "Stop before the new obstacle, select a collision-free detour visible from the front camera, and continue to the yellow goal."
+  }
+}
