@@ -126,7 +126,11 @@ def evaluate_trajectory(
 
 
 def _write_charts(
-    rows: list[dict], sample_arrays: dict[str, np.ndarray], sample_trajectory, output_dir: Path
+    rows: list[dict],
+    sample_arrays: dict[str, np.ndarray],
+    sample_trajectory,
+    output_dir: Path,
+    video_key: str,
 ) -> None:
     import matplotlib
 
@@ -182,7 +186,7 @@ def _write_charts(
         np.square(sample_arrays["ground_truth"] - sample_arrays["predicted"]).mean(axis=1)
     )
     for axis, frame_index in zip(axes, frames):
-        axis.imshow(sample_trajectory["video.ego_view"].iloc[frame_index])
+        axis.imshow(sample_trajectory[f"video.{video_key}"].iloc[frame_index])
         axis.set_title(f"frame {frame_index}\naction RMSE={frame_error[frame_index]:.3f}")
         axis.axis("off")
     figure.suptitle("Held-out Isaac Lab G1 demonstration and GR00T action error")
@@ -294,10 +298,20 @@ def main() -> None:
     if sample_arrays is not None:
         np.savez_compressed(args.output_dir / "heldout_predictions.npz", **sample_arrays)
         sample_trajectory = loader[args.trajectory_ids[0]]
-        _write_charts(rows, sample_arrays, sample_trajectory, args.output_dir)
+        video_keys = loader.modality_configs["video"].modality_keys
+        if len(video_keys) != 1:
+            raise ValueError(f"evaluation expects exactly one video modality, got {video_keys}")
+        video_key = video_keys[0]
+        _write_charts(
+            rows,
+            sample_arrays,
+            sample_trajectory,
+            args.output_dir,
+            video_key,
+        )
         source_video = (
             args.dataset_path
-            / "videos/chunk-000/observation.images.ego_view"
+            / f"videos/chunk-000/observation.images.{video_key}"
             / f"episode_{args.trajectory_ids[0]:06d}.mp4"
         )
         shutil.copy2(source_video, args.output_dir / "isaaclab_heldout_demonstration.mp4")

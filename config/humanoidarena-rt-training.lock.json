@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "pending_materialization_common_selection_and_recovery_admission",
+  "claim_boundary": "ST-RT and STR-RT are in-domain action-decoder adaptations; neither row is ours and neither open-loop metric is a closed-loop SR/RSR claim.",
+  "method_program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "source_dataset": {
+    "path": "_artifacts/datasets/humanoidarena-gr00t-refpose",
+    "manifest_sha256": "7695a09acc9d94fe3152fd4822ddae81371ed5b90360ef0825209a1132e255d3"
+  },
+  "subtask_rt_dataset": {
+    "path": "_artifacts/datasets/humanoidarena-st-rt",
+    "label_source": "robot-state/action weak temporal proxies with explicit fallback audit; evaluation uses different source-backed simulator predicates",
+    "minimum_phase_frames": 40,
+    "maximum_episode_fallback_rate": 0.05,
+    "splits_materialized_before_selection": ["train", "validation"],
+    "hidden_locked_until_validation_selection": true,
+    "manifests": {"train": null, "validation": null, "heldout": null}
+  },
+  "recovery_rt_dataset": {
+    "path": "_artifacts/datasets/humanoidarena-str-rt",
+    "source": "successful independent PI0.5 oracle behavior after the locked failure becomes active",
+    "language_relabel": "frozen scenario-specific recovery instruction",
+    "required_scenarios": 9,
+    "required_demonstrations_per_scenario": 20,
+    "split_derivation": "sort SHA-256(hrvla-recovery-data-v1|<scenario>|<trial>) then allocate 14 train, 3 validation, 3 heldout",
+    "splits_per_scenario": {"train": 14, "validation": 3, "heldout": 3},
+    "hidden_locked_until_validation_selection": true,
+    "manifests": {"train": null, "validation": null, "heldout": null}
+  },
+  "training_seeds": [0, 1, 2],
+  "initialization": "seed-matched common HumanoidArena checkpoint selected globally on validation",
+  "methods": {
+    "gr00t_st_rt": {
+      "dataset_family": "subtask_rt_dataset",
+      "validation_episodes": 70,
+      "output_name": "st-rt"
+    },
+    "gr00t_str_rt": {
+      "dataset_family": "recovery_rt_dataset",
+      "validation_episodes": 27,
+      "output_name": "str-rt"
+    }
+  },
+  "training": {
+    "profile": "action_decoder_only",
+    "candidate_steps": [100, 200, 300],
+    "max_steps": 300,
+    "save_steps": 100,
+    "learning_rate": 0.00005,
+    "physical_batch_size": 4,
+    "gradient_accumulation_steps": 4,
+    "effective_batch_size": 16,
+    "dataloader_workers": 28,
+    "state_dropout_probability": 0.2,
+    "color_jitter": true
+  },
+  "selection": {
+    "split": "validation",
+    "criterion": "one global optimizer step per method with lowest mean of three seed-level macro-per-task action MSE values",
+    "tie_break": "lowest optimizer step",
+    "hidden_access_before_selection": false
+  },
+  "output_root": "_artifacts/retraining/humanoidarena-rt",
+  "resource_exclusion": {
+    "blocking_process_pattern": "run_humanoidarena_baseline_matrix_fast.py",
+    "maximum_preexisting_compute_vram_mib": 1024
+  }
+}
