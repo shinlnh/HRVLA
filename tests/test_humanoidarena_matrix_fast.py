@@ -55,6 +55,14 @@ def test_default_fast_matrix_keeps_full_paper_sample_size() -> None:
     assert len(FAST.TASKS) * len(FAST.MODES) * len(FAST.SEEDS) * FAST.REPEATS == 1680
 
 
+def test_cpu_server_keeps_upstream_cuda_discovery_contract(monkeypatch) -> None:
+    monkeypatch.setenv("CUDA_VISIBLE_DEVICES", "7")
+    env = FAST._server_env(cpu_threads=32, interop_threads=2, compile_threads=32)
+    assert "CUDA_VISIBLE_DEVICES" not in env
+    assert env["CUDA_DEVICE_ORDER"] == "PCI_BUS_ID"
+    assert env["OMP_NUM_THREADS"] == "32"
+
+
 def test_terminate_group_is_noop_after_process_exit() -> None:
     class ExitedProcess:
         def poll(self):

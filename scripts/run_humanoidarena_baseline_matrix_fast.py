@@ -224,9 +224,13 @@ def _server_env(cpu_threads: int, interop_threads: int, compile_threads: int) ->
             "TORCHINDUCTOR_COMPILE_THREADS": str(compile_threads),
             "HRVLA_TORCH_INTEROP_THREADS": str(interop_threads),
             "HRVLA_VLA_DEBUG_LOGGING": "0",
-            "CUDA_VISIBLE_DEVICES": "",
+            "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
         }
     )
+    # Match the released evaluator: a CPU policy does not claim CUDA memory,
+    # but CUDA remains discoverable so backend selection and compile caches do
+    # not differ from the upstream run.
+    env.pop("CUDA_VISIBLE_DEVICES", None)
     current_path = env.get("PATH", "")
     env["PATH"] = str(POLICY_PYTHON.parent) + (os.pathsep + current_path if current_path else "")
     return env
