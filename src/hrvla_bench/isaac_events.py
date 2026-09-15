@@ -93,6 +93,27 @@ def apply_root_velocity_delta_once(
         dtype=asset.data.root_vel_w.dtype,
         device=asset.device,
     )
+    before = asset.data.root_vel_w[pending].clone()
+    after = before + delta.unsqueeze(0)
+    asset.write_root_velocity_to_sim(after, env_ids=pending)
+    flags[pending] = True
+    _append_audit(
+        audit_path,
+        {
+            "event": "apply_root_velocity_delta_once",
+            "injector_id": injector_id,
+            "asset_name": asset_name,
+            "environment_ids": [int(value) for value in pending.detach().cpu().tolist()],
+            "episode_seed": None if episode_seed is None else int(episode_seed),
+            "episode_steps": [
+                int(value) for value in env.episode_length_buf[pending].detach().cpu().tolist()
+            ],
+            "linear_velocity_delta": [float(value) for value in linear_velocity_delta],
+            "angular_velocity_delta": [float(value) for value in angular_velocity_delta],
+            "velocity_before": before.detach().cpu().tolist(),
+            "velocity_after": after.detach().cpu().tolist(),
+        },
+    )
 
 
 def apply_root_local_lateral_velocity_once(
@@ -124,6 +145,10 @@ def apply_root_local_lateral_velocity_once(
     local[:, 1] = sign * float(lateral_mps)
     world = _quat_apply_wxyz(pose[:, 3:7], local)
     world[:, 2] = 0.0
+    horizontal_norm = torch.linalg.vector_norm(world[:, :2], dim=1, keepdim=True)
+    if bool(torch.any(horizontal_norm <= 1e-8)):
+        raise ValueError("local lateral axis has a degenerate horizontal projection")
+    world *= float(lateral_mps) / horizontal_norm
     before = asset.data.root_vel_w[pending].clone()
     after = before.clone()
     after[:, :3] += world
@@ -147,6 +172,39 @@ def apply_root_local_lateral_velocity_once(
             "velocity_after": after.detach().cpu().tolist(),
         },
     )
+
+
+def local_lateral_vector_world(
+    env: Any,
+    *,
+    magnitude: float,
+    lateral_direction_robot: str,
+    asset_name: str = "robot",
+    env_id: int = 0,
+) -> tuple[float, float, float]:
+    """Resolve a horizontal local-left/right vector in world coordinates."""
+
+    import torch
+
+    if magnitude <= 0.0:
+        raise ValueError("magnitude must be positive")
+    if lateral_direction_robot not in {"left", "right"}:
+        raise ValueError("lateral_direction_robot must be 'left' or 'right'")
+    asset = env.scene[asset_name]
+    ids = torch.tensor([env_id], dtype=torch.long, device=asset.device)
+    pose = _root_link_pose(asset, ids)
+    sign = 1.0 if lateral_direction_robot == "left" else -1.0
+    local = torch.tensor(
+        [[0.0, sign * float(magnitude), 0.0]], dtype=pose.dtype, device=asset.device
+    )
+    world = _quat_apply_wxyz(pose[:, 3:7], local)[0]
+    world[2] = 0.0
+    horizontal_norm = torch.linalg.vector_norm(world[:2])
+    if float(horizontal_norm) <= 1e-8:
+        raise ValueError("local lateral axis has a degenerate horizontal projection")
+    world *= float(magnitude) / horizontal_norm
+    world[2] = 0.0
+    return tuple(float(value) for value in world.detach().cpu())
 
 
 def apply_asset_local_translation_once(
@@ -202,6 +260,7 @@ def place_asset_relative_once(
     reference_asset_name: str,
     reference_local_position_m: tuple[float, float, float],
     align_orientation: bool = True,
+    preserve_height: bool = False,
     audit_path: str | None = None,
     episode_seed: int | None = None,
 ) -> None:
@@ -223,6 +282,8 @@ def place_asset_relative_once(
     after[:, :3] = reference_pose[:, :3] + _quat_apply_wxyz(
         reference_pose[:, 3:7], local
     )
+    if preserve_height:
+        after[:, 2] = before[:, 2]
     if align_orientation:
         after[:, 3:7] = reference_pose[:, 3:7]
     asset.write_root_pose_to_sim(after, env_ids=pending)
@@ -245,6 +306,7 @@ def place_asset_relative_once(
                 float(value) for value in reference_local_position_m
             ],
             "align_orientation": bool(align_orientation),
+            "preserve_height": bool(preserve_height),
             "pose_before": before.detach().cpu().tolist(),
             "pose_after": after.detach().cpu().tolist(),
         },
@@ -353,27 +415,6 @@ def clear_expired_body_impulses(env: Any, *, force: bool = False) -> int:
         cleared += 1
     env._hrvla_active_body_impulses = remaining
     return cleared
-    before = asset.data.root_vel_w[pending].clone()
-    after = before + delta.unsqueeze(0)
-    asset.write_root_velocity_to_sim(after, env_ids=pending)
-    flags[pending] = True
-    _append_audit(
-        audit_path,
-        {
-            "event": "apply_root_velocity_delta_once",
-            "injector_id": injector_id,
-            "asset_name": asset_name,
-            "environment_ids": [int(value) for value in pending.detach().cpu().tolist()],
-            "episode_seed": None if episode_seed is None else int(episode_seed),
-            "episode_steps": [
-                int(value) for value in env.episode_length_buf[pending].detach().cpu().tolist()
-            ],
-            "linear_velocity_delta": [float(value) for value in linear_velocity_delta],
-            "angular_velocity_delta": [float(value) for value in angular_velocity_delta],
-            "velocity_before": before.detach().cpu().tolist(),
-            "velocity_after": after.detach().cpu().tolist(),
-        },
-    )
 
 
 def apply_action_window(
