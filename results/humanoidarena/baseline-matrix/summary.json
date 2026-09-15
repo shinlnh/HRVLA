@@ -1,0 +1,242 @@
+{
+  "admission_blockers": [
+    "locked upstream OpenDoor self-test contract mismatch",
+    "missing independent 20/20 oracle admission evidence"
+  ],
+  "benchmark": "HumanoidArena",
+  "by_mode": {
+    "base_test": {
+      "episodes": 51,
+      "failures": 16,
+      "mean_success_steps": 290.42857142857144,
+      "result_reason_counts": {
+        "success": 35,
+        "timeout": 16
+      },
+      "success_rate": 0.6862745098039216,
+      "success_rate_wilson_95": [
+        0.5497300046930566,
+        0.7967232153447456
+      ],
+      "successes": 35
+    }
+  },
+  "by_seed": {
+    "0": {
+      "episodes": 20,
+      "failures": 6,
+      "mean_success_steps": 215.78571428571428,
+      "result_reason_counts": {
+        "success": 14,
+        "timeout": 6
+      },
+      "success_rate": 0.7,
+      "success_rate_wilson_95": [
+        0.4810271816464765,
+        0.8545227551323956
+      ],
+      "successes": 14
+    },
+    "1": {
+      "episodes": 20,
+      "failures": 8,
+      "mean_success_steps": 379.0833333333333,
+      "result_reason_counts": {
+        "success": 12,
+        "timeout": 8
+      },
+      "success_rate": 0.6,
+      "success_rate_wilson_95": [
+        0.3865815007622531,
+        0.781193467627183
+      ],
+      "successes": 12
+    },
+    "2": {
+      "episodes": 11,
+      "failures": 2,
+      "mean_success_steps": 288.3333333333333,
+      "result_reason_counts": {
+        "success": 9,
+        "timeout": 2
+      },
+      "success_rate": 0.8181818181818182,
+      "success_rate_wilson_95": [
+        0.523019438039156,
+        0.9486323102539149
+      ],
+      "successes": 9
+    }
+  },
+  "by_task": {
+    "boxing": {
+      "episodes": 51,
+      "failures": 16,
+      "mean_success_steps": 290.42857142857144,
+      "result_reason_counts": {
+        "success": 35,
+        "timeout": 16
+      },
+      "success_rate": 0.6862745098039216,
+      "success_rate_wilson_95": [
+        0.5497300046930566,
+        0.7967232153447456
+      ],
+      "successes": 35
+    }
+  },
+  "by_task_mode": {
+    "base_test/boxing": {
+      "episodes": 51,
+      "failures": 16,
+      "mean_success_steps": 290.42857142857144,
+      "result_reason_counts": {
+        "success": 35,
+        "timeout": 16
+      },
+      "success_rate": 0.6862745098039216,
+      "success_rate_wilson_95": [
+        0.5497300046930566,
+        0.7967232153447456
+      ],
+      "successes": 35
+    }
+  },
+  "claim_status": "partial_non_claim",
+  "dataset_revision": "a079beddd6b1521f762c991be8f36993f17ebeca",
+  "generated_at": "2026-09-15T04:58:39.050364+00:00",
+  "includes_ours": false,
+  "isaaclab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",
+  "matrix": {
+    "cells_complete": 2,
+    "cells_expected": 84,
+    "cells_with_observations": 3,
+    "duplicate_identities": [],
+    "episodes_complete": 51,
+    "episodes_expected": 1680,
+    "invalid_cells": [
+      "base_test/boxing/seed-2",
+      "semantic/boxing/seed-0",
+      "semantic/boxing/seed-1",
+      "semantic/boxing/seed-2",
+      "vision/boxing/seed-0",
+      "vision/boxing/seed-1",
+      "vision/boxing/seed-2",
+      "execution/boxing/seed-0",
+      "execution/boxing/seed-1",
+      "execution/boxing/seed-2",
+      "base_test/doubledesk/seed-0",
+      "base_test/doubledesk/seed-1",
+      "base_test/doubledesk/seed-2",
+      "semantic/doubledesk/seed-0",
+      "semantic/doubledesk/seed-1",
+      "semantic/doubledesk/seed-2",
+      "vision/doubledesk/seed-0",
+      "vision/doubledesk/seed-1",
+      "vision/doubledesk/seed-2",
+      "execution/doubledesk/seed-0",
+      "execution/doubledesk/seed-1",
+      "execution/doubledesk/seed-2",
+      "base_test/football/seed-0",
+      "base_test/football/seed-1",
+      "base_test/football/seed-2",
+      "semantic/football/seed-0",
+      "semantic/football/seed-1",
+      "semantic/football/seed-2",
+      "vision/football/seed-0",
+      "vision/football/seed-1",
+      "vision/football/seed-2",
+      "execution/football/seed-0",
+      "execution/football/seed-1",
+      "execution/football/seed-2",
+      "base_test/open_door/seed-0",
+      "base_test/open_door/seed-1",
+      "base_test/open_door/seed-2",
+      "semantic/open_door/seed-0",
+      "semantic/open_door/seed-1",
+      "semantic/open_door/seed-2",
+      "vision/open_door/seed-0",
+      "vision/open_door/seed-1",
+      "vision/open_door/seed-2",
+      "execution/open_door/seed-0",
+      "execution/open_door/seed-1",
+      "execution/open_door/seed-2",
+      "base_test/pp_box/seed-0",
+      "base_test/pp_box/seed-1",
+      "base_test/pp_box/seed-2",
+      "semantic/pp_box/seed-0",
+      "semantic/pp_box/seed-1",
+      "semantic/pp_box/seed-2",
+      "vision/pp_box/seed-0",
+      "vision/pp_box/seed-1",
+      "vision/pp_box/seed-2",
+      "execution/pp_box/seed-0",
+      "execution/pp_box/seed-1",
+      "execution/pp_box/seed-2",
+      "base_test/sit_sofa/seed-0",
+      "base_test/sit_sofa/seed-1",
+      "base_test/sit_sofa/seed-2",
+      "semantic/sit_sofa/seed-0",
+      "semantic/sit_sofa/seed-1",
+      "semantic/sit_sofa/seed-2",
+      "vision/sit_sofa/seed-0",
+      "vision/sit_sofa/seed-1",
+      "vision/sit_sofa/seed-2",
+      "execution/sit_sofa/seed-0",
+      "execution/sit_sofa/seed-1",
+      "execution/sit_sofa/seed-2",
+      "base_test/vision_navi/seed-0",
+      "base_test/vision_navi/seed-1",
+      "base_test/vision_navi/seed-2",
+      "semantic/vision_navi/seed-0",
+      "semantic/vision_navi/seed-1",
+      "semantic/vision_navi/seed-2",
+      "vision/vision_navi/seed-0",
+      "vision/vision_navi/seed-1",
+      "vision/vision_navi/seed-2",
+      "execution/vision_navi/seed-0",
+      "execution/vision_navi/seed-1",
+      "execution/vision_navi/seed-2"
+    ],
+    "modes": [
+      "base_test",
+      "semantic",
+      "vision",
+      "execution"
+    ],
+    "repeats_per_seed": 20,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "tasks": [
+      "boxing",
+      "doubledesk",
+      "football",
+      "open_door",
+      "pp_box",
+      "sit_sofa",
+      "vision_navi"
+    ]
+  },
+  "method": "released PI0.5 task checkpoint with SONIC whole-body controller",
+  "model_revision": "da13e072902840e2682afde360b763f1edb76d32",
+  "overall": {
+    "episodes": 51,
+    "failures": 16,
+    "mean_success_steps": 290.42857142857144,
+    "result_reason_counts": {
+      "success": 35,
+      "timeout": 16
+    },
+    "success_rate": 0.6862745098039216,
+    "success_rate_wilson_95": [
+      0.5497300046930566,
+      0.7967232153447456
+    ],
+    "successes": 35
+  },
+  "schema_version": 1,
+  "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9"
+}
