@@ -45,6 +45,7 @@ def install_method_hooks(
         "runtime": None,
         "env": None,
         "task_success": False,
+        "episode_seed": None,
         "episode_output_dir": None,
         "provider_hooked": False,
     }
@@ -91,7 +92,12 @@ def install_method_hooks(
             seed=int(episode_seed),
         )
         runtime.reset(env)
-        state.update(runtime=runtime, env=env, task_success=False)
+        state.update(
+            runtime=runtime,
+            env=env,
+            task_success=False,
+            episode_seed=int(episode_seed),
+        )
         _append_jsonl(
             trace_path,
             {
@@ -121,6 +127,11 @@ def install_method_hooks(
 
     def method_notify(provider):
         result = original_notify(provider)
+        client = getattr(provider, "_lerobot_http_client", None)
+        if client is not None:
+            if state.get("episode_seed") is None:
+                raise RuntimeError("method policy seed is unresolved at provider reset")
+            client.reset(seed=int(state["episode_seed"]))
         if state["provider_hooked"]:
             return result
         original_fetch = provider._fetch_lerobot_action_chunk
@@ -187,6 +198,7 @@ def install_method_hooks(
                     if line
                 ]
             ),
+            "policy_reset_seed": int(state["episode_seed"]),
         }
         payload["hrvla_method"] = summary
         _write_json_atomic(episode_output / "method-summary.json", summary)

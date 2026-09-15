@@ -34,6 +34,11 @@ class _Provider:
         self.task_name = "original"
         self._latest_vla_action = None
         self.instructions = []
+        self._lerobot_http_client = types.SimpleNamespace(reset=self._reset_client)
+        self.policy_reset_seeds = []
+
+    def _reset_client(self, seed=None):
+        self.policy_reset_seeds.append(seed)
 
     def _fetch_lerobot_action_chunk(self):
         self.instructions.append(self.task_name)
@@ -82,6 +87,8 @@ def test_hook_routes_st_prompts_and_embeds_audited_summary(tmp_path: Path) -> No
     assert "Approach the box" in provider.instructions[0]
     assert "Lift the grasped box" in provider.instructions[1]
     assert result["hrvla_method"]["completed_transition_count"] == 1
+    assert provider.policy_reset_seeds == [17]
+    assert result["hrvla_method"]["policy_reset_seed"] == 17
     trace = [json.loads(line) for line in (tmp_path / "method-trace.jsonl").read_text().splitlines()]
     assert [row["event"] for row in trace] == [
         "method_reset",
