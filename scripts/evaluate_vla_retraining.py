@@ -207,6 +207,9 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
+    from humanoidarena_gr00t_video import install_packed_video_offset_patch
+
+    install_packed_video_offset_patch()
     from gr00t.data.dataset.lerobot_episode_loader import LeRobotEpisodeLoader
     from gr00t.data.embodiment_tags import EmbodimentTag
     from gr00t.policy.gr00t_policy import Gr00tPolicy

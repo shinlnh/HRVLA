@@ -110,6 +110,13 @@ def main() -> None:
     torch.set_float32_matmul_precision("high")
     _load_modality_config(args.modality_config_path.resolve())
 
+    # HumanoidArena LeRobot-v3 views keep immutable packed videos as symlinks
+    # and record each episode's exact starting frame in episodes.jsonl.  The
+    # patch is a no-op for ordinary v2 datasets (offset defaults to zero).
+    from humanoidarena_gr00t_video import install_packed_video_offset_patch
+
+    install_packed_video_offset_patch()
+
     from gr00t.configs.base_config import get_default_config
     from gr00t.data.embodiment_tags import EmbodimentTag
     from gr00t.experiment.experiment import run
