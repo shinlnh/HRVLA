@@ -44,7 +44,7 @@ The single-episode upstream wrapper now connects those pieces without modifying
 the locked HumanoidArena checkout and records detector/injector/snapshot sidecars.
 The fail-closed auditor cross-checks numerical action hashes, physical magnitude,
 target, seed, one-shot timing, simulator provenance, and snapshot settle timing.
-The full repository suite passes at `160 passed, 16 skipped`; no row is promoted
+The full repository suite passes at `163 passed, 16 skipped`; no row is promoted
 until the wrapper executes under the real Isaac process after the claim-bearing
 external matrix releases CUDA.
 The runtime-admission launcher is staged for that handoff: it uses one released
@@ -258,6 +258,20 @@ During execution, machine-live progress is written to
 samples are appended to `hardware-telemetry.jsonl`. Both are ignored while
 mutable. At a milestone or clean completion, regenerate the compact tracked
 summary and plots under `results/`, update this file, commit, and push `main`.
+
+A durable post-external supervisor is installed at
+`scripts/run_humanoidarena_post_external_pipeline.py`. It waits for both the
+1680/1680 completion marker and driver exit, resumes the external matrix up to
+three times after an unexpected exit, then runs only pre-frozen independent
+work: complete-matrix audit; common GR00T three-seed training, validation
+selection, and hidden open-loop evaluation; Cosmos temporal adjudication;
+recovery runtime capture, manifest compilation, 20/20 oracle admission,
+admitted-suite compilation, and recovery-dataset materialization. Each command,
+exit code, dependency block, and timestamp is persisted under
+`_artifacts/HumanoidArena/benchmark-pipeline/`. It deliberately stops before
+editing tracked locks or starting RT training, because those steps require an
+audited human/agent freeze of newly observed hashes. It never promotes partial
+results or edits a claim-bearing file.
 
 ## Resource rule
 
