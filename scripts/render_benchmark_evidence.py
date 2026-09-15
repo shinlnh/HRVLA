@@ -22,13 +22,57 @@ DEFAULT_RECOVERY_PREFLIGHT = (
     ROOT / "results" / "humanoidarena" / "admission" / "predicate-source-audit.json"
 )
 DEFAULT_STORAGE_CLEANUP = ROOT / "results" / "benchmark" / "storage" / "cleanup.json"
+DEFAULT_CHECKPOINT_LOCK = ROOT / "config" / "humanoidarena-internal-checkpoints.lock.json"
+DEFAULT_ADMITTED_SUITE = (
+    ROOT / "_artifacts" / "HumanoidArena" / "recovery-admission" / "hrvla_recovery_v0.admitted.json"
+)
+DEFAULT_INTERNAL_PROGRESS = (
+    ROOT / "_artifacts" / "HumanoidArena" / "internal-benchmark" / "runs" / "hidden_final" / "progress.json"
+)
 DEFAULT_OUTPUT = ROOT / "results" / "benchmark" / "readiness"
 
 
-def readiness_rows(humanoid: dict[str, Any] | None) -> list[dict[str, Any]]:
+def readiness_rows(
+    humanoid: dict[str, Any] | None,
+    checkpoint_lock: dict[str, Any] | None = None,
+    admitted_suite: dict[str, Any] | None = None,
+    internal_progress: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     matrix = (humanoid or {}).get("matrix", {})
     cells_complete = int(matrix.get("cells_complete", 0))
     cells_expected = int(matrix.get("cells_expected", 84))
+    rt_complete = 0
+    if (checkpoint_lock or {}).get("status") == "ready_for_frozen_execution":
+        checkpoints = checkpoint_lock.get("checkpoints", {})
+        rt_complete = sum(
+            isinstance((row := checkpoints.get(method, {}).get(str(seed))), dict)
+            and isinstance(row.get("published_revision"), str)
+            and len(row["published_revision"]) == 40
+            and isinstance(row.get("manifest_sha256"), str)
+            and len(row["manifest_sha256"]) == 64
+            for method in ("gr00t_st_rt", "gr00t_str_rt")
+            for seed in (0, 1, 2)
+        )
+    scenarios_complete = sum(
+        scenario.get("admission", {}).get("status") == "admitted"
+        for task in (admitted_suite or {}).get("tasks", [])
+        for scenario in task.get("scenarios", [])
+    )
+    internal_complete = 0
+    if internal_progress:
+        methods = internal_progress.get("methods", {})
+        expected = int(internal_progress.get("records_expected", 0))
+        expected_per_method = expected // 5 if expected and expected % 5 == 0 else -1
+        internal_complete = sum(
+            int(methods.get(method, -1)) == expected_per_method
+            for method in (
+                "gr00t_sonic",
+                "gr00t_st",
+                "gr00t_st_rt",
+                "gr00t_str",
+                "gr00t_str_rt",
+            )
+        )
     return [
         {
             "workstream": "Planner component",
@@ -53,7 +97,7 @@ def readiness_rows(humanoid: dict[str, Any] | None) -> list[dict[str, Any]]:
         },
         {
             "workstream": "HA 40-D RT training",
-            "completed": 0,
+            "completed": rt_complete,
             "expected": 6,
             "unit": "training seeds",
             "scope": "in-domain ST-RT and STR-RT checkpoints",
@@ -67,14 +111,14 @@ def readiness_rows(humanoid: dict[str, Any] | None) -> list[dict[str, Any]]:
         },
         {
             "workstream": "Scenario admission",
-            "completed": 0,
+            "completed": scenarios_complete,
             "expected": 9,
             "unit": "recovery scenarios",
             "scope": "oracle 20/20 plus immutable failure artifacts",
         },
         {
             "workstream": "Internal closed loop",
-            "completed": 0,
+            "completed": internal_complete,
             "expected": 5,
             "unit": "registered methods",
             "scope": "same frozen paired HumanoidArena plan",
@@ -393,6 +437,9 @@ def main() -> int:
         "--recovery-preflight", type=Path, default=DEFAULT_RECOVERY_PREFLIGHT
     )
     parser.add_argument("--storage-cleanup", type=Path, default=DEFAULT_STORAGE_CLEANUP)
+    parser.add_argument("--checkpoint-lock", type=Path, default=DEFAULT_CHECKPOINT_LOCK)
+    parser.add_argument("--admitted-suite", type=Path, default=DEFAULT_ADMITTED_SUITE)
+    parser.add_argument("--internal-progress", type=Path, default=DEFAULT_INTERNAL_PROGRESS)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 
@@ -406,7 +453,10 @@ def main() -> int:
     gr00t_bridge = _load_optional(args.gr00t_bridge_summary.resolve())
     recovery_preflight = _load_optional(args.recovery_preflight.resolve())
     storage_cleanup = _load_optional(args.storage_cleanup.resolve())
-    rows = readiness_rows(humanoid)
+    checkpoint_lock = _load_optional(args.checkpoint_lock.resolve())
+    admitted_suite = _load_optional(args.admitted_suite.resolve())
+    internal_progress = _load_optional(args.internal_progress.resolve())
+    rows = readiness_rows(humanoid, checkpoint_lock, admitted_suite, internal_progress)
     _write_readiness(rows, output_dir)
     _render_readiness(rows, output_dir / "benchmark_readiness.png")
     if retraining is not None:
