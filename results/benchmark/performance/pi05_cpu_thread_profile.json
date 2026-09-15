@@ -1,0 +1,84 @@
+{
+  "environment": {
+    "compile_threads": 32,
+    "interop_threads": 2,
+    "logical_cpu_count": 32
+  },
+  "generated_at": "2026-09-15T05:23:28.420458+00:00",
+  "model_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/models/pi/HSI_boxing/pi05_sonic_boxing_0529/100000/pretrained_model",
+  "precision": "unchanged released float32 CPU policy",
+  "rows": [
+    {
+      "compile_threads": 32,
+      "interop_threads": 2,
+      "load_seconds": 4.01243668099778,
+      "log_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/performance/pi05-cpu/threads-8.log",
+      "mean_seconds": 23.717572891997406,
+      "measured_seconds": [
+        23.73444575999747,
+        23.700700023997342
+      ],
+      "median_seconds": 23.717572891997406,
+      "requests_per_minute": 2.5297698155381116,
+      "threads": 8,
+      "warmup_seconds": [
+        39.16845971199655
+      ]
+    },
+    {
+      "compile_threads": 32,
+      "interop_threads": 2,
+      "load_seconds": 4.002566637995187,
+      "log_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/performance/pi05-cpu/threads-16.log",
+      "mean_seconds": 29.184587525996903,
+      "measured_seconds": [
+        29.861281683995912,
+        28.507893367997895
+      ],
+      "median_seconds": 29.184587525996903,
+      "requests_per_minute": 2.05587966410536,
+      "threads": 16,
+      "warmup_seconds": [
+        44.130611239001155
+      ]
+    },
+    {
+      "compile_threads": 32,
+      "interop_threads": 2,
+      "load_seconds": 5.008730341003684,
+      "log_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/performance/pi05-cpu/threads-24.log",
+      "mean_seconds": 17.52195893550379,
+      "measured_seconds": [
+        17.82058178000443,
+        17.223336091003148
+      ],
+      "median_seconds": 17.52195893550379,
+      "requests_per_minute": 3.4242746613465274,
+      "threads": 24,
+      "warmup_seconds": [
+        29.36359112700302
+      ]
+    },
+    {
+      "compile_threads": 32,
+      "interop_threads": 2,
+      "load_seconds": 4.002779451002425,
+      "log_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/performance/pi05-cpu/threads-32.log",
+      "mean_seconds": 40.24284557050123,
+      "measured_seconds": [
+        40.67480075899948,
+        39.81089038200298
+      ],
+      "median_seconds": 40.24284557050123,
+      "requests_per_minute": 1.4909482455679313,
+      "threads": 32,
+      "warmup_seconds": [
+        52.73413878300198
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "scope": "performance-only synthetic input; not benchmark evidence",
+  "selected_threads": 24,
+  "selection_metric": "lowest steady-state median request latency"
+}

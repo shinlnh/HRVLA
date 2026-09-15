@@ -47,6 +47,7 @@ SONIC_ROOT = (
 MODES = ("base_test", "semantic", "vision", "execution")
 SEEDS = (0, 1, 2)
 REPEATS = 20
+DEFAULT_POLICY_THREADS = min(24, len(os.sched_getaffinity(0)))
 MODEL_REVISION = "da13e072902840e2682afde360b763f1edb76d32"
 SOURCE_REVISION = "68479287a784a69be9ce6ad739311d2f11f75ef9"
 ISAACLAB_REVISION = "46dff135f44683f031edf346e544fcfd8456b2bb"
@@ -557,7 +558,7 @@ def main() -> int:
     parser.add_argument("--repeats", type=int, default=REPEATS)
     parser.add_argument("--record-video-every-n", type=int, default=10)
     parser.add_argument("--step-log-every-n", type=int, default=250)
-    parser.add_argument("--cpu-threads", type=int, default=len(os.sched_getaffinity(0)))
+    parser.add_argument("--cpu-threads", type=int, default=DEFAULT_POLICY_THREADS)
     parser.add_argument("--interop-threads", type=int, default=2)
     parser.add_argument("--compile-threads", type=int, default=len(os.sched_getaffinity(0)))
     parser.add_argument("--server-port", type=int, default=18443)

@@ -91,7 +91,7 @@ unchanged; only orchestration and non-metric I/O differ.
 
 ```bash
 python3 -u scripts/run_humanoidarena_baseline_matrix_fast.py \
-  --cpu-threads 32 --compile-threads 32 --interop-threads 2
+  --cpu-threads 24 --compile-threads 32 --interop-threads 2
 
 python3 scripts/summarize_humanoidarena_baseline_matrix.py --allow-partial
 python3 scripts/render_benchmark_evidence.py
@@ -114,6 +114,14 @@ rendering, and SONIC. Quantization or reduced precision would be a different
 baseline and requires a separately labeled ablation. “Maximum hardware” means
 maximum safe throughput under the unchanged scientific method, not an unsafe
 utilization target.
+
+A fixed-input steady-state profile on the i9-14900K measured median PI0.5
+request latency of 23.72s, 29.18s, 17.52s, and 40.24s at 8, 16, 24, and 32
+intra-op threads respectively. The pipeline therefore uses 24 policy threads;
+this is 2.30× faster than forcing all 32 logical threads. The remaining cores
+serve Isaac Sim, I/O, and orchestration. See the
+[profile JSON](results/benchmark/performance/pi05_cpu_thread_profile.json) and
+[thread-scaling plot](results/benchmark/performance/pi05_cpu_thread_scaling.png).
 
 ## Stop/restart log
 

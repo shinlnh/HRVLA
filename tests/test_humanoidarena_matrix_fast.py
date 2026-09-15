@@ -53,6 +53,7 @@ def test_sim_command_preserves_locked_runtime_contract(tmp_path: Path) -> None:
 
 def test_default_fast_matrix_keeps_full_paper_sample_size() -> None:
     assert len(FAST.TASKS) * len(FAST.MODES) * len(FAST.SEEDS) * FAST.REPEATS == 1680
+    assert FAST.DEFAULT_POLICY_THREADS == min(24, len(FAST.os.sched_getaffinity(0)))
 
 
 def test_cpu_server_keeps_upstream_cuda_discovery_contract(monkeypatch) -> None:

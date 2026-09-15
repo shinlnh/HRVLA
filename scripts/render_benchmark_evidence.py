@@ -12,6 +12,9 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RETRAINING = ROOT / "results" / "retraining" / "paper-seeds" / "summary.json"
 DEFAULT_HUMANOID = ROOT / "results" / "humanoidarena" / "baseline-matrix" / "summary.json"
+DEFAULT_PERFORMANCE = (
+    ROOT / "results" / "benchmark" / "performance" / "pi05_cpu_thread_profile.json"
+)
 DEFAULT_OUTPUT = ROOT / "results" / "benchmark" / "readiness"
 
 
@@ -219,10 +222,33 @@ def _render_humanoid(summary: dict[str, Any], output_path: Path) -> None:
     plt.close(figure)
 
 
+def _render_performance(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    rows = sorted(summary["rows"], key=lambda row: int(row["threads"]))
+    threads = [int(row["threads"]) for row in rows]
+    latency = [float(row["median_seconds"]) for row in rows]
+    selected = int(summary["selected_threads"])
+    colors = ["#2f855a" if value == selected else "#718096" for value in threads]
+    figure, axis = plt.subplots(figsize=(8.4, 4.8), constrained_layout=True)
+    bars = axis.bar([str(value) for value in threads], latency, color=colors)
+    axis.bar_label(bars, fmt="%.2fs")
+    axis.set_xlabel("PI0.5 CPU intra-op threads")
+    axis.set_ylabel("steady-state median request latency (s)")
+    axis.set_title(
+        "i9-14900K thread scaling — exact released PI0.5 precision\n"
+        "Synthetic fixed input for orchestration tuning, not task-success evidence"
+    )
+    axis.grid(axis="y", alpha=0.25)
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--retraining-summary", type=Path, default=DEFAULT_RETRAINING)
     parser.add_argument("--humanoidarena-summary", type=Path, default=DEFAULT_HUMANOID)
+    parser.add_argument("--performance-summary", type=Path, default=DEFAULT_PERFORMANCE)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 
@@ -232,6 +258,7 @@ def main() -> int:
     output_dir = args.output_dir.resolve()
     humanoid = _load_optional(args.humanoidarena_summary.resolve())
     retraining = _load_optional(args.retraining_summary.resolve())
+    performance = _load_optional(args.performance_summary.resolve())
     rows = readiness_rows(humanoid)
     _write_readiness(rows, output_dir)
     _render_readiness(rows, output_dir / "benchmark_readiness.png")
@@ -241,6 +268,11 @@ def main() -> int:
     if humanoid is not None:
         humanoid_output = args.humanoidarena_summary.resolve().parent / "partial_progress.png"
         _render_humanoid(humanoid, humanoid_output)
+    if performance is not None:
+        performance_output = (
+            args.performance_summary.resolve().parent / "pi05_cpu_thread_scaling.png"
+        )
+        _render_performance(performance, performance_output)
     return 0
 
 
