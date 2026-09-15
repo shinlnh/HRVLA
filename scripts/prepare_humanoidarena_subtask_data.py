@@ -86,6 +86,37 @@ FAST_TASK_DATASETS = {
 }
 
 
+def _adjudication_index(lock: dict[str, Any]) -> dict[tuple[str, int], dict[str, Any]]:
+    policy = lock["subtask_rt_dataset"].get("temporal_video_adjudication")
+    if not policy or policy.get("status") != "ready":
+        return {}
+    path = (ROOT / policy["report_path"]).resolve()
+    if not path.is_file():
+        raise FileNotFoundError(f"frozen temporal adjudication report is missing: {path}")
+    report = load_json(path)
+    audit_sha256 = report.get("audit_sha256")
+    core = {key: value for key, value in report.items() if key != "audit_sha256"}
+    if canonical_sha256(core) != audit_sha256 or audit_sha256 != policy["report_sha256"]:
+        raise ValueError("temporal adjudication report differs from the frozen lock")
+    if report.get("status") != "pass":
+        raise ValueError("temporal adjudication report was not admitted")
+    if report.get("source_manifest_sha256") != lock["source_dataset"]["manifest_sha256"]:
+        raise ValueError("temporal adjudication used a different source dataset")
+    if report.get("method_program_sha256") != lock["method_program_sha256"]:
+        raise ValueError("temporal adjudication used different method programs")
+    if report.get("model_revision") != policy["model_revision"]:
+        raise ValueError("temporal adjudication used a different model revision")
+    output: dict[tuple[str, int], dict[str, Any]] = {}
+    for row in report["records"]:
+        if not row["consensus"].get("accepted"):
+            continue
+        key = (str(row["split"]), int(row["episode_index"]))
+        if key in output:
+            raise ValueError(f"duplicate temporal adjudication record: {key}")
+        output[key] = row
+    return output
+
+
 def _episode_arrays(path: Path) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
     import pandas as pd
 
@@ -100,6 +131,7 @@ def _analyze_split(
     split: str,
     programs: dict[str, Any],
     minimum_phase_frames: int,
+    adjudications: dict[tuple[str, int], dict[str, Any]] | None = None,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     source_split = source / split
     episode_rows = [
@@ -116,12 +148,19 @@ def _analyze_split(
         program = next(
             item for item in programs["tasks"] if item["humanoidarena_task_key"] == task_key
         )
+        adjudication = (adjudications or {}).get((split, episode))
         segmentation = segment_subtasks(
             task_key,
             states,
             actions,
             skill_count=len(program["skills"]),
             minimum_phase_frames=minimum_phase_frames,
+            boundary_override=(
+                list(adjudication["consensus"]["boundaries"])
+                if adjudication is not None
+                else None
+            ),
+            boundary_override_audit=(adjudication["consensus"] if adjudication else None),
         )
         audits.append(
             {
@@ -139,6 +178,7 @@ def materialize_split(
     split: str,
     programs: dict[str, Any],
     lock: dict[str, Any],
+    adjudications: dict[tuple[str, int], dict[str, Any]],
 ) -> dict[str, Any]:
     import pandas as pd
 
@@ -149,7 +189,7 @@ def materialize_split(
     if target.exists():
         raise FileExistsError(f"refusing to overwrite existing ST split: {target}")
     minimum = int(lock["subtask_rt_dataset"]["minimum_phase_frames"])
-    rows, audits = _analyze_split(source, split, programs, minimum)
+    rows, audits = _analyze_split(source, split, programs, minimum, adjudications)
     fallback_rate = sum(row["fallback_used"] for row in audits) / len(audits)
     maximum = float(lock["subtask_rt_dataset"]["maximum_episode_fallback_rate"])
     if fallback_rate > maximum:
@@ -169,12 +209,19 @@ def materialize_split(
         frame, states, actions = _episode_arrays(source_parquet)
         task_key = _source_task_key(row, programs)
         indices = program_indices[task_key]
+        adjudication = adjudications.get((split, episode))
         segmentation = segment_subtasks(
             task_key,
             states,
             actions,
             skill_count=len(indices),
             minimum_phase_frames=minimum,
+            boundary_override=(
+                list(adjudication["consensus"]["boundaries"])
+                if adjudication is not None
+                else None
+            ),
+            boundary_override_audit=(adjudication["consensus"] if adjudication else None),
         )
         frame["task_index"] = np.asarray(indices, dtype=np.int64)[segmentation.labels]
         if "annotation.human.task_description" in frame:
@@ -270,6 +317,7 @@ def main() -> int:
     if _file_sha256(source / "split_manifest.json") != lock["source_dataset"]["manifest_sha256"]:
         raise ValueError("source dataset manifest differs from the RT training lock")
     output_root = (ROOT / lock["subtask_rt_dataset"]["path"]).resolve()
+    adjudications = _adjudication_index(lock)
     splits = args.split or list(lock["subtask_rt_dataset"]["splits_materialized_before_selection"])
     if args.audit_only:
         split_reports = {}
@@ -279,6 +327,7 @@ def main() -> int:
                 split,
                 programs,
                 int(lock["subtask_rt_dataset"]["minimum_phase_frames"]),
+                adjudications,
             )
             split_reports[split] = {
                 "episodes": len(rows),
@@ -351,7 +400,10 @@ def main() -> int:
             plt.close(figure)
         print(json.dumps(report, indent=2, sort_keys=True))
         return 0
-    reports = [materialize_split(source, output_root, split, programs, lock) for split in splits]
+    reports = [
+        materialize_split(source, output_root, split, programs, lock, adjudications)
+        for split in splits
+    ]
     print(
         json.dumps(
             {

@@ -164,6 +164,8 @@ def segment_subtasks(
     *,
     skill_count: int,
     minimum_phase_frames: int = 40,
+    boundary_override: list[int] | None = None,
+    boundary_override_audit: dict[str, Any] | None = None,
 ) -> Segmentation:
     """Return monotonic per-frame skill labels and explicit proxy diagnostics."""
 
@@ -256,6 +258,29 @@ def segment_subtasks(
             )
         boundaries.append(boundary)
         previous = boundary
+    fallback_avoided = False
+    state_action_proxy = proxy
+    state_action_proxy_details = proxy_details
+    if fallback_reasons and boundary_override is not None:
+        if boundary_override_audit is None or not boundary_override_audit.get("accepted"):
+            raise ValueError("boundary override requires an accepted adjudication audit")
+        override = [int(item) for item in boundary_override]
+        phase_counts = np.diff(np.asarray([0, *override, length], dtype=np.int64))
+        if (
+            len(override) != skill_count - 1
+            or override != sorted(set(override))
+            or np.any(phase_counts < minimum_phase_frames)
+        ):
+            raise ValueError("adjudicated boundaries violate the frozen phase contract")
+        boundaries = override
+        fallback_reasons = []
+        fallback_avoided = True
+        proxy = "cosmos-reason2-temporal-consensus"
+        proxy_details = {
+            "state_action_proxy": state_action_proxy,
+            "state_action_proxy_details": state_action_proxy_details,
+            "adjudication": boundary_override_audit,
+        }
     if len(boundaries) != skill_count - 1 or boundaries != sorted(set(boundaries)):
         raise AssertionError("subtask boundaries are not strictly monotonic")
 
@@ -279,6 +304,7 @@ def segment_subtasks(
         "proxy_details": proxy_details,
         "phase_frame_counts": counts.tolist(),
         "fallback_used": bool(fallback_reasons),
+        "fallback_avoided_by_adjudication": fallback_avoided,
         "fallback_reasons": fallback_reasons,
     }
     return Segmentation(labels=labels.astype(np.int64), audit=audit)

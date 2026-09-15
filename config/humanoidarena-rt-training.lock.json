@@ -12,6 +12,19 @@
     "label_source": "robot-state/action weak temporal proxies with explicit fallback audit; evaluation uses different source-backed simulator predicates",
     "minimum_phase_frames": 40,
     "maximum_episode_fallback_rate": 0.05,
+    "temporal_video_adjudication": {
+      "status": "pending",
+      "eligible_tasks": ["open_door", "pp_box"],
+      "policy": "only episodes rejected by the frozen state/action proxy; three staggered contact-sheet samples must reach confidence and boundary-spread consensus",
+      "model_repo_id": "nvidia/Cosmos-Reason2-2B",
+      "model_revision": "9ce19a195e423419c349abfc86fd07178b230561",
+      "sample_frames_per_variant": 24,
+      "sampling_variants": 3,
+      "minimum_boundary_confidence": 0.7,
+      "maximum_boundary_spread_fraction": 0.08,
+      "report_path": "results/benchmark/retraining/subtask_video_adjudication.json",
+      "report_sha256": null
+    },
     "splits_materialized_before_selection": ["train", "validation"],
     "hidden_locked_until_validation_selection": true,
     "manifests": {"train": null, "validation": null, "heldout": null}
