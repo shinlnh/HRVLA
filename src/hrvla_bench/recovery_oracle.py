@@ -69,6 +69,8 @@ def validate_oracle_lock(lock: dict[str, Any], suite: dict[str, Any]) -> None:
         raise ValueError("recovery admission requires a predeclared 20/20 oracle")
     if protocol.get("policy_seed_is_the_only_varied_factor") is not True:
         raise ValueError("oracle trials must vary only the locked policy seed")
+    if protocol.get("record_all_trials") is not True:
+        raise ValueError("oracle admission requires video evidence for every trial")
 
     scenario_ids = {
         scenario["id"] for task in suite["tasks"] for scenario in task["scenarios"]
@@ -160,6 +162,11 @@ def evaluate_oracle_trials(
             raise ValueError(f"{scenario_id}/trial-{index}: success must be boolean")
         if row["success"] != (row.get("failure_reason") == "success"):
             raise ValueError(f"{scenario_id}/trial-{index}: success/reason mismatch")
+        if lock["protocol"].get("record_all_trials") is True:
+            if row.get("video_recorded") is not True or not str(
+                row.get("video_path", "")
+            ).strip():
+                raise ValueError(f"{scenario_id}/trial-{index}: required video is missing")
         protocol_evidence_key = (
             "failure_start_trial_audit_sha256"
             if scenario["protocol"] == "failure_start"

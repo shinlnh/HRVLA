@@ -24,8 +24,7 @@
     "success": "the unchanged upstream task reward reaches raw_total >= 1 within the suite horizon",
     "infrastructure_failures_are_trials": false,
     "failed_behavioral_trials_are_preserved": true,
-    "record_video_trial_indices": [0],
-    "record_all_behavioral_failures": true
+    "record_all_trials": true
   },
   "resource_profile": {
     "policy_device": "cpu",

@@ -65,6 +65,11 @@ policy seeds vary independently, while the simulator is reset with the capture
 seed and the full declared state hash must match. Online trials restore initial
 state then inject once; failure-start trials restore the post-failure state and
 never reinject it.
+The 180-trial oracle launcher is implemented with 20 episodes per persistent
+scenario simulator, one task-shared PI0.5 CPU server, isolated per-trial hashes,
+and video for every trial. Resume preserves failed attempt directories. A missed
+online trigger is a recorded behavioral failure, not a reroll; any such row
+fails the frozen 20/20 gate.
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized

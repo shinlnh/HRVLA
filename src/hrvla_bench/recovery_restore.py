@@ -103,6 +103,47 @@ def restore_snapshot_for_trial(
     return report
 
 
+def validate_restore_audit(
+    restore: dict[str, Any],
+    *,
+    expected_snapshot_sha256: str,
+    expected_task_id: str,
+    expected_event_id: str,
+    expected_simulator_revision: str,
+    expected_policy_rollout_seed: int,
+) -> str:
+    """Recompute a restore report's hashes and locked provenance."""
+
+    claimed = restore.get("audit_sha256")
+    core = {key: value for key, value in restore.items() if key != "audit_sha256"}
+    if claimed != canonical_sha256(core):
+        raise ValueError("restore audit content hash differs")
+    expected = {
+        "snapshot_sha256": expected_snapshot_sha256,
+        "task_id": expected_task_id,
+        "event_id": expected_event_id,
+        "simulator_revision": expected_simulator_revision,
+        "environment_index": 0,
+        "policy_rollout_seed": int(expected_policy_rollout_seed),
+        "restore_validated": True,
+    }
+    for key, value in expected.items():
+        if restore.get(key) != value:
+            raise ValueError(f"restore audit {key} differs")
+    source_snapshot_path = Path(str(restore.get("snapshot_path", ""))).resolve()
+    source_snapshot = load_snapshot(source_snapshot_path)
+    if source_snapshot["snapshot_sha256"] != expected_snapshot_sha256:
+        raise ValueError("restore source snapshot content address differs")
+    if _file_sha256(source_snapshot_path) != restore.get("snapshot_file_sha256"):
+        raise ValueError("restore source snapshot file hash differs")
+    source_state_sha = snapshot_state_sha256(source_snapshot)
+    if source_state_sha != restore.get("source_state_sha256"):
+        raise ValueError("restore source state hash differs")
+    if restore.get("readback_state_sha256") != source_state_sha:
+        raise ValueError("restore readback state hash differs")
+    return str(claimed)
+
+
 def audit_failure_start_trial(
     suite: dict[str, Any],
     scenario_id: str,
@@ -135,29 +176,15 @@ def audit_failure_start_trial(
     if not all(isinstance(value, dict) for value in (restore, summary, result)):
         raise ValueError("failure-start trial sidecars must be JSON objects")
 
-    claimed_restore_hash = restore.get("audit_sha256")
-    restore_core = {key: value for key, value in restore.items() if key != "audit_sha256"}
-    if claimed_restore_hash != canonical_sha256(restore_core):
-        raise ValueError("failure-start restore audit hash differs")
-    if restore.get("restore_validated") is not True:
-        raise ValueError("failure-start snapshot did not pass state readback")
-    if restore.get("snapshot_sha256") != expected_snapshot_sha256:
-        raise ValueError("failure-start snapshot differs from the capture manifest")
-    if restore.get("task_id") != task["id"] or restore.get("event_id") != scenario_id:
-        raise ValueError("failure-start restore identity differs")
     expected_simulator = suite["reference_stack"]["isaac_lab_revision"]
-    if restore.get("simulator_revision") != expected_simulator:
-        raise ValueError("failure-start restore simulator revision differs")
-    source_snapshot_path = Path(str(restore.get("snapshot_path", ""))).resolve()
-    source_snapshot = load_snapshot(source_snapshot_path)
-    if source_snapshot["snapshot_sha256"] != expected_snapshot_sha256:
-        raise ValueError("failure-start source snapshot content address differs")
-    if _file_sha256(source_snapshot_path) != restore.get("snapshot_file_sha256"):
-        raise ValueError("failure-start source snapshot file hash differs")
-    if snapshot_state_sha256(source_snapshot) != restore.get("source_state_sha256"):
-        raise ValueError("failure-start source state hash differs")
-    if restore.get("readback_state_sha256") != restore.get("source_state_sha256"):
-        raise ValueError("failure-start restore readback hash differs")
+    claimed_restore_hash = validate_restore_audit(
+        restore,
+        expected_snapshot_sha256=expected_snapshot_sha256,
+        expected_task_id=task["id"],
+        expected_event_id=scenario_id,
+        expected_simulator_revision=expected_simulator,
+        expected_policy_rollout_seed=int(summary["episode_seed"]),
+    )
 
     expected_summary = {
         "suite_sha256": canonical_sha256(suite),
@@ -206,4 +233,8 @@ def audit_failure_start_trial(
     return {**core, "audit_sha256": canonical_sha256(core)}
 
 
-__all__ = ["audit_failure_start_trial", "restore_snapshot_for_trial"]
+__all__ = [
+    "audit_failure_start_trial",
+    "restore_snapshot_for_trial",
+    "validate_restore_audit",
+]

@@ -11,6 +11,7 @@ from typing import Any
 from .isaac_snapshot import load_snapshot
 from .plan import canonical_sha256
 from .recovery_injector_contract import validate_recovery_injector_contract
+from .recovery_restore import validate_restore_audit
 
 
 EXPECTED_SCENE_AUDIT_EVENT = {
@@ -327,20 +328,16 @@ def audit_recovery_runtime_trace(
     restore_path = output_dir / "restore-audit.json"
     if start_snapshot_sha is not None:
         restore_report = _json(restore_path)
-        claimed_restore_hash = restore_report.get("audit_sha256")
-        restore_core = {
-            key: value for key, value in restore_report.items() if key != "audit_sha256"
-        }
-        if claimed_restore_hash != canonical_sha256(restore_core):
-            raise ValueError("restore audit content hash differs")
+        claimed_restore_hash = validate_restore_audit(
+            restore_report,
+            expected_snapshot_sha256=str(start_snapshot_sha),
+            expected_task_id=task["id"],
+            expected_event_id="initial",
+            expected_simulator_revision=reset["simulator_revision"],
+            expected_policy_rollout_seed=episode_seed,
+        )
         if claimed_restore_hash != restore_audit_sha:
             raise ValueError("restore audit hash differs from runtime summary")
-        if restore_report.get("snapshot_sha256") != start_snapshot_sha:
-            raise ValueError("restored snapshot hash differs from runtime summary")
-        if restore_report.get("restore_validated") is not True:
-            raise ValueError("start snapshot did not pass immediate state readback")
-        if int(restore_report.get("policy_rollout_seed", -1)) != episode_seed:
-            raise ValueError("restore audit policy seed differs from runtime summary")
     elif restore_path.exists():
         raise ValueError("capture-only runtime unexpectedly contains a restore audit")
 

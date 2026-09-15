@@ -222,6 +222,16 @@ and then runs its semantic injector; `failure_start` restores the post-failure
 state and explicitly does not inject again. Restore-only outcomes are checked by
 `scripts/audit_humanoidarena_failure_start_trial.py`.
 
+`scripts/run_humanoidarena_recovery_oracle.py` consumes the completed capture
+manifest and executes all 180 frozen witness trials. It batches 20 policy seeds
+inside one persistent Isaac process per scenario and keeps one CPU policy server
+per task, while writing isolated `trial-NNNN` sidecars so provider state and
+evidence cannot cross episodes. Every trial is video-recorded. Failed or partial
+process attempts remain in numbered directories; only independently re-audited
+records enter the 20/20 report. An online rollout that never reaches its locked
+injection boundary is retained as `failure_not_injected` and rejects admission.
+The launcher refuses to overlap either the external matrix or runtime capture.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1

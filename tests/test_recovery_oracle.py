@@ -72,6 +72,8 @@ def _records(scenario_id: str, *, successes: int = 20) -> list[dict]:
             "success": success,
             "failure_reason": "success" if success else "timeout",
             "episode_result_sha256": f"{index + 1:064x}",
+            "video_recorded": True,
+            "video_path": f"trial-{index:04d}.mp4",
         }
         evidence_key = (
             "failure_start_trial_audit_sha256"
