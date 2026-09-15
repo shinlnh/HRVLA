@@ -8,13 +8,13 @@
     "root_z": 1
   },
   "checks": {
-    "actual_storage_bytes_excluding_symlink_targets": 345791543,
+    "actual_storage_bytes_excluding_symlink_targets": 345817703,
     "all_episode_memberships_match_manifest": true,
+    "all_splits_disjoint_per_task": true,
     "dense_episode_ids": true,
-    "lowdim_roundtrip_rows": 28,
+    "lowdim_roundtrip_rows": 42,
     "packed_video_symlinks": 700,
-    "pixel_exact_samples": 14,
-    "train_heldout_disjoint_per_task": true
+    "pixel_exact_samples": 21
   },
   "claim_boundary": "dataset/action-interface validation only; not policy quality, task success, or recovery",
   "modality_sha256": "sha256:25afee169fad127880548c22ac928885bfd47201fba2af144020eb149f456943",
@@ -52,11 +52,11 @@
       "split": "train"
     },
     {
-      "local_frame_index": 1034,
-      "packed_frame_index": 2794,
-      "pixel_sha256": "e46046fa1063d2a25f082014cd709319c8d8f5952870a8cb301088cf9f126788",
+      "local_frame_index": 366,
+      "packed_frame_index": 4195,
+      "pixel_sha256": "9dce0a892db23cbc43f286519f58cdfb1033bb08ccd3c06e2ff17e34aff08822",
       "source_dataset": "HSI_open_door/sonic_refpose_v3_1",
-      "source_episode_index": 1,
+      "source_episode_index": 2,
       "split": "train"
     },
     {
@@ -74,6 +74,62 @@
       "source_dataset": "HSI_vision_navi/sonic_refpose_v3_1",
       "source_episode_index": 2,
       "split": "train"
+    },
+    {
+      "local_frame_index": 823,
+      "packed_frame_index": 4610,
+      "pixel_sha256": "a33cf93fed128a050430070a72911245c5eb3c9f073cd800dcf8cdfc3b671094",
+      "source_dataset": "HOI_double_desk/sonic_refpose_v3_1",
+      "source_episode_index": 3,
+      "split": "validation"
+    },
+    {
+      "local_frame_index": 190,
+      "packed_frame_index": 7482,
+      "pixel_sha256": "66ee942b2c1efff032649a544bea37566c6a656e36ac89b73960f5f2cb2d1c35",
+      "source_dataset": "HOI_football/sonic_refpose_v3_1",
+      "source_episode_index": 25,
+      "split": "validation"
+    },
+    {
+      "local_frame_index": 277,
+      "packed_frame_index": 11173,
+      "pixel_sha256": "3aa1822288a838d1dd13d1fa9059b55822ea1b63c0f8defb397d0e6c13bc2aa6",
+      "source_dataset": "HOI_pp_box/sonic_refpose_v3_1",
+      "source_episode_index": 48,
+      "split": "validation"
+    },
+    {
+      "local_frame_index": 303,
+      "packed_frame_index": 7478,
+      "pixel_sha256": "b86fe07005377a62311c51eca958d4e6f74a8e0a51ca1cd1087d149afdb06a6b",
+      "source_dataset": "HSI_boxing/sonic_refpose_v3_1",
+      "source_episode_index": 13,
+      "split": "validation"
+    },
+    {
+      "local_frame_index": 1034,
+      "packed_frame_index": 2794,
+      "pixel_sha256": "e46046fa1063d2a25f082014cd709319c8d8f5952870a8cb301088cf9f126788",
+      "source_dataset": "HSI_open_door/sonic_refpose_v3_1",
+      "source_episode_index": 1,
+      "split": "validation"
+    },
+    {
+      "local_frame_index": 343,
+      "packed_frame_index": 5028,
+      "pixel_sha256": "7d74707d455dc0629450b97649cdf0a555326b5bb8602cb5c56f4de61f872063",
+      "source_dataset": "HSI_sit_sofa/sonic_refpose_v3_1",
+      "source_episode_index": 6,
+      "split": "validation"
+    },
+    {
+      "local_frame_index": 773,
+      "packed_frame_index": 17950,
+      "pixel_sha256": "6bf9cc7fd58a1e26c7e71e1caf497b28eabedfc70ed2931fb3917ef3496e1483",
+      "source_dataset": "HSI_vision_navi/sonic_refpose_v3_1",
+      "source_episode_index": 14,
+      "split": "validation"
     },
     {
       "local_frame_index": 601,
@@ -145,50 +201,64 @@
       "heldout_episodes": 20,
       "heldout_frames": 21273,
       "task": "HOI_double_desk",
-      "train_episodes": 80,
-      "train_frames": 81347
+      "train_episodes": 70,
+      "train_frames": 70418,
+      "validation_episodes": 10,
+      "validation_frames": 10929
     },
     {
       "heldout_episodes": 20,
       "heldout_frames": 11522,
       "task": "HOI_football",
-      "train_episodes": 80,
-      "train_frames": 44804
+      "train_episodes": 70,
+      "train_frames": 38375,
+      "validation_episodes": 10,
+      "validation_frames": 6429
     },
     {
       "heldout_episodes": 20,
       "heldout_frames": 12839,
       "task": "HOI_pp_box",
-      "train_episodes": 80,
-      "train_frames": 56337
+      "train_episodes": 70,
+      "train_frames": 50266,
+      "validation_episodes": 10,
+      "validation_frames": 6071
     },
     {
       "heldout_episodes": 20,
       "heldout_frames": 11069,
       "task": "HSI_boxing",
-      "train_episodes": 80,
-      "train_frames": 44702
+      "train_episodes": 70,
+      "train_frames": 38511,
+      "validation_episodes": 10,
+      "validation_frames": 6191
     },
     {
       "heldout_episodes": 20,
       "heldout_frames": 16580,
       "task": "HSI_open_door",
-      "train_episodes": 80,
-      "train_frames": 66547
+      "train_episodes": 70,
+      "train_frames": 57580,
+      "validation_episodes": 10,
+      "validation_frames": 8967
     },
     {
       "heldout_episodes": 20,
       "heldout_frames": 14159,
       "task": "HSI_sit_sofa",
-      "train_episodes": 80,
-      "train_frames": 56808
+      "train_episodes": 70,
+      "train_frames": 49948,
+      "validation_episodes": 10,
+      "validation_frames": 6860
     },
     {
       "heldout_episodes": 20,
       "heldout_frames": 23817,
       "task": "HSI_vision_navi",
-      "train_episodes": 80,
-      "train_frames": 84656
+      "train_episodes": 70,
+      "train_frames": 75829,
+      "validation_episodes": 10,
+      "validation_frames": 8827
     }
   ],
   "totals": {
@@ -197,9 +267,13 @@
       "frames": 111259
     },
     "train": {
-      "episodes": 560,
-      "frames": 435201
+      "episodes": 490,
+      "frames": 380927
+    },
+    "validation": {
+      "episodes": 70,
+      "frames": 54274
     }
   },
-  "view_manifest_sha256": "9db84e404876c60ec9cf52ba5114fd03489fadda018e26198e7af52df2db9ce2"
+  "view_manifest_sha256": "7695a09acc9d94fe3152fd4822ddae81371ed5b90360ef0825209a1132e255d3"
 }

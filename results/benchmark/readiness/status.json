@@ -27,9 +27,9 @@
       "workstream": "VLA retraining"
     },
     {
-      "completed": 2,
+      "completed": 3,
       "expected": 84,
-      "percent": 2.380952380952381,
+      "percent": 3.5714285714285716,
       "scope": "direct external rerun; partial non-claim",
       "unit": "HumanoidArena cells",
       "workstream": "PI0.5 + SONIC"

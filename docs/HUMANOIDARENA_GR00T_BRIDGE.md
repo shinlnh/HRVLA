@@ -71,20 +71,19 @@ their original behavior.
 
 ## Current validation evidence
 
-The frozen view contains 560 training episodes (435,201 frames) and 140 held-out
-episodes (111,259 frames), exactly 80/20 inside each of the seven tasks. All 700
-source memberships match the manifest, all video paths are symlinks, 28 sampled
-low-dimensional endpoint rows reconstruct state64/action40 losslessly, and 14
-mid-episode frames spanning every task and both splits match direct packed-video
-decoding pixel-for-pixel. The view occupies 345,791,543 local bytes excluding
-the immutable source-video targets.
+The final frozen view contains 490 training episodes (380,927 frames), 70
+validation episodes (54,274 frames), and 140 hidden-test episodes (111,259
+frames): exactly 70/10/20 inside each of the seven tasks. The hidden membership
+is identical to the earlier frozen 80/20 view. Validation is the only split
+allowed for checkpoint or hyperparameter selection; hidden-test actions and
+outcomes must not be inspected until the configuration is locked.
 
-Before checkpoint training, the final view builder additionally freezes a 10%
-validation slice out of the original training membership. This produces 70
-train, 10 validation, and 20 hidden-test episodes per task while preserving the
-already frozen 20 hidden IDs exactly. Validation is the only split allowed for
-checkpoint or hyperparameter selection; hidden-test actions and outcomes must
-not be inspected until the configuration is locked.
+All 700 source memberships match the manifest, all video paths are symlinks, 42
+sampled low-dimensional endpoint rows reconstruct state64/action40 losslessly,
+and 21 mid-episode frames spanning every task and every split match direct
+packed-video decoding pixel-for-pixel. The view occupies 345,817,703 local
+bytes excluding the immutable source-video targets. Its manifest SHA-256 is
+`7695a09acc9d94fe3152fd4822ddae81371ed5b90360ef0825209a1132e255d3`.
 
 See the [machine-readable validation report](../results/humanoidarena/gr00t-bridge/validation.json)
 and [dataset split plot](../results/humanoidarena/gr00t-bridge/dataset_split.png).

@@ -37,6 +37,13 @@ Deleted from `_artifacts/retraining`:
 Approximately **202 GiB** was reclaimed. Free filesystem space increased from
 about 189 GiB to about 391 GiB.
 
+After the three-way HumanoidArena split passed membership, pixel, and
+state/action round-trip validation, the superseded 335 MiB two-way derived view
+was removed and the validated 70/10/20 view took its canonical path. The
+immutable source dataset remains local and at the locked Hugging Face revision;
+the builder, final manifest hash, validation JSON, and plot are tracked, so the
+deleted derived view is reproducible and is not claim evidence.
+
 ## Explicitly retained
 
 - `_artifacts/retraining/.../checkpoint-300` for the selected ST-RT and STR-RT

@@ -6,36 +6,51 @@
   "benchmark": "HumanoidArena",
   "by_mode": {
     "base_test": {
-      "episodes": 51,
-      "failures": 16,
-      "mean_success_steps": 290.42857142857144,
+      "episodes": 60,
+      "failures": 18,
+      "mean_success_steps": 283.76190476190476,
       "result_reason_counts": {
-        "success": 35,
-        "timeout": 16
+        "success": 42,
+        "timeout": 18
       },
-      "success_rate": 0.6862745098039216,
+      "success_rate": 0.7,
       "success_rate_wilson_95": [
-        0.5497300046930566,
-        0.7967232153447456
+        0.5749129205308552,
+        0.8010183386123089
       ],
-      "successes": 35
+      "successes": 42
+    },
+    "semantic": {
+      "episodes": 5,
+      "failures": 1,
+      "mean_success_steps": 217.75,
+      "result_reason_counts": {
+        "success": 4,
+        "timeout": 1
+      },
+      "success_rate": 0.8,
+      "success_rate_wilson_95": [
+        0.37553462976252533,
+        0.9637758913675698
+      ],
+      "successes": 4
     }
   },
   "by_seed": {
     "0": {
-      "episodes": 20,
-      "failures": 6,
-      "mean_success_steps": 215.78571428571428,
+      "episodes": 25,
+      "failures": 7,
+      "mean_success_steps": 216.22222222222223,
       "result_reason_counts": {
-        "success": 14,
-        "timeout": 6
+        "success": 18,
+        "timeout": 7
       },
-      "success_rate": 0.7,
+      "success_rate": 0.72,
       "success_rate_wilson_95": [
-        0.4810271816464765,
-        0.8545227551323956
+        0.5242339480963842,
+        0.8571614614904344
       ],
-      "successes": 14
+      "successes": 18
     },
     "1": {
       "episodes": 20,
@@ -53,69 +68,83 @@
       "successes": 12
     },
     "2": {
-      "episodes": 11,
-      "failures": 2,
-      "mean_success_steps": 288.3333333333333,
+      "episodes": 20,
+      "failures": 4,
+      "mean_success_steps": 271.75,
       "result_reason_counts": {
-        "success": 9,
-        "timeout": 2
+        "success": 16,
+        "timeout": 4
       },
-      "success_rate": 0.8181818181818182,
+      "success_rate": 0.8,
       "success_rate_wilson_95": [
-        0.523019438039156,
-        0.9486323102539149
+        0.5839825677481064,
+        0.919342337420202
       ],
-      "successes": 9
+      "successes": 16
     }
   },
   "by_task": {
     "boxing": {
-      "episodes": 51,
-      "failures": 16,
-      "mean_success_steps": 290.42857142857144,
+      "episodes": 65,
+      "failures": 19,
+      "mean_success_steps": 278.0217391304348,
       "result_reason_counts": {
-        "success": 35,
-        "timeout": 16
+        "success": 46,
+        "timeout": 19
       },
-      "success_rate": 0.6862745098039216,
+      "success_rate": 0.7076923076923077,
       "success_rate_wilson_95": [
-        0.5497300046930566,
-        0.7967232153447456
+        0.5880396276349971,
+        0.8041658901232009
       ],
-      "successes": 35
+      "successes": 46
     }
   },
   "by_task_mode": {
     "base_test/boxing": {
-      "episodes": 51,
-      "failures": 16,
-      "mean_success_steps": 290.42857142857144,
+      "episodes": 60,
+      "failures": 18,
+      "mean_success_steps": 283.76190476190476,
       "result_reason_counts": {
-        "success": 35,
-        "timeout": 16
+        "success": 42,
+        "timeout": 18
       },
-      "success_rate": 0.6862745098039216,
+      "success_rate": 0.7,
       "success_rate_wilson_95": [
-        0.5497300046930566,
-        0.7967232153447456
+        0.5749129205308552,
+        0.8010183386123089
       ],
-      "successes": 35
+      "successes": 42
+    },
+    "semantic/boxing": {
+      "episodes": 5,
+      "failures": 1,
+      "mean_success_steps": 217.75,
+      "result_reason_counts": {
+        "success": 4,
+        "timeout": 1
+      },
+      "success_rate": 0.8,
+      "success_rate_wilson_95": [
+        0.37553462976252533,
+        0.9637758913675698
+      ],
+      "successes": 4
     }
   },
   "claim_status": "partial_non_claim",
   "dataset_revision": "a079beddd6b1521f762c991be8f36993f17ebeca",
-  "generated_at": "2026-09-15T04:58:39.050364+00:00",
+  "generated_at": "2026-09-15T06:15:28.983631+00:00",
   "includes_ours": false,
   "isaaclab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",
   "matrix": {
-    "cells_complete": 2,
+    "cells_complete": 3,
     "cells_expected": 84,
-    "cells_with_observations": 3,
+    "cells_with_observations": 4,
     "duplicate_identities": [],
-    "episodes_complete": 51,
+    "episodes_complete": 65,
     "episodes_expected": 1680,
     "invalid_cells": [
-      "base_test/boxing/seed-2",
       "semantic/boxing/seed-0",
       "semantic/boxing/seed-1",
       "semantic/boxing/seed-2",
@@ -223,19 +252,19 @@
   "method": "released PI0.5 task checkpoint with SONIC whole-body controller",
   "model_revision": "da13e072902840e2682afde360b763f1edb76d32",
   "overall": {
-    "episodes": 51,
-    "failures": 16,
-    "mean_success_steps": 290.42857142857144,
+    "episodes": 65,
+    "failures": 19,
+    "mean_success_steps": 278.0217391304348,
     "result_reason_counts": {
-      "success": 35,
-      "timeout": 16
+      "success": 46,
+      "timeout": 19
     },
-    "success_rate": 0.6862745098039216,
+    "success_rate": 0.7076923076923077,
     "success_rate_wilson_95": [
-      0.5497300046930566,
-      0.7967232153447456
+      0.5880396276349971,
+      0.8041658901232009
     ],
-    "successes": 35
+    "successes": 46
   },
   "schema_version": 1,
   "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9"
