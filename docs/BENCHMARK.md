@@ -106,6 +106,14 @@ not be silently conjoined with or removed from the upstream binary task reward.
 Run `scripts/audit_humanoidarena_recovery_contract.py` to hash those source
 files and expose the still-missing snapshot, runtime-injector, and oracle gates.
 
+Initial and failure-start states use
+`src/hrvla_bench/isaac_snapshot.py`. A snapshot contains the exact 13-value root
+state and, for articulations, ordered joint position/velocity values for every
+declared scene asset. Task/event/seed/step and simulator revision are inside the
+canonical SHA-256 envelope. Restore rejects hash or joint-order drift and uses
+Isaac Lab's public root/joint state writers. Wall-clock timestamps are excluded,
+so an identical simulator state has an identical content address.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1

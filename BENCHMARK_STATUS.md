@@ -22,6 +22,9 @@ Recovery admission remains 0/9. Static provenance now resolves and hashes all
 definitions that were stronger than the simulator code. Initial/failure
 snapshots, nine runtime injectors, and independent 20/20 oracle trials remain
 unexecuted and are shown separately in the tracked admission-preflight plot.
+The hash-addressed Isaac Lab capture/restore implementation is now tested, but
+the gate stays at 0/10 until the seven initial and three failure snapshots are
+captured from the locked live simulator and independently replayed.
 
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized
