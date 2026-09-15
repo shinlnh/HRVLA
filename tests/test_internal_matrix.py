@@ -187,6 +187,15 @@ def test_checkpoint_lock_accepts_an_audited_cpu_fallback_only_after_failed_probe
             method_program_sha256=PROGRAM_SHA,
             internal_protocol_sha256=PROTOCOL_SHA,
         )
+    lock["coexistence_probe"]["gpu_attempt"] = {
+        "status": "fail",
+        "error": "RuntimeError: CUDA out of memory",
+    }
+    validate_ready_checkpoint_lock(
+        lock,
+        method_program_sha256=PROGRAM_SHA,
+        internal_protocol_sha256=PROTOCOL_SHA,
+    )
 
 
 def test_plan_cells_group_rollouts_without_losing_pairing() -> None:

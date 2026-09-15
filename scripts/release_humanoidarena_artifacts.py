@@ -320,6 +320,11 @@ def compile_lock(args: argparse.Namespace) -> int:
         raise ValueError("coexistence probe policy_device is unresolved")
     if type(probe.get("measured_peak_compute_vram_mib")) not in {int, float}:
         raise ValueError("coexistence probe peak VRAM is missing")
+    common_probe_manifest = manifests["common-seed-0"]
+    if probe.get("checkpoint_manifest_sha256") != common_probe_manifest["manifest_sha256"]:
+        raise ValueError("coexistence probe used a different common checkpoint manifest")
+    if probe.get("checkpoint_path") != common_probe_manifest["root"]:
+        raise ValueError("coexistence probe used a different common checkpoint path")
 
     def checkpoint_row(artifact_id: str) -> dict[str, Any]:
         manifest = manifests[artifact_id]

@@ -71,7 +71,9 @@ def validate_ready_checkpoint_lock(
     if device == "cuda:0" and float(peak) > float(limit):
         raise ValueError("coexistence probe exceeds the frozen VRAM safety limit")
     if device == "cpu" and probe.get("status") == "failed_cpu_fallback" and float(peak) <= float(limit):
-        raise ValueError("CPU fallback contradicts a coexistence probe below the safety limit")
+        gpu_attempt = probe.get("gpu_attempt", {})
+        if gpu_attempt.get("status") != "fail" or not gpu_attempt.get("error"):
+            raise ValueError("CPU fallback contradicts a successful probe below the safety limit")
     signatures = lock.get("method_runtime_signatures")
     if not isinstance(signatures, dict) or not signatures:
         raise ValueError("method runtime signatures are required")

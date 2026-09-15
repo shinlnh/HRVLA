@@ -250,7 +250,13 @@ python3 scripts/prepare_humanoidarena_internal_plans.py
 python3 scripts/release_humanoidarena_artifacts.py stage
 _vendor/Isaac-GR00T/.venv/bin/python \
   scripts/release_humanoidarena_artifacts.py publish
-# After the exclusive GR00T+Isaac VRAM probe writes coexistence-probe.json:
+# Run one real camera/SONIC/GR00T request concurrently under telemetry. The
+# probe automatically validates CUDA or records and validates the CPU fallback.
+_vendor/Isaac-GR00T/.venv/bin/python \
+  scripts/probe_humanoidarena_gr00t_coexistence.py \
+  --checkpoint _artifacts/retraining/humanoidarena-common/seed-0/checkpoints/checkpoint-<selected-step> \
+  --manifest _artifacts/HumanoidArena/release/humanoidarena-v1/manifests/common-seed-0.json
+# After the exclusive probe writes coexistence-probe.json:
 python3 scripts/release_humanoidarena_artifacts.py compile-lock
 # Review the candidate, then commit it as the tracked checkpoint lock before
 # compiling or executing any internal plan.
