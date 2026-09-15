@@ -113,6 +113,14 @@ def test_changed_final_replication_fails_power_contract() -> None:
         validate_internal_protocol_lock(changed)
 
 
+def test_primary_endpoints_are_bound_before_hidden_results() -> None:
+    validate_internal_protocol_lock(LOCK)
+    changed = copy.deepcopy(LOCK)
+    changed["analysis"]["primary_comparison_endpoints"][1]["protocol"] = "failure_start"
+    with pytest.raises(ValueError, match="frozen ablations"):
+        validate_internal_protocol_lock(changed)
+
+
 def test_draft_suite_cannot_materialize_internal_plans() -> None:
     suite = _admitted_suite()
     suite["tasks"][0]["admission"] = {"status": "draft"}

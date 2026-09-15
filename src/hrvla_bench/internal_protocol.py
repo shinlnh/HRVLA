@@ -136,6 +136,25 @@ def validate_internal_protocol_lock(lock: dict[str, Any]) -> None:
     if calculated < float(power.get("minimum_power", 1.0)):
         raise ValueError("hidden-final replication is below the predeclared power target")
 
+    analysis = lock.get("analysis", {})
+    endpoints = analysis.get("primary_comparison_endpoints")
+    if not isinstance(endpoints, list) or len(endpoints) != len(families):
+        raise ValueError("analysis must bind exactly four primary comparison endpoints")
+    if [row.get("family") for row in endpoints] != families:
+        raise ValueError("primary endpoint order differs from the power-analysis families")
+    expected_endpoints = [
+        ("gr00t_st", "gr00t_sonic", "nominal"),
+        ("gr00t_str", "gr00t_st", "online_failure"),
+        ("gr00t_st_rt", "gr00t_st", "nominal"),
+        ("gr00t_str_rt", "gr00t_str", "online_failure"),
+    ]
+    observed_endpoints = [
+        (row.get("candidate"), row.get("baseline"), row.get("protocol"))
+        for row in endpoints
+    ]
+    if observed_endpoints != expected_endpoints:
+        raise ValueError("primary comparison endpoints differ from the frozen ablations")
+
 
 def build_internal_plans(
     admitted_suite: dict[str, Any],

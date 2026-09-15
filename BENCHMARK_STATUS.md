@@ -121,6 +121,18 @@ over-limit measurement and freezes the CPU fallback. The runner shares each
 checkpoint server across all applicable methods, batches rollout seeds per
 task/scenario, preserves failed attempts, normalizes only audited trials, and
 requires an exact complete record set before writing a method audit.
+Before any hidden-final outcome existed, the four primary hypothesis endpoints
+were bound in the protocol lock: ST vs base and ST-RT vs ST on nominal SR;
+STR vs ST and STR-RT vs STR on online-failure RSR. The final reporter requires
+78 paired observations in every included task/scenario cell, applies a
+two-sided exact McNemar test and Holm correction to exactly these four tests,
+and reports paired risk difference, matched odds ratio, per-seed effect
+dispersion, Wilson intervals, macro/micro SR/RSR, RD, RC, L/H slices,
+detection precision/recall/F1, recovery time, falls, safety, exact policy and
+planner request latency, wall time, and hardware telemetry. Failure-start,
+OpenDoor, and slice analyses remain explicitly secondary. Runtime timing is
+recorded around the existing HTTP call and does not alter policy inputs,
+outputs, precision, or control timing.
 
 The first HumanoidArena ST label audit correctly rejected materialization:
 state/action proxies still fell back on 69/490 train episodes and 11/70
@@ -238,6 +250,7 @@ python3 scripts/run_humanoidarena_internal_matrix.py --split development --dry-r
 python3 -u scripts/run_humanoidarena_internal_matrix.py --split development
 # Freeze every validation-time choice before exposing these one-shot outcomes:
 python3 -u scripts/run_humanoidarena_internal_matrix.py --split hidden_final
+python3 scripts/render_humanoidarena_internal_results.py
 ```
 
 During execution, machine-live progress is written to

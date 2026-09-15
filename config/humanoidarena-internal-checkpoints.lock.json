@@ -3,7 +3,7 @@
   "status": "pending_training_and_coexistence_probe",
   "claim_boundary": "This lock is intentionally non-runnable until common, ST-RT, and STR-RT checkpoints are selected on validation, published immutably, and a GR00T plus Isaac Sim memory probe passes.",
   "method_program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
-  "internal_protocol_sha256": "9956126f3e6cb7d676563437a55fde816887667ed07372d63b4a2d148eb59763",
+  "internal_protocol_sha256": "05cf235f47226968ccc3350f3e5725b5e6a81e2f22f89722a45ee92823410fa3",
   "training_seeds": [0, 1, 2],
   "controller_id": "gear-sonic@6733128a3d8a523b1418b06bca3cdf61c8b0987f",
   "simulator_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",

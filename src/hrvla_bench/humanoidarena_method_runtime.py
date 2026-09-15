@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import json
 from pathlib import Path
+import statistics
 from typing import Any
 
 from hrvla_subtask.backends import HeuristicProposalBackend
@@ -142,6 +143,7 @@ class HumanoidArenaMethodRuntime:
         self.transition_index = 0
         self.decisions = 0
         self.recovery_decisions = 0
+        self.planner_latencies_ms: list[float] = []
 
     def reset(self, env: Any) -> None:
         self.memory = ExecutionMemory()
@@ -149,6 +151,7 @@ class HumanoidArenaMethodRuntime:
         self.transition_index = 0
         self.decisions = 0
         self.recovery_decisions = 0
+        self.planner_latencies_ms = []
         for detector in self.detectors:
             detector.reset(env)
 
@@ -215,6 +218,7 @@ class HumanoidArenaMethodRuntime:
             self.memory,
             seed=self.seed + self.decisions,
         )
+        self.planner_latencies_ms.append(float(decision.latency_ms))
         if decision.selected is None:
             instruction = self.program["goal_instruction"]
             skill_id = None
@@ -232,6 +236,11 @@ class HumanoidArenaMethodRuntime:
         )
 
     def summary(self) -> dict[str, Any]:
+        ordered_latencies = sorted(self.planner_latencies_ms)
+        p95_index = max(
+            0,
+            min(len(ordered_latencies) - 1, round(0.95 * len(ordered_latencies)) - 1),
+        )
         return {
             "schema_version": 1,
             "program_id": self.programs["program_id"],
@@ -240,6 +249,14 @@ class HumanoidArenaMethodRuntime:
             "features": self.features,
             "planner_decisions": self.decisions,
             "recovery_decisions": self.recovery_decisions,
+            "planner_calls": len(ordered_latencies),
+            "planner_latencies_ms": ordered_latencies,
+            "mean_planner_latency_ms": (
+                statistics.fmean(ordered_latencies) if ordered_latencies else None
+            ),
+            "p95_planner_latency_ms": (
+                ordered_latencies[p95_index] if ordered_latencies else None
+            ),
             "completed_transition_count": self.transition_index,
             "total_transition_count": len(self.detectors),
             "memory": self.memory.to_dict(),

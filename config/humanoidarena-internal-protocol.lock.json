@@ -63,6 +63,33 @@
     "diagnostic_only_tasks": ["open_door"],
     "confidence_interval": "Wilson 95% for binary rates",
     "paired_test": "two-sided exact McNemar with Holm correction",
+    "primary_comparison_endpoints": [
+      {
+        "family": "subtask_contribution",
+        "candidate": "gr00t_st",
+        "baseline": "gr00t_sonic",
+        "protocol": "nominal"
+      },
+      {
+        "family": "recovery_contribution",
+        "candidate": "gr00t_str",
+        "baseline": "gr00t_st",
+        "protocol": "online_failure"
+      },
+      {
+        "family": "subtask_retraining_contribution",
+        "candidate": "gr00t_st_rt",
+        "baseline": "gr00t_st",
+        "protocol": "nominal"
+      },
+      {
+        "family": "recovery_retraining_contribution",
+        "candidate": "gr00t_str_rt",
+        "baseline": "gr00t_str",
+        "protocol": "online_failure"
+      }
+    ],
+    "secondary_endpoints": "failure_start, per-task, L-level, H-axis, OpenDoor diagnostic, latency, falls, safety, and seed dispersion; clearly labeled exploratory and not added to the four-test family",
     "random_seed_unit": "paired rollout within training seed and scenario cell",
     "training_seed_reporting": "report each seed, mean, and sample standard deviation; never hide a seed"
   }

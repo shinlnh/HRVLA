@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+import statistics
+import time
 from typing import Any
 
 from .humanoidarena_method_runtime import HumanoidArenaMethodRuntime
@@ -48,6 +50,8 @@ def install_method_hooks(
         "episode_seed": None,
         "episode_output_dir": None,
         "provider_hooked": False,
+        "policy_request_latencies_ms": [],
+        "first_recovery_decision_control_step": None,
     }
 
     original_run_episode = module._run_episode_once
@@ -97,6 +101,8 @@ def install_method_hooks(
             env=env,
             task_success=False,
             episode_seed=int(episode_seed),
+            policy_request_latencies_ms=[],
+            first_recovery_decision_control_step=None,
         )
         _append_jsonl(
             trace_path,
@@ -156,7 +162,16 @@ def install_method_hooks(
                 recovery_scenario_id=recovery_scenario_id,
                 recovery_active=recovery_active,
             )
+            if recovery_active and state["first_recovery_decision_control_step"] is None:
+                recovery_runtime = None if recovery_state is None else recovery_state.get("runtime")
+                state["first_recovery_decision_control_step"] = (
+                    0 if recovery_runtime is None else int(recovery_runtime.control_step)
+                )
             provider.task_name = decision.instruction
+            started = time.perf_counter()
+            action = original_fetch()
+            policy_latency_ms = (time.perf_counter() - started) * 1000.0
+            state["policy_request_latencies_ms"].append(policy_latency_ms)
             _append_jsonl(
                 episode_output / "method-trace.jsonl",
                 {
@@ -166,10 +181,11 @@ def install_method_hooks(
                     "task_id": task_id,
                     "recovery_scenario_id": recovery_scenario_id,
                     "recovery_active": recovery_active,
+                    "policy_request_latency_ms": policy_latency_ms,
                     **decision.to_dict(),
                 },
             )
-            return original_fetch()
+            return action
 
         provider._fetch_lerobot_action_chunk = method_fetch
         state["provider_hooked"] = True
@@ -200,6 +216,21 @@ def install_method_hooks(
             ),
             "policy_reset_seed": int(state["episode_seed"]),
         }
+        policy_latencies = sorted(float(value) for value in state["policy_request_latencies_ms"])
+        p95_index = max(0, min(len(policy_latencies) - 1, round(0.95 * len(policy_latencies)) - 1))
+        summary.update(
+            policy_requests=len(policy_latencies),
+            policy_request_latencies_ms=policy_latencies,
+            mean_policy_request_latency_ms=(
+                statistics.fmean(policy_latencies) if policy_latencies else None
+            ),
+            p95_policy_request_latency_ms=(
+                policy_latencies[p95_index] if policy_latencies else None
+            ),
+            first_recovery_decision_control_step=state[
+                "first_recovery_decision_control_step"
+            ],
+        )
         payload["hrvla_method"] = summary
         _write_json_atomic(episode_output / "method-summary.json", summary)
         return payload

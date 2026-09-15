@@ -229,6 +229,15 @@ def normalize_internal_record(
         total_subtasks,
         int(method.get("completed_transition_count", 0)) + int(success),
     )
+    policy_latencies = [float(value) for value in method.get("policy_request_latencies_ms", [])]
+    planner_latencies = [float(value) for value in method.get("planner_latencies_ms", [])]
+    if (
+        len(policy_latencies) != int(method.get("policy_requests", 0))
+        or len(planner_latencies) != int(method.get("planner_calls", 0))
+        or any(not math.isfinite(value) or value < 0.0 for value in policy_latencies)
+        or any(not math.isfinite(value) or value < 0.0 for value in planner_latencies)
+    ):
+        raise ValueError("internal method latency evidence is incomplete or invalid")
     outcome: dict[str, Any] = {
         "success": success,
         "termination": _termination(result),
@@ -237,6 +246,15 @@ def normalize_internal_record(
         "replans": max(0, int(method.get("planner_decisions", 0)) - 1),
         "retries": int(method.get("recovery_decisions", 0)),
         "safety_violations": int(_termination(result) == "safety"),
+        "wall_time_s": float(result.get("duration_sec", 0.0)),
+        "policy_requests": int(method.get("policy_requests", 0)),
+        "policy_request_latencies_ms": policy_latencies,
+        "mean_policy_request_latency_ms": method.get("mean_policy_request_latency_ms"),
+        "p95_policy_request_latency_ms": method.get("p95_policy_request_latency_ms"),
+        "planner_calls": int(method.get("planner_calls", 0)),
+        "planner_latencies_ms": planner_latencies,
+        "mean_planner_latency_ms": method.get("mean_planner_latency_ms"),
+        "p95_planner_latency_ms": method.get("p95_planner_latency_ms"),
         "diagnostics": {
             "upstream_failure_reason": str(result.get("failure_reason")),
             "episode_steps": int(result.get("episode_steps", 0)),
@@ -251,6 +269,12 @@ def normalize_internal_record(
     }
     if features["recovery"]:
         outcome["detected"] = int(method.get("recovery_decisions", 0)) > 0
+        if protocol == "online_failure" and outcome["detected"]:
+            trigger_step = int(recovery.get("trigger_control_step") or 0)
+            decision_step = method.get("first_recovery_decision_control_step")
+            if decision_step is None or int(decision_step) < trigger_step:
+                raise ValueError("recovery detection step precedes the injected failure")
+            outcome["detection_latency_s"] = (int(decision_step) - trigger_step) * 0.02
     if protocol != "nominal" and success and features["recovery"]:
         control_dt = 0.02
         trigger_step = 0

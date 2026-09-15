@@ -87,6 +87,9 @@ def test_hook_routes_st_prompts_and_embeds_audited_summary(tmp_path: Path) -> No
     assert "Approach the box" in provider.instructions[0]
     assert "Lift the grasped box" in provider.instructions[1]
     assert result["hrvla_method"]["completed_transition_count"] == 1
+    assert result["hrvla_method"]["policy_requests"] == 2
+    assert result["hrvla_method"]["mean_policy_request_latency_ms"] >= 0.0
+    assert result["hrvla_method"]["planner_calls"] == 2
     assert provider.policy_reset_seeds == [17]
     assert result["hrvla_method"]["policy_reset_seed"] == 17
     trace = [json.loads(line) for line in (tmp_path / "method-trace.jsonl").read_text().splitlines()]
@@ -115,3 +118,4 @@ def test_hook_routes_only_str_to_recovery_after_runtime_trigger(tmp_path: Path) 
     result = module._run_episode_once(spec={"episode_index": 0})
     assert "re-align" in provider.instructions[0]
     assert result["hrvla_method"]["recovery_decisions"] == 1
+    assert result["hrvla_method"]["first_recovery_decision_control_step"] == 0
