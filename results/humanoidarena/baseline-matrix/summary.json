@@ -21,51 +21,51 @@
       "successes": 42
     },
     "semantic": {
-      "episodes": 5,
-      "failures": 1,
-      "mean_success_steps": 217.75,
+      "episodes": 23,
+      "failures": 7,
+      "mean_success_steps": 228.9375,
       "result_reason_counts": {
-        "success": 4,
-        "timeout": 1
+        "success": 16,
+        "timeout": 7
       },
-      "success_rate": 0.8,
+      "success_rate": 0.6956521739130435,
       "success_rate_wilson_95": [
-        0.37553462976252533,
-        0.9637758913675698
+        0.49134243731240795,
+        0.8439597554678597
       ],
-      "successes": 4
+      "successes": 16
     }
   },
   "by_seed": {
     "0": {
-      "episodes": 25,
-      "failures": 7,
-      "mean_success_steps": 216.22222222222223,
+      "episodes": 40,
+      "failures": 12,
+      "mean_success_steps": 219.5,
       "result_reason_counts": {
-        "success": 18,
-        "timeout": 7
+        "success": 28,
+        "timeout": 12
       },
-      "success_rate": 0.72,
+      "success_rate": 0.7,
       "success_rate_wilson_95": [
-        0.5242339480963842,
-        0.8571614614904344
+        0.5456998118185507,
+        0.8192515477025347
       ],
-      "successes": 18
+      "successes": 28
     },
     "1": {
-      "episodes": 20,
-      "failures": 8,
-      "mean_success_steps": 379.0833333333333,
+      "episodes": 23,
+      "failures": 9,
+      "mean_success_steps": 363.35714285714283,
       "result_reason_counts": {
-        "success": 12,
-        "timeout": 8
+        "success": 14,
+        "timeout": 9
       },
-      "success_rate": 0.6,
+      "success_rate": 0.6086956521739131,
       "success_rate_wilson_95": [
-        0.3865815007622531,
-        0.781193467627183
+        0.4078552239138171,
+        0.7784237720752205
       ],
-      "successes": 12
+      "successes": 14
     },
     "2": {
       "episodes": 20,
@@ -85,19 +85,19 @@
   },
   "by_task": {
     "boxing": {
-      "episodes": 65,
-      "failures": 19,
-      "mean_success_steps": 278.0217391304348,
+      "episodes": 83,
+      "failures": 25,
+      "mean_success_steps": 268.63793103448273,
       "result_reason_counts": {
-        "success": 46,
-        "timeout": 19
+        "success": 58,
+        "timeout": 25
       },
-      "success_rate": 0.7076923076923077,
+      "success_rate": 0.6987951807228916,
       "success_rate_wilson_95": [
-        0.5880396276349971,
-        0.8041658901232009
+        0.593109725530978,
+        0.7868931031655867
       ],
-      "successes": 46
+      "successes": 58
     }
   },
   "by_task_mode": {
@@ -117,35 +117,34 @@
       "successes": 42
     },
     "semantic/boxing": {
-      "episodes": 5,
-      "failures": 1,
-      "mean_success_steps": 217.75,
+      "episodes": 23,
+      "failures": 7,
+      "mean_success_steps": 228.9375,
       "result_reason_counts": {
-        "success": 4,
-        "timeout": 1
+        "success": 16,
+        "timeout": 7
       },
-      "success_rate": 0.8,
+      "success_rate": 0.6956521739130435,
       "success_rate_wilson_95": [
-        0.37553462976252533,
-        0.9637758913675698
+        0.49134243731240795,
+        0.8439597554678597
       ],
-      "successes": 4
+      "successes": 16
     }
   },
   "claim_status": "partial_non_claim",
   "dataset_revision": "a079beddd6b1521f762c991be8f36993f17ebeca",
-  "generated_at": "2026-09-15T06:15:28.983631+00:00",
+  "generated_at": "2026-09-15T07:19:45.938832+00:00",
   "includes_ours": false,
   "isaaclab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",
   "matrix": {
-    "cells_complete": 3,
+    "cells_complete": 4,
     "cells_expected": 84,
-    "cells_with_observations": 4,
+    "cells_with_observations": 5,
     "duplicate_identities": [],
-    "episodes_complete": 65,
+    "episodes_complete": 83,
     "episodes_expected": 1680,
     "invalid_cells": [
-      "semantic/boxing/seed-0",
       "semantic/boxing/seed-1",
       "semantic/boxing/seed-2",
       "vision/boxing/seed-0",
@@ -252,19 +251,19 @@
   "method": "released PI0.5 task checkpoint with SONIC whole-body controller",
   "model_revision": "da13e072902840e2682afde360b763f1edb76d32",
   "overall": {
-    "episodes": 65,
-    "failures": 19,
-    "mean_success_steps": 278.0217391304348,
+    "episodes": 83,
+    "failures": 25,
+    "mean_success_steps": 268.63793103448273,
     "result_reason_counts": {
-      "success": 46,
-      "timeout": 19
+      "success": 58,
+      "timeout": 25
     },
-    "success_rate": 0.7076923076923077,
+    "success_rate": 0.6987951807228916,
     "success_rate_wilson_95": [
-      0.5880396276349971,
-      0.8041658901232009
+      0.593109725530978,
+      0.7868931031655867
     ],
-    "successes": 46
+    "successes": 58
   },
   "schema_version": 1,
   "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9"
