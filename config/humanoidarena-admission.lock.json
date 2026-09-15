@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "status": "resources_ready_upstream_and_oracle_blocked",
-  "checked_at": "2026-09-14",
+  "status": "runtime_verified_upstream_and_oracle_blocked",
+  "checked_at": "2026-09-15",
   "source": {
     "repository": "https://github.com/William-wAng618/HumanoidArena.git",
     "branch": "release/open-source-prep",
@@ -11,8 +11,10 @@
   "runtime": {
     "isaac_sim": "5.0.0",
     "isaac_lab_ref": "release/2.2.0",
+    "isaac_lab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",
     "sim_python": "3.11",
-    "policy_python_min": "3.12"
+    "policy_python_min": "3.12",
+    "onnxruntime_gpu": "1.22.0"
   },
   "resources": {
     "models": {
@@ -48,6 +50,19 @@
         "model_decoder.onnx",
         "observation_config.yaml"
       ]
+    },
+    "paligemma_tokenizer": {
+      "repository": "leo009/paligemma-3b-pt-224",
+      "repository_type": "model",
+      "revision": "39996beb6fb17c5d16a50d3ef8f7a96ad9d03986",
+      "upstream_repository": "google/paligemma-3b-pt-224",
+      "upstream_access": "gated_unavailable",
+      "default_local_path": "_artifacts/HumanoidArena/tokenizers/paligemma-3b-pt-224",
+      "sha256": {
+        "special_tokens_map.json": "5ef37093ae4236587b6e8266acb815b46e2db8ce656c66552bfa574d32880405",
+        "tokenizer.json": "ef6773c135b77b834de1d13c75a4c98ab7a3684ffd602d1831e1f1bf5467c563",
+        "tokenizer_config.json": "3259402b1d1802e02417d7bff75a889ec61d359d15be6050a957b307c48edbbe"
+      }
     }
   },
   "tasks": [
@@ -88,6 +103,9 @@
     "required_oracle_successes": 20,
     "oracle_evidence_default_path": "_artifacts/HumanoidArena/oracle-admission.json",
     "latest_preflight": "results/humanoidarena/admission/preflight.json",
-    "upstream_self_test_report": "results/humanoidarena/admission/upstream-self-test.xml"
+    "upstream_self_test_report": "results/humanoidarena/admission/upstream-self-test.xml",
+    "runtime_summary": "results/humanoidarena/runtime/summary.json",
+    "end_to_end_smoke": "results/humanoidarena/runtime/boxing-e2e-smoke.json",
+    "closed_loop_episode": "results/humanoidarena/runtime/boxing-closed-loop-seed0.json"
   }
 }

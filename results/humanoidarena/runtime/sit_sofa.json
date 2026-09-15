@@ -1,0 +1,24 @@
+{
+  "action_shape": [
+    1,
+    43
+  ],
+  "benchmark": "HumanoidArena",
+  "completed_steps": 64,
+  "device": "cuda:0",
+  "elapsed_seconds": 6.867175721999956,
+  "env_config": "tasks/common_test_config/base_test/sit_sofa_sonic_test.yaml",
+  "finished_at": "2026-09-14T17:15:10.894310+00:00",
+  "gpu_name": "NVIDIA GeForce RTX 5070 Ti",
+  "isaac_sim_version": "5.0.0",
+  "isaaclab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",
+  "requested_steps": 64,
+  "resolved_env_config": "/HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/tasks/common_test_config/base_test/sit_sofa_sonic_test.yaml",
+  "runtime_device": "cuda:0",
+  "schema_version": 1,
+  "seed": 0,
+  "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
+  "started_at": "2026-09-14T17:15:04.031025+00:00",
+  "status": "pass",
+  "task_id": "Isaac-Move-Sit-Sofa-G129-Dex3-Wholebody"
+}

@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import subprocess
+from pathlib import Path
 
 from hrvla_bench.humanoidarena import admission_report
-
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = json.loads((ROOT / "config/humanoidarena-admission.lock.json").read_text())
@@ -98,3 +97,24 @@ def test_admission_reports_runtime_artifact_and_oracle_blockers(tmp_path: Path) 
     assert "isaac_sim_version" in report["blockers"]
     assert "released_dataset:boxing" in report["blockers"]
     assert "oracle_admission" in report["blockers"]
+
+
+def test_runtime_evidence_matches_locked_revisions() -> None:
+    runtime_root = ROOT / "results/humanoidarena/runtime"
+    summary = json.loads((runtime_root / "summary.json").read_text())
+    smoke = json.loads((runtime_root / summary["end_to_end_smoke"]).read_text())
+    episode = json.loads((runtime_root / summary["closed_loop_episode"]).read_text())
+
+    assert summary["status"] == "pass"
+    assert summary["tasks_passed"] == summary["tasks_total"] == len(LOCK["tasks"])
+    assert summary["total_physics_steps"] == 64 * len(LOCK["tasks"])
+    assert summary["source_revision"] == LOCK["source"]["revision"]
+    assert summary["isaaclab_revision"] == LOCK["runtime"]["isaac_lab_revision"]
+    assert smoke["status"] == "pass"
+    assert smoke["completed_steps"] == smoke["configured_max_steps"]
+    assert smoke["sonic_execution_provider"] == "CUDAExecutionProvider"
+    assert smoke["model_revision"] == LOCK["resources"]["models"]["revision"]
+    assert episode["success"] is True
+    assert episode["episode_steps"] < episode["configured_max_steps"]
+    assert episode["source_revision"] == LOCK["source"]["revision"]
+    assert episode["model_revision"] == LOCK["resources"]["models"]["revision"]

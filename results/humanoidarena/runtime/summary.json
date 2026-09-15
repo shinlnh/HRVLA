@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "benchmark": "HumanoidArena",
+  "claim_scope": "runtime integration evidence only; not a benchmark score",
+  "status": "pass",
+  "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
+  "isaaclab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",
+  "isaac_sim_version": "5.0.0",
+  "device": "cuda:0",
+  "gpu_name": "NVIDIA GeForce RTX 5070 Ti",
+  "tasks_passed": 7,
+  "tasks_total": 7,
+  "steps_per_task": 64,
+  "total_physics_steps": 448,
+  "task_evidence": [
+    "boxing.json",
+    "doubledesk.json",
+    "football.json",
+    "open_door.json",
+    "pp_box.json",
+    "sit_sofa.json",
+    "vision_navi.json"
+  ],
+  "end_to_end_smoke": "boxing-e2e-smoke.json",
+  "closed_loop_episode": "boxing-closed-loop-seed0.json",
+  "remaining_admission_blockers": [
+    "locked upstream OpenDoor self-test contract mismatch",
+    "missing independent 20/20 oracle admission evidence"
+  ]
+}
