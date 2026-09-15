@@ -15,6 +15,9 @@ DEFAULT_HUMANOID = ROOT / "results" / "humanoidarena" / "baseline-matrix" / "sum
 DEFAULT_PERFORMANCE = (
     ROOT / "results" / "benchmark" / "performance" / "pi05_cpu_thread_profile.json"
 )
+DEFAULT_GR00T_BRIDGE = (
+    ROOT / "results" / "humanoidarena" / "gr00t-bridge" / "validation.json"
+)
 DEFAULT_OUTPUT = ROOT / "results" / "benchmark" / "readiness"
 
 
@@ -244,11 +247,62 @@ def _render_performance(summary: dict[str, Any], output_path: Path) -> None:
     plt.close(figure)
 
 
+def _render_gr00t_bridge(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    tasks = summary["tasks"]
+    labels = [
+        row["task"].replace("HOI_", "").replace("HSI_", "").replace("_", "\n")
+        for row in tasks
+    ]
+    positions = list(range(len(tasks)))
+    train_episodes = [int(row["train_episodes"]) for row in tasks]
+    heldout_episodes = [int(row["heldout_episodes"]) for row in tasks]
+    train_frames = [int(row["train_frames"]) / 1000 for row in tasks]
+    heldout_frames = [int(row["heldout_frames"]) / 1000 for row in tasks]
+    width = 0.38
+    figure, axes = plt.subplots(1, 2, figsize=(14, 5.2), constrained_layout=True)
+    for axis, train, heldout, ylabel, title in (
+        (axes[0], train_episodes, heldout_episodes, "episodes", "Frozen per-task split"),
+        (axes[1], train_frames, heldout_frames, "frames (thousands)", "Frame coverage"),
+    ):
+        axis.bar(
+            [position - width / 2 for position in positions],
+            train,
+            width,
+            label="train",
+            color="#2b6cb0",
+        )
+        axis.bar(
+            [position + width / 2 for position in positions],
+            heldout,
+            width,
+            label="held-out",
+            color="#dd6b20",
+        )
+        axis.set_xticks(positions, labels)
+        axis.set_ylabel(ylabel)
+        axis.set_title(title)
+        axis.grid(axis="y", alpha=0.25)
+        axis.legend()
+    checks = summary["checks"]
+    figure.suptitle(
+        "HumanoidArena → GR00T state64/action40 bridge validation\n"
+        f"{checks['packed_video_symlinks']} episode links; "
+        f"{checks['pixel_exact_samples']} pixel-exact packed-video samples — "
+        "interface evidence only",
+        fontsize=10,
+    )
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--retraining-summary", type=Path, default=DEFAULT_RETRAINING)
     parser.add_argument("--humanoidarena-summary", type=Path, default=DEFAULT_HUMANOID)
     parser.add_argument("--performance-summary", type=Path, default=DEFAULT_PERFORMANCE)
+    parser.add_argument("--gr00t-bridge-summary", type=Path, default=DEFAULT_GR00T_BRIDGE)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 
@@ -259,6 +313,7 @@ def main() -> int:
     humanoid = _load_optional(args.humanoidarena_summary.resolve())
     retraining = _load_optional(args.retraining_summary.resolve())
     performance = _load_optional(args.performance_summary.resolve())
+    gr00t_bridge = _load_optional(args.gr00t_bridge_summary.resolve())
     rows = readiness_rows(humanoid)
     _write_readiness(rows, output_dir)
     _render_readiness(rows, output_dir / "benchmark_readiness.png")
@@ -273,6 +328,9 @@ def main() -> int:
             args.performance_summary.resolve().parent / "pi05_cpu_thread_scaling.png"
         )
         _render_performance(performance, performance_output)
+    if gr00t_bridge is not None:
+        bridge_output = args.gr00t_bridge_summary.resolve().parent / "dataset_split.png"
+        _render_gr00t_bridge(gr00t_bridge, bridge_output)
     return 0
 
 
