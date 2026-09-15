@@ -1,22 +1,32 @@
 {
   "schema_version": "1.0",
   "suite_id": "hrvla_recovery_v0",
-  "status": "specification_ready_artifacts_pending",
+  "status": "semantic40_interface_ready_admission_artifacts_pending",
   "robot": "Unitree G1",
   "reference_stack": {
-    "vla": "NVIDIA GR00T N1.7 with a task-specific UNITREE_G1_SONIC checkpoint",
-    "whole_body_controller": "GEAR-SONIC original release",
-    "simulator": "Isaac Lab 2.3.2 / Isaac Sim 5.1",
-    "baseline_branch": "feat(GR00T)/reproduce-gr00t-sonic-whole-body@5638698"
+    "vla": "NVIDIA GR00T N1.7 with the pending common HumanoidArena state64/action40 adaptation checkpoint",
+    "whole_body_controller": "GEAR-SONIC through HumanoidArena's released semantic-v3 action provider",
+    "simulator": "Isaac Lab 2.2.0 / Isaac Sim 5.0.0",
+    "humanoidarena_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
+    "isaac_lab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb"
   },
   "controller_contract": {
-    "embodiment_tag": "UNITREE_G1_SONIC",
-    "action_interface": "64-dimensional SONIC latent",
+    "embodiment_tag": "NEW_EMBODIMENT",
+    "action_interface": "40-dimensional semantic reference pose: root local-XY delta, root Z, root rotation-6D, 29 joints, 2 hands",
+    "observation_interface": "64-dimensional state: root heading canonical rotation-6D, 29 joint positions, 29 joint velocities",
     "joint_actions": 29,
+    "hand_actions": 2,
+    "vla_action_rate_hz": 2.5,
     "control_rate_hz": 50,
-    "checkpoint_sha256": "e6bdab3f64a39336b3d41877d4f497d05f58af275f288ec0e6746c283ded8909",
-    "source_revision": "087f9ac01d46f6d8e4d0b73c01ae64799f292a38",
-    "isaac_lab_revision": "37ddf626871758333d6ed89cf64ad702aef127d0"
+    "sonic_manifest_sha256": "8cfb946c56344636f69be22f92492f9a4d039e351d4409ec1c60debb0c5c661c",
+    "sonic_file_sha256": {
+      "model_encoder.onnx": "013ab0287236aa2721e13f1e936d699db982302d0de0bfcdae76d5c3245362d3",
+      "model_decoder.onnx": "c7241a123eaa36b5d64bad19540efde93cac1ad443bd4572fd12ca99898118ed",
+      "observation_config.yaml": "466d05947c78af6c76388adfb86e3a2a77b2a1d921a64883ed3d085ebf58de1b"
+    },
+    "sonic_model_revision": "6733128a3d8a523b1418b06bca3cdf61c8b0987f",
+    "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
+    "isaac_lab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb"
   },
   "protocols": {
     "nominal": {

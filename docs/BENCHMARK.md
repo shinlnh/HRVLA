@@ -101,10 +101,13 @@ Freeze before evaluation:
 - allowed compute, model checkpoint, recovery memory, and reset policy.
 
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
-`draft`. A draft becomes `admitted` only after its immutable artifacts are
-published, its predicates are tested, and an independent oracle succeeds in
-all 20 admission trials. The default planner excludes drafts, so a missing
-dataset cannot silently become a publishable score.
+`draft`. The suite now uses the same HumanoidArena state64/semantic-action40
+contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1
+placeholder contract was retired before any claim-bearing plan was generated.
+A draft becomes `admitted` only after its immutable artifacts are published,
+its predicates are tested, and an independent oracle succeeds in all 20
+admission trials. The default planner excludes drafts, so a missing dataset
+cannot silently become a publishable score.
 
 ## Reproducible pipeline
 
