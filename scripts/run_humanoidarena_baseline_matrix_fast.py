@@ -575,9 +575,43 @@ def main() -> int:
     output_root = args.output_root.resolve()
     model_root = args.model_root.resolve()
     _validate_runtime(model_root)
+
+    if args.dry_run:
+        for task_name in args.tasks:
+            spec = TASKS[task_name]
+            model_path = model_root / spec["model"]
+            model_label = _model_label(model_path)
+            task_jobs = 0
+            for mode in args.modes:
+                jobs, _ = _build_jobs(
+                    output_root,
+                    task_name=task_name,
+                    mode=mode,
+                    seeds=args.seeds,
+                    repeats=args.repeats,
+                    model_label=model_label,
+                    model_path=model_path,
+                    max_steps=int(spec["max_steps"]),
+                )
+                task_jobs += len(jobs)
+                print(f"[fast-matrix] dry-run {task_name}/{mode} missing={len(jobs)}")
+            if task_jobs:
+                print(" ".join(_server_command(model_path, args.server_port)))
+        return 0
+
     output_root.mkdir(parents=True, exist_ok=True)
     progress_path = output_root / "progress.json"
     telemetry_path = output_root / "hardware-telemetry.jsonl"
+    _write_json_atomic(
+        progress_path,
+        _matrix_progress(
+            output_root,
+            tasks=args.tasks,
+            modes=args.modes,
+            seeds=args.seeds,
+            repeats=args.repeats,
+        ),
+    )
 
     with Telemetry(telemetry_path):
         for task_name in args.tasks:
@@ -595,10 +629,6 @@ def main() -> int:
             )
             if not task_has_work:
                 print(f"[fast-matrix] task complete, skip server: {task_name}", flush=True)
-                continue
-
-            if args.dry_run:
-                print(" ".join(_server_command(model_path, args.server_port)))
                 continue
 
             _wait_for_capacity(args.min_start_ram_gib, args.max_idle_gpu_mib)
