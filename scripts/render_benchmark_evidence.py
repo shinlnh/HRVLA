@@ -310,9 +310,16 @@ def _render_recovery_preflight(summary: dict[str, Any], output_path: Path) -> No
     import matplotlib.pyplot as plt
 
     gates = summary["gates"]
-    labels = [name.replace("_", "\n") for name in gates]
-    complete = [int(value["complete"]) for value in gates.values()]
-    required = [int(value["required"]) for value in gates.values()]
+    order = (
+        "task_predicate_sources",
+        "initial_snapshots",
+        "failure_snapshots",
+        "runtime_injectors",
+        "oracle_20_of_20",
+    )
+    labels = [name.replace("_", "\n") for name in order]
+    complete = [int(gates[name]["complete"]) for name in order]
+    required = [int(gates[name]["required"]) for name in order]
     percentages = [100.0 * done / total for done, total in zip(complete, required)]
     colors = ["#2f855a" if value == 100 else "#c53030" for value in percentages]
     figure, axis = plt.subplots(figsize=(10.5, 5.2), constrained_layout=True)

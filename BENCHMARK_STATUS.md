@@ -17,6 +17,12 @@ Last audited: **2026-09-15 (Asia/Bangkok)**.
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes and the HTTP inference contract is implemented, common checkpoint/real-model server validation still pending | Train the shared bridge and run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
+Recovery admission remains 0/9. Static provenance now resolves and hashes all
+7/7 exact upstream task-reward predicates; this corrected several prose-only
+definitions that were stronger than the simulator code. Initial/failure
+snapshots, nine runtime injectors, and independent 20/20 oracle trials remain
+unexecuted and are shown separately in the tracked admission-preflight plot.
+
 The first interrupted external run completed `base_test/boxing/seed-0` and
 `seed-1`. It also left 11 valid atomic episode records for seed 2. The optimized
 resume completed the remaining nine records, formally closed the third cell,
