@@ -114,6 +114,14 @@ canonical SHA-256 envelope. Restore rejects hash or joint-order drift and uses
 Isaac Lab's public root/joint state writers. Wall-clock timestamps are excluded,
 so an identical simulator state has an identical content address.
 
+Action-stream injectors are typed by interface. `release-grasp-contact` may
+only force the two semantic-action40 hand bits open, while
+`attenuate-sonic-latent` may only scale the post-encoder latent64; applying
+either at the wrong dimensional seam is a hard error. World-frame root-velocity
+events record before/after values and use per-injector, per-environment flags.
+The evaluator must call `reset_one_shot_injectors` at every episode reset so a
+persistent simulator cannot silently skip perturbations in later rollouts.
+
 All end-to-end scenarios in `hrvla_recovery_v0` intentionally start as
 `draft`. The suite now uses the same HumanoidArena state64/semantic-action40
 contract as the controlled internal matrix; its older latent64/Isaac Sim 5.1
