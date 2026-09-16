@@ -438,11 +438,19 @@ def parse_args() -> argparse.Namespace:
         default=1,
         help="bounded CPU trajectory preparation workers for the batched path",
     )
+    parser.add_argument(
+        "--prefetch-pending-per-worker",
+        type=int,
+        default=2,
+        help="maximum prepared/in-flight trajectories per CPU worker",
+    )
     args = parser.parse_args()
     if args.throughput_batch_size < 1:
         parser.error("--throughput-batch-size must be positive")
     if args.prefetch_workers < 1:
         parser.error("--prefetch-workers must be positive")
+    if args.prefetch_pending_per_worker < 1:
+        parser.error("--prefetch-pending-per-worker must be positive")
     if args.throughput_batch_size == 1 and args.prefetch_workers != 1:
         parser.error("--prefetch-workers requires --throughput-batch-size greater than one")
     return args
@@ -519,6 +527,7 @@ def main() -> None:
             args.trajectory_ids,
             prepare,
             workers=args.prefetch_workers,
+            pending_per_worker=args.prefetch_pending_per_worker,
         )
         for prepared in prepared_iterator:
             prepared_group.append(prepared)
@@ -571,6 +580,7 @@ def main() -> None:
             ),
             "throughput_batch_size": args.throughput_batch_size,
             "prefetch_workers": args.prefetch_workers,
+            "prefetch_pending_per_worker": args.prefetch_pending_per_worker,
             "wall_seconds": evaluation_wall_seconds,
             "latency_claim_eligible": args.throughput_batch_size == 1,
             "batched_timing_semantics": (
