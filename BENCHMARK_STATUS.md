@@ -4,7 +4,7 @@ This file is the persistent source of truth for finishing the pre-`ours`
 benchmark. Update it whenever a pipeline stage starts, stops, fails, or reaches
 a frozen evidence revision. Do not infer paper readiness from branch names.
 
-Last audited: **2026-09-16 (Asia/Bangkok)**.
+Last audited: **2026-09-17 (Asia/Bangkok)**.
 
 ## Current state
 
@@ -119,6 +119,15 @@ start while the external matrix or more than 1 GiB of pre-existing compute VRAM
 is present. Separate validation and hidden-evaluation launchers enforce the
 exact episode/condition cross-products, refuse partial-output overwrites, and
 cryptographically verify the frozen selection before exposing hidden data.
+The first GPU-first infrastructure probe used the originally locked 28 loader
+workers, exhausted the machine's 31 GiB host RAM, and was killed by the kernel
+before optimizer step 1. Its partial directory and logs are retained as failed
+infrastructure evidence and contain no checkpoint or experimental outcome. The
+common and later RT training locks now use four loader workers: this is the
+largest conservative setting supported by the observed 2--3.8 GiB per-worker
+peak, while BF16/TF32, fused AdamW, physical batch 4, accumulation 4, and the
+effective batch of 16 remain unchanged. This pre-outcome resource correction
+prevents swap/OOM thrashing and is shared by every training seed and method.
 
 The five-row internal experiment design is frozen in
 `config/humanoidarena-internal-protocol.lock.json`. Development uses 4 paired

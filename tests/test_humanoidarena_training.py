@@ -22,7 +22,7 @@ def test_locked_training_and_validation_commands_are_split_safe() -> None:
     lock = load_training_lock(LOCK)
     training = build_training_command(ROOT, Path("python"), lock, 2)
     assert training[training.index("--dataset-path") + 1].endswith("/train")
-    assert training[training.index("--dataloader-num-workers") + 1] == "28"
+    assert training[training.index("--dataloader-num-workers") + 1] == "4"
     assert training[training.index("--seed") + 1] == "2"
     validation = build_validation_command(ROOT, Path("python"), lock, 1, 200)
     assert validation[validation.index("--dataset-path") + 1].endswith("/validation")

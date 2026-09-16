@@ -63,7 +63,8 @@
     "physical_batch_size": 4,
     "gradient_accumulation_steps": 4,
     "effective_batch_size": 16,
-    "dataloader_workers": 28,
+    "dataloader_workers": 4,
+    "dataloader_worker_rationale": "match the common-adaptation memory-safe profile; the 28-worker infrastructure probe exhausted 31 GiB host RAM before optimizer step 1",
     "state_dropout_probability": 0.2,
     "color_jitter": true
   },

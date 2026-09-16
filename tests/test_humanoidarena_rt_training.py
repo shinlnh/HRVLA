@@ -27,7 +27,7 @@ def test_rt_commands_initialize_from_seed_matched_common_and_never_validation_da
     )
     assert "seed-2/checkpoints/checkpoint-200" in command[command.index("--base-model-path") + 1]
     assert command[command.index("--dataset-path") + 1].endswith("humanoidarena-str-rt/train")
-    assert command[command.index("--dataloader-num-workers") + 1] == "28"
+    assert command[command.index("--dataloader-num-workers") + 1] == "4"
     validation = build_validation_command(
         ROOT, Path("python"), lock, "gr00t_st_rt", 1, 300
     )
