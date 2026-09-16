@@ -13,7 +13,7 @@ Last audited: **2026-09-16 (Asia/Bangkok)**.
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
 | VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena 40-D ST-RT/STR-RT: 0/6 seeds | Materialize admitted in-domain datasets, train/select/publish 3 ST-RT + 3 STR-RT checkpoints, then measure closed-loop task and recovery success; legacy open-loop MSE is not SR/RSR |
-| External HumanoidArena | 13/84 evidence-complete seed-cells (12 finalized plus one complete cell inside the active batch); 271/1680 valid episode JSONs at tracked checkpoint | Finish the locked PI0.5+SONIC matrix; treat OpenDoor separately until its upstream contract is fixed |
+| External HumanoidArena | Operator-paused at 17/84 evidence-complete seed-cells (15 finalized plus two complete cells inside the interrupted batch); 356/1680 valid episode JSONs at tracked checkpoint | Decide the external runtime path, then resume the locked PI0.5+SONIC matrix without mixing execution backends; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
@@ -99,6 +99,15 @@ three-seed batch remains open. Two complete `boxing/vision` summaries missed
 between the last episode write and the operator pause were reconstructed only
 from their 20/20 atomic JSON records. The runner now reconciles this derived
 summary state automatically on every resume.
+At 2026-09-16 23:49 Asia/Bangkok the operator paused the external matrix again
+to reconsider the CPU-only PI0.5 runtime. The clean shutdown retained 356/1,680
+valid atomic episode records: all 240 boxing episodes, all 60
+`doubledesk/base_test` episodes, and 56 `doubledesk/semantic` episodes. Seventeen
+seed-cells contain 20/20 atomic records; 15 were finalized before the active
+three-seed batch was interrupted. No supervisor, policy server, or Isaac Sim
+process remains active. Resuming the same backend will submit only the four
+missing `doubledesk/semantic` episodes; changing backend requires a separate
+homogeneous matrix rather than pooling these records.
 The mutable machine progress file is authoritative after this tracked checkpoint.
 
 The common GR00T adaptation inputs and 70/10/20 split are frozen in
@@ -391,6 +400,10 @@ serve Isaac Sim, I/O, and orchestration. See the
 - 2026-09-16 01:41 UTC: tracked 271/1,680 episodes. Reconciled two missing
   derived cell summaries from complete 20/20 atomic JSON sets and added a
   regression-tested startup reconciliation path for future operator pauses.
+- 2026-09-16 16:49 UTC: operator-paused all three pipeline layers at
+  356/1,680 episodes. Supervisors were stopped before the matrix runner; the
+  runner drained PI0.5 and Isaac, GPU allocation returned to the desktop-only
+  baseline, and no completed episode was removed.
 
 See [the local storage cleanup ledger](docs/LOCAL_STORAGE_CLEANUP.md),
 [the benchmark protocol](docs/BENCHMARK.md), and
