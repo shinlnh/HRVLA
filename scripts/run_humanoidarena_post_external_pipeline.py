@@ -26,6 +26,12 @@ DEFAULT_STATUS = ROOT / "_artifacts/HumanoidArena/benchmark-pipeline/status.json
 EXTERNAL_PROGRESS = (
     ROOT / "_artifacts/HumanoidArena/paper-baselines/pi05-sonic/progress.json"
 )
+GPU_FIRST_STAGE_NAMES = (
+    "common_gr00t_training",
+    "common_gr00t_validation",
+    "common_gr00t_hidden",
+    "subtask_video_adjudication",
+)
 
 
 def _utc_now() -> str:
@@ -218,33 +224,11 @@ def _stage(
     return code == 0
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--status", type=Path, default=DEFAULT_STATUS)
-    parser.add_argument("--poll-seconds", type=int, default=60)
-    args = parser.parse_args()
-    if args.poll_seconds < 10:
-        parser.error("--poll-seconds must be at least 10")
-    status_path = args.status.resolve()
-    status = _load_status(status_path)
-    if not _tracked_worktree_is_clean():
-        raise RuntimeError("post-external supervisor requires a clean tracked worktree")
-    external_ok = _wait_for_external(status, status_path, args.poll_seconds)
-    python = sys.executable
-    groot_python = str(ROOT / "_vendor/Isaac-GR00T/.venv/bin/python")
+def _run_gpu_first_stages(
+    status: dict[str, Any], status_path: Path, python: str, groot_python: str
+) -> bool:
+    """Run stages that need exclusive CUDA but not external/oracle evidence."""
 
-    if external_ok:
-        _stage(
-            status,
-            status_path,
-            "external_complete_audit",
-            [
-                python,
-                "scripts/summarize_humanoidarena_baseline_matrix.py",
-                "--output",
-                str(status_path.parent / "external-complete-summary.json"),
-            ],
-        )
     _stage(
         status,
         status_path,
@@ -265,12 +249,70 @@ def main() -> int:
         [python, "-u", "scripts/run_humanoidarena_gr00t_hidden_eval.py"],
         dependencies=("common_gr00t_validation",),
     )
+    # This stage writes a tracked candidate report, so it intentionally runs
+    # last: a scientifically useful failed report must be preserved without
+    # making the earlier clean-worktree stages impossible to start.
     _stage(
         status,
         status_path,
         "subtask_video_adjudication",
         [groot_python, "-u", "scripts/run_humanoidarena_subtask_video_adjudication.py"],
     )
+    return all(
+        status["stages"].get(name, {}).get("status") == "complete"
+        for name in GPU_FIRST_STAGE_NAMES
+    )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--status", type=Path, default=DEFAULT_STATUS)
+    parser.add_argument("--poll-seconds", type=int, default=60)
+    parser.add_argument(
+        "--gpu-first-only",
+        action="store_true",
+        help=(
+            "run only external-independent exclusive-GPU stages, then stop "
+            "without starting or resuming the external matrix"
+        ),
+    )
+    args = parser.parse_args()
+    if args.poll_seconds < 10:
+        parser.error("--poll-seconds must be at least 10")
+    status_path = args.status.resolve()
+    status = _load_status(status_path)
+    if not _tracked_worktree_is_clean():
+        raise RuntimeError("post-external supervisor requires a clean tracked worktree")
+    python = sys.executable
+    groot_python = str(ROOT / "_vendor/Isaac-GR00T/.venv/bin/python")
+    if args.gpu_first_only:
+        gpu_first_ok = _run_gpu_first_stages(status, status_path, python, groot_python)
+        status["status"] = (
+            "gpu_first_complete_waiting_for_external_matrix"
+            if gpu_first_ok
+            else "gpu_first_pipeline_requires_audit"
+        )
+        status["external_pids"] = []
+        status["gpu_first_only"] = True
+        status["updated_at_utc"] = _utc_now()
+        _write_json_atomic(status_path, status)
+        return 0 if gpu_first_ok else 2
+
+    external_ok = _wait_for_external(status, status_path, args.poll_seconds)
+
+    if external_ok:
+        _stage(
+            status,
+            status_path,
+            "external_complete_audit",
+            [
+                python,
+                "scripts/summarize_humanoidarena_baseline_matrix.py",
+                "--output",
+                str(status_path.parent / "external-complete-summary.json"),
+            ],
+        )
+    _run_gpu_first_stages(status, status_path, python, groot_python)
     _stage(
         status,
         status_path,
