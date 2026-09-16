@@ -35,9 +35,9 @@
       "workstream": "HA 40-D RT training"
     },
     {
-      "completed": 6,
+      "completed": 13,
       "expected": 84,
-      "percent": 7.142857142857143,
+      "percent": 15.476190476190476,
       "scope": "direct external rerun; partial non-claim",
       "unit": "HumanoidArena cells",
       "workstream": "PI0.5 + SONIC"

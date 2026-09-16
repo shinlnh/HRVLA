@@ -70,3 +70,52 @@ def test_terminate_group_is_noop_after_process_exit() -> None:
             return 0
 
     FAST._terminate_group(ExitedProcess())
+
+
+def test_resume_reconciles_complete_cell_without_summary(tmp_path: Path) -> None:
+    output_root = tmp_path / "matrix"
+    cell_dir = output_root / "vision" / "boxing" / "seed-1"
+    episodes = cell_dir / "episodes"
+    episodes.mkdir(parents=True)
+    for repeat_idx in range(3):
+        (episodes / f"episode-{repeat_idx}.json").write_text(
+            json.dumps(
+                {
+                    "seed": 1,
+                    "repeat_idx": repeat_idx,
+                    "success": repeat_idx == 0,
+                    "failure_reason": "success" if repeat_idx == 0 else "timeout",
+                    "returncode": 0,
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+    reconciled = FAST._reconcile_complete_cells(
+        output_root,
+        task_name="boxing",
+        modes=["vision"],
+        seeds=[1],
+        repeats=3,
+        model_path=tmp_path / "checkpoint",
+        log_root=tmp_path / "logs" / "boxing",
+    )
+
+    assert reconciled == 1
+    assert len((cell_dir / "summary.jsonl").read_text().splitlines()) == 3
+    summary = json.loads((cell_dir / "summary.json").read_text())
+    assert summary["episodes"] == 3
+    assert summary["successes"] == 1
+    assert (
+        FAST._reconcile_complete_cells(
+            output_root,
+            task_name="boxing",
+            modes=["vision"],
+            seeds=[1],
+            repeats=3,
+            model_path=tmp_path / "checkpoint",
+            log_root=tmp_path / "logs" / "boxing",
+        )
+        == 0
+    )

@@ -6,19 +6,35 @@
   "benchmark": "HumanoidArena",
   "by_mode": {
     "base_test": {
-      "episodes": 60,
-      "failures": 18,
-      "mean_success_steps": 283.76190476190476,
+      "episodes": 91,
+      "failures": 40,
+      "mean_success_steps": 361.05882352941177,
       "result_reason_counts": {
-        "success": 42,
-        "timeout": 18
+        "fall": 7,
+        "success": 51,
+        "timeout": 33
       },
-      "success_rate": 0.7,
+      "success_rate": 0.5604395604395604,
       "success_rate_wilson_95": [
-        0.5749129205308552,
-        0.8010183386123089
+        0.45807137219291083,
+        0.6579116602992026
       ],
-      "successes": 42
+      "successes": 51
+    },
+    "execution": {
+      "episodes": 60,
+      "failures": 22,
+      "mean_success_steps": 263.1842105263158,
+      "result_reason_counts": {
+        "success": 38,
+        "timeout": 22
+      },
+      "success_rate": 0.6333333333333333,
+      "success_rate_wilson_95": [
+        0.5068300063010303,
+        0.7437908331277456
+      ],
+      "successes": 38
     },
     "semantic": {
       "episodes": 60,
@@ -34,70 +50,103 @@
         0.7583222559398244
       ],
       "successes": 39
+    },
+    "vision": {
+      "episodes": 60,
+      "failures": 18,
+      "mean_success_steps": 259.7142857142857,
+      "result_reason_counts": {
+        "success": 42,
+        "timeout": 18
+      },
+      "success_rate": 0.7,
+      "success_rate_wilson_95": [
+        0.5749129205308552,
+        0.8010183386123089
+      ],
+      "successes": 42
     }
   },
   "by_seed": {
     "0": {
-      "episodes": 40,
-      "failures": 12,
-      "mean_success_steps": 219.5,
+      "episodes": 100,
+      "failures": 37,
+      "mean_success_steps": 278.1587301587302,
       "result_reason_counts": {
-        "success": 28,
-        "timeout": 12
+        "fall": 4,
+        "success": 63,
+        "timeout": 33
       },
-      "success_rate": 0.7,
+      "success_rate": 0.63,
       "success_rate_wilson_95": [
-        0.5456998118185507,
-        0.8192515477025347
+        0.5322052958094291,
+        0.7181763946567546
       ],
-      "successes": 28
+      "successes": 63
     },
     "1": {
-      "episodes": 40,
-      "failures": 16,
-      "mean_success_steps": 337.9583333333333,
+      "episodes": 91,
+      "failures": 41,
+      "mean_success_steps": 345.42,
       "result_reason_counts": {
-        "success": 24,
-        "timeout": 16
+        "fall": 3,
+        "success": 50,
+        "timeout": 38
       },
-      "success_rate": 0.6,
+      "success_rate": 0.5494505494505495,
       "success_rate_wilson_95": [
-        0.44595893660346186,
-        0.7365167431570808
+        0.44729289373397435,
+        0.6476023146686639
       ],
-      "successes": 24
+      "successes": 50
     },
     "2": {
-      "episodes": 40,
-      "failures": 11,
-      "mean_success_steps": 254.27586206896552,
+      "episodes": 80,
+      "failures": 23,
+      "mean_success_steps": 249.8421052631579,
       "result_reason_counts": {
-        "success": 29,
-        "timeout": 11
+        "success": 57,
+        "timeout": 23
       },
-      "success_rate": 0.725,
+      "success_rate": 0.7125,
       "success_rate_wilson_95": [
-        0.5716504419378943,
-        0.8389198375233267
+        0.6053965378701002,
+        0.8001307570773007
       ],
-      "successes": 29
+      "successes": 57
     }
   },
   "by_task": {
     "boxing": {
-      "episodes": 120,
-      "failures": 39,
-      "mean_success_steps": 267.04938271604937,
+      "episodes": 240,
+      "failures": 79,
+      "mean_success_steps": 264.22360248447205,
       "result_reason_counts": {
-        "success": 81,
-        "timeout": 39
+        "success": 161,
+        "timeout": 79
       },
-      "success_rate": 0.675,
+      "success_rate": 0.6708333333333333,
       "success_rate_wilson_95": [
-        0.5869018408594733,
-        0.7522414508939805
+        0.6091000179190962,
+        0.7271840594342045
       ],
-      "successes": 81
+      "successes": 161
+    },
+    "doubledesk": {
+      "episodes": 31,
+      "failures": 22,
+      "mean_success_steps": 721.7777777777778,
+      "result_reason_counts": {
+        "fall": 7,
+        "success": 9,
+        "timeout": 15
+      },
+      "success_rate": 0.2903225806451613,
+      "success_rate_wilson_95": [
+        0.1609580015630062,
+        0.46592329330749926
+      ],
+      "successes": 9
     }
   },
   "by_task_mode": {
@@ -116,6 +165,37 @@
       ],
       "successes": 42
     },
+    "base_test/doubledesk": {
+      "episodes": 31,
+      "failures": 22,
+      "mean_success_steps": 721.7777777777778,
+      "result_reason_counts": {
+        "fall": 7,
+        "success": 9,
+        "timeout": 15
+      },
+      "success_rate": 0.2903225806451613,
+      "success_rate_wilson_95": [
+        0.1609580015630062,
+        0.46592329330749926
+      ],
+      "successes": 9
+    },
+    "execution/boxing": {
+      "episodes": 60,
+      "failures": 22,
+      "mean_success_steps": 263.1842105263158,
+      "result_reason_counts": {
+        "success": 38,
+        "timeout": 22
+      },
+      "success_rate": 0.6333333333333333,
+      "success_rate_wilson_95": [
+        0.5068300063010303,
+        0.7437908331277456
+      ],
+      "successes": 38
+    },
     "semantic/boxing": {
       "episodes": 60,
       "failures": 21,
@@ -130,28 +210,36 @@
         0.7583222559398244
       ],
       "successes": 39
+    },
+    "vision/boxing": {
+      "episodes": 60,
+      "failures": 18,
+      "mean_success_steps": 259.7142857142857,
+      "result_reason_counts": {
+        "success": 42,
+        "timeout": 18
+      },
+      "success_rate": 0.7,
+      "success_rate_wilson_95": [
+        0.5749129205308552,
+        0.8010183386123089
+      ],
+      "successes": 42
     }
   },
   "claim_status": "partial_non_claim",
   "dataset_revision": "a079beddd6b1521f762c991be8f36993f17ebeca",
-  "generated_at": "2026-09-15T09:39:32.157059+00:00",
+  "generated_at": "2026-09-16T01:41:46.768307+00:00",
   "includes_ours": false,
   "isaaclab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",
   "matrix": {
-    "cells_complete": 6,
+    "cells_complete": 13,
     "cells_expected": 84,
-    "cells_with_observations": 6,
+    "cells_with_observations": 14,
     "duplicate_identities": [],
-    "episodes_complete": 120,
+    "episodes_complete": 271,
     "episodes_expected": 1680,
     "invalid_cells": [
-      "vision/boxing/seed-0",
-      "vision/boxing/seed-1",
-      "vision/boxing/seed-2",
-      "execution/boxing/seed-0",
-      "execution/boxing/seed-1",
-      "execution/boxing/seed-2",
-      "base_test/doubledesk/seed-0",
       "base_test/doubledesk/seed-1",
       "base_test/doubledesk/seed-2",
       "semantic/doubledesk/seed-0",
@@ -249,19 +337,20 @@
   "method": "released PI0.5 task checkpoint with SONIC whole-body controller",
   "model_revision": "da13e072902840e2682afde360b763f1edb76d32",
   "overall": {
-    "episodes": 120,
-    "failures": 39,
-    "mean_success_steps": 267.04938271604937,
+    "episodes": 271,
+    "failures": 101,
+    "mean_success_steps": 288.4470588235294,
     "result_reason_counts": {
-      "success": 81,
-      "timeout": 39
+      "fall": 7,
+      "success": 170,
+      "timeout": 94
     },
-    "success_rate": 0.675,
+    "success_rate": 0.6273062730627307,
     "success_rate_wilson_95": [
-      0.5869018408594733,
-      0.7522414508939805
+      0.5683351985543159,
+      0.6827186282448479
     ],
-    "successes": 81
+    "successes": 170
   },
   "schema_version": 1,
   "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9"

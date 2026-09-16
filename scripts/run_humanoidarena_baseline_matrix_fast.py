@@ -511,6 +511,58 @@ def _finalize_cell(
     return True
 
 
+def _reconcile_complete_cells(
+    output_root: Path,
+    *,
+    task_name: str,
+    modes: tuple[str, ...] | list[str],
+    seeds: tuple[int, ...] | list[int],
+    repeats: int,
+    model_path: Path,
+    log_root: Path,
+) -> int:
+    """Rebuild summaries missed when a complete batch was interrupted.
+
+    Episode JSON files are the atomic source of truth.  A shutdown can happen
+    after the final episode is written but before the driver reaches its
+    batch-finalization loop.  On resume there are then no pending repeats, so
+    that old loop would skip the cell forever.  Reconcile only absent or
+    malformed-length derived summaries before deciding whether a task has
+    remaining simulator work.
+    """
+
+    reconciled = 0
+    for mode in modes:
+        for seed in seeds:
+            cell_dir = output_root / mode / task_name / f"seed-{seed}"
+            rows = _valid_episode_rows(cell_dir, seed=seed, repeats=repeats)
+            if len(rows) != repeats:
+                continue
+            summary_path = cell_dir / "summary.jsonl"
+            try:
+                summary_rows = [
+                    line
+                    for line in summary_path.read_text(encoding="utf-8").splitlines()
+                    if line
+                ]
+            except OSError:
+                summary_rows = []
+            if len(summary_rows) == repeats:
+                continue
+            if not _finalize_cell(
+                cell_dir,
+                seed=seed,
+                repeats=repeats,
+                model_path=model_path,
+                log_path=log_root / f"{mode}.log",
+            ):
+                raise RuntimeError(
+                    f"complete cell could not be reconciled: {task_name}/{mode}/seed-{seed}"
+                )
+            reconciled += 1
+    return reconciled
+
+
 def _matrix_progress(
     output_root: Path, *, tasks: list[str], modes: list[str], seeds: list[int], repeats: int
 ) -> dict[str, Any]:
@@ -631,6 +683,23 @@ def main() -> int:
             spec = TASKS[task_name]
             model_path = model_root / spec["model"]
             model_label = _model_label(model_path)
+            log_root = output_root / "driver-logs" / task_name
+            log_root.mkdir(parents=True, exist_ok=True)
+            reconciled = _reconcile_complete_cells(
+                output_root,
+                task_name=task_name,
+                modes=args.modes,
+                seeds=args.seeds,
+                repeats=args.repeats,
+                model_path=model_path,
+                log_root=log_root,
+            )
+            if reconciled:
+                print(
+                    f"[fast-matrix] reconciled {reconciled} complete cell summaries "
+                    f"for task={task_name}",
+                    flush=True,
+                )
             task_has_work = any(
                 pending_repeat_ids(
                     output_root / mode / task_name / f"seed-{seed}",
@@ -645,8 +714,6 @@ def main() -> int:
                 continue
 
             _wait_for_capacity(args.min_start_ram_gib, args.max_idle_gpu_mib)
-            log_root = output_root / "driver-logs" / task_name
-            log_root.mkdir(parents=True, exist_ok=True)
             server_log_path = log_root / "server.log"
             with server_log_path.open("a", encoding="utf-8", buffering=1) as server_log:
                 server = subprocess.Popen(
