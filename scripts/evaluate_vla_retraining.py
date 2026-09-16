@@ -8,6 +8,7 @@ import csv
 from copy import deepcopy
 from dataclasses import dataclass
 import json
+import math
 from pathlib import Path
 import platform
 import shutil
@@ -181,46 +182,84 @@ def evaluate_prepared_trajectory(
     batch_size: int,
     execution_horizon: int,
 ) -> list[tuple[dict, dict[str, np.ndarray]]]:
-    """Consume CPU-prepared requests in deterministic GPU batches."""
+    """Consume one CPU-prepared trajectory in deterministic GPU batches."""
+
+    return [
+        (row, arrays)
+        for _, row, arrays in evaluate_prepared_trajectories(
+            policy,
+            loader,
+            [prepared],
+            conditions,
+            batch_size=batch_size,
+            execution_horizon=execution_horizon,
+        )
+    ]
+
+
+def evaluate_prepared_trajectories(
+    policy,
+    loader,
+    prepared_trajectories: list[PreparedTrajectory],
+    conditions: list[str],
+    *,
+    batch_size: int,
+    execution_horizon: int,
+) -> list[tuple[PreparedTrajectory, dict, dict[str, np.ndarray]]]:
+    """Batch requests across trajectories while retaining per-row provenance."""
 
     action_keys = loader.modality_configs["action"].modality_keys
-    chunks: dict[str, list[tuple[int, np.ndarray]]] = {name: [] for name in conditions}
-    latencies: dict[str, list[float]] = {name: [] for name in conditions}
-    requests = list(prepared.requests)
+    keys = [
+        (prepared.trajectory_id, condition)
+        for prepared in prepared_trajectories
+        for condition in conditions
+    ]
+    chunks: dict[tuple[int, str], list[tuple[int, np.ndarray]]] = {
+        key: [] for key in keys
+    }
+    latencies: dict[tuple[int, str], list[float]] = {key: [] for key in keys}
+    requests = [
+        (prepared, request)
+        for prepared in prepared_trajectories
+        for request in prepared.requests
+    ]
     for start in range(0, len(requests), batch_size):
         batch = requests[start : start + batch_size]
-        observation = stack_observations([request.observation for request in batch])
+        observation = stack_observations([request.observation for _, request in batch])
         torch.cuda.synchronize()
         started = time.perf_counter()
-        with inject_seeded_action_noise(policy, [request.seed for request in batch]):
+        with inject_seeded_action_noise(policy, [request.seed for _, request in batch]):
             action, _ = policy.get_action(observation)
         torch.cuda.synchronize()
         elapsed_ms = (time.perf_counter() - started) * 1_000
         amortized_ms = elapsed_ms / len(batch)
-        for batch_index, request in enumerate(batch):
+        for batch_index, (prepared, request) in enumerate(batch):
             action_chunk = np.concatenate(
                 [np.asarray(action[key])[batch_index] for key in action_keys], axis=-1
             )
             remaining = prepared.actual_steps - request.step
-            chunks[request.condition].append(
+            key = (prepared.trajectory_id, request.condition)
+            chunks[key].append(
                 (request.step, action_chunk[: min(execution_horizon, remaining)])
             )
-            latencies[request.condition].append(amortized_ms)
+            latencies[key].append(amortized_ms)
 
     output = []
-    for condition in conditions:
-        predicted = np.concatenate(
-            [value for _, value in sorted(chunks[condition], key=lambda item: item[0])], axis=0
-        )[: prepared.actual_steps]
-        output.append(
-            _trajectory_metrics(
-                prepared,
-                condition,
-                predicted,
-                latencies[condition],
-                timing_semantics="amortized_gpu_batch_wall_time_non_claim",
+    for prepared in prepared_trajectories:
+        for condition in conditions:
+            key = (prepared.trajectory_id, condition)
+            predicted = np.concatenate(
+                [value for _, value in sorted(chunks[key], key=lambda item: item[0])],
+                axis=0,
+            )[: prepared.actual_steps]
+            row, arrays = _trajectory_metrics(
+                    prepared,
+                    condition,
+                    predicted,
+                    latencies[key],
+                    timing_semantics="amortized_gpu_batch_wall_time_non_claim",
             )
-        )
+            output.append((prepared, row, arrays))
     return output
 
 
@@ -469,24 +508,50 @@ def main() -> None:
                 seed=args.seed + trajectory_id * 10_000,
             )
 
-        for prepared in bounded_ordered_prefetch(
+        requests_per_trajectory = len(args.conditions) * math.ceil(
+            args.steps / args.execution_horizon
+        )
+        trajectory_group_size = max(
+            1, math.ceil(args.throughput_batch_size / requests_per_trajectory)
+        )
+        prepared_group = []
+        prepared_iterator = bounded_ordered_prefetch(
             args.trajectory_ids,
             prepare,
             workers=args.prefetch_workers,
-        ):
-            evaluated = evaluate_prepared_trajectory(
+        )
+        for prepared in prepared_iterator:
+            prepared_group.append(prepared)
+            if len(prepared_group) < trajectory_group_size:
+                continue
+            evaluated = evaluate_prepared_trajectories(
                 policy,
                 loader,
-                prepared,
+                prepared_group,
                 args.conditions,
                 batch_size=args.throughput_batch_size,
                 execution_horizon=args.execution_horizon,
             )
-            for row, arrays in evaluated:
+            for source, row, arrays in evaluated:
                 rows.append(row)
                 if sample_arrays is None and row["condition"] == "clean":
                     sample_arrays = arrays
-                    sample_trajectory = prepared.frame
+                    sample_trajectory = source.frame
+            prepared_group = []
+        if prepared_group:
+            evaluated = evaluate_prepared_trajectories(
+                policy,
+                loader,
+                prepared_group,
+                args.conditions,
+                batch_size=args.throughput_batch_size,
+                execution_horizon=args.execution_horizon,
+            )
+            for source, row, arrays in evaluated:
+                rows.append(row)
+                if sample_arrays is None and row["condition"] == "clean":
+                    sample_arrays = arrays
+                    sample_trajectory = source.frame
     evaluation_wall_seconds = time.perf_counter() - evaluation_started
 
     summary = {
