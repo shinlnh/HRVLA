@@ -5,10 +5,12 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator
 from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import contextmanager
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import numpy as np
-import torch
+
+if TYPE_CHECKING:
+    import torch
 
 
 def stack_observations(observations: list[dict[str, Any]]) -> dict[str, Any]:
@@ -41,14 +43,18 @@ def seeded_noise_batch(
     seeds: list[int],
     *,
     sample_shape: tuple[int, ...],
-    dtype: torch.dtype,
-    device: torch.device | str,
-    randn: Callable[..., torch.Tensor] = torch.randn,
-) -> torch.Tensor:
+    dtype: "torch.dtype",
+    device: "torch.device | str",
+    randn: Callable[..., "torch.Tensor"] | None = None,
+) -> "torch.Tensor":
     """Create one independent RNG stream per sample for batch-size invariance."""
+
+    import torch
 
     if not seeds:
         raise ValueError("at least one seed is required")
+    if randn is None:
+        randn = torch.randn
     samples = []
     for seed in seeds:
         generator = torch.Generator(device=device)
@@ -72,6 +78,8 @@ def inject_seeded_action_noise(policy: Any, seeds: list[int]) -> Iterator[None]:
     Intercepting the single, shape-checked draw lets batching preserve the exact
     per-request seed contract. Any upstream call-pattern drift fails closed.
     """
+
+    import torch
 
     action_head = policy.model.action_head
     expected_shape = (

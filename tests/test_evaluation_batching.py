@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 
 import numpy as np
-import torch
+import pytest
 
 from hrvla_bench.evaluation_batching import (
     bounded_ordered_prefetch,
@@ -29,6 +29,7 @@ def test_stack_observations_preserves_batch_order() -> None:
 
 
 def test_seeded_noise_is_invariant_to_batch_neighbors() -> None:
+    torch = pytest.importorskip("torch")
     batched = seeded_noise_batch(
         [11, 29], sample_shape=(3, 4), dtype=torch.float32, device="cpu"
     )
