@@ -67,7 +67,19 @@
     "conditions": ["clean", "vision_noise", "occlusion", "state_noise", "combined"],
     "frames_per_trajectory": 120,
     "execution_horizon": 40,
-    "denoising_steps": 4
+    "denoising_steps": 4,
+    "execution_profile": "cpu_prefetch_gpu_batch",
+    "throughput_batch_size": 30,
+    "prefetch_workers": 16,
+    "prefetch_pending_per_worker": 1,
+    "latency_claim_eligible": false,
+    "equivalence_gate": {
+      "validation_trajectory_ids": [0, 1],
+      "maximum_mse_delta": 0.0001,
+      "maximum_rate_delta": 0.002,
+      "observed_maximum_mse_delta": 0.00005728006362915039,
+      "observed_maximum_rate_delta": 0.0008333333333333526
+    }
   },
   "resource_exclusion": {
     "blocking_process_pattern": "run_humanoidarena_baseline_matrix_fast.py",

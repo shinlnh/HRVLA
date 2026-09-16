@@ -33,6 +33,9 @@ def test_locked_training_and_validation_commands_are_split_safe() -> None:
     hidden = build_hidden_command(ROOT, Path("python"), lock, 1, 200)
     assert hidden[hidden.index("--dataset-path") + 1].endswith("/heldout")
     assert "/validation" not in hidden[hidden.index("--dataset-path") + 1]
+    assert hidden[hidden.index("--throughput-batch-size") + 1] == "30"
+    assert hidden[hidden.index("--prefetch-workers") + 1] == "16"
+    assert hidden[hidden.index("--prefetch-pending-per-worker") + 1] == "1"
 
 
 def test_global_selection_uses_macro_task_mse_and_lower_step_tie(tmp_path: Path) -> None:

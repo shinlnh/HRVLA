@@ -12,7 +12,7 @@ Last audited: **2026-09-17 (Asia/Bangkok)**.
 | --- | --- | --- |
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
-| VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena 40-D ST-RT/STR-RT: 0/6 seeds | Materialize admitted in-domain datasets, train/select/publish 3 ST-RT + 3 STR-RT checkpoints, then measure closed-loop task and recovery success; legacy open-loop MSE is not SR/RSR |
+| VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena common adaptation: 3/3 seeds trained, validation complete, global step 300 selected; HumanoidArena 40-D ST-RT/STR-RT: 0/6 seeds | Finish the common hidden evaluation, materialize admitted in-domain datasets, train/select/publish 3 ST-RT + 3 STR-RT checkpoints, then measure closed-loop task and recovery success; legacy open-loop MSE is not SR/RSR |
 | External HumanoidArena | Operator-paused at 17/84 evidence-complete seed-cells (15 finalized plus two complete cells inside the interrupted batch); 356/1680 valid episode JSONs at tracked checkpoint | Decide the external runtime path, then resume the locked PI0.5+SONIC matrix without mixing execution backends; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
@@ -128,6 +128,21 @@ largest conservative setting supported by the observed 2--3.8 GiB per-worker
 peak, while BF16/TF32, fused AdamW, physical batch 4, accumulation 4, and the
 effective batch of 16 remain unchanged. This pre-outcome resource correction
 prevents swap/OOM thrashing and is shared by every training seed and method.
+All three common-adaptation seeds subsequently completed, and the frozen
+validation sweep selected optimizer step 300 globally. Before any hidden metric
+file was written, the first serial hidden attempt was operator-stopped and its
+log retained to replace avoidable repeated video decode with a validation-gated
+throughput path. On the same 32 validation trajectories, CPU prefetch plus
+GPU batching (`batch=30`, 16 workers, one pending trajectory per worker) is
+12.34 times faster per trajectory than serial evaluation. It peaks at 7.29 GiB
+allocated VRAM and retains at least 10.63 GiB available host RAM. Its maximum
+row-level MSE and within-0.1-rate deltas versus the seed-identical serial path
+are 0.0000573 and 0.000833, below the frozen 0.0001 and 0.002 infrastructure
+equivalence bounds. Batched timing is explicitly non-claim and cannot replace
+the serial single-request latency endpoint. The profile JSON and plot are
+tracked as `vla_evaluator_throughput.*`.
+
+![VLA evaluator throughput profile](results/benchmark/readiness/vla_evaluator_throughput.png)
 
 The five-row internal experiment design is frozen in
 `config/humanoidarena-internal-protocol.lock.json`. Development uses 4 paired

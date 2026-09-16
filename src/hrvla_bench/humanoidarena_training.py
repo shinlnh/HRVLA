@@ -29,6 +29,25 @@ def load_training_lock(path: Path) -> dict[str, Any]:
         raise ValueError("candidate checkpoint steps must remain [100, 200, 300]")
     if training.get("max_steps") != 300 or training.get("save_steps") != 100:
         raise ValueError("training/save step contract changed")
+    hidden = lock.get("hidden_evaluation", {})
+    if hidden.get("execution_profile") != "cpu_prefetch_gpu_batch":
+        raise ValueError("hidden evaluation execution profile changed")
+    if (
+        hidden.get("throughput_batch_size") != 30
+        or hidden.get("prefetch_workers") != 16
+        or hidden.get("prefetch_pending_per_worker") != 1
+    ):
+        raise ValueError("hidden evaluation throughput profile changed")
+    if hidden.get("latency_claim_eligible") is not False:
+        raise ValueError("batched hidden timing must remain non-claim")
+    equivalence = hidden.get("equivalence_gate", {})
+    if (
+        float(equivalence.get("observed_maximum_mse_delta", float("inf")))
+        > float(equivalence.get("maximum_mse_delta", 0.0))
+        or float(equivalence.get("observed_maximum_rate_delta", float("inf")))
+        > float(equivalence.get("maximum_rate_delta", 0.0))
+    ):
+        raise ValueError("batched hidden evaluation failed its validation equivalence gate")
     splits = lock.get("dataset", {}).get("splits", {})
     if [splits.get(name, {}).get("episodes") for name in ("train", "validation", "heldout")] != [
         490,
@@ -132,7 +151,7 @@ def build_validation_command(
         / f"seed-{seed}"
         / f"checkpoint-{step}"
     )
-    return [
+    command = [
         str(python),
         str(repo_root / "scripts/evaluate_vla_retraining.py"),
         "--model-path",
@@ -154,6 +173,7 @@ def build_validation_command(
         "--seed",
         str(20260915 + seed * 10_000 + step),
     ]
+    return command
 
 
 def build_hidden_command(
@@ -172,7 +192,7 @@ def build_hidden_command(
         / f"checkpoint-{selected_step}"
     )
     output = repo_root / lock["output_root"] / "hidden" / f"seed-{seed}"
-    return [
+    command = [
         str(python),
         str(repo_root / "scripts/evaluate_vla_retraining.py"),
         "--model-path",
@@ -194,6 +214,18 @@ def build_hidden_command(
         "--seed",
         str(20260915 + seed * 10_000),
     ]
+    if hidden.get("execution_profile") == "cpu_prefetch_gpu_batch":
+        command.extend(
+            [
+                "--throughput-batch-size",
+                str(hidden["throughput_batch_size"]),
+                "--prefetch-workers",
+                str(hidden["prefetch_workers"]),
+                "--prefetch-pending-per-worker",
+                str(hidden["prefetch_pending_per_worker"]),
+            ]
+        )
+    return command
 
 
 def resource_blockers(lock: dict[str, Any], own_script_name: str = "") -> list[str]:
