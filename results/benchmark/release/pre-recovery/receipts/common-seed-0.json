@@ -1,0 +1,12 @@
+{
+  "artifact_id": "common-seed-0",
+  "manifest_sha256": "e258c4933ee1bfd8c5fd748e60e7ce85e5aec5a8efd3de6a68bedb8b8f511789",
+  "path_in_repo": "humanoidarena-v1/checkpoints/common/seed-0/checkpoint-300",
+  "published_revision": "0490eda2db83bf7fe553789c0b99ca8416a03025",
+  "receipt_sha256": "75aa70e613771b3826af2d82249cad81f4cfc1ed2a802ae9eca44587490eb5ba",
+  "remote_manifest_path": "humanoidarena-v1/checkpoints/common/seed-0/checkpoint-300/hrvla-release-manifest.json",
+  "remote_manifest_verified": true,
+  "repo_id": "shin0412/HRVLA",
+  "repo_type": "model",
+  "schema_version": 1
+}

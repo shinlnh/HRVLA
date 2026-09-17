@@ -1,0 +1,100 @@
+{
+  "artifact_id": "common-seed-0",
+  "artifact_type": "checkpoint",
+  "files": [
+    {
+      "path": "config.json",
+      "sha256": "d9acbc8d71bcca945e3a8ed41406144e9c52046af0fb740fafafc2d42f5fb182",
+      "size_bytes": 2150
+    },
+    {
+      "path": "embodiment_id.json",
+      "sha256": "c8af3d61fe9ca5508c4a5b9e8be6ad4d0d1eb2c68cec76620ea089b894a3ee22",
+      "size_bytes": 2226
+    },
+    {
+      "path": "experiment_cfg/conf.yaml",
+      "sha256": "3310581dab272ed1663557826944d995881cd76615cf8584cf9d91a760c3d612",
+      "size_bytes": 5930
+    },
+    {
+      "path": "experiment_cfg/config.yaml",
+      "sha256": "b6abfacc114b82262df5d71589ab9a2391bad21a561d6faf66e493895ade1929",
+      "size_bytes": 5899
+    },
+    {
+      "path": "experiment_cfg/dataset_statistics.json",
+      "sha256": "0e274acfda5932142230838c911681d8aff671384aea9d5218a95ed02069ea4c",
+      "size_bytes": 20607
+    },
+    {
+      "path": "experiment_cfg/final_model_config.json",
+      "sha256": "420a9cc16ee52ad998e9bd15d6e1761f5c9fb8ed6f23b54af2243cb207ff620a",
+      "size_bytes": 1515
+    },
+    {
+      "path": "experiment_cfg/final_processor_config.json",
+      "sha256": "74a27d017b84e9ed1a0bef1914a4691ea41919c825e86528e43752f2833fa751",
+      "size_bytes": 2549056
+    },
+    {
+      "path": "experiment_cfg/trainable_parameters.json",
+      "sha256": "ffc8cac95fc6ecf8ac4e7ccf67cf7e372f2c00b846df0fcb2b2a91e4b80df579",
+      "size_bytes": 791
+    },
+    {
+      "path": "model-00001-of-00002.safetensors",
+      "sha256": "29f4021d57ea87289d2eb1f4fd1f901bb69cc431b2639024e23b5230e4377dbc",
+      "size_bytes": 4997668384
+    },
+    {
+      "path": "model-00002-of-00002.safetensors",
+      "sha256": "6204a156579893f7da2a3f5320a2eb9457cce69c7cafe03fef64891c634f3ee7",
+      "size_bytes": 1366334744
+    },
+    {
+      "path": "model.safetensors.index.json",
+      "sha256": "d1e37f546a07b887bdf6ae2ed895d9cfd5de10449fb816b343e59c9c1b4a8dea",
+      "size_bytes": 104912
+    },
+    {
+      "path": "processor_config.json",
+      "sha256": "70a290d11b6abd1952dc06d6594b438d8d4e1e3c5efc83e5cbef3b6c513600df",
+      "size_bytes": 27534
+    },
+    {
+      "path": "statistics.json",
+      "sha256": "1d2eb55a4bb9eaa795f637affe88b8fa16a037927bcbc7e9e2c1607deb682483",
+      "size_bytes": 4313700
+    },
+    {
+      "path": "trainer_state.json",
+      "sha256": "110c3fbcef344e7ccfdae80f7d9a5a5520d591454740fba5ab55828e77a0563b",
+      "size_bytes": 42252
+    },
+    {
+      "path": "training_args.bin",
+      "sha256": "f41e829913f0ca57611b5746517de88c45877c90364f360cb862b36f5421ba67",
+      "size_bytes": 5969
+    },
+    {
+      "path": "wandb_config.json",
+      "sha256": "0ac8b31d2c323a7d925344277f66baed9cdb159dc8097c6553e5d7203fd298ae",
+      "size_bytes": 59
+    }
+  ],
+  "manifest_sha256": "e258c4933ee1bfd8c5fd748e60e7ce85e5aec5a8efd3de6a68bedb8b8f511789",
+  "path_in_repo": "humanoidarena-v1/checkpoints/common/seed-0/checkpoint-300",
+  "provenance": {
+    "family": "common",
+    "selected_step": 300,
+    "selection_sha256": "d9c291cbf17832b387ece65c8c2262f42f91448cecd7bce581b6d31ad2aebc26",
+    "training_seed": 0
+  },
+  "repo_id": "shin0412/HRVLA",
+  "repo_type": "model",
+  "root": "_artifacts/retraining/humanoidarena-common/seed-0/checkpoints/checkpoint-300",
+  "schema_version": 1,
+  "source_revision": "7cdfac38c3c0f8007cc28a361c04006195dbee78",
+  "total_bytes": 6371085728
+}

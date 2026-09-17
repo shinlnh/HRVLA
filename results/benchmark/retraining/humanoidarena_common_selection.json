@@ -1,0 +1,135 @@
+{
+  "candidates": {
+    "100": {
+      "mean_seed_macro_task_mse": 0.2918230500959214,
+      "seeds": {
+        "0": {
+          "macro_task_mse": 0.2908681486334119,
+          "task_mse": {
+            "HOI_double_desk": 0.26932776570320127,
+            "HOI_football": 0.27510846555233004,
+            "HOI_pp_box": 0.2770000517368317,
+            "HSI_boxing": 0.2879164218902588,
+            "HSI_open_door": 0.26439658403396604,
+            "HSI_sit_sofa": 0.2662615835666656,
+            "HSI_vision_navi": 0.3960661679506302
+          }
+        },
+        "1": {
+          "macro_task_mse": 0.2931271753140858,
+          "task_mse": {
+            "HOI_double_desk": 0.2794099420309067,
+            "HOI_football": 0.28847265243530273,
+            "HOI_pp_box": 0.2763907819986343,
+            "HSI_boxing": 0.2761744499206543,
+            "HSI_open_door": 0.26473002731800077,
+            "HSI_sit_sofa": 0.265878489613533,
+            "HSI_vision_navi": 0.40083388388156893
+          }
+        },
+        "2": {
+          "macro_task_mse": 0.29147382634026664,
+          "task_mse": {
+            "HOI_double_desk": 0.27142985463142394,
+            "HOI_football": 0.2794962763786316,
+            "HOI_pp_box": 0.2821382999420166,
+            "HSI_boxing": 0.28156777322292326,
+            "HSI_open_door": 0.2715995371341705,
+            "HSI_sit_sofa": 0.2681866526603699,
+            "HSI_vision_navi": 0.38589839041233065
+          }
+        }
+      }
+    },
+    "200": {
+      "mean_seed_macro_task_mse": 0.2906913315966016,
+      "seeds": {
+        "0": {
+          "macro_task_mse": 0.29078850661005295,
+          "task_mse": {
+            "HOI_double_desk": 0.2714014291763306,
+            "HOI_football": 0.2787672281265259,
+            "HOI_pp_box": 0.2805736124515533,
+            "HSI_boxing": 0.2834688305854797,
+            "HSI_open_door": 0.27181499600410464,
+            "HSI_sit_sofa": 0.2718874543905258,
+            "HSI_vision_navi": 0.3776059955358505
+          }
+        },
+        "1": {
+          "macro_task_mse": 0.2866945722273418,
+          "task_mse": {
+            "HOI_double_desk": 0.2715947538614273,
+            "HOI_football": 0.27301666140556335,
+            "HOI_pp_box": 0.2790022283792496,
+            "HSI_boxing": 0.2704081594944,
+            "HSI_open_door": 0.2720519512891769,
+            "HSI_sit_sofa": 0.2605415314435959,
+            "HSI_vision_navi": 0.3802467197179794
+          }
+        },
+        "2": {
+          "macro_task_mse": 0.29459091595241,
+          "task_mse": {
+            "HOI_double_desk": 0.276728892326355,
+            "HOI_football": 0.28615093529224395,
+            "HOI_pp_box": 0.2811966359615326,
+            "HSI_boxing": 0.285657674074173,
+            "HSI_open_door": 0.27237663269042967,
+            "HSI_sit_sofa": 0.2716080904006958,
+            "HSI_vision_navi": 0.38841755092144015
+          }
+        }
+      }
+    },
+    "300": {
+      "mean_seed_macro_task_mse": 0.28952600998537886,
+      "seeds": {
+        "0": {
+          "macro_task_mse": 0.288964809690203,
+          "task_mse": {
+            "HOI_double_desk": 0.2726192116737366,
+            "HOI_football": 0.2792715311050415,
+            "HOI_pp_box": 0.2802448093891144,
+            "HSI_boxing": 0.2807807892560959,
+            "HSI_open_door": 0.2704778254032135,
+            "HSI_sit_sofa": 0.2669000864028931,
+            "HSI_vision_navi": 0.372459414601326
+          }
+        },
+        "1": {
+          "macro_task_mse": 0.2861248293093273,
+          "task_mse": {
+            "HOI_double_desk": 0.2724029183387756,
+            "HOI_football": 0.2735652565956116,
+            "HOI_pp_box": 0.27736576199531554,
+            "HSI_boxing": 0.2707968056201935,
+            "HSI_open_door": 0.2710783064365387,
+            "HSI_sit_sofa": 0.26045624911785126,
+            "HSI_vision_navi": 0.3772085070610046
+          }
+        },
+        "2": {
+          "macro_task_mse": 0.29348839095660617,
+          "task_mse": {
+            "HOI_double_desk": 0.27826509475708006,
+            "HOI_football": 0.2805469691753387,
+            "HOI_pp_box": 0.27903500497341155,
+            "HSI_boxing": 0.2866810977458954,
+            "HSI_open_door": 0.2713113099336624,
+            "HSI_sit_sofa": 0.2690289944410324,
+            "HSI_vision_navi": 0.3895502656698227
+          }
+        }
+      }
+    }
+  },
+  "criterion": "lowest mean across the three seed-level macro-per-task action MSE values",
+  "dataset_manifest_sha256": "7695a09acc9d94fe3152fd4822ddae81371ed5b90360ef0825209a1132e255d3",
+  "hidden_test_accessed": false,
+  "schema_version": 1,
+  "selected_step": 300,
+  "selection_sha256": "d9c291cbf17832b387ece65c8c2262f42f91448cecd7bce581b6d31ad2aebc26",
+  "selection_split": "validation",
+  "tie_break": "lowest optimizer step"
+}
