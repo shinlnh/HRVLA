@@ -25,13 +25,19 @@ class TemporalProposal:
 
 def temporal_format_repair_prompt(
     original_prompt: str,
-    invalid_text: str,
+    _invalid_text: str,
     error: str,
     *,
     expected_boundaries: int,
+    repair_number: int = 1,
 ) -> str:
     """Build a deterministic corrective prompt without changing label gates."""
 
+    emphasis = (
+        "Do not repeat a transition list or any prior answer."
+        if repair_number == 1
+        else "Use compact single-line JSON; keep every evidence phrase under six words."
+    )
     return (
         f"{original_prompt}\n\n"
         "FORMAT_CORRECTION: Your previous answer failed strict validation. "
@@ -39,8 +45,8 @@ def temporal_format_repair_prompt(
         f"Each of the three lists must contain exactly {expected_boundaries} entries. "
         "Do not invent new frame labels; boundary_frame_indices must come from "
         "SAMPLED_LOCAL_FRAMES and remain strictly increasing. Preserve your visual "
-        "judgment; this retry corrects structure only.\n"
-        f"PREVIOUS_INVALID_OUTPUT: {invalid_text}"
+        f"judgment; this retry corrects structure only. {emphasis}\n"
+        "FINAL_JSON_ONLY:"
     )
 
 
@@ -93,6 +99,7 @@ def infer_temporal_proposal_with_repair(
                 raw_text,
                 error,
                 expected_boundaries=expected_boundaries,
+                repair_number=attempt_index + 1,
             )
             continue
         attempt = {

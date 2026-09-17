@@ -23,6 +23,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 MAXIMUM_FORMAT_REPAIRS = 2
+PROMPT_PROTOCOL_VERSION = "cosmos-temporal-json-v2"
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -90,13 +91,15 @@ def _contact_sheet(frames: np.ndarray, indices: np.ndarray):
 
 def _prompt(task: dict[str, Any], episode_frames: int, sample_indices: np.ndarray) -> str:
     skills = [skill["instruction"] for skill in task["skills"]]
-    transitions = [
-        {
-            "boundary_after_skill": task["skills"][index]["id"],
-            "next_skill": task["skills"][index + 1]["id"],
-        }
+    skill_lines = "\n".join(
+        f"{index + 1}. {skill['id']}: {skill['instruction']}"
+        for index, skill in enumerate(task["skills"])
+    )
+    transition_lines = "\n".join(
+        f"{index + 1}. {task['skills'][index]['id']} -> {task['skills'][index + 1]['id']}"
         for index in range(len(skills) - 1)
-    ]
+    )
+    expected = len(skills) - 1
     return (
         "The image is a chronological contact sheet from one humanoid demonstration. "
         "Each tile is labeled with its exact LOCAL episode frame Fxxxxx. Locate the ordered "
@@ -104,14 +107,18 @@ def _prompt(task: dict[str, Any], episode_frames: int, sample_indices: np.ndarra
         "A boundary_frame_index MUST equal one of the printed sampled frame labels, must be "
         "strictly increasing, and means the first sampled frame where the next skill is visibly "
         "underway. Do not infer simulator success or invisible state. If evidence is ambiguous, "
-        "lower confidence. Return a final JSON object only with keys boundary_frame_indices "
-        "(integer list), boundary_confidences (0..1 list), and visible_evidence (short string "
-        "list), with one entry per transition.\n"
+        "lower confidence.\n"
         f"GOAL: {task['goal_instruction']}\n"
-        f"ORDERED_SKILLS: {json.dumps(skills)}\n"
-        f"TRANSITIONS: {json.dumps(transitions, sort_keys=True)}\n"
+        f"ORDERED_SKILLS:\n{skill_lines}\n"
+        f"ORDERED_TRANSITIONS:\n{transition_lines}\n"
         f"EPISODE_FRAMES: {episode_frames}\n"
-        f"SAMPLED_LOCAL_FRAMES: {sample_indices.tolist()}"
+        f"SAMPLED_LOCAL_FRAMES: {', '.join(str(int(item)) for item in sample_indices)}\n"
+        "OUTPUT REQUIREMENTS: Return exactly one JSON object and no markdown. It must have "
+        "only these keys: boundary_frame_indices (integers), boundary_confidences (numbers "
+        "from 0 to 1), and visible_evidence (brief strings). "
+        f"Every list must contain exactly {expected} entries. Evidence describes the visible "
+        "transition at the corresponding selected frame, not the ordered skill definition.\n"
+        "FINAL_JSON_ONLY:"
     )
 
 
@@ -169,7 +176,7 @@ class CosmosContactSheetModel:
             return_tensors="pt",
         ).to(self._model.device)
         with self._torch.inference_mode():
-            generated = self._model.generate(**inputs, do_sample=False, max_new_tokens=384)
+            generated = self._model.generate(**inputs, do_sample=False, max_new_tokens=768)
         trimmed = generated[:, inputs.input_ids.shape[1] :]
         return self._processor.batch_decode(
             trimmed,
@@ -362,6 +369,7 @@ def main() -> int:
                         "contact_sheet_sha256": sheet_sha256,
                         "model_repo_id": policy["model_repo_id"],
                         "model_revision": policy["model_revision"],
+                        "prompt_protocol_version": PROMPT_PROTOCOL_VERSION,
                         **attempt,
                     }
                     attempt_id = canonical_sha256(core)
@@ -434,6 +442,7 @@ def main() -> int:
                 "episode_frames": length,
                 "task_key": candidate["task_key"],
                 "state_action_proxy": candidate["proxy"],
+                "prompt_protocol_version": PROMPT_PROTOCOL_VERSION,
                 "variants": variant_rows,
                 "consensus": consensus,
             }
@@ -476,7 +485,9 @@ def main() -> int:
             "maximum_boundary_spread_fraction",
         )},
         "inference_protocol": {
+            "prompt_protocol_version": PROMPT_PROTOCOL_VERSION,
             "maximum_format_repairs": MAXIMUM_FORMAT_REPAIRS,
+            "maximum_new_tokens": 768,
             "invalid_output_policy": "reject_episode_and_continue",
             "repair_scope": "structure_only_no_local_boundary_modification",
         },

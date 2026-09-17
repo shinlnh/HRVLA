@@ -41,10 +41,13 @@ def test_parse_temporal_proposal_uses_final_strict_json() -> None:
 
 
 def test_format_repair_retains_invalid_attempt_then_accepts_strict_json() -> None:
+    invalid = (
+        '{"boundary_frame_indices":[80],"boundary_confidences":[0.9],'
+        '"visible_evidence":["contact"]}'
+    )
     outputs = iter(
         [
-            '{"boundary_frame_indices":[80],"boundary_confidences":[0.9],'
-            '"visible_evidence":["contact"]}',
+            invalid,
             '{"boundary_frame_indices":[80,160],"boundary_confidences":[0.9,0.8],'
             '"visible_evidence":["contact","opened"]}',
         ]
@@ -70,6 +73,7 @@ def test_format_repair_retains_invalid_attempt_then_accepts_strict_json() -> Non
     assert retained == attempts
     assert "FORMAT_CORRECTION" in prompts[1]
     assert "exactly 2 entries" in prompts[1]
+    assert invalid not in prompts[1]
 
 
 def test_format_repair_is_bounded_and_does_not_invent_a_boundary() -> None:
