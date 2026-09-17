@@ -1,4 +1,5 @@
 import json
+import importlib.util
 from pathlib import Path
 
 import pytest
@@ -14,6 +15,17 @@ from hrvla_bench.humanoidarena_release import (
 
 
 REVISION = "1" * 40
+
+
+def _release_script():
+    spec = importlib.util.spec_from_file_location(
+        "release_humanoidarena_artifacts_test",
+        Path(__file__).resolve().parents[1] / "scripts/release_humanoidarena_artifacts.py",
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def test_runtime_signature_closure_binds_server_simulator_and_planner() -> None:
@@ -95,3 +107,64 @@ def test_release_manifest_rejects_external_symlink(tmp_path: Path) -> None:
             )
     finally:
         outside.unlink()
+
+
+def test_partial_release_does_not_require_recovery_artifacts(
+    tmp_path: Path, monkeypatch
+) -> None:
+    module = _release_script()
+    module.ROOT = tmp_path
+    common_lock = {
+        "output_root": "common",
+        "training_seeds": [0, 1, 2],
+    }
+    rt_lock = {
+        "output_root": "rt",
+        "training_seeds": [0, 1, 2],
+        "methods": {"gr00t_st_rt": {"output_name": "st-rt"}},
+        "subtask_rt_dataset": {"path": "st-data"},
+    }
+    (tmp_path / "common").mkdir()
+    (tmp_path / "common/selection.json").write_text(
+        json.dumps({"selection_sha256": "c" * 64}), encoding="utf-8"
+    )
+    (tmp_path / "rt/st-rt").mkdir(parents=True)
+    (tmp_path / "rt/st-rt/selection.json").write_text(
+        json.dumps({"selection_sha256": "s" * 64}), encoding="utf-8"
+    )
+    validated = []
+    monkeypatch.setattr(module, "validate_selection", lambda selection, lock: 300)
+    monkeypatch.setattr(
+        module,
+        "validate_rt_inputs",
+        lambda root, rt, common, selection, methods: validated.append(methods),
+    )
+    monkeypatch.setattr(module, "_validate_rt_selection", lambda lock, method, selection: 300)
+    monkeypatch.setattr(
+        module,
+        "_dataset_provenance",
+        lambda lock, family: {"dataset_family": family, "manifests": {}},
+    )
+    monkeypatch.setattr(
+        module,
+        "seed_directory",
+        lambda root, lock, seed: root / f"common/seed-{seed}",
+    )
+    monkeypatch.setattr(
+        module,
+        "run_directory",
+        lambda root, lock, method, seed: root / f"rt/st-rt/seed-{seed}",
+    )
+    specs = module._artifact_specifications(
+        common_lock, rt_lock, ("common", "subtask_rt")
+    )
+    assert validated == [("gr00t_st_rt",)]
+    assert [row["artifact_id"] for row in specs] == [
+        "common-seed-0",
+        "common-seed-1",
+        "common-seed-2",
+        "subtask_rt-seed-0",
+        "subtask_rt-seed-1",
+        "subtask_rt-seed-2",
+        "subtask-rt-dataset",
+    ]

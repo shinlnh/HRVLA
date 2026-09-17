@@ -44,6 +44,7 @@ DEFAULT_ROOT = ROOT / "_artifacts/HumanoidArena/release/humanoidarena-v1"
 DEFAULT_PLAN = DEFAULT_ROOT / "release-plan.json"
 DEFAULT_CANDIDATE_LOCK = DEFAULT_ROOT / "humanoidarena-internal-checkpoints.lock.json"
 DEFAULT_PROBE = DEFAULT_ROOT / "coexistence-probe.json"
+RELEASE_FAMILIES = ("common", "subtask_rt", "recovery_rt")
 
 
 def _relative(path: Path) -> str:
@@ -92,15 +93,32 @@ def _dataset_provenance(lock: dict[str, Any], family: str) -> dict[str, Any]:
 
 
 def _artifact_specifications(
-    common_lock: dict[str, Any], rt_lock: dict[str, Any]
+    common_lock: dict[str, Any],
+    rt_lock: dict[str, Any],
+    families: tuple[str, ...] = RELEASE_FAMILIES,
 ) -> list[dict[str, Any]]:
+    if not families or len(set(families)) != len(families) or any(
+        family not in RELEASE_FAMILIES for family in families
+    ):
+        raise ValueError("release families must be a non-empty unique locked subset")
     common_selection_path = ROOT / common_lock["output_root"] / "selection.json"
     common_selection = _load_selection(common_selection_path)
     common_step = validate_selection(common_selection, common_lock)
-    validate_rt_inputs(ROOT, rt_lock, common_lock, common_selection)
+    requested_methods = tuple(
+        method_id
+        for family, method_id in (
+            ("subtask_rt", "gr00t_st_rt"),
+            ("recovery_rt", "gr00t_str_rt"),
+        )
+        if family in families
+    )
+    if requested_methods:
+        validate_rt_inputs(
+            ROOT, rt_lock, common_lock, common_selection, requested_methods
+        )
     rt_selections = {}
     rt_steps = {}
-    for method_id in RT_METHODS:
+    for method_id in requested_methods:
         name = rt_lock["methods"][method_id]["output_name"]
         path = ROOT / rt_lock["output_root"] / name / "selection.json"
         selection = _load_selection(path)
@@ -108,24 +126,25 @@ def _artifact_specifications(
         rt_selections[method_id] = selection
 
     specs = []
-    for seed in common_lock["training_seeds"]:
-        root = seed_directory(ROOT, common_lock, seed) / f"checkpoints/checkpoint-{common_step}"
-        specs.append(
-            {
-                "artifact_id": f"common-seed-{seed}",
-                "artifact_type": "checkpoint",
-                "root": _relative(root),
-                "repo_type": "model",
-                "path_in_repo": f"humanoidarena-v1/checkpoints/common/seed-{seed}/checkpoint-{common_step}",
-                "provenance": {
-                    "family": "common",
-                    "training_seed": seed,
-                    "selected_step": common_step,
-                    "selection_sha256": common_selection["selection_sha256"],
+    if "common" in families:
+        for seed in common_lock["training_seeds"]:
+            root = seed_directory(ROOT, common_lock, seed) / f"checkpoints/checkpoint-{common_step}"
+            specs.append(
+                {
+                    "artifact_id": f"common-seed-{seed}",
+                    "artifact_type": "checkpoint",
+                    "root": _relative(root),
+                    "repo_type": "model",
+                    "path_in_repo": f"humanoidarena-v1/checkpoints/common/seed-{seed}/checkpoint-{common_step}",
+                    "provenance": {
+                        "family": "common",
+                        "training_seed": seed,
+                        "selected_step": common_step,
+                        "selection_sha256": common_selection["selection_sha256"],
+                    },
                 },
-            }
-        )
-    for method_id in RT_METHODS:
+            )
+    for method_id in requested_methods:
         family = "subtask_rt" if method_id == "gr00t_st_rt" else "recovery_rt"
         step = rt_steps[method_id]
         for seed in rt_lock["training_seeds"]:
@@ -146,18 +165,20 @@ def _artifact_specifications(
                     },
                 }
             )
-    for family, name in (
-        ("subtask_rt_dataset", "subtask-rt-dataset"),
-        ("recovery_rt_dataset", "recovery-rt-dataset"),
+    for release_family, dataset_family, name in (
+        ("subtask_rt", "subtask_rt_dataset", "subtask-rt-dataset"),
+        ("recovery_rt", "recovery_rt_dataset", "recovery-rt-dataset"),
     ):
+        if release_family not in families:
+            continue
         specs.append(
             {
                 "artifact_id": name,
                 "artifact_type": "dataset",
-                "root": rt_lock[family]["path"],
+                "root": rt_lock[dataset_family]["path"],
                 "repo_type": "dataset",
                 "path_in_repo": f"humanoidarena-v1/{name}",
-                "provenance": _dataset_provenance(rt_lock, family),
+                "provenance": _dataset_provenance(rt_lock, dataset_family),
             }
         )
     return specs
@@ -170,8 +191,9 @@ def stage(args: argparse.Namespace) -> int:
     rt_lock = load_rt_lock(args.rt_lock.resolve())
     revision = git_revision(ROOT)
     plan_root = args.plan.resolve().parent
+    families = tuple(args.family or RELEASE_FAMILIES)
     rows = []
-    for spec in _artifact_specifications(common_lock, rt_lock):
+    for spec in _artifact_specifications(common_lock, rt_lock, families):
         repo_id = args.model_repo if spec["repo_type"] == "model" else args.dataset_repo
         manifest = build_release_manifest(
             ROOT,
@@ -197,13 +219,26 @@ def stage(args: argparse.Namespace) -> int:
         )
     core = {
         "schema_version": 1,
-        "status": "staged_waiting_for_immutable_publication",
+        "status": (
+            "staged_waiting_for_immutable_publication"
+            if families == RELEASE_FAMILIES
+            else "partial_staged_waiting_for_immutable_publication"
+        ),
         "source_revision": revision,
+        "families": list(families),
         "artifacts": rows,
     }
     plan = {**core, "release_plan_sha256": canonical_sha256(core)}
     write_json_once(args.plan.resolve(), plan)
-    print(json.dumps({"artifacts": len(rows), "release_plan_sha256": plan["release_plan_sha256"]}))
+    print(
+        json.dumps(
+            {
+                "artifacts": len(rows),
+                "families": list(families),
+                "release_plan_sha256": plan["release_plan_sha256"],
+            }
+        )
+    )
     return 0
 
 
@@ -398,6 +433,7 @@ def parser() -> argparse.ArgumentParser:
     common.add_argument("--plan", type=Path, default=DEFAULT_PLAN)
     common.add_argument("--model-repo", default="shin0412/HRVLA")
     common.add_argument("--dataset-repo", default="shin0412/HRVLA")
+    common.add_argument("--family", action="append", choices=RELEASE_FAMILIES)
     common.set_defaults(handler=stage)
     publishing = subparsers.add_parser("publish")
     publishing.add_argument("--plan", type=Path, default=DEFAULT_PLAN)
