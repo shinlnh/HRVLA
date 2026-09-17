@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "pending_materialization_common_selection_and_recovery_admission",
+  "status": "adjudication_frozen_waiting_for_dataset_materialization",
   "claim_boundary": "ST-RT and STR-RT are in-domain action-decoder adaptations; neither row is ours and neither open-loop metric is a closed-loop SR/RSR claim.",
   "method_program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
   "source_dataset": {
@@ -13,7 +13,7 @@
     "minimum_phase_frames": 40,
     "maximum_episode_fallback_rate": 0.05,
     "temporal_video_adjudication": {
-      "status": "pending",
+      "status": "ready",
       "eligible_tasks": ["open_door", "pp_box"],
       "policy": "only episodes rejected by the frozen state/action proxy; one shared subset of at least two among three staggered contact-sheet samples must satisfy every confidence, boundary-spread, ordering, and minimum-phase gate",
       "protocol_amendment": "robust same-subset consensus selected on train/validation development evidence only after all-three consensus failed; heldout remained inaccessible and all negative protocols are retained",
@@ -25,7 +25,7 @@
       "minimum_boundary_confidence": 0.7,
       "maximum_boundary_spread_fraction": 0.08,
       "report_path": "results/benchmark/retraining/subtask_video_adjudication.json",
-      "report_sha256": null
+      "report_sha256": "f7a03a5c9ac5c722925a75d18d5a917e63c1bc6bd6b6e7c9c2a4c6cbca8fbfb2"
     },
     "splits_materialized_before_selection": ["train", "validation"],
     "hidden_locked_until_validation_selection": true,
