@@ -30,7 +30,10 @@ from hrvla_bench.humanoidarena_training import load_training_lock  # noqa: E402
 
 def _write_once(path: Path, value: dict) -> None:
     if path.exists():
-        raise FileExistsError(f"refusing to replace frozen RT selection: {path}")
+        existing = json.loads(path.read_text(encoding="utf-8"))
+        if existing == value:
+            return
+        raise FileExistsError(f"refusing to replace different frozen RT selection: {path}")
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
