@@ -29,6 +29,9 @@ DEFAULT_ADMITTED_SUITE = (
 DEFAULT_INTERNAL_PROGRESS = (
     ROOT / "_artifacts" / "HumanoidArena" / "internal-benchmark" / "runs" / "hidden_final" / "progress.json"
 )
+DEFAULT_PRE_RECOVERY_RECEIPTS = (
+    ROOT / "results" / "benchmark" / "release" / "pre-recovery" / "receipts"
+)
 DEFAULT_OUTPUT = ROOT / "results" / "benchmark" / "readiness"
 
 
@@ -37,6 +40,7 @@ def readiness_rows(
     checkpoint_lock: dict[str, Any] | None = None,
     admitted_suite: dict[str, Any] | None = None,
     internal_progress: dict[str, Any] | None = None,
+    rt_release_receipts: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
     matrix = (humanoid or {}).get("matrix", {})
     cells_complete = int(matrix.get("cells_complete", 0))
@@ -53,6 +57,25 @@ def readiness_rows(
             for method in ("gr00t_st_rt", "gr00t_str_rt")
             for seed in (0, 1, 2)
         )
+    else:
+        expected_ids = {
+            f"{family}-seed-{seed}"
+            for family in ("subtask_rt", "recovery_rt")
+            for seed in (0, 1, 2)
+        }
+        published_ids = {
+            receipt.get("artifact_id")
+            for receipt in (rt_release_receipts or [])
+            if receipt.get("artifact_id") in expected_ids
+            and receipt.get("remote_manifest_verified") is True
+            and isinstance(receipt.get("published_revision"), str)
+            and len(receipt["published_revision"]) == 40
+            and isinstance(receipt.get("manifest_sha256"), str)
+            and len(receipt["manifest_sha256"]) == 64
+            and isinstance(receipt.get("receipt_sha256"), str)
+            and len(receipt["receipt_sha256"]) == 64
+        }
+        rt_complete = len(published_ids)
     scenarios_complete = sum(
         scenario.get("admission", {}).get("status") == "admitted"
         for task in (admitted_suite or {}).get("tasks", [])
@@ -130,6 +153,15 @@ def _load_optional(path: Path) -> dict[str, Any] | None:
     if not path.is_file():
         return None
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _load_receipts(path: Path) -> list[dict[str, Any]]:
+    if not path.is_dir():
+        return []
+    return [
+        json.loads(receipt.read_text(encoding="utf-8"))
+        for receipt in sorted(path.glob("*.json"))
+    ]
 
 
 def _write_readiness(rows: list[dict[str, Any]], output_dir: Path) -> None:
@@ -440,6 +472,9 @@ def main() -> int:
     parser.add_argument("--checkpoint-lock", type=Path, default=DEFAULT_CHECKPOINT_LOCK)
     parser.add_argument("--admitted-suite", type=Path, default=DEFAULT_ADMITTED_SUITE)
     parser.add_argument("--internal-progress", type=Path, default=DEFAULT_INTERNAL_PROGRESS)
+    parser.add_argument(
+        "--pre-recovery-receipts", type=Path, default=DEFAULT_PRE_RECOVERY_RECEIPTS
+    )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()
 
@@ -456,7 +491,14 @@ def main() -> int:
     checkpoint_lock = _load_optional(args.checkpoint_lock.resolve())
     admitted_suite = _load_optional(args.admitted_suite.resolve())
     internal_progress = _load_optional(args.internal_progress.resolve())
-    rows = readiness_rows(humanoid, checkpoint_lock, admitted_suite, internal_progress)
+    rt_release_receipts = _load_receipts(args.pre_recovery_receipts.resolve())
+    rows = readiness_rows(
+        humanoid,
+        checkpoint_lock,
+        admitted_suite,
+        internal_progress,
+        rt_release_receipts,
+    )
     _write_readiness(rows, output_dir)
     _render_readiness(rows, output_dir / "benchmark_readiness.png")
     if retraining is not None:

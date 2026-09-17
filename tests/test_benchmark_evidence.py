@@ -69,3 +69,37 @@ def test_readiness_uses_audited_dynamic_completion_inputs() -> None:
     assert by_name["HA 40-D RT training"]["completed"] == 6
     assert by_name["Scenario admission"]["completed"] == 9
     assert by_name["Internal closed loop"]["completed"] == 5
+
+
+def test_readiness_counts_verified_partial_rt_publications() -> None:
+    receipts = [
+        {
+            "artifact_id": f"subtask_rt-seed-{seed}",
+            "published_revision": "a" * 40,
+            "manifest_sha256": "b" * 64,
+            "receipt_sha256": "c" * 64,
+            "remote_manifest_verified": True,
+        }
+        for seed in range(3)
+    ]
+    receipts.extend(
+        [
+            {
+                "artifact_id": "subtask-rt-dataset",
+                "published_revision": "d" * 40,
+                "manifest_sha256": "e" * 64,
+                "receipt_sha256": "f" * 64,
+                "remote_manifest_verified": True,
+            },
+            {
+                "artifact_id": "recovery_rt-seed-0",
+                "published_revision": "short",
+                "manifest_sha256": "b" * 64,
+                "receipt_sha256": "c" * 64,
+                "remote_manifest_verified": True,
+            },
+        ]
+    )
+    rows = EVIDENCE.readiness_rows(None, rt_release_receipts=receipts)
+    by_name = {row["workstream"]: row for row in rows}
+    assert by_name["HA 40-D RT training"]["completed"] == 3

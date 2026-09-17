@@ -27,9 +27,9 @@
       "workstream": "Legacy 43-D retraining"
     },
     {
-      "completed": 0,
+      "completed": 3,
       "expected": 6,
-      "percent": 0.0,
+      "percent": 50.0,
       "scope": "in-domain ST-RT and STR-RT checkpoints",
       "unit": "training seeds",
       "workstream": "HA 40-D RT training"
