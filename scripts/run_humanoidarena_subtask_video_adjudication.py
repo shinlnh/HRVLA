@@ -23,13 +23,14 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 MAXIMUM_FORMAT_REPAIRS = 2
-PROMPT_PROTOCOL_VERSION = "cosmos-independent-transition-grounding-v5"
+PROMPT_PROTOCOL_VERSION = "cosmos-constrained-sequential-grounding-v6"
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from hrvla_bench.plan import canonical_sha256, load_json  # noqa: E402
 from hrvla_bench.subtask_video_adjudication import (  # noqa: E402
     combine_temporal_boundaries,
+    constrained_sample_positions,
     contact_sheet_indices,
     infer_temporal_boundary_with_repair,
     temporal_consensus,
@@ -98,7 +99,8 @@ def _transition_prompt(
     task: dict[str, Any],
     transition_index: int,
     episode_frames: int,
-    sample_indices: np.ndarray,
+    allowed_sample_positions: list[int],
+    earlier_sample_positions: list[int],
 ) -> str:
     source_skill = task["skills"][transition_index]
     target_skill = task["skills"][transition_index + 1]
@@ -116,7 +118,11 @@ def _transition_prompt(
         f"TO_SKILL_ID: {target_skill['id']}\n"
         f"TO_SKILL_VISIBLE_ACTION: {target_skill['instruction']}\n"
         f"EPISODE_FRAMES: {episode_frames}\n"
-        f"ALLOWED_SAMPLE_POSITIONS: 0 through {len(sample_indices) - 1}\n"
+        f"EARLIER_SELECTED_SAMPLE_POSITIONS: {earlier_sample_positions}\n"
+        f"ALLOWED_SAMPLE_POSITIONS_FOR_THIS_TRANSITION: {allowed_sample_positions}\n"
+        "The boundary_sample_position MUST be exactly one integer from that allowed list. "
+        "The list already enforces temporal order and the frozen minimum phase duration; do "
+        "not select a position outside it.\n"
         "OUTPUT REQUIREMENTS: Return exactly one JSON object and no markdown. It must have "
         "only these three scalar keys: boundary_sample_position (one Sxx number as an integer "
         "without the S), boundary_confidence (one number from 0 to 1), and visible_evidence "
@@ -366,7 +372,34 @@ def main() -> int:
                 transition_rows = []
                 boundary_proposals = []
                 invalid_transitions = []
+                previous_frame = 0
+                earlier_sample_positions: list[int] = []
                 for transition_index in range(len(program["skills"]) - 1):
+                    remaining_phases = len(program["skills"]) - transition_index - 1
+                    allowed_sample_positions = list(
+                        constrained_sample_positions(
+                            local_indices,
+                            previous_frame=previous_frame,
+                            episode_frames=length,
+                            remaining_phases=remaining_phases,
+                            minimum_phase_frames=minimum,
+                        )
+                    )
+                    if not allowed_sample_positions:
+                        invalid_transitions.append(transition_index)
+                        transition_rows.append(
+                            {
+                                "transition_index": transition_index,
+                                "from_skill_id": program["skills"][transition_index]["id"],
+                                "to_skill_id": program["skills"][transition_index + 1]["id"],
+                                "attempt_ids": [],
+                                "attempt_count": 0,
+                                "valid": False,
+                                "parse_error": "no_sample_position_satisfies_frozen_phase_constraints",
+                                "allowed_sample_positions": [],
+                            }
+                        )
+                        break
                     transition_attempt_ids: list[str] = []
 
                     def record_attempt(attempt: dict[str, Any]) -> None:
@@ -377,6 +410,7 @@ def main() -> int:
                             "task_key": candidate["task_key"],
                             "variant": variant,
                             "transition_index": transition_index,
+                            "allowed_sample_positions": allowed_sample_positions,
                             "contact_sheet_sha256": sheet_sha256,
                             "sample_indices": local_indices.tolist(),
                             "model_repo_id": policy["model_repo_id"],
@@ -393,9 +427,16 @@ def main() -> int:
 
                     parsed, attempts = infer_temporal_boundary_with_repair(
                         lambda repair_prompt: model.infer(sheet, repair_prompt),
-                        _transition_prompt(program, transition_index, length, local_indices),
+                        _transition_prompt(
+                            program,
+                            transition_index,
+                            length,
+                            allowed_sample_positions,
+                            earlier_sample_positions,
+                        ),
                         episode_frames=length,
                         sample_indices=local_indices,
+                        allowed_sample_positions=allowed_sample_positions,
                         maximum_format_repairs=MAXIMUM_FORMAT_REPAIRS,
                         record_attempt=record_attempt,
                     )
@@ -406,6 +447,7 @@ def main() -> int:
                         "to_skill_id": program["skills"][transition_index + 1]["id"],
                         "attempt_ids": transition_attempt_ids,
                         "attempt_count": len(attempts),
+                        "allowed_sample_positions": allowed_sample_positions,
                     }
                     if parsed is None:
                         invalid_transitions.append(transition_index)
@@ -418,6 +460,8 @@ def main() -> int:
                         )
                     else:
                         boundary_proposals.append(parsed)
+                        previous_frame = parsed.frame_index
+                        earlier_sample_positions.append(parsed.sample_position)
                         transition_rows.append(
                             {
                                 **transition_row,
@@ -537,7 +581,11 @@ def main() -> int:
         )},
         "inference_protocol": {
             "prompt_protocol_version": PROMPT_PROTOCOL_VERSION,
-            "grounding_strategy": "independent_per_transition",
+            "grounding_strategy": "constraint_aware_sequential_per_transition",
+            "decode_constraints": (
+                "strict temporal order and frozen minimum_phase_frames; "
+                "no post-hoc boundary snapping"
+            ),
             "maximum_format_repairs": MAXIMUM_FORMAT_REPAIRS,
             "maximum_new_tokens": 512,
             "invalid_output_policy": "reject_episode_and_continue",

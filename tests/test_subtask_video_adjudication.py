@@ -8,6 +8,7 @@ from hrvla_bench.subtask_video_adjudication import (
     TemporalBoundaryProposal,
     TemporalProposal,
     combine_temporal_boundaries,
+    constrained_sample_positions,
     contact_sheet_indices,
     infer_temporal_boundary_with_repair,
     infer_temporal_proposal_with_repair,
@@ -114,6 +115,37 @@ def test_combine_rejects_duplicate_independent_boundaries() -> None:
     row = TemporalBoundaryProposal(80, 1, 0.9, "contact", "{}")
     with pytest.raises(ValueError, match="strictly increasing"):
         combine_temporal_boundaries([row, row])
+
+
+def test_constrained_positions_preserve_every_frozen_minimum_phase() -> None:
+    samples = [0, 40, 80, 120, 160, 200, 239]
+    first = constrained_sample_positions(
+        samples,
+        previous_frame=0,
+        episode_frames=240,
+        remaining_phases=2,
+        minimum_phase_frames=40,
+    )
+    assert first == (1, 2, 3, 4)
+    second = constrained_sample_positions(
+        samples,
+        previous_frame=80,
+        episode_frames=240,
+        remaining_phases=1,
+        minimum_phase_frames=40,
+    )
+    assert second == (3, 4, 5)
+
+
+def test_single_boundary_rejects_a_position_outside_frozen_constraints() -> None:
+    with pytest.raises(ValueError, match="frozen phase constraints"):
+        parse_temporal_boundary_proposal(
+            '{"boundary_sample_position":1,"boundary_confidence":0.9,'
+            '"visible_evidence":"contact"}',
+            episode_frames=240,
+            sample_indices=[0, 40, 80, 120, 160, 200, 239],
+            allowed_sample_positions=[2, 3, 4],
+        )
 
 
 def test_format_repair_retains_invalid_attempt_then_accepts_strict_json() -> None:

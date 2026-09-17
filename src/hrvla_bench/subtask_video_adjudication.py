@@ -37,6 +37,7 @@ def parse_temporal_boundary_proposal(
     *,
     episode_frames: int,
     sample_indices: Iterable[int],
+    allowed_sample_positions: Iterable[int] | None = None,
 ) -> TemporalBoundaryProposal:
     """Parse one independently grounded transition from a strict JSON object."""
 
@@ -52,6 +53,10 @@ def parse_temporal_boundary_proposal(
     samples = tuple(int(item) for item in sample_indices)
     if position < 0 or position >= len(samples):
         raise ValueError("temporal VLM sample position lies outside the contact sheet")
+    if allowed_sample_positions is not None:
+        allowed = {int(item) for item in allowed_sample_positions}
+        if position not in allowed:
+            raise ValueError("temporal VLM sample position violates the frozen phase constraints")
     frame_index = samples[position]
     if frame_index <= 0 or frame_index >= episode_frames:
         raise ValueError("temporal VLM boundary lies outside the episode")
@@ -100,6 +105,7 @@ def infer_temporal_boundary_with_repair(
     *,
     episode_frames: int,
     sample_indices: Iterable[int],
+    allowed_sample_positions: Iterable[int] | None = None,
     maximum_format_repairs: int,
     record_attempt: Callable[[dict[str, Any]], None] | None = None,
 ) -> tuple[TemporalBoundaryProposal | None, list[dict[str, Any]]]:
@@ -108,6 +114,11 @@ def infer_temporal_boundary_with_repair(
     if maximum_format_repairs < 0:
         raise ValueError("maximum_format_repairs must be non-negative")
     samples = tuple(int(item) for item in sample_indices)
+    allowed = (
+        tuple(int(item) for item in allowed_sample_positions)
+        if allowed_sample_positions is not None
+        else None
+    )
     attempts: list[dict[str, Any]] = []
     current_prompt = prompt
     for attempt_index in range(maximum_format_repairs + 1):
@@ -117,6 +128,7 @@ def infer_temporal_boundary_with_repair(
                 raw_text,
                 episode_frames=episode_frames,
                 sample_indices=samples,
+                allowed_sample_positions=allowed,
             )
         except ValueError as exc:
             error = str(exc)
@@ -314,6 +326,26 @@ def contact_sheet_indices(length: int, count: int, variant: int) -> np.ndarray:
     return indices
 
 
+def constrained_sample_positions(
+    sample_indices: Iterable[int],
+    *,
+    previous_frame: int,
+    episode_frames: int,
+    remaining_phases: int,
+    minimum_phase_frames: int,
+) -> tuple[int, ...]:
+    """Return positions satisfying frozen sequential phase-duration constraints."""
+
+    if remaining_phases < 1 or minimum_phase_frames < 1:
+        raise ValueError("remaining_phases and minimum_phase_frames must be positive")
+    return tuple(
+        position
+        for position, frame in enumerate(int(item) for item in sample_indices)
+        if frame - previous_frame >= minimum_phase_frames
+        and episode_frames - frame >= remaining_phases * minimum_phase_frames
+    )
+
+
 def _json_objects(text: str) -> Iterable[dict[str, Any]]:
     decoder = json.JSONDecoder()
     for match in re.finditer(r"\{", text):
@@ -434,6 +466,7 @@ __all__ = [
     "TemporalBoundaryProposal",
     "TemporalProposal",
     "combine_temporal_boundaries",
+    "constrained_sample_positions",
     "contact_sheet_indices",
     "infer_temporal_boundary_with_repair",
     "infer_temporal_proposal_with_repair",
