@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import fcntl
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -192,6 +193,54 @@ def _adjudication_frozen() -> bool:
         return False
 
 
+def _canonical_sha256(value: Any) -> str:
+    payload = json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _dataset_family_frozen(family: str) -> bool:
+    """Return true only when every pre-selection split matches the tracked lock."""
+
+    try:
+        lock = _load(RT_LOCK)
+        row = lock[family]
+        root = ROOT / row["path"]
+        for split in row["splits_materialized_before_selection"]:
+            expected = row["manifests"][split]
+            manifest = _load(root / "manifests" / f"{split}.json")
+            core = {key: value for key, value in manifest.items() if key != "manifest_sha256"}
+            if (
+                not expected
+                or manifest.get("manifest_sha256") != expected
+                or _canonical_sha256(core) != expected
+                or not (root / split).is_dir()
+            ):
+                return False
+        return True
+    except (KeyError, OSError, json.JSONDecodeError, TypeError):
+        return False
+
+
+def _record_existing_stage(
+    state: dict[str, Any], status_path: Path, name: str, reason: str
+) -> None:
+    """Record an already-frozen input without regenerating immutable evidence."""
+
+    if state["stages"].get(name, {}).get("status") == "complete":
+        return
+    now = _utc_now()
+    state["stages"][name] = {
+        "status": "complete",
+        "satisfied_by_existing_artifact": True,
+        "reason": reason,
+        "source_revision": _revision(),
+        "finished_at_utc": now,
+    }
+    state["status"] = f"{name}_complete"
+    state["updated_at_utc"] = now
+    _write(status_path, state)
+
+
 def _probe_command(python: str) -> list[str]:
     plan = _load(RELEASE_ROOT / "release-plan.json")
     row = next(item for item in plan["artifacts"] if item["artifact_id"] == "common-seed-0")
@@ -253,7 +302,14 @@ def main() -> int:
     groot_python = str(ROOT / "_vendor/Isaac-GR00T/.venv/bin/python")
 
     _wait_for(state, status_path, "waiting_for_post_external_pipeline", _post_external_ready, args.poll_seconds)
-    if not _stage(
+    if _adjudication_frozen():
+        _record_existing_stage(
+            state,
+            status_path,
+            "rt_adjudication_candidate",
+            "tracked RT lock already binds the passing temporal adjudication report",
+        )
+    elif not _stage(
         state,
         status_path,
         "rt_adjudication_candidate",
@@ -267,7 +323,14 @@ def main() -> int:
         _adjudication_frozen,
         args.poll_seconds,
     )
-    if not _stage(
+    if _dataset_family_frozen("subtask_rt_dataset"):
+        _record_existing_stage(
+            state,
+            status_path,
+            "subtask_training_dataset",
+            "tracked ST train/validation manifest hashes match the materialized dataset",
+        )
+    elif not _stage(
         state,
         status_path,
         "subtask_training_dataset",
