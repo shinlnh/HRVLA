@@ -40,6 +40,20 @@ def test_parse_temporal_proposal_uses_final_strict_json() -> None:
     assert parsed.confidences == (0.91, 0.88)
 
 
+def test_parse_sample_positions_maps_exactly_to_contact_sheet_frames() -> None:
+    text = (
+        '{"boundary_sample_positions":[1,3],"boundary_confidences":[0.91,0.88],'
+        '"visible_evidence":["handle contact","door opened"]}'
+    )
+    parsed = parse_temporal_proposal(
+        text,
+        expected_boundaries=2,
+        episode_frames=240,
+        sample_indices=[0, 80, 120, 160, 239],
+    )
+    assert parsed.boundaries == (80, 160)
+
+
 def test_format_repair_retains_invalid_attempt_then_accepts_strict_json() -> None:
     invalid = (
         '{"boundary_frame_indices":[80],"boundary_confidences":[0.9],'

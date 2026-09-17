@@ -30,6 +30,7 @@ def temporal_format_repair_prompt(
     *,
     expected_boundaries: int,
     repair_number: int = 1,
+    boundary_key: str = "boundary_frame_indices",
 ) -> str:
     """Build a deterministic corrective prompt without changing label gates."""
 
@@ -51,16 +52,16 @@ def temporal_format_repair_prompt(
         )
     elif "boundar" in error:
         targeted = (
-            " CRITICAL: boundary_frame_indices must be a JSON ARRAY in square brackets with "
-            f"exactly {expected_boundaries} sampled integer frame labels."
+            f" CRITICAL: {boundary_key} must be a JSON ARRAY in square brackets with "
+            f"exactly {expected_boundaries} strictly increasing integers from the allowed range."
         )
     return (
         f"{original_prompt}\n\n"
         "FORMAT_CORRECTION: Your previous answer failed strict validation. "
         f"Validation error: {error}. Return exactly one JSON object and no other text. "
         f"Each of the three lists must contain exactly {expected_boundaries} entries. "
-        "Do not invent new frame labels; boundary_frame_indices must come from "
-        "SAMPLED_LOCAL_FRAMES and remain strictly increasing. Preserve your visual "
+        f"Use the required {boundary_key} key and strictly increasing allowed values. "
+        "Preserve your visual "
         f"judgment; this retry corrects structure only. {emphasis}{targeted}\n"
         "FINAL_JSON_ONLY:"
     )
@@ -73,6 +74,7 @@ def infer_temporal_proposal_with_repair(
     expected_boundaries: int,
     episode_frames: int,
     allowed_boundary_indices: Iterable[int] | None = None,
+    sample_indices: Iterable[int] | None = None,
     maximum_format_repairs: int,
     record_attempt: Callable[[dict[str, Any]], None] | None = None,
 ) -> tuple[TemporalProposal | None, list[dict[str, Any]]]:
@@ -86,6 +88,14 @@ def infer_temporal_proposal_with_repair(
     if maximum_format_repairs < 0:
         raise ValueError("maximum_format_repairs must be non-negative")
     attempts: list[dict[str, Any]] = []
+    frozen_sample_indices = (
+        tuple(int(item) for item in sample_indices) if sample_indices is not None else None
+    )
+    boundary_key = (
+        "boundary_sample_positions"
+        if frozen_sample_indices is not None
+        else "boundary_frame_indices"
+    )
     current_prompt = prompt
     for attempt_index in range(maximum_format_repairs + 1):
         raw_text = infer(current_prompt)
@@ -95,6 +105,7 @@ def infer_temporal_proposal_with_repair(
                 expected_boundaries=expected_boundaries,
                 episode_frames=episode_frames,
                 allowed_boundary_indices=allowed_boundary_indices,
+                sample_indices=frozen_sample_indices,
             )
         except ValueError as exc:
             error = str(exc)
@@ -116,6 +127,7 @@ def infer_temporal_proposal_with_repair(
                 error,
                 expected_boundaries=expected_boundaries,
                 repair_number=attempt_index + 1,
+                boundary_key=boundary_key,
             )
             continue
         attempt = {
@@ -171,6 +183,7 @@ def parse_temporal_proposal(
     expected_boundaries: int,
     episode_frames: int,
     allowed_boundary_indices: Iterable[int] | None = None,
+    sample_indices: Iterable[int] | None = None,
 ) -> TemporalProposal:
     """Parse the final strict JSON object emitted by the temporal VLM."""
 
@@ -178,7 +191,9 @@ def parse_temporal_proposal(
     if not objects:
         raise ValueError("temporal VLM output contains no JSON object")
     value = objects[-1]
-    raw_boundaries = value.get("boundary_frame_indices")
+    samples = tuple(int(item) for item in sample_indices) if sample_indices is not None else None
+    boundary_key = "boundary_sample_positions" if samples is not None else "boundary_frame_indices"
+    raw_boundaries = value.get(boundary_key)
     raw_confidences = value.get("boundary_confidences")
     raw_evidence = value.get("visible_evidence")
     if not isinstance(raw_boundaries, list) or len(raw_boundaries) != expected_boundaries:
@@ -188,10 +203,16 @@ def parse_temporal_proposal(
     if not isinstance(raw_evidence, list) or len(raw_evidence) != expected_boundaries:
         raise ValueError("temporal VLM returned the wrong number of evidence statements")
     if any(isinstance(item, bool) or not isinstance(item, int) for item in raw_boundaries):
-        raise ValueError("boundary_frame_indices must contain JSON integers")
-    boundaries = tuple(int(item) for item in raw_boundaries)
-    if boundaries != tuple(sorted(set(boundaries))):
+        raise ValueError(f"{boundary_key} must contain JSON integers")
+    raw_boundary_tuple = tuple(int(item) for item in raw_boundaries)
+    if raw_boundary_tuple != tuple(sorted(set(raw_boundary_tuple))):
         raise ValueError("temporal VLM boundaries must be strictly increasing")
+    if samples is not None:
+        if any(item < 0 or item >= len(samples) for item in raw_boundary_tuple):
+            raise ValueError("temporal VLM sample position lies outside the contact sheet")
+        boundaries = tuple(samples[item] for item in raw_boundary_tuple)
+    else:
+        boundaries = raw_boundary_tuple
     if any(item <= 0 or item >= episode_frames for item in boundaries):
         raise ValueError("temporal VLM boundary lies outside the episode")
     if allowed_boundary_indices is not None:

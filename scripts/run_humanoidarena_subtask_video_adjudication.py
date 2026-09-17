@@ -23,7 +23,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 MAXIMUM_FORMAT_REPAIRS = 2
-PROMPT_PROTOCOL_VERSION = "cosmos-temporal-json-v3"
+PROMPT_PROTOCOL_VERSION = "cosmos-temporal-sample-position-v4"
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -81,7 +81,11 @@ def _contact_sheet(frames: np.ndarray, indices: np.ndarray):
         x, y = column * tile_width, row * (tile_height + label_height)
         sheet.paste(tile, (x, y + label_height))
         draw.rectangle((x, y, x + tile_width, y + label_height), fill="black")
-        draw.text((x + 5, y + 4), f"F{int(frame_index):05d}", fill="white")
+        draw.text(
+            (x + 5, y + 4),
+            f"S{position:02d} / F{int(frame_index):05d}",
+            fill="white",
+        )
     payload = BytesIO()
     sheet.save(payload, format="PNG", optimize=True)
     import hashlib
@@ -102,19 +106,21 @@ def _prompt(task: dict[str, Any], episode_frames: int, sample_indices: np.ndarra
     expected = len(skills) - 1
     return (
         "The image is a chronological contact sheet from one humanoid demonstration. "
-        "Each tile is labeled with its exact LOCAL episode frame Fxxxxx. Locate the ordered "
+        "Each tile is labeled Sxx / Fxxxxx, where Sxx is its sample position and Fxxxxx is "
+        "the exact LOCAL episode frame. Locate the ordered "
         "semantic transition from each skill to its successor using only visible evidence. "
-        "A boundary_frame_index MUST equal one of the printed sampled frame labels, must be "
-        "strictly increasing, and means the first sampled frame where the next skill is visibly "
+        "A boundary_sample_position MUST be one of the printed Sxx position numbers, must be "
+        "strictly increasing, and identifies the first tile where the next skill is visibly "
         "underway. Do not infer simulator success or invisible state. If evidence is ambiguous, "
         "lower confidence.\n"
         f"GOAL: {task['goal_instruction']}\n"
         f"ORDERED_SKILLS:\n{skill_lines}\n"
         f"ORDERED_TRANSITIONS:\n{transition_lines}\n"
         f"EPISODE_FRAMES: {episode_frames}\n"
-        f"SAMPLED_LOCAL_FRAMES: {', '.join(str(int(item)) for item in sample_indices)}\n"
+        f"ALLOWED_SAMPLE_POSITIONS: 0 through {len(sample_indices) - 1}\n"
         "OUTPUT REQUIREMENTS: Return exactly one JSON object and no markdown. It must have "
-        "only these keys: boundary_frame_indices (integers), boundary_confidences (numbers "
+        "only these keys: boundary_sample_positions (Sxx numbers as integers, without the S), "
+        "boundary_confidences (numbers "
         "from 0 to 1), and visible_evidence (a JSON array of distinct brief strings, never "
         "a single string). "
         f"Every list must contain exactly {expected} entries. Evidence describes the visible "
@@ -368,6 +374,7 @@ def main() -> int:
                         "task_key": candidate["task_key"],
                         "variant": variant,
                         "contact_sheet_sha256": sheet_sha256,
+                        "sample_indices": local_indices.tolist(),
                         "model_repo_id": policy["model_repo_id"],
                         "model_revision": policy["model_revision"],
                         "prompt_protocol_version": PROMPT_PROTOCOL_VERSION,
@@ -384,7 +391,7 @@ def main() -> int:
                     _prompt(program, length, local_indices),
                     expected_boundaries=len(program["skills"]) - 1,
                     episode_frames=length,
-                    allowed_boundary_indices=local_indices,
+                    sample_indices=local_indices,
                     maximum_format_repairs=MAXIMUM_FORMAT_REPAIRS,
                     record_attempt=record_attempt,
                 )
@@ -408,11 +415,17 @@ def main() -> int:
                     )
                 else:
                     proposals.append(parsed)
+                    sample_position_by_frame = {
+                        int(frame): position for position, frame in enumerate(local_indices)
+                    }
                     variant_rows.append(
                         {
                             **variant_row,
                             "valid": True,
                             "parse_error": None,
+                            "sample_positions": [
+                                sample_position_by_frame[item] for item in parsed.boundaries
+                            ],
                             "boundaries": list(parsed.boundaries),
                             "confidences": list(parsed.confidences),
                             "visible_evidence": list(parsed.evidence),
