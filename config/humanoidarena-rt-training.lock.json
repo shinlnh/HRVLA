@@ -80,6 +80,16 @@
     "tie_break": "lowest optimizer step",
     "hidden_access_before_selection": false
   },
+  "validation_execution": {
+    "profile": "cpu_prefetch_gpu_batch",
+    "throughput_batch_size": 30,
+    "prefetch_workers": 16,
+    "prefetch_pending_per_worker": 1,
+    "latency_claim_eligible": false,
+    "admission_report": "results/benchmark/readiness/vla_evaluator_throughput.json",
+    "speedup_over_serial": 12.337017189461648,
+    "equivalence_gate_passed": true
+  },
   "output_root": "_artifacts/retraining/humanoidarena-rt",
   "resource_exclusion": {
     "blocking_process_pattern": "run_humanoidarena_baseline_matrix_fast.py",

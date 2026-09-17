@@ -28,6 +28,17 @@ def load_rt_lock(path: Path) -> dict[str, Any]:
         raise ValueError("RT candidate checkpoints must remain 100/200/300")
     if training.get("max_steps") != 300 or training.get("save_steps") != 100:
         raise ValueError("RT train/save step contract differs")
+    validation = lock.get("validation_execution", {})
+    if validation.get("profile") != "cpu_prefetch_gpu_batch":
+        raise ValueError("RT validation execution profile is not admitted")
+    if (
+        validation.get("throughput_batch_size") != 30
+        or validation.get("prefetch_workers") != 16
+        or validation.get("prefetch_pending_per_worker") != 1
+        or validation.get("equivalence_gate_passed") is not True
+        or validation.get("latency_claim_eligible") is not False
+    ):
+        raise ValueError("RT validation batching contract differs")
     return lock
 
 
@@ -162,7 +173,7 @@ def build_validation_command(
     count = int(config["validation_episodes"])
     model = run_directory(repo_root, lock, method_id, seed) / f"checkpoints/checkpoint-{step}"
     output = run_directory(repo_root, lock, method_id, seed) / f"validation/checkpoint-{step}"
-    return [
+    command = [
         str(python),
         str(repo_root / "scripts/evaluate_vla_retraining.py"),
         "--model-path",
@@ -184,6 +195,19 @@ def build_validation_command(
         "--seed",
         str(20260915 + seed * 10_000 + step),
     ]
+    execution = lock["validation_execution"]
+    if execution["profile"] == "cpu_prefetch_gpu_batch":
+        command.extend(
+            [
+                "--throughput-batch-size",
+                str(execution["throughput_batch_size"]),
+                "--prefetch-workers",
+                str(execution["prefetch_workers"]),
+                "--prefetch-pending-per-worker",
+                str(execution["prefetch_pending_per_worker"]),
+            ]
+        )
+    return command
 
 
 def evaluation_complete(path: Path, expected: int) -> bool:

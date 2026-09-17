@@ -34,6 +34,9 @@ def test_rt_commands_initialize_from_seed_matched_common_and_never_validation_da
     assert validation[validation.index("--dataset-path") + 1].endswith(
         "humanoidarena-st-rt/validation"
     )
+    assert validation[validation.index("--throughput-batch-size") + 1] == "30"
+    assert validation[validation.index("--prefetch-workers") + 1] == "16"
+    assert validation[validation.index("--prefetch-pending-per-worker") + 1] == "1"
     assert "/heldout" not in " ".join(validation)
 
 
