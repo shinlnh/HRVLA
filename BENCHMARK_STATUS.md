@@ -12,7 +12,7 @@ Last audited: **2026-09-17 (Asia/Bangkok)**.
 | --- | --- | --- |
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
-| VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena common adaptation: 3/3 seeds trained, global step 300 selected, hidden evaluation complete at 700 rows per seed; HumanoidArena 40-D ST-RT/STR-RT: 0/6 seeds | Materialize admitted in-domain datasets, train/select/publish 3 ST-RT + 3 STR-RT checkpoints, then measure closed-loop task and recovery success; legacy open-loop MSE is not SR/RSR |
+| VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena common adaptation: 3/3 seeds trained, global step 300 selected, hidden evaluation complete at 700 rows per seed; HumanoidArena 40-D ST-RT/STR-RT: 3/6 seeds trained, selected, and published | Materialize the admitted recovery dataset, train/select/publish 3 STR-RT checkpoints, then measure closed-loop task and recovery success; validation MSE is not SR/RSR |
 | External HumanoidArena | Operator-paused at 17/84 evidence-complete seed-cells (15 finalized plus two complete cells inside the interrupted batch); 356/1680 valid episode JSONs at tracked checkpoint | Decide the external runtime path, then resume the locked PI0.5+SONIC matrix without mixing execution backends; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
@@ -44,7 +44,7 @@ The single-episode upstream wrapper now connects those pieces without modifying
 the locked HumanoidArena checkout and records detector/injector/snapshot sidecars.
 The fail-closed auditor cross-checks numerical action hashes, physical magnitude,
 target, seed, one-shot timing, simulator provenance, and snapshot settle timing.
-The full repository suite passes at `163 passed, 16 skipped`; no row is promoted
+The full repository suite passes at `204 passed, 17 skipped`; no row is promoted
 until the wrapper executes under the real Isaac process after the claim-bearing
 external matrix releases CUDA.
 The runtime-admission launcher is staged for that handoff: it uses one released
@@ -244,8 +244,11 @@ model/threshold policy and a complete passing report; `datasets` accepts only
 490/70 ST episodes and 126/27 recovery episodes with canonical manifests. A
 single family may be frozen first, but validation opens only the selected
 method's train/validation manifests and never a held-out split. Each run writes
-a candidate rather than replacing the tracked lock. ST-RT is ready for
-three-seed training; STR-RT remains fail-closed.
+a candidate rather than replacing the tracked lock. ST-RT has completed all
+three training seeds, frozen validation selection, and immutable publication;
+STR-RT remains fail-closed pending recovery admission and its dataset manifests.
+The completion supervisor verifies and skips the already frozen ST
+adjudication/dataset stages instead of regenerating them.
 
 ![Readiness by independent workstream](results/benchmark/readiness/benchmark_readiness.png)
 
@@ -301,9 +304,9 @@ condition.
 | PI0.5 + SONIC | Released HumanoidArena task checkpoints under the locked 84-cell protocol | Running; partial non-claim |
 | GR00T + SONIC | No subtask planner, no recovery, no project retraining | Registered; closed-loop pending |
 | GR00T-ST | Adds the subtask planner only | Registered; closed-loop pending |
-| GR00T-ST-RT | Adds in-domain post-training to ST | New 40-D in-domain training pending; legacy 43-DoF open-loop evidence is context only |
+| GR00T-ST-RT | Adds in-domain post-training to ST | 3/3 selected checkpoints published; validation-only open-loop MSE complete, closed-loop pending |
 | GR00T-STR | Adds transition-aware recovery to ST | Component complete; closed-loop pending |
-| GR00T-STR-RT | Adds recovery-conditioned post-training to STR | New 40-D in-domain training pending; legacy 43-DoF open-loop evidence is context only |
+| GR00T-STR-RT | Adds recovery-conditioned post-training to STR | Recovery dataset and new 40-D training pending; legacy 43-DoF open-loop evidence is context only |
 | `ours` | Future contribution against the frozen rows above | Must not start until the frozen tag exists |
 
 τ0-VLA, Vesta, Anticipation-VLA, STEP Planner, Hi Robot, BATON, AgentChord,
@@ -375,6 +378,19 @@ python3 scripts/compile_humanoidarena_hidden_final_gate.py
 # only then expose these one-shot outcomes:
 python3 -u scripts/run_humanoidarena_internal_matrix.py --split hidden_final
 python3 scripts/render_humanoidarena_internal_results.py
+```
+
+The current operator handoff intentionally leaves two CPU-bound work packages
+for last: (1) the remaining homogeneous PI0.5+SONIC external matrix and (2) the
+recovery admission package (nine live captures plus 180 independent PI0.5 oracle
+trials). All work that is independent of those packages is complete. When the
+machine is available, the first command resumes only missing evidence and then
+executes recovery admission; the second can wait at zero compute and continues
+the authorized GPU/downstream stages after each reviewed lock is committed:
+
+```bash
+python3 -u scripts/run_humanoidarena_post_external_pipeline.py --poll-seconds 60
+python3 -u scripts/run_humanoidarena_completion_supervisor.py --poll-seconds 60
 ```
 
 During execution, machine-live progress is written to
