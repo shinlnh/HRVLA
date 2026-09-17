@@ -5,9 +5,13 @@ import pytest
 
 from hrvla_bench.subtask_relabel import segment_subtasks
 from hrvla_bench.subtask_video_adjudication import (
+    TemporalBoundaryProposal,
     TemporalProposal,
+    combine_temporal_boundaries,
     contact_sheet_indices,
+    infer_temporal_boundary_with_repair,
     infer_temporal_proposal_with_repair,
+    parse_temporal_boundary_proposal,
     parse_temporal_proposal,
     temporal_consensus,
 )
@@ -52,6 +56,64 @@ def test_parse_sample_positions_maps_exactly_to_contact_sheet_frames() -> None:
         sample_indices=[0, 80, 120, 160, 239],
     )
     assert parsed.boundaries == (80, 160)
+
+
+def test_independent_transition_grounding_combines_without_value_changes() -> None:
+    samples = [0, 80, 120, 160, 239]
+    first = parse_temporal_boundary_proposal(
+        '{"boundary_sample_position":1,"boundary_confidence":0.91,'
+        '"visible_evidence":"gripper closes"}',
+        episode_frames=240,
+        sample_indices=samples,
+    )
+    second = parse_temporal_boundary_proposal(
+        '{"boundary_sample_position":3,"boundary_confidence":0.88,'
+        '"visible_evidence":"door starts opening"}',
+        episode_frames=240,
+        sample_indices=samples,
+    )
+    combined = combine_temporal_boundaries([first, second])
+    assert combined.boundaries == (80, 160)
+    assert combined.confidences == (0.91, 0.88)
+    with pytest.raises(ValueError, match="strictly increasing"):
+        combine_temporal_boundaries([second, first])
+
+
+def test_independent_transition_format_repair_is_bounded_and_retained() -> None:
+    outputs = iter(
+        [
+            '{"boundary_sample_position":[1],"boundary_confidence":0.9,'
+            '"visible_evidence":"contact"}',
+            '{"boundary_sample_position":1,"boundary_confidence":0.9,'
+            '"visible_evidence":"contact"}',
+        ]
+    )
+    prompts: list[str] = []
+    retained: list[dict] = []
+
+    def infer(prompt: str) -> str:
+        prompts.append(prompt)
+        return next(outputs)
+
+    proposal, attempts = infer_temporal_boundary_with_repair(
+        infer,
+        "one transition",
+        episode_frames=240,
+        sample_indices=[0, 80, 160, 239],
+        maximum_format_repairs=2,
+        record_attempt=retained.append,
+    )
+    assert proposal is not None and proposal.frame_index == 80
+    assert [row["valid"] for row in attempts] == [False, True]
+    assert retained == attempts
+    assert "three scalar values" not in prompts[1]
+    assert "Do not return lists" in prompts[1]
+
+
+def test_combine_rejects_duplicate_independent_boundaries() -> None:
+    row = TemporalBoundaryProposal(80, 1, 0.9, "contact", "{}")
+    with pytest.raises(ValueError, match="strictly increasing"):
+        combine_temporal_boundaries([row, row])
 
 
 def test_format_repair_retains_invalid_attempt_then_accepts_strict_json() -> None:

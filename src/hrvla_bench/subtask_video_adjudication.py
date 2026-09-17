@@ -23,6 +23,154 @@ class TemporalProposal:
     raw_text: str
 
 
+@dataclass(frozen=True)
+class TemporalBoundaryProposal:
+    frame_index: int
+    sample_position: int
+    confidence: float
+    evidence: str
+    raw_text: str
+
+
+def parse_temporal_boundary_proposal(
+    text: str,
+    *,
+    episode_frames: int,
+    sample_indices: Iterable[int],
+) -> TemporalBoundaryProposal:
+    """Parse one independently grounded transition from a strict JSON object."""
+
+    objects = list(_json_objects(text))
+    if not objects:
+        raise ValueError("temporal VLM output contains no JSON object")
+    value = objects[-1]
+    position = value.get("boundary_sample_position")
+    confidence = value.get("boundary_confidence")
+    evidence = value.get("visible_evidence")
+    if isinstance(position, bool) or not isinstance(position, int):
+        raise ValueError("boundary_sample_position must be one JSON integer")
+    samples = tuple(int(item) for item in sample_indices)
+    if position < 0 or position >= len(samples):
+        raise ValueError("temporal VLM sample position lies outside the contact sheet")
+    frame_index = samples[position]
+    if frame_index <= 0 or frame_index >= episode_frames:
+        raise ValueError("temporal VLM boundary lies outside the episode")
+    if isinstance(confidence, bool) or not isinstance(confidence, (int, float)):
+        raise ValueError("boundary_confidence must be one JSON number")
+    numeric_confidence = float(confidence)
+    if not 0.0 <= numeric_confidence <= 1.0:
+        raise ValueError("boundary confidence lies outside [0, 1]")
+    if not isinstance(evidence, str) or not evidence.strip():
+        raise ValueError("visible_evidence must be one non-empty JSON string")
+    return TemporalBoundaryProposal(
+        frame_index=frame_index,
+        sample_position=position,
+        confidence=numeric_confidence,
+        evidence=evidence.strip(),
+        raw_text=text,
+    )
+
+
+def temporal_boundary_format_repair_prompt(
+    original_prompt: str,
+    error: str,
+    *,
+    repair_number: int,
+) -> str:
+    """Request structural repair for one boundary without supplying a replacement."""
+
+    emphasis = (
+        "Do not return lists, markdown, or explanations."
+        if repair_number == 1
+        else "Use compact single-line JSON with exactly three scalar values."
+    )
+    return (
+        f"{original_prompt}\n\n"
+        "FORMAT_CORRECTION: Your previous answer failed strict validation. "
+        f"Validation error: {error}. {emphasis} boundary_sample_position must be one "
+        "allowed integer, boundary_confidence must be one number from 0 to 1, and "
+        "visible_evidence must be one brief non-empty string. This retry corrects "
+        "structure only; preserve your visual judgment.\nFINAL_JSON_ONLY:"
+    )
+
+
+def infer_temporal_boundary_with_repair(
+    infer: Callable[[str], str],
+    prompt: str,
+    *,
+    episode_frames: int,
+    sample_indices: Iterable[int],
+    maximum_format_repairs: int,
+    record_attempt: Callable[[dict[str, Any]], None] | None = None,
+) -> tuple[TemporalBoundaryProposal | None, list[dict[str, Any]]]:
+    """Infer one transition with bounded, fully retained format correction."""
+
+    if maximum_format_repairs < 0:
+        raise ValueError("maximum_format_repairs must be non-negative")
+    samples = tuple(int(item) for item in sample_indices)
+    attempts: list[dict[str, Any]] = []
+    current_prompt = prompt
+    for attempt_index in range(maximum_format_repairs + 1):
+        raw_text = infer(current_prompt)
+        try:
+            parsed = parse_temporal_boundary_proposal(
+                raw_text,
+                episode_frames=episode_frames,
+                sample_indices=samples,
+            )
+        except ValueError as exc:
+            error = str(exc)
+            attempt = {
+                "attempt": attempt_index,
+                "prompt_kind": "initial" if attempt_index == 0 else "format_repair",
+                "valid": False,
+                "parse_error": error,
+                "raw_text": raw_text,
+            }
+            attempts.append(attempt)
+            if record_attempt is not None:
+                record_attempt(attempt)
+            if attempt_index == maximum_format_repairs:
+                return None, attempts
+            current_prompt = temporal_boundary_format_repair_prompt(
+                prompt,
+                error,
+                repair_number=attempt_index + 1,
+            )
+            continue
+        attempt = {
+            "attempt": attempt_index,
+            "prompt_kind": "initial" if attempt_index == 0 else "format_repair",
+            "valid": True,
+            "parse_error": None,
+            "raw_text": raw_text,
+        }
+        attempts.append(attempt)
+        if record_attempt is not None:
+            record_attempt(attempt)
+        return parsed, attempts
+    raise AssertionError("bounded temporal boundary inference loop did not return")
+
+
+def combine_temporal_boundaries(
+    rows: Iterable[TemporalBoundaryProposal],
+) -> TemporalProposal:
+    """Combine independently grounded transitions without modifying their values."""
+
+    proposals = list(rows)
+    if not proposals:
+        raise ValueError("at least one independently grounded transition is required")
+    boundaries = tuple(row.frame_index for row in proposals)
+    if boundaries != tuple(sorted(set(boundaries))):
+        raise ValueError("independently grounded boundaries must be strictly increasing")
+    return TemporalProposal(
+        boundaries=boundaries,
+        confidences=tuple(row.confidence for row in proposals),
+        evidence=tuple(row.evidence for row in proposals),
+        raw_text="\n".join(row.raw_text for row in proposals),
+    )
+
+
 def temporal_format_repair_prompt(
     original_prompt: str,
     _invalid_text: str,
@@ -283,10 +431,15 @@ def temporal_consensus(
 
 
 __all__ = [
+    "TemporalBoundaryProposal",
     "TemporalProposal",
+    "combine_temporal_boundaries",
     "contact_sheet_indices",
+    "infer_temporal_boundary_with_repair",
     "infer_temporal_proposal_with_repair",
+    "parse_temporal_boundary_proposal",
     "parse_temporal_proposal",
+    "temporal_boundary_format_repair_prompt",
     "temporal_format_repair_prompt",
     "temporal_consensus",
 ]

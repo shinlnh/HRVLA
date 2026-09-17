@@ -23,14 +23,15 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 MAXIMUM_FORMAT_REPAIRS = 2
-PROMPT_PROTOCOL_VERSION = "cosmos-temporal-sample-position-v4"
+PROMPT_PROTOCOL_VERSION = "cosmos-independent-transition-grounding-v5"
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from hrvla_bench.plan import canonical_sha256, load_json  # noqa: E402
 from hrvla_bench.subtask_video_adjudication import (  # noqa: E402
+    combine_temporal_boundaries,
     contact_sheet_indices,
-    infer_temporal_proposal_with_repair,
+    infer_temporal_boundary_with_repair,
     temporal_consensus,
 )
 from prepare_humanoidarena_subtask_data import _analyze_split  # noqa: E402
@@ -93,38 +94,34 @@ def _contact_sheet(frames: np.ndarray, indices: np.ndarray):
     return sheet, hashlib.sha256(payload.getvalue()).hexdigest()
 
 
-def _prompt(task: dict[str, Any], episode_frames: int, sample_indices: np.ndarray) -> str:
-    skills = [skill["instruction"] for skill in task["skills"]]
-    skill_lines = "\n".join(
-        f"{index + 1}. {skill['id']}: {skill['instruction']}"
-        for index, skill in enumerate(task["skills"])
-    )
-    transition_lines = "\n".join(
-        f"{index + 1}. {task['skills'][index]['id']} -> {task['skills'][index + 1]['id']}"
-        for index in range(len(skills) - 1)
-    )
-    expected = len(skills) - 1
+def _transition_prompt(
+    task: dict[str, Any],
+    transition_index: int,
+    episode_frames: int,
+    sample_indices: np.ndarray,
+) -> str:
+    source_skill = task["skills"][transition_index]
+    target_skill = task["skills"][transition_index + 1]
     return (
         "The image is a chronological contact sheet from one humanoid demonstration. "
         "Each tile is labeled Sxx / Fxxxxx, where Sxx is its sample position and Fxxxxx is "
-        "the exact LOCAL episode frame. Locate the ordered "
-        "semantic transition from each skill to its successor using only visible evidence. "
-        "A boundary_sample_position MUST be one of the printed Sxx position numbers, must be "
-        "strictly increasing, and identifies the first tile where the next skill is visibly "
-        "underway. Do not infer simulator success or invisible state. If evidence is ambiguous, "
-        "lower confidence.\n"
+        "the exact LOCAL episode frame. Ground only the single target transition below using "
+        "visible evidence. Select the first Sxx tile where the TO skill is visibly underway, "
+        "not the final tile of the FROM skill and not merely its preparation. Do not infer "
+        "simulator success or invisible state. If evidence is ambiguous, lower confidence.\n"
         f"GOAL: {task['goal_instruction']}\n"
-        f"ORDERED_SKILLS:\n{skill_lines}\n"
-        f"ORDERED_TRANSITIONS:\n{transition_lines}\n"
+        f"TRANSITION_NUMBER: {transition_index + 1} of {len(task['skills']) - 1}\n"
+        f"FROM_SKILL_ID: {source_skill['id']}\n"
+        f"FROM_SKILL_VISIBLE_ACTION: {source_skill['instruction']}\n"
+        f"TO_SKILL_ID: {target_skill['id']}\n"
+        f"TO_SKILL_VISIBLE_ACTION: {target_skill['instruction']}\n"
         f"EPISODE_FRAMES: {episode_frames}\n"
         f"ALLOWED_SAMPLE_POSITIONS: 0 through {len(sample_indices) - 1}\n"
         "OUTPUT REQUIREMENTS: Return exactly one JSON object and no markdown. It must have "
-        "only these keys: boundary_sample_positions (Sxx numbers as integers, without the S), "
-        "boundary_confidences (numbers "
-        "from 0 to 1), and visible_evidence (a JSON array of distinct brief strings, never "
-        "a single string). "
-        f"Every list must contain exactly {expected} entries. Evidence describes the visible "
-        "transition at the corresponding selected frame, not the ordered skill definition.\n"
+        "only these three scalar keys: boundary_sample_position (one Sxx number as an integer "
+        "without the S), boundary_confidence (one number from 0 to 1), and visible_evidence "
+        "(one brief string describing what is actually visible at the selected tile). Do not "
+        "return arrays or copy a skill definition.\n"
         "FINAL_JSON_ONLY:"
     )
 
@@ -183,7 +180,7 @@ class CosmosContactSheetModel:
             return_tensors="pt",
         ).to(self._model.device)
         with self._torch.inference_mode():
-            generated = self._model.generate(**inputs, do_sample=False, max_new_tokens=768)
+            generated = self._model.generate(**inputs, do_sample=False, max_new_tokens=512)
         trimmed = generated[:, inputs.input_ids.shape[1] :]
         return self._processor.batch_decode(
             trimmed,
@@ -365,67 +362,107 @@ def main() -> int:
                     examples.mkdir(parents=True, exist_ok=True)
                     sheet.save(examples / f"{split}-{candidate['task_key']}-episode-{episode:06d}.png")
                 attempt_ids: list[str] = []
+                format_repairs_used = 0
+                transition_rows = []
+                boundary_proposals = []
+                invalid_transitions = []
+                for transition_index in range(len(program["skills"]) - 1):
+                    transition_attempt_ids: list[str] = []
 
-                def record_attempt(attempt: dict[str, Any]) -> None:
-                    core = {
-                        "schema_version": 1,
-                        "split": split,
-                        "episode_index": episode,
-                        "task_key": candidate["task_key"],
-                        "variant": variant,
-                        "contact_sheet_sha256": sheet_sha256,
-                        "sample_indices": local_indices.tolist(),
-                        "model_repo_id": policy["model_repo_id"],
-                        "model_revision": policy["model_revision"],
-                        "prompt_protocol_version": PROMPT_PROTOCOL_VERSION,
-                        **attempt,
+                    def record_attempt(attempt: dict[str, Any]) -> None:
+                        core = {
+                            "schema_version": 1,
+                            "split": split,
+                            "episode_index": episode,
+                            "task_key": candidate["task_key"],
+                            "variant": variant,
+                            "transition_index": transition_index,
+                            "contact_sheet_sha256": sheet_sha256,
+                            "sample_indices": local_indices.tolist(),
+                            "model_repo_id": policy["model_repo_id"],
+                            "model_revision": policy["model_revision"],
+                            "prompt_protocol_version": PROMPT_PROTOCOL_VERSION,
+                            **attempt,
+                        }
+                        attempt_id = canonical_sha256(core)
+                        attempt_ids.append(attempt_id)
+                        transition_attempt_ids.append(attempt_id)
+                        if attempt_id not in observed_attempt_ids:
+                            _append_jsonl(attempts_path, {**core, "attempt_id": attempt_id})
+                            observed_attempt_ids.add(attempt_id)
+
+                    parsed, attempts = infer_temporal_boundary_with_repair(
+                        lambda repair_prompt: model.infer(sheet, repair_prompt),
+                        _transition_prompt(program, transition_index, length, local_indices),
+                        episode_frames=length,
+                        sample_indices=local_indices,
+                        maximum_format_repairs=MAXIMUM_FORMAT_REPAIRS,
+                        record_attempt=record_attempt,
+                    )
+                    format_repairs_used += len(attempts) - 1
+                    transition_row = {
+                        "transition_index": transition_index,
+                        "from_skill_id": program["skills"][transition_index]["id"],
+                        "to_skill_id": program["skills"][transition_index + 1]["id"],
+                        "attempt_ids": transition_attempt_ids,
+                        "attempt_count": len(attempts),
                     }
-                    attempt_id = canonical_sha256(core)
-                    attempt_ids.append(attempt_id)
-                    if attempt_id not in observed_attempt_ids:
-                        _append_jsonl(attempts_path, {**core, "attempt_id": attempt_id})
-                        observed_attempt_ids.add(attempt_id)
-
-                parsed, attempts = infer_temporal_proposal_with_repair(
-                    lambda repair_prompt: model.infer(sheet, repair_prompt),
-                    _prompt(program, length, local_indices),
-                    expected_boundaries=len(program["skills"]) - 1,
-                    episode_frames=length,
-                    sample_indices=local_indices,
-                    maximum_format_repairs=MAXIMUM_FORMAT_REPAIRS,
-                    record_attempt=record_attempt,
-                )
+                    if parsed is None:
+                        invalid_transitions.append(transition_index)
+                        transition_rows.append(
+                            {
+                                **transition_row,
+                                "valid": False,
+                                "parse_error": attempts[-1]["parse_error"],
+                            }
+                        )
+                    else:
+                        boundary_proposals.append(parsed)
+                        transition_rows.append(
+                            {
+                                **transition_row,
+                                "valid": True,
+                                "parse_error": None,
+                                "sample_position": parsed.sample_position,
+                                "boundary": parsed.frame_index,
+                                "confidence": parsed.confidence,
+                                "visible_evidence": parsed.evidence,
+                            }
+                        )
                 variant_row = {
                     "variant": variant,
                     "sample_indices": local_indices.tolist(),
                     "contact_sheet_sha256": sheet_sha256,
                     "attempt_ids": attempt_ids,
-                    "attempt_count": len(attempts),
-                    "format_repairs_used": len(attempts) - 1,
-                    "raw_text": attempts[-1]["raw_text"],
+                    "attempt_count": len(attempt_ids),
+                    "format_repairs_used": format_repairs_used,
+                    "transitions": transition_rows,
                 }
+                parsed = None
+                parse_error = None
+                if not invalid_transitions:
+                    try:
+                        parsed = combine_temporal_boundaries(boundary_proposals)
+                    except ValueError as exc:
+                        parse_error = str(exc)
                 if parsed is None:
                     invalid_variants.append(variant)
                     variant_rows.append(
                         {
                             **variant_row,
                             "valid": False,
-                            "parse_error": attempts[-1]["parse_error"],
+                            "parse_error": parse_error or "one_or_more_invalid_transitions",
+                            "invalid_transitions": invalid_transitions,
                         }
                     )
                 else:
                     proposals.append(parsed)
-                    sample_position_by_frame = {
-                        int(frame): position for position, frame in enumerate(local_indices)
-                    }
                     variant_rows.append(
                         {
                             **variant_row,
                             "valid": True,
                             "parse_error": None,
-                            "sample_positions": [
-                                sample_position_by_frame[item] for item in parsed.boundaries
-                            ],
+                            "sample_positions": [row.sample_position for row in boundary_proposals],
                             "boundaries": list(parsed.boundaries),
                             "confidences": list(parsed.confidences),
                             "visible_evidence": list(parsed.evidence),
@@ -446,7 +483,7 @@ def main() -> int:
                 )
                 consensus["invalid_variants"] = invalid_variants
             result = {
-                "schema_version": 2,
+                "schema_version": 3,
                 "split": split,
                 "episode_index": episode,
                 "source_dataset": row["source_dataset"],
@@ -484,7 +521,7 @@ def main() -> int:
     maximum = float(lock["subtask_rt_dataset"]["maximum_episode_fallback_rate"])
     status = "pass" if complete and all(rate <= maximum for rate in residual_rates.values()) else "fail"
     core = {
-        "schema_version": 2,
+        "schema_version": 3,
         "status": status,
         "claim_boundary": "training-label adjudication only; not a closed-loop success metric",
         "source_manifest_sha256": lock["source_dataset"]["manifest_sha256"],
@@ -500,8 +537,9 @@ def main() -> int:
         )},
         "inference_protocol": {
             "prompt_protocol_version": PROMPT_PROTOCOL_VERSION,
+            "grounding_strategy": "independent_per_transition",
             "maximum_format_repairs": MAXIMUM_FORMAT_REPAIRS,
-            "maximum_new_tokens": 768,
+            "maximum_new_tokens": 512,
             "invalid_output_policy": "reject_episode_and_continue",
             "repair_scope": "structure_only_no_local_boundary_modification",
         },
