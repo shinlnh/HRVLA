@@ -230,11 +230,13 @@ The hash-bound report and plot are retained as
 `results/benchmark/retraining/humanoidarena_st_rt_validation.{json,png}`.
 All three common and all three ST-RT selected step-300 checkpoints have been
 published to immutable Hugging Face revisions; their manifests and receipts
-are tracked under `results/benchmark/release/pre-recovery/`. The ST dataset
-publication is still running because its symlink-resolved logical payload is
-106.9 GB. After receipt verification, 12 unselected checkpoint directories and
-12 redundant root shards were removed while all selected checkpoints remained
-local, reclaiming 106.76 GiB; the exact cleanup record is
+are tracked under `results/benchmark/release/pre-recovery/`. The 106.94 GB
+(99.60 GiB) symlink-resolved ST dataset is also published and remotely verified
+at immutable revision `7e82c2031b4675a6cc5aab84c32a1c64adbf9e13`; all seven
+pre-recovery artifact receipts are now retained in Git. After receipt
+verification, 12 unselected checkpoint directories and 12 redundant root
+shards were removed while all selected checkpoints remained local, reclaiming
+106.76 GiB; the exact cleanup record is
 `results/benchmark/storage/retraining_cleanup_v2.json`.
 The two observed-data freeze points are now executable without hand-editing
 JSON: `compile_humanoidarena_rt_lock.py adjudication` accepts only the original
