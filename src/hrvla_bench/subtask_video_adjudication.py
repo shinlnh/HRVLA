@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 import re
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable
 
 import numpy as np
 
@@ -21,6 +21,92 @@ class TemporalProposal:
     confidences: tuple[float, ...]
     evidence: tuple[str, ...]
     raw_text: str
+
+
+def temporal_format_repair_prompt(
+    original_prompt: str,
+    invalid_text: str,
+    error: str,
+    *,
+    expected_boundaries: int,
+) -> str:
+    """Build a deterministic corrective prompt without changing label gates."""
+
+    return (
+        f"{original_prompt}\n\n"
+        "FORMAT_CORRECTION: Your previous answer failed strict validation. "
+        f"Validation error: {error}. Return exactly one JSON object and no other text. "
+        f"Each of the three lists must contain exactly {expected_boundaries} entries. "
+        "Do not invent new frame labels; boundary_frame_indices must come from "
+        "SAMPLED_LOCAL_FRAMES and remain strictly increasing. Preserve your visual "
+        "judgment; this retry corrects structure only.\n"
+        f"PREVIOUS_INVALID_OUTPUT: {invalid_text}"
+    )
+
+
+def infer_temporal_proposal_with_repair(
+    infer: Callable[[str], str],
+    prompt: str,
+    *,
+    expected_boundaries: int,
+    episode_frames: int,
+    allowed_boundary_indices: Iterable[int] | None = None,
+    maximum_format_repairs: int,
+    record_attempt: Callable[[dict[str, Any]], None] | None = None,
+) -> tuple[TemporalProposal | None, list[dict[str, Any]]]:
+    """Infer a proposal while retaining every valid or malformed response.
+
+    Format correction is bounded and never modifies an answer locally.
+    Exhausted retries return ``None`` so callers can reject the episode without
+    terminating unrelated adjudications.
+    """
+
+    if maximum_format_repairs < 0:
+        raise ValueError("maximum_format_repairs must be non-negative")
+    attempts: list[dict[str, Any]] = []
+    current_prompt = prompt
+    for attempt_index in range(maximum_format_repairs + 1):
+        raw_text = infer(current_prompt)
+        try:
+            parsed = parse_temporal_proposal(
+                raw_text,
+                expected_boundaries=expected_boundaries,
+                episode_frames=episode_frames,
+                allowed_boundary_indices=allowed_boundary_indices,
+            )
+        except ValueError as exc:
+            error = str(exc)
+            attempt = {
+                "attempt": attempt_index,
+                "prompt_kind": "initial" if attempt_index == 0 else "format_repair",
+                "valid": False,
+                "parse_error": error,
+                "raw_text": raw_text,
+            }
+            attempts.append(attempt)
+            if record_attempt is not None:
+                record_attempt(attempt)
+            if attempt_index == maximum_format_repairs:
+                return None, attempts
+            current_prompt = temporal_format_repair_prompt(
+                prompt,
+                raw_text,
+                error,
+                expected_boundaries=expected_boundaries,
+            )
+            continue
+        attempt = {
+            "attempt": attempt_index,
+            "prompt_kind": "initial" if attempt_index == 0 else "format_repair",
+            "valid": True,
+            "parse_error": None,
+            "raw_text": raw_text,
+        }
+        attempts.append(attempt)
+        if record_attempt is not None:
+            record_attempt(attempt)
+        return parsed, attempts
+    raise AssertionError("bounded temporal inference loop did not return")
 
 
 def contact_sheet_indices(length: int, count: int, variant: int) -> np.ndarray:
@@ -61,6 +147,7 @@ def parse_temporal_proposal(
     *,
     expected_boundaries: int,
     episode_frames: int,
+    allowed_boundary_indices: Iterable[int] | None = None,
 ) -> TemporalProposal:
     """Parse the final strict JSON object emitted by the temporal VLM."""
 
@@ -84,6 +171,10 @@ def parse_temporal_proposal(
         raise ValueError("temporal VLM boundaries must be strictly increasing")
     if any(item <= 0 or item >= episode_frames for item in boundaries):
         raise ValueError("temporal VLM boundary lies outside the episode")
+    if allowed_boundary_indices is not None:
+        allowed = {int(item) for item in allowed_boundary_indices}
+        if any(item not in allowed for item in boundaries):
+            raise ValueError("temporal VLM boundary is not a sampled frame label")
     if any(isinstance(item, bool) or not isinstance(item, (int, float)) for item in raw_confidences):
         raise ValueError("boundary_confidences must be numeric")
     confidences = tuple(float(item) for item in raw_confidences)
@@ -150,6 +241,8 @@ def temporal_consensus(
 __all__ = [
     "TemporalProposal",
     "contact_sheet_indices",
+    "infer_temporal_proposal_with_repair",
     "parse_temporal_proposal",
+    "temporal_format_repair_prompt",
     "temporal_consensus",
 ]

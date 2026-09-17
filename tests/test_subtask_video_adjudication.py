@@ -7,6 +7,7 @@ from hrvla_bench.subtask_relabel import segment_subtasks
 from hrvla_bench.subtask_video_adjudication import (
     TemporalProposal,
     contact_sheet_indices,
+    infer_temporal_proposal_with_repair,
     parse_temporal_proposal,
     temporal_consensus,
 )
@@ -37,6 +38,64 @@ def test_parse_temporal_proposal_uses_final_strict_json() -> None:
     parsed = parse_temporal_proposal(text, expected_boundaries=2, episode_frames=240)
     assert parsed.boundaries == (81, 161)
     assert parsed.confidences == (0.91, 0.88)
+
+
+def test_format_repair_retains_invalid_attempt_then_accepts_strict_json() -> None:
+    outputs = iter(
+        [
+            '{"boundary_frame_indices":[80],"boundary_confidences":[0.9],'
+            '"visible_evidence":["contact"]}',
+            '{"boundary_frame_indices":[80,160],"boundary_confidences":[0.9,0.8],'
+            '"visible_evidence":["contact","opened"]}',
+        ]
+    )
+    prompts: list[str] = []
+    retained: list[dict] = []
+
+    def infer(prompt: str) -> str:
+        prompts.append(prompt)
+        return next(outputs)
+
+    proposal, attempts = infer_temporal_proposal_with_repair(
+        infer,
+        "SAMPLED_LOCAL_FRAMES: [0, 80, 160, 239]",
+        expected_boundaries=2,
+        episode_frames=240,
+        allowed_boundary_indices=[0, 80, 160, 239],
+        maximum_format_repairs=2,
+        record_attempt=retained.append,
+    )
+    assert proposal is not None and proposal.boundaries == (80, 160)
+    assert [row["valid"] for row in attempts] == [False, True]
+    assert retained == attempts
+    assert "FORMAT_CORRECTION" in prompts[1]
+    assert "exactly 2 entries" in prompts[1]
+
+
+def test_format_repair_is_bounded_and_does_not_invent_a_boundary() -> None:
+    invalid = (
+        '{"boundary_frame_indices":[81,160],"boundary_confidences":[0.9,0.8],'
+        '"visible_evidence":["contact","opened"]}'
+    )
+    calls = 0
+
+    def infer(_prompt: str) -> str:
+        nonlocal calls
+        calls += 1
+        return invalid
+
+    proposal, attempts = infer_temporal_proposal_with_repair(
+        infer,
+        "sampled labels",
+        expected_boundaries=2,
+        episode_frames=240,
+        allowed_boundary_indices=[0, 80, 160, 239],
+        maximum_format_repairs=2,
+    )
+    assert proposal is None
+    assert calls == len(attempts) == 3
+    assert all(not row["valid"] for row in attempts)
+    assert all("not a sampled frame label" in row["parse_error"] for row in attempts)
 
 
 def test_consensus_rejects_sampling_disagreement() -> None:

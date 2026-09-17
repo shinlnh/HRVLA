@@ -22,13 +22,14 @@ import numpy as np
 
 
 ROOT = Path(__file__).resolve().parents[1]
+MAXIMUM_FORMAT_REPAIRS = 2
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from hrvla_bench.plan import canonical_sha256, load_json  # noqa: E402
 from hrvla_bench.subtask_video_adjudication import (  # noqa: E402
     contact_sheet_indices,
-    parse_temporal_proposal,
+    infer_temporal_proposal_with_repair,
     temporal_consensus,
 )
 from prepare_humanoidarena_subtask_data import _analyze_split  # noqa: E402
@@ -204,6 +205,21 @@ def _append_jsonl(path: Path, row: dict[str, Any]) -> None:
         os.fsync(stream.fileno())
 
 
+def _load_attempt_ids(path: Path) -> set[str]:
+    if not path.is_file():
+        return set()
+    output: set[str] = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line:
+            continue
+        row = json.loads(line)
+        attempt_id = str(row["attempt_id"])
+        if attempt_id in output:
+            raise ValueError(f"duplicate temporal inference attempt: {attempt_id}")
+        output.add(attempt_id)
+    return output
+
+
 def _plot_report(report: dict[str, Any], path: Path) -> None:
     import matplotlib
 
@@ -287,9 +303,11 @@ def main() -> int:
 
     report_path = (ROOT / policy["report_path"]).resolve()
     raw_path = report_path.with_name(report_path.stem + "_raw.jsonl")
+    attempts_path = report_path.with_name(report_path.stem + "_attempts.jsonl")
     plot_path = report_path.with_name(report_path.stem + ".png")
     examples = report_path.with_name(report_path.stem + "_examples")
     resumed = _load_resumed(raw_path)
+    observed_attempt_ids = _load_attempt_ids(attempts_path)
     pending = [
         row
         for row in candidates
@@ -316,6 +334,7 @@ def main() -> int:
             program = program_by_task[candidate["task_key"]]
             variant_rows = []
             proposals = []
+            invalid_variants = []
             for variant in range(3):
                 local_indices = contact_sheet_indices(
                     length, int(policy["sample_frames_per_variant"]), variant
@@ -331,24 +350,65 @@ def main() -> int:
                 ) and variant == 1:
                     examples.mkdir(parents=True, exist_ok=True)
                     sheet.save(examples / f"{split}-{candidate['task_key']}-episode-{episode:06d}.png")
-                raw_text = model.infer(sheet, _prompt(program, length, local_indices))
-                parsed = parse_temporal_proposal(
-                    raw_text,
+                attempt_ids: list[str] = []
+
+                def record_attempt(attempt: dict[str, Any]) -> None:
+                    core = {
+                        "schema_version": 1,
+                        "split": split,
+                        "episode_index": episode,
+                        "task_key": candidate["task_key"],
+                        "variant": variant,
+                        "contact_sheet_sha256": sheet_sha256,
+                        "model_repo_id": policy["model_repo_id"],
+                        "model_revision": policy["model_revision"],
+                        **attempt,
+                    }
+                    attempt_id = canonical_sha256(core)
+                    attempt_ids.append(attempt_id)
+                    if attempt_id not in observed_attempt_ids:
+                        _append_jsonl(attempts_path, {**core, "attempt_id": attempt_id})
+                        observed_attempt_ids.add(attempt_id)
+
+                parsed, attempts = infer_temporal_proposal_with_repair(
+                    lambda repair_prompt: model.infer(sheet, repair_prompt),
+                    _prompt(program, length, local_indices),
                     expected_boundaries=len(program["skills"]) - 1,
                     episode_frames=length,
+                    allowed_boundary_indices=local_indices,
+                    maximum_format_repairs=MAXIMUM_FORMAT_REPAIRS,
+                    record_attempt=record_attempt,
                 )
-                proposals.append(parsed)
-                variant_rows.append(
-                    {
-                        "variant": variant,
-                        "sample_indices": local_indices.tolist(),
-                        "contact_sheet_sha256": sheet_sha256,
-                        "raw_text": raw_text,
-                        "boundaries": list(parsed.boundaries),
-                        "confidences": list(parsed.confidences),
-                        "visible_evidence": list(parsed.evidence),
-                    }
-                )
+                variant_row = {
+                    "variant": variant,
+                    "sample_indices": local_indices.tolist(),
+                    "contact_sheet_sha256": sheet_sha256,
+                    "attempt_ids": attempt_ids,
+                    "attempt_count": len(attempts),
+                    "format_repairs_used": len(attempts) - 1,
+                    "raw_text": attempts[-1]["raw_text"],
+                }
+                if parsed is None:
+                    invalid_variants.append(variant)
+                    variant_rows.append(
+                        {
+                            **variant_row,
+                            "valid": False,
+                            "parse_error": attempts[-1]["parse_error"],
+                        }
+                    )
+                else:
+                    proposals.append(parsed)
+                    variant_rows.append(
+                        {
+                            **variant_row,
+                            "valid": True,
+                            "parse_error": None,
+                            "boundaries": list(parsed.boundaries),
+                            "confidences": list(parsed.confidences),
+                            "visible_evidence": list(parsed.evidence),
+                        }
+                    )
             consensus = temporal_consensus(
                 proposals,
                 episode_frames=length,
@@ -357,8 +417,14 @@ def main() -> int:
                 minimum_confidence=float(policy["minimum_boundary_confidence"]),
                 maximum_spread_fraction=float(policy["maximum_boundary_spread_fraction"]),
             )
+            if invalid_variants:
+                consensus["reasons"] = sorted(
+                    set(consensus["reasons"])
+                    | {"invalid_model_output_after_bounded_format_repair"}
+                )
+                consensus["invalid_variants"] = invalid_variants
             result = {
-                "schema_version": 1,
+                "schema_version": 2,
                 "split": split,
                 "episode_index": episode,
                 "source_dataset": row["source_dataset"],
@@ -395,7 +461,7 @@ def main() -> int:
     maximum = float(lock["subtask_rt_dataset"]["maximum_episode_fallback_rate"])
     status = "pass" if complete and all(rate <= maximum for rate in residual_rates.values()) else "fail"
     core = {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": status,
         "claim_boundary": "training-label adjudication only; not a closed-loop success metric",
         "source_manifest_sha256": lock["source_dataset"]["manifest_sha256"],
@@ -409,6 +475,11 @@ def main() -> int:
             "minimum_boundary_confidence",
             "maximum_boundary_spread_fraction",
         )},
+        "inference_protocol": {
+            "maximum_format_repairs": MAXIMUM_FORMAT_REPAIRS,
+            "invalid_output_policy": "reject_episode_and_continue",
+            "repair_scope": "structure_only_no_local_boundary_modification",
+        },
         "complete": complete,
         "candidates_expected": len(candidates),
         "candidates_observed": len(records),
@@ -419,6 +490,7 @@ def main() -> int:
         "maximum_episode_fallback_rate": maximum,
         "peak_vram_mib": model.peak_vram_mib if model is not None else None,
         "raw_evidence_path": str(raw_path.relative_to(ROOT)),
+        "raw_attempt_evidence_path": str(attempts_path.relative_to(ROOT)),
         "records": [
             {key: value for key, value in row.items() if key != "variants"}
             | {
