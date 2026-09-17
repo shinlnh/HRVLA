@@ -219,6 +219,15 @@ The ST train/validation views are materialized and frozen as
 `40a713454ae3dbd053f91892518cc008b039e14e94bc15083516ad09c441a132` and
 `b1ee2f9fc399e18a25388318d8b24c704aee15628e941d02da944dad007e812c`.
 Recovery manifests and both held-out manifests remain null.
+ST-RT action-decoder adaptation is complete for seeds 0/1/2 at steps
+100/200/300. Complete validation selected step 300 without accessing hidden
+data (`selection_sha256=b09c3e6b03f00e62c2e202fcb2ffbbe18d475a8ddbbb6e48d48bca4c2a234a56`).
+At that step the mean three-seed macro-per-task action MSE changed from
+`0.289526` for the seed-matched common checkpoints to `0.288673` for ST-RT;
+the paired per-seed reduction is `0.294%` on average. This is validation-only
+open-loop evidence, not a held-out, task-success, or recovery-success claim.
+The hash-bound report and plot are retained as
+`results/benchmark/retraining/humanoidarena_st_rt_validation.{json,png}`.
 The two observed-data freeze points are now executable without hand-editing
 JSON: `compile_humanoidarena_rt_lock.py adjudication` accepts only the original
 model/threshold policy and a complete passing report; `datasets` accepts only
