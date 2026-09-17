@@ -29,6 +29,9 @@ RT_LOCK = ROOT / "config/humanoidarena-rt-training.lock.json"
 CHECKPOINT_LOCK = ROOT / "config/humanoidarena-internal-checkpoints.lock.json"
 HIDDEN_GATE = ROOT / "config/humanoidarena-hidden-final.lock.json"
 RELEASE_ROOT = ROOT / "_artifacts/HumanoidArena/release/humanoidarena-v1"
+PRE_RECOVERY_RELEASE_PLAN = (
+    ROOT / "_artifacts/HumanoidArena/release/pre-recovery/release-plan.json"
+)
 
 
 def _utc_now() -> str:
@@ -204,6 +207,13 @@ def _probe_command(python: str) -> list[str]:
     ]
 
 
+def _release_stage_command(python: str) -> list[str]:
+    command = [python, "scripts/release_humanoidarena_artifacts.py", "stage"]
+    if PRE_RECOVERY_RELEASE_PLAN.is_file():
+        command.extend(["--reuse-plan", str(PRE_RECOVERY_RELEASE_PLAN)])
+    return command
+
+
 def _audit_hidden_command(python: str) -> list[str]:
     root = "_artifacts/HumanoidArena/internal-benchmark/runs/hidden_final"
     return [
@@ -281,7 +291,7 @@ def main() -> int:
     for name, command in (
         ("rt_training", [python, "-u", "scripts/run_humanoidarena_rt_training.py"]),
         ("rt_validation", [python, "-u", "scripts/run_humanoidarena_rt_validation.py"]),
-        ("release_stage", [python, "scripts/release_humanoidarena_artifacts.py", "stage"]),
+        ("release_stage", _release_stage_command(python)),
         ("release_publish", [groot_python, "-u", "scripts/release_humanoidarena_artifacts.py", "publish"]),
     ):
         if not _stage(state, status_path, name, command):
