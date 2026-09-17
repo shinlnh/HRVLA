@@ -168,3 +168,19 @@ def test_partial_release_does_not_require_recovery_artifacts(
         "subtask_rt-seed-2",
         "subtask-rt-dataset",
     ]
+
+
+def test_stage_parser_accepts_reusable_partial_plans() -> None:
+    args = _release_script().parser().parse_args(
+        [
+            "stage",
+            "--family",
+            "common",
+            "--family",
+            "subtask_rt",
+            "--reuse-plan",
+            "partial.json",
+        ]
+    )
+    assert args.family == ["common", "subtask_rt"]
+    assert args.reuse_plan == [Path("partial.json")]

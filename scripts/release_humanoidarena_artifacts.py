@@ -192,9 +192,47 @@ def stage(args: argparse.Namespace) -> int:
     revision = git_revision(ROOT)
     plan_root = args.plan.resolve().parent
     families = tuple(args.family or RELEASE_FAMILIES)
+    specifications = _artifact_specifications(common_lock, rt_lock, families)
+    expected_ids = {spec["artifact_id"] for spec in specifications}
+    reused: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
+    reused_plan_hashes = []
+    for reuse_path in args.reuse_plan or []:
+        reuse_plan = _load_plan(reuse_path.resolve())
+        reused_plan_hashes.append(reuse_plan["release_plan_sha256"])
+        for row in reuse_plan["artifacts"]:
+            artifact_id = row["artifact_id"]
+            if artifact_id not in expected_ids:
+                continue
+            if artifact_id in reused:
+                raise ValueError(f"duplicate reused release artifact: {artifact_id}")
+            _manifest_path, manifest = _load_manifest(row)
+            receipt_path = ROOT / row["receipt_path"]
+            if not receipt_path.is_file():
+                raise FileNotFoundError(
+                    f"reused artifact is not published: {artifact_id}: {receipt_path}"
+                )
+            receipt = load_json(receipt_path)
+            validate_release_receipt(receipt, manifest)
+            reused[artifact_id] = (row, manifest)
     rows = []
-    for spec in _artifact_specifications(common_lock, rt_lock, families):
+    for spec in specifications:
         repo_id = args.model_repo if spec["repo_type"] == "model" else args.dataset_repo
+        if spec["artifact_id"] in reused:
+            row, manifest = reused[spec["artifact_id"]]
+            expected = {
+                "artifact_type": spec["artifact_type"],
+                "root": spec["root"],
+                "repo_id": repo_id,
+                "repo_type": spec["repo_type"],
+                "path_in_repo": spec["path_in_repo"],
+                "provenance": spec["provenance"],
+            }
+            if any(manifest.get(key) != value for key, value in expected.items()):
+                raise ValueError(
+                    f"reused artifact contract differs: {spec['artifact_id']}"
+                )
+            rows.append(row)
+            continue
         manifest = build_release_manifest(
             ROOT,
             artifact_id=spec["artifact_id"],
@@ -226,6 +264,7 @@ def stage(args: argparse.Namespace) -> int:
         ),
         "source_revision": revision,
         "families": list(families),
+        "reused_release_plan_sha256": reused_plan_hashes,
         "artifacts": rows,
     }
     plan = {**core, "release_plan_sha256": canonical_sha256(core)}
@@ -434,6 +473,7 @@ def parser() -> argparse.ArgumentParser:
     common.add_argument("--model-repo", default="shin0412/HRVLA")
     common.add_argument("--dataset-repo", default="shin0412/HRVLA")
     common.add_argument("--family", action="append", choices=RELEASE_FAMILIES)
+    common.add_argument("--reuse-plan", action="append", type=Path)
     common.set_defaults(handler=stage)
     publishing = subparsers.add_parser("publish")
     publishing.add_argument("--plan", type=Path, default=DEFAULT_PLAN)
