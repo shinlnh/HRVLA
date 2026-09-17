@@ -38,6 +38,22 @@ def temporal_format_repair_prompt(
         if repair_number == 1
         else "Use compact single-line JSON; keep every evidence phrase under six words."
     )
+    targeted = ""
+    if "evidence" in error:
+        targeted = (
+            " CRITICAL: visible_evidence must be a JSON ARRAY in square brackets, never "
+            f"one string. Put exactly {expected_boundaries} separately quoted strings inside it."
+        )
+    elif "confidences" in error:
+        targeted = (
+            " CRITICAL: boundary_confidences must be a JSON ARRAY in square brackets with "
+            f"exactly {expected_boundaries} numeric values."
+        )
+    elif "boundar" in error:
+        targeted = (
+            " CRITICAL: boundary_frame_indices must be a JSON ARRAY in square brackets with "
+            f"exactly {expected_boundaries} sampled integer frame labels."
+        )
     return (
         f"{original_prompt}\n\n"
         "FORMAT_CORRECTION: Your previous answer failed strict validation. "
@@ -45,7 +61,7 @@ def temporal_format_repair_prompt(
         f"Each of the three lists must contain exactly {expected_boundaries} entries. "
         "Do not invent new frame labels; boundary_frame_indices must come from "
         "SAMPLED_LOCAL_FRAMES and remain strictly increasing. Preserve your visual "
-        f"judgment; this retry corrects structure only. {emphasis}\n"
+        f"judgment; this retry corrects structure only. {emphasis}{targeted}\n"
         "FINAL_JSON_ONLY:"
     )
 

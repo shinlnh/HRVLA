@@ -23,7 +23,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 MAXIMUM_FORMAT_REPAIRS = 2
-PROMPT_PROTOCOL_VERSION = "cosmos-temporal-json-v2"
+PROMPT_PROTOCOL_VERSION = "cosmos-temporal-json-v3"
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -115,7 +115,8 @@ def _prompt(task: dict[str, Any], episode_frames: int, sample_indices: np.ndarra
         f"SAMPLED_LOCAL_FRAMES: {', '.join(str(int(item)) for item in sample_indices)}\n"
         "OUTPUT REQUIREMENTS: Return exactly one JSON object and no markdown. It must have "
         "only these keys: boundary_frame_indices (integers), boundary_confidences (numbers "
-        "from 0 to 1), and visible_evidence (brief strings). "
+        "from 0 to 1), and visible_evidence (a JSON array of distinct brief strings, never "
+        "a single string). "
         f"Every list must contain exactly {expected} entries. Evidence describes the visible "
         "transition at the corresponding selected frame, not the ordered skill definition.\n"
         "FINAL_JSON_ONLY:"

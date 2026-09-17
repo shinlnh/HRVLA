@@ -73,6 +73,7 @@ def test_format_repair_retains_invalid_attempt_then_accepts_strict_json() -> Non
     assert retained == attempts
     assert "FORMAT_CORRECTION" in prompts[1]
     assert "exactly 2 entries" in prompts[1]
+    assert "JSON ARRAY in square brackets" in prompts[1]
     assert invalid not in prompts[1]
 
 
