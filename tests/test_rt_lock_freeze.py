@@ -68,6 +68,32 @@ def test_freeze_adjudication_and_datasets_is_fail_closed() -> None:
     assert ready["recovery_rt_dataset"]["manifests"]["validation"] == manifests["recovery_rt_dataset"]["validation"]["manifest_sha256"]
 
 
+def test_freeze_one_dataset_family_without_unlocking_the_other() -> None:
+    lock = freeze_adjudication(_lock(), _adjudication(_lock()))
+    st_manifests = {
+        "subtask_rt_dataset": {
+            split: _manifest(lock, "subtask_rt_dataset", split)
+            for split in ("train", "validation")
+        }
+    }
+    partial = freeze_dataset_manifests(
+        lock, st_manifests, ("subtask_rt_dataset",)
+    )
+    assert partial["status"] == "subtask_rt_ready_waiting_for_recovery_dataset"
+    assert isinstance(partial["subtask_rt_dataset"]["manifests"]["train"], str)
+    assert partial["recovery_rt_dataset"]["manifests"]["train"] is None
+    recovery_manifests = {
+        "recovery_rt_dataset": {
+            split: _manifest(partial, "recovery_rt_dataset", split)
+            for split in ("train", "validation")
+        }
+    }
+    ready = freeze_dataset_manifests(
+        partial, recovery_manifests, ("recovery_rt_dataset",)
+    )
+    assert ready["status"] == "ready_for_rt_training"
+
+
 def test_freeze_rejects_threshold_drift_and_hidden_access() -> None:
     lock = _lock()
     report = _adjudication(lock)

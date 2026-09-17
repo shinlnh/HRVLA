@@ -59,8 +59,8 @@ def main() -> int:
     lock = load_rt_lock(args.lock.resolve())
     common_lock = load_training_lock(args.common_lock.resolve())
     common_selection = json.loads(args.common_selection.read_text(encoding="utf-8"))
-    validate_rt_inputs(ROOT, lock, common_lock, common_selection)
     methods = args.method or list(RT_METHODS)
+    validate_rt_inputs(ROOT, lock, common_lock, common_selection, tuple(methods))
     for method_id in methods:
         for seed in lock["training_seeds"]:
             if not training_complete(run_directory(ROOT, lock, method_id, seed)):

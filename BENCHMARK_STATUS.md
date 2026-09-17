@@ -211,15 +211,22 @@ staggered views agrees on every boundary for 65/69 train and 10/11 validation
 fallbacks. A documented pre-held-out protocol amendment therefore uses a
 single shared robust inlier subset of at least two views; per-boundary pair
 mixing remains forbidden. The original confidence `0.70`, spread `0.08`, and
-40-frame minimum-phase gates remain unchanged. Replay of the retained Cosmos
-v6 evidence gives residual fallback `0.008163/0.014286`; a fresh canonical run
-and audit-hash freeze are still required before materialization.
+40-frame minimum-phase gates remain unchanged. The fresh canonical Cosmos run
+accepted 75/80 candidates and passed with residual fallback
+`4/490 = 0.008163` on train and `1/70 = 0.014286` on validation. Its frozen
+audit hash is `f7a03a5c9ac5c722925a75d18d5a917e63c1bc6bd6b6e7c9c2a4c6cbca8fbfb2`.
+The ST train/validation views are materialized and frozen as
+`40a713454ae3dbd053f91892518cc008b039e14e94bc15083516ad09c441a132` and
+`b1ee2f9fc399e18a25388318d8b24c704aee15628e941d02da944dad007e812c`.
+Recovery manifests and both held-out manifests remain null.
 The two observed-data freeze points are now executable without hand-editing
 JSON: `compile_humanoidarena_rt_lock.py adjudication` accepts only the original
 model/threshold policy and a complete passing report; `datasets` accepts only
-490/70 ST episodes and 126/27 recovery episodes with canonical manifests. Each
-writes a candidate rather than replacing the tracked lock. Training remains
-blocked until the reviewed candidate is committed on `main`.
+490/70 ST episodes and 126/27 recovery episodes with canonical manifests. A
+single family may be frozen first, but validation opens only the selected
+method's train/validation manifests and never a held-out split. Each run writes
+a candidate rather than replacing the tracked lock. ST-RT is ready for
+three-seed training; STR-RT remains fail-closed.
 
 ![Readiness by independent workstream](results/benchmark/readiness/benchmark_readiness.png)
 
@@ -243,7 +250,7 @@ condition.
 - [x] Implement and validate the HumanoidArena 40-D action bridge for the five
   GR00T/SONIC internal methods. The existing Arena G1 retrains use a different
   43-DoF/direct-action contract and cannot be presented as HumanoidArena reruns.
-- [ ] Pass the frozen ST temporal-label admission gate, materialize train and
+- [x] Pass the frozen ST temporal-label admission gate, materialize train and
   validation views, and preserve the rejected-attempt audits. Video consensus
   is training supervision only and must not be reported as simulator success.
 - [ ] Materialize the nine recovery scenarios with deterministic semantic-event
@@ -315,6 +322,11 @@ python3 scripts/prepare_humanoidarena_subtask_data.py \
   --audit-plot results/benchmark/retraining/subtask_label_fallback_v3.png
 # After ST and recovery train/validation views exist:
 python3 scripts/compile_humanoidarena_rt_lock.py datasets
+
+# ST may be frozen and trained first while independent recovery capture remains
+# pending; this never opens STR-RT or either hidden split.
+python3 scripts/compile_humanoidarena_rt_lock.py datasets \
+  --family subtask_rt_dataset
 
 # After 9/9 capture and 9/9 independent oracle admission:
 python3 scripts/compile_humanoidarena_admitted_suite.py

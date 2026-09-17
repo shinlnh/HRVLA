@@ -36,13 +36,24 @@ def main() -> int:
     parser.add_argument("--lock", type=Path, default=ROOT / "config/humanoidarena-rt-training.lock.json")
     parser.add_argument("--report", type=Path, default=ROOT / "results/benchmark/retraining/subtask_video_adjudication.json")
     parser.add_argument("--output", type=Path)
+    parser.add_argument(
+        "--family",
+        action="append",
+        choices=("subtask_rt_dataset", "recovery_rt_dataset"),
+        help="freeze only this materialized family; repeat to freeze both",
+    )
     args = parser.parse_args()
     lock = load_json(args.lock.resolve())
     if args.phase == "adjudication":
         candidate = freeze_adjudication(lock, load_json(args.report.resolve()))
         default = ROOT / "_artifacts/HumanoidArena/benchmark-pipeline/rt-lock-after-adjudication.candidate.json"
     else:
-        candidate = freeze_dataset_manifests(lock, load_dataset_manifests(ROOT, lock))
+        families = tuple(args.family or ("subtask_rt_dataset", "recovery_rt_dataset"))
+        candidate = freeze_dataset_manifests(
+            lock,
+            load_dataset_manifests(ROOT, lock, families),
+            families,
+        )
         default = ROOT / "_artifacts/HumanoidArena/benchmark-pipeline/rt-lock-ready-for-training.candidate.json"
     output = (args.output or default).resolve()
     _write_once(output, candidate)

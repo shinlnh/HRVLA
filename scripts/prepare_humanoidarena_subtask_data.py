@@ -368,33 +368,50 @@ def main() -> int:
                     for task in split_report["by_task"]
                 }
             )
-            width = 0.36
-            x = np.arange(len(task_names))
-            figure, axis = plt.subplots(figsize=(12, 5.5), constrained_layout=True)
-            for offset, split in enumerate(splits):
-                values = [
-                    split_reports[split]["by_task"][task]["fallback_episodes"]
-                    / split_reports[split]["by_task"][task]["episodes"]
-                    for task in task_names
-                ]
-                axis.bar(
-                    x + (offset - (len(splits) - 1) / 2) * width,
-                    values,
-                    width,
-                    label=split,
-                )
-            axis.axhline(
+            figure, (gate_axis, task_axis) = plt.subplots(
+                1, 2, figsize=(13.5, 5.5), constrained_layout=True
+            )
+            aggregate_rates = [split_reports[split]["fallback_rate"] for split in splits]
+            gate_bars = gate_axis.bar(splits, aggregate_rates, color=("#2b7bba", "#f47f17"))
+            gate_axis.axhline(
                 float(lock["subtask_rt_dataset"]["maximum_episode_fallback_rate"]),
                 color="#c53030",
                 linestyle="--",
                 label="frozen maximum",
             )
-            axis.set_xticks(x, [name.replace("_", "\n") for name in task_names])
-            axis.set_ylim(0, 1)
-            axis.set_ylabel("Episode fallback rate")
-            axis.set_title("HumanoidArena ST weak-label admission audit")
-            axis.grid(axis="y", alpha=0.25)
-            axis.legend()
+            gate_axis.bar_label(gate_bars, labels=[f"{value:.2%}" for value in aggregate_rates])
+            gate_axis.set_ylim(
+                0,
+                max(
+                    0.06,
+                    float(lock["subtask_rt_dataset"]["maximum_episode_fallback_rate"])
+                    * 1.25,
+                ),
+            )
+            gate_axis.set_ylabel("Episode fallback rate")
+            gate_axis.set_title("Admission gate (split aggregate)")
+            gate_axis.grid(axis="y", alpha=0.25)
+            gate_axis.legend()
+
+            width = 0.36
+            x = np.arange(len(task_names))
+            for offset, split in enumerate(splits):
+                counts = [
+                    split_reports[split]["by_task"][task]["fallback_episodes"]
+                    for task in task_names
+                ]
+                task_axis.bar(
+                    x + (offset - (len(splits) - 1) / 2) * width,
+                    counts,
+                    width,
+                    label=split,
+                )
+            task_axis.set_xticks(x, [name.replace("_", "\n") for name in task_names])
+            task_axis.set_ylabel("Fallback episodes")
+            task_axis.set_title("Diagnostic counts by task (not a gate)")
+            task_axis.grid(axis="y", alpha=0.25)
+            task_axis.legend()
+            figure.suptitle("HumanoidArena ST weak-label admission audit")
             args.audit_plot.resolve().parent.mkdir(parents=True, exist_ok=True)
             figure.savefig(args.audit_plot.resolve(), dpi=180)
             plt.close(figure)

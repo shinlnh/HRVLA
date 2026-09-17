@@ -49,8 +49,10 @@ def main() -> int:
     lock = load_rt_lock(args.lock.resolve())
     common_lock = load_training_lock(args.common_lock.resolve())
     common_selection = json.loads(args.common_selection.read_text(encoding="utf-8"))
-    common_step = validate_rt_inputs(ROOT, lock, common_lock, common_selection)
     methods = args.method or list(RT_METHODS)
+    common_step = validate_rt_inputs(
+        ROOT, lock, common_lock, common_selection, tuple(methods)
+    )
     seeds = args.seed or list(lock["training_seeds"])
     commands = [
         build_training_command(

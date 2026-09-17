@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "adjudication_frozen_waiting_for_dataset_materialization",
+  "status": "subtask_rt_ready_waiting_for_recovery_dataset",
   "claim_boundary": "ST-RT and STR-RT are in-domain action-decoder adaptations; neither row is ours and neither open-loop metric is a closed-loop SR/RSR claim.",
   "method_program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
   "source_dataset": {
@@ -29,7 +29,11 @@
     },
     "splits_materialized_before_selection": ["train", "validation"],
     "hidden_locked_until_validation_selection": true,
-    "manifests": {"train": null, "validation": null, "heldout": null}
+    "manifests": {
+      "train": "40a713454ae3dbd053f91892518cc008b039e14e94bc15083516ad09c441a132",
+      "validation": "b1ee2f9fc399e18a25388318d8b24c704aee15628e941d02da944dad007e812c",
+      "heldout": null
+    }
   },
   "recovery_rt_dataset": {
     "path": "_artifacts/datasets/humanoidarena-str-rt",

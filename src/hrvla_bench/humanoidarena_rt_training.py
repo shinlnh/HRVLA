@@ -50,11 +50,16 @@ def validate_rt_inputs(
     lock: dict[str, Any],
     common_lock: dict[str, Any],
     common_selection: dict[str, Any],
+    method_ids: tuple[str, ...] = RT_METHODS,
 ) -> int:
     selected_step = validate_common_selection(common_selection, common_lock)
     if lock.get("method_program_sha256") is None:
         raise ValueError("RT method program hash is missing")
-    for method_id in RT_METHODS:
+    if not method_ids or len(set(method_ids)) != len(method_ids) or any(
+        method_id not in RT_METHODS for method_id in method_ids
+    ):
+        raise ValueError("RT methods must be a non-empty unique locked subset")
+    for method_id in method_ids:
         train = _manifest(lock, repo_root, method_id, "train")
         validation = _manifest(lock, repo_root, method_id, "validation")
         expected = int(lock["methods"][method_id]["validation_episodes"])

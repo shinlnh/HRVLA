@@ -85,12 +85,19 @@ def _validate_manifest(
 
 
 def freeze_dataset_manifests(
-    lock: dict[str, Any], manifests: dict[str, dict[str, dict[str, Any]]]
+    lock: dict[str, Any],
+    manifests: dict[str, dict[str, dict[str, Any]]],
+    families: tuple[str, ...] = ("subtask_rt_dataset", "recovery_rt_dataset"),
 ) -> dict[str, Any]:
     if lock["subtask_rt_dataset"]["temporal_video_adjudication"].get("status") != "ready":
         raise ValueError("adjudication must be frozen before dataset manifests")
+    allowed = ("subtask_rt_dataset", "recovery_rt_dataset")
+    if not families or len(set(families)) != len(families) or any(
+        family not in allowed for family in families
+    ):
+        raise ValueError("dataset families must be a non-empty unique locked subset")
     output = copy.deepcopy(lock)
-    for family in ("subtask_rt_dataset", "recovery_rt_dataset"):
+    for family in families:
         if set(manifests.get(family, {})) != {"train", "validation"}:
             raise ValueError(f"{family}: train and validation manifests are required")
         for split in ("train", "validation"):
@@ -98,15 +105,33 @@ def freeze_dataset_manifests(
             output[family]["manifests"][split] = digest
         if output[family]["manifests"].get("heldout") is not None:
             raise ValueError(f"{family}: hidden manifest was accessed before selection")
-    output["status"] = "ready_for_rt_training"
+    ready = {
+        family: all(
+            isinstance(output[family]["manifests"].get(split), str)
+            for split in ("train", "validation")
+        )
+        for family in allowed
+    }
+    if all(ready.values()):
+        output["status"] = "ready_for_rt_training"
+    elif ready["subtask_rt_dataset"]:
+        output["status"] = "subtask_rt_ready_waiting_for_recovery_dataset"
+    elif ready["recovery_rt_dataset"]:
+        output["status"] = "recovery_rt_ready_waiting_for_subtask_dataset"
+    else:
+        output["status"] = "adjudication_frozen_waiting_for_dataset_materialization"
     return output
 
 
-def load_dataset_manifests(repo_root: Path, lock: dict[str, Any]) -> dict[str, dict[str, dict[str, Any]]]:
+def load_dataset_manifests(
+    repo_root: Path,
+    lock: dict[str, Any],
+    families: tuple[str, ...] = ("subtask_rt_dataset", "recovery_rt_dataset"),
+) -> dict[str, dict[str, dict[str, Any]]]:
     import json
 
     output = {}
-    for family in ("subtask_rt_dataset", "recovery_rt_dataset"):
+    for family in families:
         root = repo_root / lock[family]["path"] / "manifests"
         output[family] = {
             split: json.loads((root / f"{split}.json").read_text(encoding="utf-8"))
