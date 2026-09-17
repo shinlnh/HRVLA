@@ -224,6 +224,37 @@ def test_consensus_rejects_sampling_disagreement() -> None:
     assert "sampling_variants_disagree" in report["reasons"]
 
 
+def test_robust_consensus_accepts_one_whole_variant_outlier() -> None:
+    report = temporal_consensus(
+        [_proposal((80, 160)), _proposal((82, 161)), _proposal((120, 205))],
+        episode_frames=240,
+        skills=3,
+        minimum_phase_frames=40,
+        minimum_confidence=0.7,
+        maximum_spread_fraction=0.08,
+        minimum_consensus_variants=2,
+        proposal_variant_ids=[0, 1, 2],
+    )
+    assert report["accepted"] is True
+    assert report["inlier_variant_ids"] == [0, 1]
+    assert report["outlier_variant_ids"] == [2]
+
+
+def test_robust_consensus_requires_one_pair_to_match_every_boundary() -> None:
+    report = temporal_consensus(
+        [_proposal((80, 200)), _proposal((82, 240)), _proposal((120, 202))],
+        episode_frames=300,
+        skills=3,
+        minimum_phase_frames=40,
+        minimum_confidence=0.7,
+        maximum_spread_fraction=0.08,
+        minimum_consensus_variants=2,
+        proposal_variant_ids=[0, 1, 2],
+    )
+    assert report["accepted"] is False
+    assert "sampling_variants_disagree" in report["reasons"]
+
+
 def test_accepted_consensus_replaces_only_an_explicit_fallback() -> None:
     report = temporal_consensus(
         [_proposal((78, 159)), _proposal((80, 160)), _proposal((82, 162))],

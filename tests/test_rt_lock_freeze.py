@@ -26,6 +26,7 @@ def _adjudication(lock: dict) -> dict:
         "model_revision": policy["model_revision"],
         "policy": {key: policy[key] for key in (
             "eligible_tasks", "sample_frames_per_variant", "sampling_variants",
+            "minimum_consensus_variants",
             "minimum_boundary_confidence", "maximum_boundary_spread_fraction",
         )},
         "residual_fallback_rates": {"train": 0.01, "validation": 0.02},

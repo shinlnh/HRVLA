@@ -12,7 +12,7 @@ Last audited: **2026-09-17 (Asia/Bangkok)**.
 | --- | --- | --- |
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
-| VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena common adaptation: 3/3 seeds trained, validation complete, global step 300 selected; HumanoidArena 40-D ST-RT/STR-RT: 0/6 seeds | Finish the common hidden evaluation, materialize admitted in-domain datasets, train/select/publish 3 ST-RT + 3 STR-RT checkpoints, then measure closed-loop task and recovery success; legacy open-loop MSE is not SR/RSR |
+| VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena common adaptation: 3/3 seeds trained, global step 300 selected, hidden evaluation complete at 700 rows per seed; HumanoidArena 40-D ST-RT/STR-RT: 0/6 seeds | Materialize admitted in-domain datasets, train/select/publish 3 ST-RT + 3 STR-RT checkpoints, then measure closed-loop task and recovery success; legacy open-loop MSE is not SR/RSR |
 | External HumanoidArena | Operator-paused at 17/84 evidence-complete seed-cells (15 finalized plus two complete cells inside the interrupted batch); 356/1680 valid episode JSONs at tracked checkpoint | Decide the external runtime path, then resume the locked PI0.5+SONIC matrix without mixing execution backends; treat OpenDoor separately until its upstream contract is fixed |
 | Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
@@ -199,15 +199,21 @@ validation episodes (`0.1408` and `0.1571`, above the frozen `0.05` ceiling).
 The failure is localized to semantic OpenDoor transitions plus 11 PickPlaceBox
 episodes; lowering the threshold after observing the data is forbidden. The
 failed JSON and plot are retained as `subtask_label_audit_v2_failed.*`.
-An auditable video adjudicator is now staged for the CUDA handoff. It runs only
-on those explicit fallbacks, uses the immutable Cosmos-Reason2-2B revision,
-requires three staggered contact-sheet views, minimum per-boundary confidence
-`0.70`, maximum cross-view spread `0.08` of episode length, and phases of at
-least 40 frames. Rejected or incomplete consensus remains a fallback and keeps
-training locked. Its resource gate was exercised successfully: it refuses to
-load while the external simulator occupies CUDA. Unit/static tests pass, but
-there is no VLM adjudication result yet and therefore no in-domain RT training
-claim.
+The CUDA video-adjudication development matrix is now complete on the 80
+explicit fallbacks, with hidden data still inaccessible. Joint Cosmos grounding
+failed at residual fallback `0.122449/0.142857`; constrained sequential Cosmos
+grounding improved this to `0.059184/0.071429`; and the larger
+Qwen3-VL-4B-Instruct comparison reached only `0.069388/0.085714`. All three
+negative reports, raw generations, contact sheets, and plots are retained under
+`results/benchmark/retraining/development/`. No threshold was lowered and Qwen
+was not promoted. Development showed that one complete pair of the three
+staggered views agrees on every boundary for 65/69 train and 10/11 validation
+fallbacks. A documented pre-held-out protocol amendment therefore uses a
+single shared robust inlier subset of at least two views; per-boundary pair
+mixing remains forbidden. The original confidence `0.70`, spread `0.08`, and
+40-frame minimum-phase gates remain unchanged. Replay of the retained Cosmos
+v6 evidence gives residual fallback `0.008163/0.014286`; a fresh canonical run
+and audit-hash freeze are still required before materialization.
 The two observed-data freeze points are now executable without hand-editing
 JSON: `compile_humanoidarena_rt_lock.py adjudication` accepts only the original
 model/threshold policy and a complete passing report; `datasets` accepts only

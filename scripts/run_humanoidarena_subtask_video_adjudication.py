@@ -24,6 +24,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 MAXIMUM_FORMAT_REPAIRS = 2
 PROMPT_PROTOCOL_VERSION = "cosmos-constrained-sequential-grounding-v6"
+CONSENSUS_PROTOCOL_VERSION = "single-subset-robust-consensus-v1"
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -381,6 +382,7 @@ def main() -> int:
             program = program_by_task[candidate["task_key"]]
             variant_rows = []
             proposals = []
+            proposal_variant_ids = []
             invalid_variants = []
             for variant in range(3):
                 local_indices = contact_sheet_indices(
@@ -531,6 +533,7 @@ def main() -> int:
                     )
                 else:
                     proposals.append(parsed)
+                    proposal_variant_ids.append(variant)
                     variant_rows.append(
                         {
                             **variant_row,
@@ -549,15 +552,21 @@ def main() -> int:
                 minimum_phase_frames=minimum,
                 minimum_confidence=float(policy["minimum_boundary_confidence"]),
                 maximum_spread_fraction=float(policy["maximum_boundary_spread_fraction"]),
+                minimum_consensus_variants=int(policy["minimum_consensus_variants"]),
+                proposal_variant_ids=proposal_variant_ids,
             )
             if invalid_variants:
-                consensus["reasons"] = sorted(
-                    set(consensus["reasons"])
-                    | {"invalid_model_output_after_bounded_format_repair"}
-                )
                 consensus["invalid_variants"] = invalid_variants
+                consensus["outlier_variant_ids"] = sorted(
+                    set(consensus.get("outlier_variant_ids", [])) | set(invalid_variants)
+                )
+                if not consensus["accepted"]:
+                    consensus["reasons"] = sorted(
+                        set(consensus["reasons"])
+                        | {"invalid_model_output_after_bounded_format_repair"}
+                    )
             result = {
-                "schema_version": 3,
+                "schema_version": 4,
                 "split": split,
                 "episode_index": episode,
                 "source_dataset": row["source_dataset"],
@@ -597,7 +606,7 @@ def main() -> int:
     maximum = float(lock["subtask_rt_dataset"]["maximum_episode_fallback_rate"])
     status = "pass" if complete and all(rate <= maximum for rate in residual_rates.values()) else "fail"
     core = {
-        "schema_version": 3,
+        "schema_version": 4,
         "status": status,
         "claim_boundary": "training-label adjudication only; not a closed-loop success metric",
         "source_manifest_sha256": lock["source_dataset"]["manifest_sha256"],
@@ -609,11 +618,13 @@ def main() -> int:
             "eligible_tasks",
             "sample_frames_per_variant",
             "sampling_variants",
+            "minimum_consensus_variants",
             "minimum_boundary_confidence",
             "maximum_boundary_spread_fraction",
         )},
         "inference_protocol": {
             "prompt_protocol_version": PROMPT_PROTOCOL_VERSION,
+            "consensus_protocol_version": CONSENSUS_PROTOCOL_VERSION,
             "grounding_strategy": "constraint_aware_sequential_per_transition",
             "decode_constraints": (
                 "strict temporal order and frozen minimum_phase_frames; "

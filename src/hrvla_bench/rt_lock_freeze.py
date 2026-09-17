@@ -35,6 +35,7 @@ def freeze_adjudication(
             "eligible_tasks",
             "sample_frames_per_variant",
             "sampling_variants",
+            "minimum_consensus_variants",
             "minimum_boundary_confidence",
             "maximum_boundary_spread_fraction",
         )

@@ -8,6 +8,7 @@ dataset admission remain testable without a GPU.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import combinations
 import json
 import re
 from typing import Any, Callable, Iterable
@@ -422,43 +423,108 @@ def temporal_consensus(
     minimum_phase_frames: int,
     minimum_confidence: float,
     maximum_spread_fraction: float,
+    minimum_consensus_variants: int = 3,
+    proposal_variant_ids: Iterable[int] | None = None,
 ) -> dict[str, Any]:
-    """Accept only high-confidence, three-view boundary consensus."""
+    """Accept a single robust multi-boundary inlier set across sampled views."""
 
     rows = list(proposals)
+    variant_ids = (
+        list(range(len(rows)))
+        if proposal_variant_ids is None
+        else [int(item) for item in proposal_variant_ids]
+    )
+    if len(variant_ids) != len(rows) or len(set(variant_ids)) != len(variant_ids):
+        raise ValueError("proposal variant ids must be unique and align with proposals")
+    if minimum_consensus_variants < 2 or minimum_consensus_variants > 3:
+        raise ValueError("minimum_consensus_variants must be two or three")
     expected = skills - 1
-    reasons: list[str] = []
-    if len(rows) != 3:
-        reasons.append("requires_exactly_three_sampling_variants")
+    reasons = []
+    if len(rows) < minimum_consensus_variants:
+        reasons.append("requires_minimum_consensus_variants")
     if any(len(row.boundaries) != expected for row in rows):
         reasons.append("wrong_boundary_count")
     if reasons:
-        return {"accepted": False, "reasons": reasons}
+        return {
+            "accepted": False,
+            "reasons": reasons,
+            "minimum_consensus_variants": minimum_consensus_variants,
+            "considered_variant_ids": variant_ids,
+        }
 
     matrix = np.asarray([row.boundaries for row in rows], dtype=np.int64)
     confidence = np.asarray([row.confidences for row in rows], dtype=np.float64)
-    consensus = np.rint(np.median(matrix, axis=0)).astype(np.int64)
-    spread = np.ptp(matrix, axis=0)
     maximum_spread_frames = max(1, int(np.floor(maximum_spread_fraction * episode_frames)))
-    if float(confidence.min()) < minimum_confidence:
-        reasons.append("confidence_below_frozen_minimum")
-    if np.any(spread > maximum_spread_frames):
-        reasons.append("sampling_variants_disagree")
-    phases = np.diff(np.concatenate([[0], consensus, [episode_frames]]))
-    if np.any(phases < minimum_phase_frames):
-        reasons.append("consensus_creates_undersized_phase")
-    if tuple(consensus.tolist()) != tuple(sorted(set(consensus.tolist()))):
-        reasons.append("consensus_is_not_strictly_monotonic")
+    candidates = []
+    for size in range(minimum_consensus_variants, len(rows) + 1):
+        for indices in combinations(range(len(rows)), size):
+            selected_matrix = matrix[list(indices)]
+            selected_confidence = confidence[list(indices)]
+            consensus = np.rint(np.median(selected_matrix, axis=0)).astype(np.int64)
+            spread = np.ptp(selected_matrix, axis=0)
+            phases = np.diff(np.concatenate([[0], consensus, [episode_frames]]))
+            candidate_reasons = []
+            if float(selected_confidence.min()) < minimum_confidence:
+                candidate_reasons.append("confidence_below_frozen_minimum")
+            if np.any(spread > maximum_spread_frames):
+                candidate_reasons.append("sampling_variants_disagree")
+            if np.any(phases < minimum_phase_frames):
+                candidate_reasons.append("consensus_creates_undersized_phase")
+            if tuple(consensus.tolist()) != tuple(sorted(set(consensus.tolist()))):
+                candidate_reasons.append("consensus_is_not_strictly_monotonic")
+            ids = tuple(variant_ids[index] for index in indices)
+            spread_excess = int(np.maximum(spread - maximum_spread_frames, 0).sum())
+            phase_deficit = int(np.maximum(minimum_phase_frames - phases, 0).sum())
+            confidence_deficit = max(
+                0.0, minimum_confidence - float(selected_confidence.min())
+            )
+            candidates.append(
+                {
+                    "accepted": not candidate_reasons,
+                    "reasons": candidate_reasons,
+                    "indices": indices,
+                    "ids": ids,
+                    "matrix": selected_matrix,
+                    "confidence": selected_confidence,
+                    "consensus": consensus,
+                    "spread": spread,
+                    "accepted_score": (-size, int(spread.sum()), ids),
+                    "rejected_score": (
+                        len(candidate_reasons),
+                        spread_excess,
+                        phase_deficit,
+                        confidence_deficit,
+                        -size,
+                        int(spread.sum()),
+                        ids,
+                    ),
+                }
+            )
+    accepted_candidates = [candidate for candidate in candidates if candidate["accepted"]]
+    if accepted_candidates:
+        chosen = min(accepted_candidates, key=lambda candidate: candidate["accepted_score"])
+    else:
+        chosen = min(candidates, key=lambda candidate: candidate["rejected_score"])
+    chosen_indices = chosen["indices"]
+    consensus = chosen["consensus"]
+    spread = chosen["spread"]
+    selected_confidence = chosen["confidence"]
+    inlier_ids = list(chosen["ids"])
     return {
-        "accepted": not reasons,
-        "reasons": reasons,
+        "accepted": chosen["accepted"],
+        "reasons": chosen["reasons"],
         "boundaries": consensus.tolist(),
         "variant_boundaries": matrix.tolist(),
+        "inlier_variant_boundaries": chosen["matrix"].tolist(),
+        "considered_variant_ids": variant_ids,
+        "inlier_variant_ids": inlier_ids,
+        "outlier_variant_ids": sorted(set(variant_ids) - set(inlier_ids)),
+        "minimum_consensus_variants": minimum_consensus_variants,
         "boundary_spread_frames": spread.tolist(),
         "maximum_spread_frames": maximum_spread_frames,
-        "minimum_observed_confidence": float(confidence.min()),
-        "mean_observed_confidence": float(confidence.mean()),
-        "visible_evidence": [list(row.evidence) for row in rows],
+        "minimum_observed_confidence": float(selected_confidence.min()),
+        "mean_observed_confidence": float(selected_confidence.mean()),
+        "visible_evidence": [list(rows[index].evidence) for index in chosen_indices],
     }
 
 
