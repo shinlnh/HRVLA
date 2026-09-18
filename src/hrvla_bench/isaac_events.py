@@ -16,6 +16,16 @@ def _append_audit(path_value: str | None, record: dict[str, Any]) -> None:
         stream.write(json.dumps(record, sort_keys=True) + "\n")
 
 
+def _episode_steps(env: Any, env_ids: Any, control_step: int | None) -> list[int]:
+    if control_step is not None:
+        if control_step < 0:
+            raise ValueError("control_step must be non-negative")
+        return [int(control_step)] * len(env_ids)
+    return [
+        int(value) for value in env.episode_length_buf[env_ids].detach().cpu().tolist()
+    ]
+
+
 def reset_one_shot_injectors(env: Any, env_ids: Any = None) -> None:
     """Reset HRVLA one-shot flags explicitly at an episode boundary."""
 
@@ -126,6 +136,7 @@ def apply_root_local_lateral_velocity_once(
     asset_name: str = "robot",
     audit_path: str | None = None,
     episode_seed: int | None = None,
+    control_step: int | None = None,
 ) -> None:
     """Apply a world velocity delta resolved from the asset's local lateral axis."""
 
@@ -162,9 +173,7 @@ def apply_root_local_lateral_velocity_once(
             "asset_name": asset_name,
             "environment_ids": [int(value) for value in pending.detach().cpu().tolist()],
             "episode_seed": None if episode_seed is None else int(episode_seed),
-            "episode_steps": [
-                int(value) for value in env.episode_length_buf[pending].detach().cpu().tolist()
-            ],
+            "episode_steps": _episode_steps(env, pending, control_step),
             "lateral_mps": float(lateral_mps),
             "lateral_direction_robot": lateral_direction_robot,
             "world_velocity_delta": world.detach().cpu().tolist(),
@@ -216,6 +225,7 @@ def apply_asset_local_translation_once(
     local_translation_m: tuple[float, float, float],
     audit_path: str | None = None,
     episode_seed: int | None = None,
+    control_step: int | None = None,
 ) -> None:
     """Translate an asset once along its current local frame, preserving orientation."""
 
@@ -241,9 +251,7 @@ def apply_asset_local_translation_once(
             "asset_name": asset_name,
             "environment_ids": [int(value) for value in pending.detach().cpu().tolist()],
             "episode_seed": None if episode_seed is None else int(episode_seed),
-            "episode_steps": [
-                int(value) for value in env.episode_length_buf[pending].detach().cpu().tolist()
-            ],
+            "episode_steps": _episode_steps(env, pending, control_step),
             "local_translation_m": [float(value) for value in local_translation_m],
             "pose_before": before.detach().cpu().tolist(),
             "pose_after": after.detach().cpu().tolist(),
@@ -263,6 +271,7 @@ def place_asset_relative_once(
     preserve_height: bool = False,
     audit_path: str | None = None,
     episode_seed: int | None = None,
+    control_step: int | None = None,
 ) -> None:
     """Place one movable asset at a deterministic pose relative to another asset."""
 
@@ -299,9 +308,7 @@ def place_asset_relative_once(
             "reference_asset_name": reference_asset_name,
             "environment_ids": [int(value) for value in pending.detach().cpu().tolist()],
             "episode_seed": None if episode_seed is None else int(episode_seed),
-            "episode_steps": [
-                int(value) for value in env.episode_length_buf[pending].detach().cpu().tolist()
-            ],
+            "episode_steps": _episode_steps(env, pending, control_step),
             "reference_local_position_m": [
                 float(value) for value in reference_local_position_m
             ],
@@ -324,6 +331,7 @@ def apply_body_impulse_once(
     control_dt_s: float,
     audit_path: str | None = None,
     episode_seed: int | None = None,
+    control_step: int | None = None,
 ) -> None:
     """Apply an exact world-frame impulse as a one-control-step external force."""
 
@@ -352,19 +360,21 @@ def apply_body_impulse_once(
         env_ids=pending,
         is_global=True,
     )
+    episode_steps = _episode_steps(env, pending, control_step)
     current_steps = env.episode_length_buf[pending].detach().clone()
     active = getattr(env, "_hrvla_active_body_impulses", None)
     if active is None:
         active = []
         env._hrvla_active_body_impulses = active
-    active.append(
-        {
-            "asset_name": asset_name,
-            "body_ids": body_ids,
-            "env_ids": pending.detach().clone(),
-            "clear_after_steps": current_steps + 1,
-        }
-    )
+    active_record = {
+        "asset_name": asset_name,
+        "body_ids": body_ids,
+        "env_ids": pending.detach().clone(),
+        "clear_after_steps": current_steps + 1,
+    }
+    if control_step is not None:
+        active_record["clear_after_control_step"] = int(control_step) + 1
+    active.append(active_record)
     flags[pending] = True
     _append_audit(
         audit_path,
@@ -375,7 +385,7 @@ def apply_body_impulse_once(
             "body_name": body_name,
             "environment_ids": [int(value) for value in pending.detach().cpu().tolist()],
             "episode_seed": None if episode_seed is None else int(episode_seed),
-            "episode_steps": [int(value) for value in current_steps.cpu().tolist()],
+            "episode_steps": episode_steps,
             "impulse_world_ns": [float(value) for value in impulse_world_ns],
             "control_dt_s": float(control_dt_s),
             "force_world_n": force[0, 0].detach().cpu().tolist(),
@@ -383,7 +393,9 @@ def apply_body_impulse_once(
     )
 
 
-def clear_expired_body_impulses(env: Any, *, force: bool = False) -> int:
+def clear_expired_body_impulses(
+    env: Any, *, force: bool = False, control_step: int | None = None
+) -> int:
     """Clear body-force buffers after exactly one control step or on reset."""
 
     import torch
@@ -393,9 +405,17 @@ def clear_expired_body_impulses(env: Any, *, force: bool = False) -> int:
     cleared = 0
     for record in active:
         env_ids = record["env_ids"]
-        expired = force or bool(
-            torch.all(env.episode_length_buf[env_ids] >= record["clear_after_steps"])
-        )
+        if force:
+            expired = True
+        elif "clear_after_control_step" in record:
+            expired = (
+                control_step is not None
+                and int(control_step) >= int(record["clear_after_control_step"])
+            )
+        else:
+            expired = bool(
+                torch.all(env.episode_length_buf[env_ids] >= record["clear_after_steps"])
+            )
         if not expired:
             remaining.append(record)
             continue

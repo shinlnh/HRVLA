@@ -241,6 +241,28 @@ def test_body_impulse_is_cleared_after_one_control_step() -> None:
     torch.testing.assert_close(writes[1]["forces"], torch.zeros((1, 1, 3)))
 
 
+def test_body_impulse_uses_explicit_control_step_when_env_counter_is_static(
+    tmp_path,
+) -> None:
+    torch = pytest.importorskip("torch")
+    env = _FakeEnv(torch, num_envs=1)
+    audit_path = tmp_path / "impulse.jsonl"
+    apply_body_impulse_once(
+        env,
+        None,
+        injector_id="recoil",
+        asset_name="robot",
+        body_name="torso_link",
+        impulse_world_ns=(18.0, 0.0, 0.0),
+        control_dt_s=0.02,
+        control_step=218,
+        audit_path=str(audit_path),
+    )
+    assert json.loads(audit_path.read_text())["episode_steps"] == [218]
+    assert clear_expired_body_impulses(env, control_step=218) == 0
+    assert clear_expired_body_impulses(env, control_step=219) == 1
+
+
 def test_legacy_push_wrapper_uses_resettable_registry(monkeypatch) -> None:
     torch = pytest.importorskip("torch")
     calls = []

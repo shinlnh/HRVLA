@@ -106,3 +106,5 @@ def test_runtime_applies_locked_root_velocity_when_ball_moves(tmp_path) -> None:
     assert runtime.triggered
     velocity = env.scene["robot"].data.root_vel_w[0, :3]
     torch.testing.assert_close(velocity, torch.tensor([0.0, 0.45, 0.0]))
+    audit = json.loads((tmp_path / "injector-audit.jsonl").read_text())
+    assert audit["episode_steps"] == [1]

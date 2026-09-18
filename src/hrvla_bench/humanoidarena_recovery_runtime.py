@@ -346,6 +346,7 @@ class HumanoidArenaRecoveryRuntime:
                 lateral_direction_robot=str(parameters["lateral_direction_robot"]),
                 audit_path=audit_path,
                 episode_seed=self.episode_seed,
+                control_step=self.control_step,
             )
         elif injector_id == "shift-door-assembly-handle-frame":
             distance = float(parameters["translation_m"])
@@ -359,6 +360,7 @@ class HumanoidArenaRecoveryRuntime:
                 local_translation_m=translation,
                 audit_path=audit_path,
                 episode_seed=self.episode_seed,
+                control_step=self.control_step,
             )
         elif injector_id == "place-doorway-obstacle":
             place_asset_relative_once(
@@ -370,6 +372,7 @@ class HumanoidArenaRecoveryRuntime:
                 reference_local_position_m=tuple(parameters["door_local_center_m"]),
                 audit_path=audit_path,
                 episode_seed=self.episode_seed,
+                control_step=self.control_step,
             )
         elif injector_id == "attenuate-sonic-latent":
             self._activate_action_window(injector_id, parameters)
@@ -382,6 +385,7 @@ class HumanoidArenaRecoveryRuntime:
                 lateral_direction_robot=str(parameters["lateral_direction_robot"]),
                 audit_path=audit_path,
                 episode_seed=self.episode_seed,
+                control_step=self.control_step,
             )
         elif injector_id == "support-foot-lateral-impulse":
             direction = local_lateral_vector_world(
@@ -400,6 +404,7 @@ class HumanoidArenaRecoveryRuntime:
                 control_dt_s=self.control_dt_s,
                 audit_path=audit_path,
                 episode_seed=self.episode_seed,
+                control_step=self.control_step,
             )
         elif injector_id == "upper-body-contact-impulse":
             unit = [float(value) for value in signals["recoil_direction_world"]]
@@ -414,6 +419,7 @@ class HumanoidArenaRecoveryRuntime:
                 control_dt_s=self.control_dt_s,
                 audit_path=audit_path,
                 episode_seed=self.episode_seed,
+                control_step=self.control_step,
             )
         elif injector_id == "place-path-obstacle":
             place_asset_relative_once(
@@ -430,6 +436,7 @@ class HumanoidArenaRecoveryRuntime:
                 preserve_height=True,
                 audit_path=audit_path,
                 episode_seed=self.episode_seed,
+                control_step=self.control_step,
             )
         else:
             raise ValueError(f"unsupported runtime injector: {injector_id}")
@@ -471,7 +478,7 @@ class HumanoidArenaRecoveryRuntime:
         if self.episode_seed is None:
             raise RuntimeError("runtime.reset is required before stepping")
         self.control_step += 1
-        clear_expired_body_impulses(env)
+        clear_expired_body_impulses(env, control_step=self.control_step)
         if (
             self.failure_snapshot_due_step is not None
             and self.failure_snapshot_sha256 is None

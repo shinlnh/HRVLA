@@ -126,6 +126,37 @@ def _load_evaluator():
     return module
 
 
+def _install_open_door_recovery_profile(module: Any, task_id: str) -> None:
+    """Apply the behavior already required by the locked upstream self-tests.
+
+    The pinned HumanoidArena revision accidentally maps live inference to a
+    welded XForm asset even though its tests require the articulated validation
+    door. Recovery needs joint state for snapshot/restore and semantic signals,
+    so keep the vendor checkout immutable and repair only this recovery process.
+    """
+
+    if task_id != "open_door":
+        return
+    import task_runtime_profiles as profiles
+
+    relative_paths = profiles.OPEN_DOOR_DOOR_ASSET_RELATIVE_PATHS
+    variant = profiles.OPEN_DOOR_DOOR_ASSET_VARIANT_INFERENCE_VALI
+    relative_paths[variant] = (
+        "assets/objects/small_warehouse/small_warehouse_opendoor/interaction_obj/"
+        "door001/model_door001_vali.usd"
+    )
+    original = module.apply_task_runtime_profile
+
+    def recovery_profile(args_cli):
+        applied = original(args_cli)
+        if applied.profile != profiles.TASK_RUNTIME_PROFILE_INFERENCE:
+            raise RuntimeError("recovery OpenDoor requires the live-inference profile")
+        os.environ["OPEN_DOOR_SCENE_AS_ARTICULATION"] = "1"
+        return applied
+
+    module.apply_task_runtime_profile = recovery_profile
+
+
 def _install_runtime_hooks(
     module: Any,
     suite: dict[str, Any],
@@ -514,6 +545,7 @@ def main() -> int:
 
     sys.argv = [sys.argv[0], *remaining]
     module = _load_evaluator()
+    _install_open_door_recovery_profile(module, task["id"])
     _install_runtime_hooks(
         module,
         suite,

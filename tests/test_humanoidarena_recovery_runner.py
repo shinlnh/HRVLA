@@ -73,3 +73,25 @@ def test_encoder_proxy_perturbs_only_the_first_encoder_output() -> None:
     outputs = RUNNER._EncoderProxy(Encoder(), state).run(None)
     np.testing.assert_allclose(outputs[0], 0.55)
     np.testing.assert_array_equal(outputs[1], [5.0])
+
+
+def test_open_door_recovery_profile_repairs_the_pinned_live_contract(
+    monkeypatch,
+) -> None:
+    profiles = types.ModuleType("task_runtime_profiles")
+    profiles.OPEN_DOOR_DOOR_ASSET_VARIANT_INFERENCE_VALI = "inference_vali"
+    profiles.OPEN_DOOR_DOOR_ASSET_RELATIVE_PATHS = {
+        "inference_vali": "wrong/welded.usd"
+    }
+    profiles.TASK_RUNTIME_PROFILE_INFERENCE = "inference"
+    monkeypatch.setitem(__import__("sys").modules, "task_runtime_profiles", profiles)
+    monkeypatch.delenv("OPEN_DOOR_SCENE_AS_ARTICULATION", raising=False)
+    applied = types.SimpleNamespace(profile="inference")
+    module = types.SimpleNamespace(apply_task_runtime_profile=lambda _args: applied)
+
+    RUNNER._install_open_door_recovery_profile(module, "open_door")
+    assert module.apply_task_runtime_profile(object()) is applied
+    assert __import__("os").environ["OPEN_DOOR_SCENE_AS_ARTICULATION"] == "1"
+    assert profiles.OPEN_DOOR_DOOR_ASSET_RELATIVE_PATHS["inference_vali"].endswith(
+        "model_door001_vali.usd"
+    )

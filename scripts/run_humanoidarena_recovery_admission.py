@@ -161,7 +161,10 @@ def _attempt_directories(scenario_dir: Path) -> list[Path]:
 
 
 def _validated_existing(
-    suite: dict[str, Any], scenario_id: str, scenario_dir: Path
+    suite: dict[str, Any],
+    scenario_id: str,
+    scenario_dir: Path,
+    implementation_revision: str | None = None,
 ) -> tuple[dict[str, Any], Path] | None:
     for output_dir in reversed(_attempt_directories(scenario_dir)):
         result_path = output_dir / "episode.json"
@@ -181,6 +184,11 @@ def _validated_existing(
             ValueError,
         ):
             continue
+        if (
+            implementation_revision is not None
+            and audit.get("implementation_revision") != implementation_revision
+        ):
+            continue
         return audit, output_dir
     return None
 
@@ -194,12 +202,17 @@ def _next_attempt_directory(scenario_dir: Path) -> Path:
 
 
 def _progress(
-    suite: dict[str, Any], rows: list[dict[str, Any]], output_root: Path
+    suite: dict[str, Any],
+    rows: list[dict[str, Any]],
+    output_root: Path,
+    implementation_revision: str | None = None,
 ) -> dict[str, Any]:
     scenario_rows = []
     for row in rows:
         scenario_dir = output_root / row["scenario_id"]
-        validated = _validated_existing(suite, row["scenario_id"], scenario_dir)
+        validated = _validated_existing(
+            suite, row["scenario_id"], scenario_dir, implementation_revision
+        )
         audit = None if validated is None else validated[0]
         scenario_rows.append(
             {
@@ -258,6 +271,7 @@ def main() -> int:
     args = parser.parse_args()
 
     suite = load_json(args.suite.resolve())
+    implementation_revision = FAST._git_revision(ROOT)
     rows = _task_rows(suite, set(args.scenario))
     output_root = args.output_root.resolve()
     model_root = args.model_root.resolve()
@@ -301,7 +315,10 @@ def main() -> int:
                 row
                 for row in task_rows
                 if _validated_existing(
-                    suite, row["scenario_id"], output_root / row["scenario_id"]
+                    suite,
+                    row["scenario_id"],
+                    output_root / row["scenario_id"],
+                    implementation_revision,
                 )
                 is None
             ]
@@ -397,12 +414,14 @@ def main() -> int:
                             )
                         _write_json_atomic(
                             output_root / "progress.json",
-                            _progress(suite, rows, output_root),
+                            _progress(
+                                suite, rows, output_root, implementation_revision
+                            ),
                         )
                 finally:
                     FAST._terminate_group(server, timeout=10)
 
-    progress = _progress(suite, rows, output_root)
+    progress = _progress(suite, rows, output_root, implementation_revision)
     _write_json_atomic(output_root / "progress.json", progress)
     print(
         f"[recovery-admission] runtime={progress['runtime_traces_complete']}/"

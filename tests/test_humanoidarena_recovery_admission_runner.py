@@ -61,3 +61,25 @@ def test_online_command_does_not_capture_a_failure_snapshot(tmp_path: Path) -> N
     )
     assert "--capture-initial-snapshot" in command
     assert "--capture-failure-snapshot" not in command
+
+
+def test_existing_capture_must_match_the_current_implementation(
+    tmp_path: Path, monkeypatch
+) -> None:
+    attempt = tmp_path / "attempt-0001"
+    attempt.mkdir()
+    (attempt / "episode.json").write_text("{}")
+    monkeypatch.setattr(
+        RUNNER,
+        "audit_recovery_runtime_trace",
+        lambda *_args: {"audit_sha256": "a" * 64, "implementation_revision": "1" * 40},
+    )
+    assert (
+        RUNNER._validated_existing(SUITE, "support-state-push", tmp_path, "2" * 40)
+        is None
+    )
+    validated = RUNNER._validated_existing(
+        SUITE, "support-state-push", tmp_path, "1" * 40
+    )
+    assert validated is not None
+    assert validated[1] == attempt
