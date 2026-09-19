@@ -18,6 +18,12 @@ from pathlib import Path
 import torch
 from safetensors.torch import load_file
 
+from hrvla_bench.pi05_hybrid_backend import (
+    HYBRID_BACKEND,
+    configure_hybrid_cuda_expert,
+    normalize_backend,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 HUMANOIDARENA_ROOT = ROOT / "_vendor" / "HumanoidArena"
 LEROBOT_ROOT = HUMANOIDARENA_ROOT / "lerobot"
@@ -91,7 +97,13 @@ def _load_policy_low_memory(policy_dir: Path, device_name: str):
     if config.type != "pi05":
         raise ValueError(f"Low-memory loader only supports pi05, got {config.type!r}")
 
+    backend = normalize_backend(os.environ.get("HRVLA_PI05_BACKEND"))
     target_device = str(torch.device(device_name))
+    if backend == HYBRID_BACKEND and torch.device(target_device).type != "cpu":
+        raise ValueError(
+            "hybrid_cuda_expert must be launched with --device cpu so the VLM prefix "
+            "and preprocessing remain on CPU"
+        )
     config.device = "meta"
     policy_cls = get_policy_class(config.type)
     with torch.device("meta"):
@@ -142,13 +154,21 @@ def _load_policy_low_memory(policy_dir: Path, device_name: str):
     if meta_tensors:
         raise RuntimeError(f"Unmaterialized checkpoint tensors: {meta_tensors[:10]}")
 
+    backend_details = {"backend": backend, "prefix_device": target_device}
+    if backend == HYBRID_BACKEND:
+        backend_details = configure_hybrid_cuda_expert(
+            policy,
+            os.environ.get("HRVLA_PI05_EXPERT_DEVICE", "cuda:0"),
+        )
+
     policy.eval()
     parameter_bytes = sum(
         parameter.numel() * parameter.element_size() for parameter in policy.parameters()
     )
     print(
         "[hrvla_low_memory_loader] loaded exact checkpoint "
-        f"device={target_device} parameter_bytes={parameter_bytes}",
+        f"device={target_device} parameter_bytes={parameter_bytes} "
+        f"backend_details={json.dumps(backend_details, sort_keys=True)}",
         flush=True,
     )
 
