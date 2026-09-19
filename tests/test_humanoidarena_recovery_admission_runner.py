@@ -45,6 +45,12 @@ def test_capture_horizon_is_bounded_by_evidence_not_task_rollout() -> None:
     assert max(steps.values()) == 60
 
 
+def test_admission_is_fail_fast_by_default() -> None:
+    source = SCRIPT.read_text(encoding="utf-8")
+    assert 'parser.add_argument("--continue-on-error", action="store_true")' in source
+    assert "if scenario_failed and not args.continue_on_error:" in source
+
+
 def test_failure_start_command_captures_both_snapshots(tmp_path: Path) -> None:
     command = RUNNER.build_recovery_command(
         task_key="pp_box",

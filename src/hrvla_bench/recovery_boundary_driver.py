@@ -210,6 +210,13 @@ class DeterministicBoundaryDriver:
             env_ids = torch.tensor([self.env_id], dtype=torch.long, device=door.device)
             positions = door.data.joint_pos[env_ids].clone()
             velocities = torch.zeros_like(door.data.joint_vel[env_ids])
+            reference_position = float(positions[0, matches[0]].detach().cpu().item())
+            leaf_references = getattr(
+                env.cfg, "_open_door_leaf_tensor_proxy_reference", None
+            )
+            if not isinstance(leaf_references, dict):
+                raise ValueError("open-door fixture cannot access the leaf reference state")
+            leaf_references.setdefault(self.env_id, reference_position)
             positions[:, matches[0]] = math.radians(float(parameters["leaf_angle_deg"]))
             self._target_joint_asset_name = door_name
             self._target_joint_positions = positions
@@ -225,6 +232,7 @@ class DeterministicBoundaryDriver:
                 "door_asset_name": door_name,
                 "leaf_joint_name": str(parameters["leaf_joint_name"]),
                 "leaf_angle_deg": float(parameters["leaf_angle_deg"]),
+                "leaf_reference_angle_deg": math.degrees(reference_position),
                 "latch_marked_unlocked": True,
             }
         elif driver_id == "object-speed-fixture":

@@ -284,6 +284,7 @@ def main() -> int:
     parser.add_argument("--compile-threads", type=int, default=len(os.sched_getaffinity(0)))
     parser.add_argument("--max-idle-gpu-mib", type=int, default=1024)
     parser.add_argument("--server-ready-timeout", type=float, default=600.0)
+    parser.add_argument("--continue-on-error", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -358,6 +359,7 @@ def main() -> int:
                 try:
                     FAST._wait_for_server(args.server_port, args.server_ready_timeout)
                     for row in pending:
+                        scenario_failed = False
                         scenario_id = row["scenario_id"]
                         scenario_dir = output_root / scenario_id
                         output_dir = _next_attempt_directory(scenario_dir)
@@ -417,6 +419,7 @@ def main() -> int:
                             )
                             _write_json_atomic(output_dir / "runtime-audit.json", audit)
                         except Exception as exc:
+                            scenario_failed = True
                             failures += 1
                             _write_json_atomic(
                                 output_dir / "runtime-audit-error.json",
@@ -439,6 +442,14 @@ def main() -> int:
                                 suite, rows, output_root, implementation_revision
                             ),
                         )
+                        if scenario_failed and not args.continue_on_error:
+                            print(
+                                "[recovery-admission] fail-fast: stopping after the first "
+                                "invalid scenario",
+                                file=sys.stderr,
+                                flush=True,
+                            )
+                            return 1
                 finally:
                     FAST._terminate_group(server, timeout=10)
 
