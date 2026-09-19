@@ -54,6 +54,24 @@ def _append_jsonl(path: Path, row: dict[str, Any]) -> None:
         stream.write(json.dumps(row, sort_keys=True) + "\n")
 
 
+def _scaled_unit_vector(values: Any, magnitude: float) -> tuple[float, ...]:
+    """Return a finite vector whose Euclidean norm is exactly ``magnitude``.
+
+    Detector directions can originate in float32 simulator tensors.  Normalize
+    them again in float64 before recording/applying a locked impulse so the
+    runtime audit measures the requested magnitude, not tensor round-off.
+    """
+
+    vector = tuple(float(value) for value in values)
+    norm = math.sqrt(math.fsum(value * value for value in vector))
+    magnitude = float(magnitude)
+    if not vector or not math.isfinite(norm) or norm <= 0.0:
+        raise ValueError("impulse direction must be a finite non-zero vector")
+    if not math.isfinite(magnitude) or magnitude < 0.0:
+        raise ValueError("impulse magnitude must be finite and non-negative")
+    return tuple(magnitude * value / norm for value in vector)
+
+
 def _write_snapshot_once(path: Path, snapshot: dict[str, Any]) -> str:
     expected = snapshot["snapshot_sha256"]
     if path.exists():
@@ -416,8 +434,10 @@ class HumanoidArenaRecoveryRuntime:
                 control_step=self.control_step,
             )
         elif injector_id == "upper-body-contact-impulse":
-            unit = [float(value) for value in signals["recoil_direction_world"]]
-            impulse = tuple(float(parameters["impulse_ns"]) * value for value in unit)
+            impulse = _scaled_unit_vector(
+                signals["recoil_direction_world"],
+                float(parameters["impulse_ns"]),
+            )
             apply_body_impulse_once(
                 env,
                 None,

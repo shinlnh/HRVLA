@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 import types
 
 import numpy as np
 import pytest
 
-from hrvla_bench.humanoidarena_recovery_runtime import HumanoidArenaRecoveryRuntime
+from hrvla_bench.humanoidarena_recovery_runtime import (
+    HumanoidArenaRecoveryRuntime,
+    _scaled_unit_vector,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,6 +66,20 @@ class _Env:
         self.num_envs = 1
         self.scene = _Scene(torch_module)
         self.episode_length_buf = torch_module.zeros(1, dtype=torch_module.long)
+
+
+def test_scaled_unit_vector_removes_float32_direction_roundoff() -> None:
+    direction = (-0.2949928641319275, 0.955435037612915, -0.011089751496911049)
+    impulse = _scaled_unit_vector(direction, 18.0)
+    assert math.sqrt(math.fsum(value * value for value in impulse)) == pytest.approx(
+        18.0, abs=1e-12
+    )
+
+
+@pytest.mark.parametrize("direction", [(), (0.0, 0.0, 0.0), (float("nan"), 0.0)])
+def test_scaled_unit_vector_rejects_invalid_directions(direction) -> None:
+    with pytest.raises(ValueError, match="finite non-zero"):
+        _scaled_unit_vector(direction, 18.0)
 
 
 def test_runtime_triggers_and_modifies_the_first_close_action(tmp_path) -> None:
