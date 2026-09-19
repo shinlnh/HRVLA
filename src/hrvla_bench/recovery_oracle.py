@@ -73,6 +73,17 @@ def validate_oracle_lock(lock: dict[str, Any], suite: dict[str, Any]) -> None:
         raise ValueError("oracle admission requires video evidence for every trial")
     if protocol.get("record_recovery_demonstrations") is not True:
         raise ValueError("oracle trials must retain compact recovery demonstrations")
+    resource = lock.get("resource_profile", {})
+    backend = resource.get("policy_backend")
+    device = resource.get("policy_device")
+    if backend == "cuda_int8_weight_only":
+        if device != "cuda:0" or resource.get("bitsandbytes_version") != "0.50.2":
+            raise ValueError("CUDA INT8 oracle backend provenance is incomplete")
+    elif backend == "cpu":
+        if device != "cpu":
+            raise ValueError("CPU oracle backend requires policy_device=cpu")
+    else:
+        raise ValueError(f"unsupported oracle policy backend: {backend!r}")
 
     scenario_ids = {
         scenario["id"] for task in suite["tasks"] for scenario in task["scenarios"]
@@ -150,6 +161,11 @@ def evaluate_oracle_trials(
             "source_revision": independence["source_revision"],
             "isaac_lab_revision": independence["isaac_lab_revision"],
             "sonic_revision": independence["sonic_revision"],
+            "policy_backend": lock["resource_profile"]["policy_backend"],
+            "policy_device": lock["resource_profile"]["policy_device"],
+            "bitsandbytes_version": lock["resource_profile"].get(
+                "bitsandbytes_version"
+            ),
             "initial_snapshot_sha256": capture["initial_snapshot_sha256"],
             "failure_snapshot_sha256": capture["failure_snapshot_sha256"],
         }

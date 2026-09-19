@@ -279,6 +279,11 @@ def main() -> int:
     )
     parser.add_argument("--scenario", action="append", default=[])
     parser.add_argument("--server-port", type=int, default=18444)
+    parser.add_argument(
+        "--policy-backend",
+        choices=sorted(FAST.SUPPORTED_BACKENDS),
+        default=FAST.CPU_BACKEND,
+    )
     parser.add_argument("--cpu-threads", type=int, default=FAST.DEFAULT_POLICY_THREADS)
     parser.add_argument("--interop-threads", type=int, default=2)
     parser.add_argument("--compile-threads", type=int, default=len(os.sched_getaffinity(0)))
@@ -347,17 +352,28 @@ def main() -> int:
             log_root.mkdir(parents=True, exist_ok=True)
             with (log_root / "server.log").open("a", encoding="utf-8", buffering=1) as log:
                 server = subprocess.Popen(
-                    FAST._server_command(model_path, args.server_port),
+                    FAST._server_command(
+                        model_path, args.server_port, args.policy_backend
+                    ),
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     cwd=ROOT,
                     env=FAST._server_env(
-                        args.cpu_threads, args.interop_threads, args.compile_threads
+                        args.cpu_threads,
+                        args.interop_threads,
+                        args.compile_threads,
+                        args.policy_backend,
                     ),
                     start_new_session=True,
                 )
                 try:
                     FAST._wait_for_server(args.server_port, args.server_ready_timeout)
+                    if args.policy_backend == FAST.CUDA_INT8_BACKEND:
+                        FAST._warm_cuda_int8_policy(args.server_port, task_key)
+                        if FAST._gpu_used_mib() > 8500:
+                            raise RuntimeError(
+                                "CUDA INT8 policy exceeds the post-warm-up VRAM budget"
+                            )
                     for row in pending:
                         scenario_failed = False
                         scenario_id = row["scenario_id"]

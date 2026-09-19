@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "frozen_waiting_for_capture_manifest_and_exclusive_gpu",
+  "status": "frozen_waiting_for_gpu_capture_manifest_and_exclusive_gpu",
   "oracle_id": "released-pi05-independent-recoverability-witness-v0",
   "suite_id": "hrvla_recovery_v0",
   "suite_sha256": "72601cd2135f30e26fbcfb456732b31921354313319b5141245a2140a02b76b6",
@@ -30,7 +30,11 @@
     "recovery_demonstration_role": "training-only PI0.5 behavior after the locked failure is active; final internal rollout seeds are disjoint"
   },
   "resource_profile": {
-    "policy_device": "cpu",
+    "policy_backend": "cuda_int8_weight_only",
+    "policy_device": "cuda:0",
+    "weight_precision": "int8_weight_only_with_bf16_skinny_projections",
+    "bitsandbytes_version": "0.50.2",
+    "minimum_quantized_linear_dimension": 256,
     "policy_threads": 24,
     "interop_threads": 2,
     "compile_threads": 32,

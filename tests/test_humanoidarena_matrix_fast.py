@@ -64,6 +64,28 @@ def test_cpu_server_keeps_upstream_cuda_discovery_contract(monkeypatch) -> None:
     assert env["OMP_NUM_THREADS"] == "32"
 
 
+def test_cuda_int8_server_uses_gpu_and_explicit_backend() -> None:
+    command = FAST._server_command(
+        Path("/tmp/model"), 18443, FAST.CUDA_INT8_BACKEND
+    )
+    env = FAST._server_env(24, 2, 32, FAST.CUDA_INT8_BACKEND)
+    assert command[command.index("--device") + 1] == "cuda:0"
+    assert env["HRVLA_PI05_BACKEND"] == FAST.CUDA_INT8_BACKEND
+
+
+def test_progress_binds_backend_provenance(tmp_path: Path) -> None:
+    progress = FAST._matrix_progress(
+        tmp_path,
+        tasks=["boxing"],
+        modes=["base_test"],
+        seeds=[0],
+        repeats=1,
+        policy_backend=FAST.CUDA_INT8_BACKEND,
+    )
+    assert progress["policy_backend"] == FAST.CUDA_INT8_BACKEND
+    assert progress["policy_device"] == "cuda:0"
+
+
 def test_terminate_group_is_noop_after_process_exit() -> None:
     class ExitedProcess:
         def poll(self):
