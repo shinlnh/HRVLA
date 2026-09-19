@@ -24,6 +24,7 @@ from .isaac_snapshot import (
     write_snapshot_atomic,
 )
 from .plan import canonical_sha256
+from .recovery_boundary_driver import DeterministicBoundaryDriver
 from .recovery_event_detector import EventObservation, SemanticEventDetector
 from .recovery_injector_contract import validate_recovery_injector_contract
 
@@ -208,6 +209,7 @@ class HumanoidArenaRecoveryRuntime:
         self.failure_snapshot_due_step: int | None = None
         self.initial_snapshot_sha256: str | None = None
         self.failure_snapshot_sha256: str | None = None
+        self.boundary_driver: DeterministicBoundaryDriver | None = None
 
     def _require_fresh_sidecars(self) -> None:
         stale = [
@@ -306,6 +308,13 @@ class HumanoidArenaRecoveryRuntime:
                     f"initial snapshot seed is {self.episode_seed}, expected {locked_seed}"
                 )
             self.initial_snapshot_sha256 = self._capture(env, failure=False)
+        self.boundary_driver = DeterministicBoundaryDriver(
+            self.scenario,
+            trace_path=self.trace_path,
+            episode_seed=self.episode_seed,
+            env_id=self.env_id,
+        )
+        self.boundary_driver.reset(env)
 
     def _activate_action_window(self, injector_id: str, parameters: dict[str, Any]) -> None:
         if injector_id == "release-grasp-contact":
@@ -458,6 +467,8 @@ class HumanoidArenaRecoveryRuntime:
         self.trigger_step = self.control_step
         self.trigger_observation = observation
         self.trigger_signals = signals
+        if self.boundary_driver is not None:
+            self.boundary_driver.stop_at_detector_edge()
         self._inject(env, signals)
         _append_jsonl(
             self.trace_path,
@@ -489,6 +500,8 @@ class HumanoidArenaRecoveryRuntime:
         detector_id = self.scenario["event_detector"]["id"]
         if self.triggered or detector_id == "first-hand-close":
             return
+        if self.boundary_driver is not None:
+            self.boundary_driver.before_observe(env)
         parameters = self.scenario["event_detector"]["parameters"]
         signals = signals_for_detector(detector_id, env, parameters)
         observation = self.detector.observe(
@@ -506,21 +519,26 @@ class HumanoidArenaRecoveryRuntime:
     ) -> Any:
         if self.episode_seed is None:
             raise RuntimeError("runtime.reset is required before transforming actions")
+        driven_action = (
+            action
+            if self.boundary_driver is None
+            else self.boundary_driver.transform_semantic_action(action)
+        )
         if self.scenario["event_detector"]["id"] == "first-hand-close" and not self.triggered:
             observation = self.detector.observe(
                 env,
                 task_success=bool(task_success),
-                semantic_action=action,
+                semantic_action=driven_action,
             )
             if observation.triggered:
                 self._record_trigger(env, observation, {})
         if not self.triggered or self.action_window is None:
-            return action
+            return driven_action
         injector_id, parameters = self.action_window
         assert self.trigger_step is not None
         elapsed_s = max(0.0, (self.control_step - self.trigger_step) * self.control_dt_s)
         output = apply_action_window(
-            action,
+            driven_action,
             injector_id=injector_id,
             elapsed_s=elapsed_s,
             parameters=parameters,
@@ -528,7 +546,7 @@ class HumanoidArenaRecoveryRuntime:
         if elapsed_s < float(parameters["duration_s"]):
             import numpy as np
 
-            before = np.asarray(action, dtype=np.float32)
+            before = np.asarray(driven_action, dtype=np.float32)
             after = np.asarray(output, dtype=np.float32)
             changed = not np.array_equal(before, after)
             if changed:
@@ -569,6 +587,14 @@ class HumanoidArenaRecoveryRuntime:
             "restore_audit_sha256": self.restore_audit_sha256,
             "failure_snapshot_sha256": self.failure_snapshot_sha256,
             "failure_capture_complete": self.failure_capture_complete,
+            "boundary_driver_id": (
+                None if self.boundary_driver is None else self.boundary_driver.driver_id
+            ),
+            "boundary_driver_sha256": (
+                None
+                if self.boundary_driver is None
+                else self.boundary_driver.driver_sha256
+            ),
             "runtime_validated": False,
             "claim_boundary": "runtime_validated remains false until an Isaac Sim trace audit passes",
         }

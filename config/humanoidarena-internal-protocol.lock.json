@@ -4,7 +4,7 @@
   "claim_boundary": "Only hidden_final is claim-bearing. Development and validation outcomes may tune infrastructure and frozen baseline components but must never enter the final table.",
   "source_suite": {
     "suite_id": "hrvla_recovery_v0",
-    "draft_suite_sha256": "80727fc3b8056a0e1230394ae5e1d9d981afb612c11c2d96a5ceab7b3a6626bd",
+    "draft_suite_sha256": "81df2eeea3a102d443ccb1156ed600941d1ead650f831a662ef7196376d1c9a7",
     "admitted_suite": "_artifacts/HumanoidArena/recovery-admission/hrvla_recovery_v0.admitted.json"
   },
   "methods": [

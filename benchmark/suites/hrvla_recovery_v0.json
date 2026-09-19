@@ -62,7 +62,10 @@
   },
   "admission_capture": {
     "snapshot_seed": 20260915,
-    "failure_snapshot_policy": "capture after the locked injector settle interval and before any recovery instruction"
+    "failure_snapshot_policy": "capture after the locked injector settle interval and before any recovery instruction",
+    "boundary_reachability_protocol": "pre_registered_deterministic_driver_v1",
+    "boundary_driver_selection_rule": "A driver is permitted only for a scenario that failed to reach its semantic boundary in the frozen seed-20260915 reference rollout before oracle execution; its parameters are suite-hashed and shared unchanged by admission, oracle, and internal comparisons",
+    "boundary_driver_claim_boundary": "The driver establishes only the pre-failure semantic boundary; it is disabled immediately when the locked detector fires and never supplies a recovery action"
   },
   "artifact_policy": {
     "dataset_remote": "https://huggingface.co/datasets/shin0412/HRVLA",
@@ -91,6 +94,7 @@
           "event_id": "after-first-grasp-close",
           "event_boundary": "the first semantic-action40 hand bit rising edge at the locked 0.5 close threshold",
           "event_detector": {"id": "first-hand-close", "parameters": {"close_threshold": 0.5, "hand_indices": [38, 39]}},
+          "boundary_driver": {"id": "semantic-hand-close-pulse", "parameters": {"hand_indices": [38, 39], "value": 1.0, "max_action_samples": 1}},
           "level": "L1",
           "humanoid_axes": [],
           "severity": "low",
@@ -105,6 +109,7 @@
           "event_id": "after-stable-grasp",
           "event_boundary": "box root is at least 0.05 m above its reset height with speed at most 0.08 m/s continuously for 0.5 s, before task success",
           "event_detector": {"id": "stable-object-lift", "parameters": {"asset_name": "box", "minimum_lift_m": 0.05, "maximum_speed_mps": 0.08, "stable_duration_s": 0.5}},
+          "boundary_driver": {"id": "stable-object-lift-fixture", "parameters": {"asset_name": "box", "lift_m": 0.06, "linear_velocity_mps": [0.0, 0.0, 0.0], "angular_velocity_rps": [0.0, 0.0, 0.0]}},
           "level": "L3",
           "humanoid_axes": ["H3"],
           "severity": "medium",
@@ -130,6 +135,7 @@
           "event_id": "before-handle-contact",
           "event_boundary": "a configured wrist proxy first enters 0.30 m of the live door-handle body while strict task success is false",
           "event_detector": {"id": "wrist-handle-approach", "parameters": {"door_asset_name": "door", "maximum_distance_m": 0.3}},
+          "boundary_driver": {"id": "door-to-wrist-fixture", "parameters": {"door_asset_name": "door", "target_distance_m": 0.25}},
           "level": "L2",
           "humanoid_axes": [],
           "severity": "medium",
@@ -144,6 +150,7 @@
           "event_id": "after-door-open",
           "event_boundary": "latch is unlocked and absolute live door-leaf angle first reaches 60 degrees while the geometry-required task predicate remains false",
           "event_detector": {"id": "door-open-before-traversal", "parameters": {"minimum_leaf_angle_deg": 60.0}},
+          "boundary_driver": {"id": "open-door-joint-fixture", "parameters": {"door_asset_name": "door", "leaf_joint_name": "RevoluteJoint_door001", "leaf_angle_deg": 62.0, "mark_latch_unlocked": true}},
           "level": "L4",
           "humanoid_axes": [],
           "severity": "high",
@@ -192,6 +199,7 @@
           "event_id": "after-ball-first-motion",
           "event_boundary": "football speed first exceeds 0.25 m/s while the goal predicate remains false",
           "event_detector": {"id": "object-first-motion", "parameters": {"asset_name": "object", "minimum_speed_mps": 0.25}},
+          "boundary_driver": {"id": "object-speed-fixture", "parameters": {"asset_name": "object", "linear_velocity_mps": [0.3, 0.0, 0.0], "angular_velocity_rps": [0.0, 0.0, 0.0]}},
           "level": "L1",
           "humanoid_axes": ["H1"],
           "severity": "medium",

@@ -3,7 +3,7 @@
   "status": "frozen_waiting_for_capture_manifest_and_exclusive_gpu",
   "oracle_id": "released-pi05-independent-recoverability-witness-v0",
   "suite_id": "hrvla_recovery_v0",
-  "suite_sha256": "80727fc3b8056a0e1230394ae5e1d9d981afb612c11c2d96a5ceab7b3a6626bd",
+  "suite_sha256": "81df2eeea3a102d443ccb1156ed600941d1ead650f831a662ef7196376d1c9a7",
   "claim_boundary": "The released PI0.5 task policy is an independent behavioral witness for state recoverability, not an internal GR00T comparison row or a privileged success label.",
   "independence": {
     "oracle_model_family": "PI0.5",
@@ -19,7 +19,8 @@
     "required_successes": 20,
     "seed_derivation": "lower-31-bits of the final four SHA-256 bytes for hrvla-oracle-v0|<scenario_id>|<trial_index>",
     "policy_seed_is_the_only_varied_factor": true,
-    "online_failure_start": "restore the task initial snapshot, then apply the locked live semantic injector",
+    "online_failure_start": "restore the task initial snapshot, apply any suite-hashed deterministic boundary driver, stop that driver at the detector edge, then apply the locked live semantic injector",
+    "boundary_driver_role": "pre-failure reachability only; never supplies a recovery action and is identical across all oracle and internal methods",
     "failure_start": "restore the locked post-failure snapshot without reinjecting",
     "success": "the unchanged upstream task reward reaches raw_total >= 1 within the suite horizon",
     "infrastructure_failures_are_trials": false,

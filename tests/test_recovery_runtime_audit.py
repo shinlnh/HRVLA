@@ -30,6 +30,13 @@ def _write_jsonl(path: Path, rows: list[dict]) -> None:
 
 
 def _summary(scenario_id: str, task_id: str, detector_id: str, injector_id: str) -> dict:
+    scenario = next(
+        scenario
+        for task in SUITE["tasks"]
+        for scenario in task["scenarios"]
+        if scenario["id"] == scenario_id
+    )
+    driver = scenario.get("boundary_driver")
     return {
         "schema_version": 1,
         "suite_sha256": canonical_sha256(SUITE),
@@ -45,9 +52,51 @@ def _summary(scenario_id: str, task_id: str, detector_id: str, injector_id: str)
         "initial_snapshot_sha256": None,
         "failure_snapshot_sha256": None,
         "failure_capture_complete": False,
+        "boundary_driver_id": None if driver is None else driver["id"],
+        "boundary_driver_sha256": None if driver is None else canonical_sha256(driver),
         "runtime_validated": False,
         "claim_boundary": "runtime_validated remains false until an Isaac Sim trace audit passes",
     }
+
+
+def _driver_rows(scenario_id: str) -> list[dict]:
+    scenario = next(
+        scenario
+        for task in SUITE["tasks"]
+        for scenario in task["scenarios"]
+        if scenario["id"] == scenario_id
+    )
+    driver = scenario.get("boundary_driver")
+    if driver is None:
+        return []
+    digest = canonical_sha256(driver)
+    rows = [
+        {
+            "event": "boundary_driver_prepared",
+            "scenario_id": scenario_id,
+            "episode_seed": 17,
+            "driver_id": driver["id"],
+            "driver_sha256": digest,
+            "parameters": driver["parameters"],
+            "recovery_action_provided": False,
+            "details": {},
+        }
+    ]
+    if driver["id"] == "semantic-hand-close-pulse":
+        rows.append(
+            {
+                "event": "boundary_driver_action_pulse",
+                "scenario_id": scenario_id,
+                "episode_seed": 17,
+                "driver_id": driver["id"],
+                "driver_sha256": digest,
+                "sample_index": 1,
+                "input_sha256": "1" * 64,
+                "output_sha256": "2" * 64,
+                "recovery_action_provided": False,
+            }
+        )
+    return rows
 
 
 def _reset(scenario_id: str, task_id: str) -> dict:
@@ -100,6 +149,7 @@ def test_audit_proves_a_numeric_action40_change(tmp_path: Path) -> None:
     after = [0.0] * 40
     trace = [
         _reset(scenario, "pick_and_place_box"),
+        *_driver_rows(scenario),
         _boundary(scenario, "first-hand-close", "release-grasp-contact"),
         {
             "event": "action_window_applied",
@@ -132,6 +182,7 @@ def test_audit_rejects_a_self_reported_action_change_without_changed_hashes(
     action = [0.0] * 40
     trace = [
         _reset(scenario, "pick_and_place_box"),
+        *_driver_rows(scenario),
         _boundary(scenario, "first-hand-close", "release-grasp-contact"),
         {
             "event": "action_window_applied",
@@ -158,6 +209,7 @@ def test_audit_validates_the_locked_physical_impulse(tmp_path: Path) -> None:
     summary = _summary(scenario, "football", "object-first-motion", "root-lateral-velocity-delta")
     trace = [
         _reset(scenario, "football"),
+        *_driver_rows(scenario),
         _boundary(scenario, "object-first-motion", "root-lateral-velocity-delta"),
     ]
     audit_row = {

@@ -160,7 +160,7 @@
   "schema_version": 1,
   "status": "predicate_sources_passed_runtime_admission_pending",
   "suite_id": "hrvla_recovery_v0",
-  "suite_sha256": "80727fc3b8056a0e1230394ae5e1d9d981afb612c11c2d96a5ceab7b3a6626bd",
+  "suite_sha256": "81df2eeea3a102d443ccb1156ed600941d1ead650f831a662ef7196376d1c9a7",
   "tasks": [
     {
       "admission_status": "draft",

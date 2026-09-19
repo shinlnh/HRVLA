@@ -81,6 +81,15 @@ SCENARIO_BINDINGS = {
 }
 
 
+BOUNDARY_DRIVER_BINDINGS = {
+    "box-missed-grasp-retry": "semantic-hand-close-pulse",
+    "box-drop-and-body-push": "stable-object-lift-fixture",
+    "door-handle-pose-shift": "door-to-wrist-fixture",
+    "doorway-obstruction": "open-door-joint-fixture",
+    "support-state-push": "object-speed-fixture",
+}
+
+
 def _exact_keys(value: Any, keys: set[str], label: str) -> dict[str, Any]:
     if not isinstance(value, dict) or set(value) != keys:
         actual = sorted(value) if isinstance(value, dict) else type(value).__name__
@@ -262,6 +271,56 @@ def _validate_injector(injector_id: str, parameters: Any, label: str) -> None:
         raise ValueError(f"{label}: unsupported injector {injector_id!r}")
 
 
+def _validate_boundary_driver(driver_id: str, parameters: Any, label: str) -> None:
+    if driver_id == "semantic-hand-close-pulse":
+        p = _exact_keys(parameters, {"hand_indices", "value", "max_action_samples"}, label)
+        if p["hand_indices"] != [38, 39]:
+            raise ValueError(f"{label}.hand_indices: semantic-action40 hands must be [38, 39]")
+        _number(p["value"], f"{label}.value", low=0.5, high=1.0)
+        if p["max_action_samples"] != 1:
+            raise ValueError(f"{label}.max_action_samples: must be exactly one")
+    elif driver_id == "stable-object-lift-fixture":
+        p = _exact_keys(
+            parameters,
+            {"asset_name", "lift_m", "linear_velocity_mps", "angular_velocity_rps"},
+            label,
+        )
+        _name(p["asset_name"], f"{label}.asset_name")
+        _number(p["lift_m"], f"{label}.lift_m", low=0.05, high=0.25)
+        _vector(p["linear_velocity_mps"], 3, f"{label}.linear_velocity_mps", low=-1.0, high=1.0)
+        _vector(p["angular_velocity_rps"], 3, f"{label}.angular_velocity_rps", low=-1.0, high=1.0)
+    elif driver_id == "door-to-wrist-fixture":
+        p = _exact_keys(parameters, {"door_asset_name", "target_distance_m"}, label)
+        _name(p["door_asset_name"], f"{label}.door_asset_name")
+        _number(p["target_distance_m"], f"{label}.target_distance_m", low=0.1, high=0.3)
+    elif driver_id == "open-door-joint-fixture":
+        p = _exact_keys(
+            parameters,
+            {"door_asset_name", "leaf_joint_name", "leaf_angle_deg", "mark_latch_unlocked"},
+            label,
+        )
+        _name(p["door_asset_name"], f"{label}.door_asset_name")
+        _name(p["leaf_joint_name"], f"{label}.leaf_joint_name")
+        _number(p["leaf_angle_deg"], f"{label}.leaf_angle_deg", low=60.0, high=90.0)
+        if p["mark_latch_unlocked"] is not True:
+            raise ValueError(f"{label}.mark_latch_unlocked: must be true")
+    elif driver_id == "object-speed-fixture":
+        p = _exact_keys(
+            parameters,
+            {"asset_name", "linear_velocity_mps", "angular_velocity_rps"},
+            label,
+        )
+        _name(p["asset_name"], f"{label}.asset_name")
+        linear = _vector(
+            p["linear_velocity_mps"], 3, f"{label}.linear_velocity_mps", low=-2.0, high=2.0
+        )
+        if math.sqrt(sum(value * value for value in linear)) < 0.25:
+            raise ValueError(f"{label}.linear_velocity_mps: norm must be at least 0.25")
+        _vector(p["angular_velocity_rps"], 3, f"{label}.angular_velocity_rps", low=-2.0, high=2.0)
+    else:
+        raise ValueError(f"{label}: unsupported boundary driver {driver_id!r}")
+
+
 def validate_recovery_injector_contract(suite: dict[str, Any]) -> list[dict[str, Any]]:
     """Validate complete, typed event/injector bindings for the locked v0 suite."""
 
@@ -269,12 +328,22 @@ def validate_recovery_injector_contract(suite: dict[str, Any]) -> list[dict[str,
         raise ValueError("injector contract only applies to hrvla_recovery_v0")
     capture = _exact_keys(
         suite.get("admission_capture"),
-        {"snapshot_seed", "failure_snapshot_policy"},
+        {
+            "snapshot_seed",
+            "failure_snapshot_policy",
+            "boundary_reachability_protocol",
+            "boundary_driver_selection_rule",
+            "boundary_driver_claim_boundary",
+        },
         "admission_capture",
     )
     if type(capture["snapshot_seed"]) is not int or capture["snapshot_seed"] < 0:
         raise ValueError("admission_capture.snapshot_seed must be a non-negative integer")
     _name(capture["failure_snapshot_policy"], "admission_capture.failure_snapshot_policy")
+    if capture["boundary_reachability_protocol"] != "pre_registered_deterministic_driver_v1":
+        raise ValueError("admission_capture boundary reachability protocol differs")
+    _name(capture["boundary_driver_selection_rule"], "admission_capture.boundary_driver_selection_rule")
+    _name(capture["boundary_driver_claim_boundary"], "admission_capture.boundary_driver_claim_boundary")
     scenarios: dict[str, tuple[str, dict[str, Any]]] = {}
     for task in suite.get("tasks", []):
         task_id = str(task.get("id", ""))
@@ -318,6 +387,20 @@ def validate_recovery_injector_contract(suite: dict[str, Any]) -> list[dict[str,
             raise ValueError(f"{scenario_id}: event_boundary is required")
         _validate_detector(detector_id, detector["parameters"], f"{scenario_id}.event_detector")
         _validate_injector(injector_id, injector["parameters"], f"{scenario_id}.injector")
+        driver = scenario.get("boundary_driver")
+        expected_driver = BOUNDARY_DRIVER_BINDINGS.get(scenario_id)
+        if expected_driver is None:
+            if driver is not None:
+                raise ValueError(f"{scenario_id}: natural boundary scenario must not define a driver")
+            driver_sha256 = None
+        else:
+            driver = _exact_keys(driver, {"id", "parameters"}, f"{scenario_id}.boundary_driver")
+            if driver["id"] != expected_driver:
+                raise ValueError(f"{scenario_id}: boundary driver differs from the locked binding")
+            _validate_boundary_driver(
+                expected_driver, driver["parameters"], f"{scenario_id}.boundary_driver"
+            )
+            driver_sha256 = canonical_sha256(driver)
         rows.append(
             {
                 "task_id": task_id,
@@ -329,9 +412,15 @@ def validate_recovery_injector_contract(suite: dict[str, Any]) -> list[dict[str,
                 "injector_id": injector_id,
                 "injector_parameters_sha256": canonical_sha256(injector["parameters"]),
                 "interface_seam": seam,
+                "boundary_driver_id": expected_driver,
+                "boundary_driver_sha256": driver_sha256,
             }
         )
     return rows
 
 
-__all__ = ["SCENARIO_BINDINGS", "validate_recovery_injector_contract"]
+__all__ = [
+    "BOUNDARY_DRIVER_BINDINGS",
+    "SCENARIO_BINDINGS",
+    "validate_recovery_injector_contract",
+]

@@ -206,6 +206,46 @@ def _validate_action_audit(
         raise ValueError("action-seam injector did not numerically change any sample")
 
 
+def _validate_boundary_driver_audit(
+    trace: list[dict[str, Any]],
+    contract: dict[str, Any],
+    summary: dict[str, Any],
+) -> None:
+    expected_id = contract.get("boundary_driver_id")
+    expected_sha = contract.get("boundary_driver_sha256")
+    prepared = [row for row in trace if row.get("event") == "boundary_driver_prepared"]
+    pulses = [row for row in trace if row.get("event") == "boundary_driver_action_pulse"]
+    if summary.get("boundary_driver_id") != expected_id:
+        raise ValueError("runtime summary boundary driver ID differs from the suite")
+    if summary.get("boundary_driver_sha256") != expected_sha:
+        raise ValueError("runtime summary boundary driver hash differs from the suite")
+    if expected_id is None:
+        if prepared or pulses:
+            raise ValueError("natural boundary scenario unexpectedly used a driver")
+        return
+    if len(prepared) != 1:
+        raise ValueError("driven boundary scenario requires exactly one preparation record")
+    row = prepared[0]
+    if row.get("driver_id") != expected_id or row.get("driver_sha256") != expected_sha:
+        raise ValueError("boundary driver preparation provenance differs")
+    if row.get("recovery_action_provided") is not False:
+        raise ValueError("boundary driver must explicitly deny providing recovery actions")
+    if expected_id == "semantic-hand-close-pulse":
+        if len(pulses) != 1:
+            raise ValueError("semantic hand-close driver requires exactly one action pulse")
+        pulse = pulses[0]
+        if pulse.get("driver_id") != expected_id or pulse.get("driver_sha256") != expected_sha:
+            raise ValueError("boundary driver action-pulse provenance differs")
+        if pulse.get("recovery_action_provided") is not False:
+            raise ValueError("boundary action pulse cannot be a recovery action")
+        for key in ("input_sha256", "output_sha256"):
+            value = pulse.get(key)
+            if not isinstance(value, str) or len(value) != 64:
+                raise ValueError("boundary action pulse hash is malformed")
+    elif pulses:
+        raise ValueError("scene boundary driver unexpectedly wrote an action pulse")
+
+
 def _validate_snapshot_event(
     output_dir: Path,
     row: dict[str, Any],
@@ -324,6 +364,7 @@ def audit_recovery_runtime_trace(
         raise ValueError("semantic boundary injector differs")
     if int(boundary.get("control_step", -1)) != int(summary["trigger_control_step"]):
         raise ValueError("semantic boundary control step differs")
+    _validate_boundary_driver_audit(trace, contract, summary)
 
     restore_report = None
     start_snapshot_sha = summary.get("start_snapshot_sha256")
@@ -438,6 +479,8 @@ def audit_recovery_runtime_trace(
         "detector_id": contract["detector_id"],
         "injector_id": contract["injector_id"],
         "interface_seam": seam,
+        "boundary_driver_id": contract.get("boundary_driver_id"),
+        "boundary_driver_sha256": contract.get("boundary_driver_sha256"),
         "implementation_revision": implementation_revision,
         "runtime_trace_validated": True,
         "action_samples_modified": int(summary.get("action_samples_modified", 0)),

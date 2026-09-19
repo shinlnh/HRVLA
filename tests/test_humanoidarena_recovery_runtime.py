@@ -31,9 +31,16 @@ class _Asset:
 
     def write_root_velocity_to_sim(self, values, *, env_ids) -> None:
         self.data.root_vel_w[env_ids] = values
+        self.data.root_state_w[env_ids, 7:13] = values
 
     def write_root_pose_to_sim(self, values, *, env_ids) -> None:
         self.data.root_link_pose_w[env_ids] = values
+        self.data.root_state_w[env_ids, :7] = values
+
+    def write_root_state_to_sim(self, values, *, env_ids) -> None:
+        self.data.root_state_w[env_ids] = values
+        self.data.root_link_pose_w[env_ids] = values[:, :7]
+        self.data.root_vel_w[env_ids] = values[:, 7:13]
 
     def set_external_force_and_torque(self, *args, **kwargs) -> None:
         pass
@@ -71,7 +78,6 @@ def test_runtime_triggers_and_modifies_the_first_close_action(tmp_path) -> None:
     runtime.reset(env, episode_seed=7)
     runtime.before_control_step(env, task_success=False)
     action = np.zeros(40, dtype=np.float32)
-    action[38:] = 1.0
     modified = runtime.transform_vla_action(env, action, task_success=False)
     assert runtime.triggered
     np.testing.assert_array_equal(modified[38:], [0.0, 0.0])
@@ -80,9 +86,12 @@ def test_runtime_triggers_and_modifies_the_first_close_action(tmp_path) -> None:
     events = [json.loads(line)["event"] for line in runtime.trace_path.read_text().splitlines()]
     assert events == [
         "episode_reset",
+        "boundary_driver_prepared",
+        "boundary_driver_action_pulse",
         "semantic_boundary_triggered",
         "action_window_applied",
     ]
+    assert runtime.summary()["boundary_driver_id"] == "semantic-hand-close-pulse"
     action_event = json.loads(runtime.trace_path.read_text().splitlines()[-1])
     assert action_event["changed"] is True
     assert action_event["shape"] == [40]
@@ -92,7 +101,6 @@ def test_runtime_triggers_and_modifies_the_first_close_action(tmp_path) -> None:
 def test_runtime_applies_locked_root_velocity_when_ball_moves(tmp_path) -> None:
     torch = pytest.importorskip("torch")
     env = _Env(torch)
-    env.scene["object"].data.root_vel_w[0, 0] = 0.3
     runtime = HumanoidArenaRecoveryRuntime(
         SUITE,
         "support-state-push",
@@ -108,3 +116,24 @@ def test_runtime_applies_locked_root_velocity_when_ball_moves(tmp_path) -> None:
     torch.testing.assert_close(velocity, torch.tensor([0.0, 0.45, 0.0]))
     audit = json.loads((tmp_path / "injector-audit.jsonl").read_text())
     assert audit["episode_steps"] == [1]
+
+
+def test_stable_lift_driver_holds_until_the_locked_detector_edge(tmp_path) -> None:
+    torch = pytest.importorskip("torch")
+    env = _Env(torch)
+    runtime = HumanoidArenaRecoveryRuntime(
+        SUITE,
+        "box-drop-and-body-push",
+        control_dt_s=0.02,
+        simulator_revision="isaac-test",
+        implementation_revision="a" * 40,
+        output_dir=tmp_path,
+    )
+    runtime.reset(env, episode_seed=11)
+    assert env.scene["box"].data.root_state_w[0, 2].item() == pytest.approx(0.06)
+    for _ in range(24):
+        runtime.before_control_step(env, task_success=False)
+        assert not runtime.triggered
+    runtime.before_control_step(env, task_success=False)
+    assert runtime.triggered
+    assert runtime.summary()["trigger_control_step"] == 25
