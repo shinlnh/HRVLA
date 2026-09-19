@@ -65,6 +65,11 @@ def _records(scenario_id: str, *, successes: int = 20) -> list[dict]:
             "source_revision": independence["source_revision"],
             "isaac_lab_revision": independence["isaac_lab_revision"],
             "sonic_revision": independence["sonic_revision"],
+            "policy_backend": LOCK["resource_profile"]["policy_backend"],
+            "policy_device": LOCK["resource_profile"]["policy_device"],
+            "bitsandbytes_version": LOCK["resource_profile"].get(
+                "bitsandbytes_version"
+            ),
             "initial_snapshot_sha256": "a" * 64,
             "failure_snapshot_sha256": (
                 "b" * 64 if scenario["protocol"] == "failure_start" else None

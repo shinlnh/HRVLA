@@ -10,7 +10,12 @@ requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
-gpu = ["torch>=2.7", "transformers>=4.57", "accelerate>=1.10"]
+gpu = [
+  "torch>=2.7",
+  "transformers>=4.57",
+  "accelerate>=1.10",
+  "bitsandbytes==0.50.2",
+]
 plots = ["matplotlib>=3.8"]
 
 [project.scripts]

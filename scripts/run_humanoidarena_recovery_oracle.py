@@ -296,6 +296,11 @@ def _normalize_trial(
         "source_revision": independence["source_revision"],
         "isaac_lab_revision": independence["isaac_lab_revision"],
         "sonic_revision": independence["sonic_revision"],
+        "policy_backend": lock["resource_profile"]["policy_backend"],
+        "policy_device": lock["resource_profile"]["policy_device"],
+        "bitsandbytes_version": lock["resource_profile"].get(
+            "bitsandbytes_version"
+        ),
         "initial_snapshot_sha256": capture["initial_snapshot_sha256"],
         "failure_snapshot_sha256": capture["failure_snapshot_sha256"],
         "start_state_restore_audit_sha256": restore["audit_sha256"],
@@ -490,6 +495,11 @@ def main() -> int:
     )
     parser.add_argument("--scenario", action="append", default=[])
     parser.add_argument("--server-port", type=int, default=18444)
+    parser.add_argument(
+        "--policy-backend",
+        choices=sorted(FAST.SUPPORTED_BACKENDS),
+        default=None,
+    )
     parser.add_argument("--max-idle-gpu-mib", type=int, default=1024)
     args = parser.parse_args()
 
@@ -497,6 +507,13 @@ def main() -> int:
     lock = load_json(args.oracle_lock.resolve())
     capture_manifest = load_json(args.capture_manifest.resolve())
     validate_oracle_lock(lock, suite)
+    locked_backend = str(lock["resource_profile"]["policy_backend"])
+    policy_backend = args.policy_backend or locked_backend
+    if policy_backend != locked_backend:
+        raise ValueError(
+            f"requested policy backend {policy_backend!r} differs from locked "
+            f"backend {locked_backend!r}"
+        )
     if capture_manifest.get("status") != "runtime_and_snapshots_complete_oracle_admission_pending":
         raise ValueError("capture manifest is not complete")
     if capture_manifest.get("suite_sha256") != canonical_sha256(suite):
@@ -538,15 +555,21 @@ def main() -> int:
             log_root.mkdir(parents=True, exist_ok=True)
             with (log_root / "server.log").open("a", encoding="utf-8", buffering=1) as log:
                 server = subprocess.Popen(
-                    FAST._server_command(model_path, args.server_port),
+                    FAST._server_command(model_path, args.server_port, policy_backend),
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     cwd=ROOT,
-                    env=FAST._server_env(24, 2, 32),
+                    env=FAST._server_env(24, 2, 32, policy_backend),
                     start_new_session=True,
                 )
                 try:
                     FAST._wait_for_server(args.server_port, 600.0)
+                    if policy_backend == FAST.CUDA_INT8_BACKEND:
+                        FAST._warm_cuda_int8_policy(args.server_port, task_key)
+                        if FAST._gpu_used_mib() > 8500:
+                            raise RuntimeError(
+                                "CUDA INT8 policy exceeds the post-warm-up VRAM budget"
+                            )
                     for row, completed in task_pending:
                         scenario_id = row["scenario_id"]
                         scenario_dir = output_root / scenario_id

@@ -17,6 +17,7 @@ affect a metric and needlessly slows the claim-bearing matrix.
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import os
@@ -31,6 +32,10 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
+CPU_BACKEND = "cpu"
+HYBRID_BACKEND = "hybrid_cuda_expert"
+CUDA_INT8_BACKEND = "cuda_int8_weight_only"
+SUPPORTED_BACKENDS = frozenset({CPU_BACKEND, HYBRID_BACKEND, CUDA_INT8_BACKEND})
 HUMANOIDARENA_ROOT = ROOT / "_vendor" / "HumanoidArena"
 ISAACLAB_PROJECT = HUMANOIDARENA_ROOT / "isaaclab_twist2_g1"
 ISAACLAB_ROOT = ROOT / "_vendor" / "IsaacLab-v2.2.0"
@@ -205,7 +210,12 @@ def _wait_for_capacity(min_available_gib: float, max_idle_gpu_mib: int) -> None:
         time.sleep(30)
 
 
-def _server_env(cpu_threads: int, interop_threads: int, compile_threads: int) -> dict[str, str]:
+def _server_env(
+    cpu_threads: int,
+    interop_threads: int,
+    compile_threads: int,
+    policy_backend: str = CPU_BACKEND,
+) -> dict[str, str]:
     env = os.environ.copy()
     for key in ("PYTHONPATH", "LD_LIBRARY_PATH", "CARB_APP_PATH", "EXP_PATH", "PYTHONHOME"):
         env.pop(key, None)
@@ -213,6 +223,7 @@ def _server_env(cpu_threads: int, interop_threads: int, compile_threads: int) ->
         {
             "PYTHONNOUSERSITE": "1",
             "PYTHONUNBUFFERED": "1",
+            "PYTHONPATH": str(ROOT / "src"),
             "OMP_NUM_THREADS": str(cpu_threads),
             "MKL_NUM_THREADS": str(cpu_threads),
             "OPENBLAS_NUM_THREADS": str(cpu_threads),
@@ -225,6 +236,7 @@ def _server_env(cpu_threads: int, interop_threads: int, compile_threads: int) ->
             "TORCHINDUCTOR_COMPILE_THREADS": str(compile_threads),
             "HRVLA_TORCH_INTEROP_THREADS": str(interop_threads),
             "HRVLA_VLA_DEBUG_LOGGING": "0",
+            "HRVLA_PI05_BACKEND": policy_backend,
             "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
         }
     )
@@ -258,7 +270,12 @@ def _sim_env() -> dict[str, str]:
     return env
 
 
-def _server_command(model_path: Path, port: int) -> list[str]:
+def _server_command(
+    model_path: Path,
+    port: int,
+    policy_backend: str = CPU_BACKEND,
+) -> list[str]:
+    device = "cuda:0" if policy_backend == CUDA_INT8_BACKEND else "cpu"
     return [
         str(POLICY_PYTHON),
         "-u",
@@ -266,7 +283,7 @@ def _server_command(model_path: Path, port: int) -> list[str]:
         "--policy-path",
         str(model_path),
         "--device",
-        "cpu",
+        device,
         "--host",
         "127.0.0.1",
         "--port",
@@ -284,6 +301,41 @@ def _post_reset(port: int, timeout: float) -> None:
     with urllib.request.urlopen(request, timeout=timeout) as response:
         if response.status != 200:
             raise RuntimeError(f"PI0.5 server readiness returned HTTP {response.status}")
+
+
+def _warm_cuda_int8_policy(port: int, task_name: str, timeout: float = 600.0) -> None:
+    """Materialize INT8 kernels/state before Isaac claims the remaining VRAM."""
+
+    height, width, channels = 480, 640, 3
+    payload = {
+        "observation": {
+            "images": {
+                "front": {
+                    "shape": [height, width, channels],
+                    "dtype": "uint8",
+                    "data_b64": base64.b64encode(
+                        bytes(height * width * channels)
+                    ).decode("ascii"),
+                }
+            },
+            "state": [0.0] * 64,
+        },
+        "robot_type": "unitree_g1_refpose_v3_1",
+        "task": TASKS[task_name]["task_id"],
+        "return_chunk": True,
+    }
+    request = urllib.request.Request(
+        f"http://127.0.0.1:{port}/infer",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        body = json.load(response)
+    actions = body.get("action_chunk")
+    if not isinstance(actions, list) or not actions:
+        raise RuntimeError("CUDA INT8 warm-up did not return an action chunk")
+    _post_reset(port, 30.0)
 
 
 def _wait_for_server(port: int, timeout: float) -> None:
@@ -564,7 +616,13 @@ def _reconcile_complete_cells(
 
 
 def _matrix_progress(
-    output_root: Path, *, tasks: list[str], modes: list[str], seeds: list[int], repeats: int
+    output_root: Path,
+    *,
+    tasks: list[str],
+    modes: list[str],
+    seeds: list[int],
+    repeats: int,
+    policy_backend: str = CPU_BACKEND,
 ) -> dict[str, Any]:
     cells_complete = 0
     episodes_observed = 0
@@ -583,6 +641,8 @@ def _matrix_progress(
     return {
         "schema_version": 2,
         "runner": "task-shared-server",
+        "policy_backend": policy_backend,
+        "policy_device": "cuda:0" if policy_backend == CUDA_INT8_BACKEND else "cpu",
         "model_revision": MODEL_REVISION,
         "source_revision": SOURCE_REVISION,
         "isaaclab_revision": ISAACLAB_REVISION,
@@ -615,6 +675,11 @@ def main() -> int:
     parser.add_argument("--compile-threads", type=int, default=len(os.sched_getaffinity(0)))
     parser.add_argument("--server-port", type=int, default=18443)
     parser.add_argument("--server-ready-timeout", type=float, default=600.0)
+    parser.add_argument(
+        "--policy-backend",
+        choices=sorted(SUPPORTED_BACKENDS),
+        default=CPU_BACKEND,
+    )
     parser.add_argument("--min-start-ram-gib", type=float, default=20.0)
     parser.add_argument("--min-runtime-ram-gib", type=float, default=3.0)
     parser.add_argument("--max-idle-gpu-mib", type=int, default=2048)
@@ -661,7 +726,13 @@ def main() -> int:
                 task_jobs += len(jobs)
                 print(f"[fast-matrix] dry-run {task_name}/{mode} missing={len(jobs)}")
             if task_jobs:
-                print(" ".join(_server_command(model_path, args.server_port)))
+                print(
+                    " ".join(
+                        _server_command(
+                            model_path, args.server_port, args.policy_backend
+                        )
+                    )
+                )
         return 0
 
     output_root.mkdir(parents=True, exist_ok=True)
@@ -675,6 +746,7 @@ def main() -> int:
             modes=args.modes,
             seeds=args.seeds,
             repeats=args.repeats,
+            policy_backend=args.policy_backend,
         ),
     )
 
@@ -717,16 +789,34 @@ def main() -> int:
             server_log_path = log_root / "server.log"
             with server_log_path.open("a", encoding="utf-8", buffering=1) as server_log:
                 server = subprocess.Popen(
-                    _server_command(model_path, args.server_port),
+                    _server_command(model_path, args.server_port, args.policy_backend),
                     stdout=server_log,
                     stderr=subprocess.STDOUT,
                     cwd=ROOT,
-                    env=_server_env(args.cpu_threads, args.interop_threads, args.compile_threads),
+                    env=_server_env(
+                        args.cpu_threads,
+                        args.interop_threads,
+                        args.compile_threads,
+                        args.policy_backend,
+                    ),
                     start_new_session=True,
                 )
                 try:
                     print(f"[fast-matrix] loading shared policy task={task_name}", flush=True)
                     _wait_for_server(args.server_port, args.server_ready_timeout)
+                    if args.policy_backend == CUDA_INT8_BACKEND:
+                        _warm_cuda_int8_policy(args.server_port, task_name)
+                        steady_gpu_mib = _gpu_used_mib()
+                        if steady_gpu_mib > 8500:
+                            raise RuntimeError(
+                                "CUDA INT8 policy did not release warm-up memory: "
+                                f"gpu_used={steady_gpu_mib} MiB"
+                            )
+                        print(
+                            "[fast-matrix] CUDA INT8 warm-up complete "
+                            f"gpu_used={steady_gpu_mib}MiB",
+                            flush=True,
+                        )
                     for mode in args.modes:
                         jobs, pending = _build_jobs(
                             output_root,
@@ -754,6 +844,12 @@ def main() -> int:
                                     "cpu_threads": args.cpu_threads,
                                     "interop_threads": args.interop_threads,
                                     "compile_threads": args.compile_threads,
+                                    "policy_backend": args.policy_backend,
+                                    "policy_device": (
+                                        "cuda:0"
+                                        if args.policy_backend == CUDA_INT8_BACKEND
+                                        else "cpu"
+                                    ),
                                     "record_video_every_n": args.record_video_every_n,
                                     "pending_repeat_ids_at_start": pending[seed],
                                     "started_at": time.time(),
@@ -797,6 +893,7 @@ def main() -> int:
                                             modes=args.modes,
                                             seeds=args.seeds,
                                             repeats=args.repeats,
+                                            policy_backend=args.policy_backend,
                                         )
                                         live_progress["active"] = {
                                             "task": task_name,
@@ -832,6 +929,7 @@ def main() -> int:
                                 modes=args.modes,
                                 seeds=args.seeds,
                                 repeats=args.repeats,
+                                policy_backend=args.policy_backend,
                             ),
                         )
                 finally:
@@ -843,6 +941,7 @@ def main() -> int:
         modes=args.modes,
         seeds=args.seeds,
         repeats=args.repeats,
+        policy_backend=args.policy_backend,
     )
     _write_json_atomic(progress_path, progress)
     print(
