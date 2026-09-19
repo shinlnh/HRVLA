@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "status": "frozen_waiting_for_gpu_capture_manifest_and_exclusive_gpu",
+  "oracle_id": "released-pi05-independent-recoverability-witness-v0",
+  "suite_id": "hrvla_recovery_v0",
+  "suite_sha256": "72601cd2135f30e26fbcfb456732b31921354313319b5141245a2140a02b76b6",
+  "claim_boundary": "The released PI0.5 task policy is an independent behavioral witness for state recoverability, not an internal GR00T comparison row or a privileged success label.",
+  "independence": {
+    "oracle_model_family": "PI0.5",
+    "evaluated_internal_model_family": "GR00T N1.7",
+    "model_repository": "WilliamWang16/HumanoidArena_models",
+    "model_revision": "da13e072902840e2682afde360b763f1edb76d32",
+    "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
+    "isaac_lab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb",
+    "sonic_revision": "6733128a3d8a523b1418b06bca3cdf61c8b0987f"
+  },
+  "protocol": {
+    "required_trials": 20,
+    "required_successes": 20,
+    "seed_derivation": "lower-31-bits of the final four SHA-256 bytes for hrvla-oracle-v0|<scenario_id>|<trial_index>",
+    "policy_seed_is_the_only_varied_factor": true,
+    "online_failure_start": "restore the task initial snapshot, apply any suite-hashed deterministic boundary driver, stop that driver at the detector edge, then apply the locked live semantic injector",
+    "boundary_driver_role": "pre-failure reachability only; never supplies a recovery action and is identical across all oracle and internal methods",
+    "failure_start": "restore the locked post-failure snapshot without reinjecting",
+    "success": "the unchanged upstream task reward reaches raw_total >= 1 within the suite horizon",
+    "infrastructure_failures_are_trials": false,
+    "failed_behavioral_trials_are_preserved": true,
+    "record_all_trials": true,
+    "record_recovery_demonstrations": true,
+    "recovery_demonstration_role": "training-only PI0.5 behavior after the locked failure is active; final internal rollout seeds are disjoint"
+  },
+  "resource_profile": {
+    "policy_backend": "cuda_int8_weight_only",
+    "policy_device": "cuda:0",
+    "weight_precision": "int8_weight_only_with_bf16_skinny_projections",
+    "bitsandbytes_version": "0.50.2",
+    "minimum_quantized_linear_dimension": 256,
+    "policy_threads": 24,
+    "interop_threads": 2,
+    "compile_threads": 32,
+    "simulator_device": "cuda:0",
+    "exclusive_gpu_required": true
+  },
+  "rollout_seeds": {
+    "box-missed-grasp-retry": [128919965, 1980673083, 2004343474, 1215398206, 477825403, 1682965767, 217523755, 14404726, 2131733577, 1571458400, 1887033850, 860435602, 139071920, 46390369, 1391863034, 350569531, 924152569, 1543320995, 534159972, 1993398344],
+    "box-drop-and-body-push": [1144812484, 1688803581, 1557771897, 401903115, 1219045000, 101021593, 1169770752, 2027984717, 631171927, 1563638974, 1127172384, 120058994, 1417781702, 229946824, 1604760240, 1885855489, 1142796808, 1024195384, 1007661044, 674428349],
+    "door-handle-pose-shift": [648836328, 1866939076, 1093102618, 1583826930, 61851683, 980389293, 2009907586, 2140719042, 532378124, 1945511233, 1074813212, 71683987, 1221712632, 1277565457, 1865599093, 1605008590, 804443192, 986845794, 255818832, 446765780],
+    "doorway-obstruction": [1700769954, 543708663, 1149829702, 1009133609, 151589834, 865189087, 1437138230, 1780842647, 352191322, 140829093, 111521166, 964787203, 1559505505, 991514413, 406645991, 2017948152, 1636490087, 2120599674, 60190616, 302560832],
+    "tracker-underexecution": [1322702730, 1517257869, 1575319209, 1538462358, 998718758, 958385164, 1165630468, 620024860, 784443536, 1732642428, 2039983410, 77052296, 963322368, 1753830212, 2105135975, 1297449237, 508505955, 1258071496, 968636859, 176373154],
+    "support-state-push": [156339066, 774916399, 1295788930, 206497516, 492598688, 8644655, 310213538, 1814204608, 1111805605, 353522755, 1204083253, 1281206605, 121241514, 1531753411, 1968923680, 187804071, 1007773445, 1034806743, 1218502661, 1560773468],
+    "sofa-approach-slip": [989100313, 2005926057, 2144080076, 337609587, 1813655194, 739383386, 399778469, 1507307810, 603372899, 22563085, 701197045, 716283070, 1767761764, 872989309, 695063206, 1030754196, 897197489, 225327679, 613467160, 1163677005],
+    "contact-recoil": [1145735259, 1343881532, 190396917, 1061908351, 229591918, 2126017904, 1228624009, 1778595660, 464887898, 733811239, 510414680, 854009319, 639421215, 1962929219, 2069030065, 460406798, 1756066692, 1836558403, 1576701027, 1367697554],
+    "new-blocking-obstacle": [709071895, 2014457385, 846249331, 1197764583, 1004155267, 1258891334, 24482742, 199473136, 1866517309, 715196931, 1947385382, 1650961042, 1259433841, 580308403, 1926000322, 1836388094, 765645998, 1895194884, 1499636242, 1668237943]
+  }
+}

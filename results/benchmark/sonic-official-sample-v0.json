@@ -1,0 +1,26 @@
+{
+  "episode_records": 2,
+  "paired_comparisons": [],
+  "schema_version": "1.0",
+  "tracks": {
+    "controller_tracking_pilot": {
+      "methods": {
+        "gear_sonic_original_release": {
+          "detection": null,
+          "episodes": 2,
+          "failure_start": null,
+          "nominal_success": {
+            "episodes": 2,
+            "rate": 1.0,
+            "successes": 2,
+            "wilson_95": [
+              0.34238022750665303,
+              1.0
+            ]
+          },
+          "online_failure": null
+        }
+      }
+    }
+  }
+}

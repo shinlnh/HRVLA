@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "inputs_validated_waiting_for_exclusive_gpu",
+  "claim_boundary": "common action-interface adaptation shared by every internal row; not an ST, STR, or ours contribution",
+  "base_model": {
+    "repo_id": "nvidia/GR00T-N1.7-3B",
+    "revision": "2fc962b973bccdd5d8ce4f67cc63b264d6886495",
+    "path": "_artifacts/GR00T-N1.7-3B",
+    "signatures": {
+      "config.json": "54c0367060cd310d0b3343fe72a589860a8b6e8173810164a4ffd6253f52e689",
+      "model.safetensors.index.json": "407804ea5a62f4f8823f48811ae0edbb82fac101e9cf4d7273e6e2f692bb4d59",
+      "processor_config.json": "85c1b4690ae090559e79a45193e598b65d6146eedf14750884da65e6d31032be"
+    }
+  },
+  "dataset": {
+    "repo_id": "WilliamWang16/HumanoidArena_dataset_v3_1",
+    "revision": "a079beddd6b1521f762c991be8f36993f17ebeca",
+    "path": "_artifacts/datasets/humanoidarena-gr00t-refpose",
+    "manifest_sha256": "7695a09acc9d94fe3152fd4822ddae81371ed5b90360ef0825209a1132e255d3",
+    "modality_sha256": "sha256:25afee169fad127880548c22ac928885bfd47201fba2af144020eb149f456943",
+    "split_seed": 20260915,
+    "splits": {
+      "train": {"episodes": 490, "frames": 380927, "role": "optimization"},
+      "validation": {"episodes": 70, "frames": 54274, "role": "global checkpoint-step selection"},
+      "heldout": {"episodes": 140, "frames": 111259, "role": "hidden final test only"}
+    }
+  },
+  "upstreams": {
+    "Isaac-GR00T": "51d4c89f72fda44cbf77285c6a8114b52676b8a1",
+    "HumanoidArena": "68479287a784a69be9ce6ad739311d2f11f75ef9",
+    "IsaacLab": "46dff135f44683f031edf346e544fcfd8456b2bb"
+  },
+  "modality_config_path": "config/g1_humanoidarena_refpose_config.py",
+  "output_root": "_artifacts/retraining/humanoidarena-common",
+  "training_seeds": [0, 1, 2],
+  "training": {
+    "profile": "action_decoder_only",
+    "candidate_steps": [100, 200, 300],
+    "max_steps": 300,
+    "save_steps": 100,
+    "learning_rate": 0.00005,
+    "physical_batch_size": 4,
+    "gradient_accumulation_steps": 4,
+    "effective_batch_size": 16,
+    "dataloader_workers": 4,
+    "dataloader_worker_rationale": "maximum memory-safe profile after a 28-worker infrastructure probe exhausted 31 GiB host RAM before optimizer step 1",
+    "state_dropout_probability": 0.2,
+    "color_jitter": true,
+    "bf16_frozen_weights": true,
+    "fp32_trainable_decoder": true,
+    "tf32": true
+  },
+  "checkpoint_selection": {
+    "split": "validation",
+    "conditions": ["clean"],
+    "trajectory_ids": "0..69",
+    "frames_per_trajectory": 120,
+    "execution_horizon": 40,
+    "denoising_steps": 4,
+    "criterion": "lowest mean across the three seed-level macro-per-task action MSE values",
+    "tie_break": "lowest optimizer step",
+    "one_global_step_for_all_seeds": true
+  },
+  "hidden_evaluation": {
+    "locked_until_selection_json_exists": true,
+    "trajectory_ids": "0..139",
+    "conditions": ["clean", "vision_noise", "occlusion", "state_noise", "combined"],
+    "frames_per_trajectory": 120,
+    "execution_horizon": 40,
+    "denoising_steps": 4,
+    "execution_profile": "cpu_prefetch_gpu_batch",
+    "throughput_batch_size": 30,
+    "prefetch_workers": 16,
+    "prefetch_pending_per_worker": 1,
+    "latency_claim_eligible": false,
+    "equivalence_gate": {
+      "validation_trajectory_ids": [0, 1],
+      "maximum_mse_delta": 0.0001,
+      "maximum_rate_delta": 0.002,
+      "observed_maximum_mse_delta": 0.00005728006362915039,
+      "observed_maximum_rate_delta": 0.0008333333333333526
+    }
+  },
+  "resource_exclusion": {
+    "blocking_process_pattern": "run_humanoidarena_baseline_matrix_fast.py",
+    "maximum_preexisting_compute_vram_mib": 1024,
+    "reason": "the 16 GiB GPU cannot safely co-host Isaac Sim/SONIC and GR00T post-training"
+  }
+}

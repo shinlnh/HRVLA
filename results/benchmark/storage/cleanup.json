@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-09-15",
+  "units": "GiB (rounded filesystem measurements)",
+  "free_space": {
+    "before": 189,
+    "after": 391
+  },
+  "reclaimed_total": 202,
+  "current_project_footprint": {
+    "vendor_runtimes": 76,
+    "runtime_and_benchmark_artifacts": 100,
+    "user_vscode_state_preserved": 5.2
+  },
+  "claim_boundary": "Operational storage evidence only; values are rounded and are not benchmark metrics."
+}

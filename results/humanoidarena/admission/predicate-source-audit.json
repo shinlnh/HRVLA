@@ -1,0 +1,250 @@
+{
+  "claim_boundary": "static source provenance only; no scenario is admitted and no oracle trial is claimed",
+  "gates": {
+    "failure_snapshots": {
+      "complete": 0,
+      "required": 3
+    },
+    "initial_snapshots": {
+      "complete": 0,
+      "required": 7
+    },
+    "oracle_20_of_20": {
+      "complete": 0,
+      "required": 9
+    },
+    "runtime_injectors": {
+      "complete": 0,
+      "required": 9
+    },
+    "static_injector_contracts": {
+      "complete": 9,
+      "required": 9
+    },
+    "task_predicate_sources": {
+      "complete": 7,
+      "required": 7
+    }
+  },
+  "humanoidarena_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
+  "open_door_blocker": "two locked upstream self-tests remain failing",
+  "open_door_primary_aggregate_eligible": false,
+  "scenarios": [
+    {
+      "admission_status": "draft",
+      "event_detector_id": "first-hand-close",
+      "event_detector_parameters_sha256": "dda5bb183847140eae4583da698b5a667abf77e790ce82e2c63d6da02a7b27a0",
+      "injector_id": "release-grasp-contact",
+      "injector_parameters_sha256": "74b2d3d77cf60bf3fe7c7dc7af0e59f6aa919d4bc3de8cd602fa06e1571429fd",
+      "interface_seam": "semantic-action40",
+      "oracle_trials": 0,
+      "protocol": "online_failure",
+      "runtime_validated": false,
+      "scenario_id": "box-missed-grasp-retry",
+      "static_contract_validated": true,
+      "task_id": "pick_and_place_box"
+    },
+    {
+      "admission_status": "draft",
+      "event_detector_id": "stable-object-lift",
+      "event_detector_parameters_sha256": "5ba2284f62d0da8db72547632f1316bf5c79e7235da4f44265447b9133c168cd",
+      "injector_id": "drop-object-and-root-velocity",
+      "injector_parameters_sha256": "2c66dc886109098b53383a9478aecf553871e221f9fce1008c768140f7df0206",
+      "interface_seam": "scene+semantic-action40",
+      "oracle_trials": 0,
+      "protocol": "failure_start",
+      "runtime_validated": false,
+      "scenario_id": "box-drop-and-body-push",
+      "static_contract_validated": true,
+      "task_id": "pick_and_place_box"
+    },
+    {
+      "admission_status": "draft",
+      "event_detector_id": "wrist-handle-approach",
+      "event_detector_parameters_sha256": "bfe396df175ae8d7093cc0be4c1b9075fc9baff2e5c16f331441f481a8845f9e",
+      "injector_id": "shift-door-assembly-handle-frame",
+      "injector_parameters_sha256": "7e3860da5965517270af009883d2a7130f32e7996aba484e2afda4704f85f022",
+      "interface_seam": "scene",
+      "oracle_trials": 0,
+      "protocol": "online_failure",
+      "runtime_validated": false,
+      "scenario_id": "door-handle-pose-shift",
+      "static_contract_validated": true,
+      "task_id": "open_door"
+    },
+    {
+      "admission_status": "draft",
+      "event_detector_id": "door-open-before-traversal",
+      "event_detector_parameters_sha256": "a55c517d20c5cbebba9e9ef7d463beb6009ebee6b2a5552d8b58cd44c0bb15f4",
+      "injector_id": "place-doorway-obstacle",
+      "injector_parameters_sha256": "28316cb277edf2b53b92999d827102b802a99530fb5067537a68de8614db0d61",
+      "interface_seam": "scene",
+      "oracle_trials": 0,
+      "protocol": "failure_start",
+      "runtime_validated": false,
+      "scenario_id": "doorway-obstruction",
+      "static_contract_validated": true,
+      "task_id": "open_door"
+    },
+    {
+      "admission_status": "draft",
+      "event_detector_id": "object-in-transport",
+      "event_detector_parameters_sha256": "f15897aeb771a807e504711145fe697c9a7e35238302ba5fcd002dbb912f10b8",
+      "injector_id": "attenuate-sonic-latent",
+      "injector_parameters_sha256": "6bc6e75f8f3e875098ab6d2407aeccf9d2c390c0d7804719795be0a17564f568",
+      "interface_seam": "post-encoder-latent64",
+      "oracle_trials": 0,
+      "protocol": "online_failure",
+      "runtime_validated": false,
+      "scenario_id": "tracker-underexecution",
+      "static_contract_validated": true,
+      "task_id": "double_desk"
+    },
+    {
+      "admission_status": "draft",
+      "event_detector_id": "object-first-motion",
+      "event_detector_parameters_sha256": "3febf408530dc1cad3d57980c04e3082f8195901a41ad8573866852c73bda76d",
+      "injector_id": "root-lateral-velocity-delta",
+      "injector_parameters_sha256": "f710ad167b3276d8f5692bd5875731bd1f6bc428348ebb19c802e2958122cbdf",
+      "interface_seam": "scene",
+      "oracle_trials": 0,
+      "protocol": "online_failure",
+      "runtime_validated": false,
+      "scenario_id": "support-state-push",
+      "static_contract_validated": true,
+      "task_id": "football"
+    },
+    {
+      "admission_status": "draft",
+      "event_detector_id": "seat-approach",
+      "event_detector_parameters_sha256": "78a24bace8f9d7f9f17d5357927e1fbf1d9b35cc311cfb3186eb8429d3c67879",
+      "injector_id": "support-foot-lateral-impulse",
+      "injector_parameters_sha256": "0620acede52990563a40e37aa4f2bc62bd76138e08e40789c788383714eaa7a2",
+      "interface_seam": "scene",
+      "oracle_trials": 0,
+      "protocol": "failure_start",
+      "runtime_validated": false,
+      "scenario_id": "sofa-approach-slip",
+      "static_contract_validated": true,
+      "task_id": "sit_sofa"
+    },
+    {
+      "admission_status": "draft",
+      "event_detector_id": "strike-approach-shell",
+      "event_detector_parameters_sha256": "45c88391fbfb4348d352b99ba78e5bf01b8d292992e343075572a26c59ba97f8",
+      "injector_id": "upper-body-contact-impulse",
+      "injector_parameters_sha256": "da9a003daf4c082642e7f658c8363a8c289cf373016632bc08ccafad12591a10",
+      "interface_seam": "scene",
+      "oracle_trials": 0,
+      "protocol": "online_failure",
+      "runtime_validated": false,
+      "scenario_id": "contact-recoil",
+      "static_contract_validated": true,
+      "task_id": "boxing"
+    },
+    {
+      "admission_status": "draft",
+      "event_detector_id": "root-displacement",
+      "event_detector_parameters_sha256": "1322c078da77a2258b73042c79933a904e1b80eac48e5a9d805fe1b434ac35ef",
+      "injector_id": "place-path-obstacle",
+      "injector_parameters_sha256": "ec2976c25aecb5145af38d70368ad328b9a8a758fef141c91e3d993ddd3bcbb2",
+      "interface_seam": "scene",
+      "oracle_trials": 0,
+      "protocol": "online_failure",
+      "runtime_validated": false,
+      "scenario_id": "new-blocking-obstacle",
+      "static_contract_validated": true,
+      "task_id": "visual_navigation"
+    }
+  ],
+  "schema_version": 1,
+  "status": "predicate_sources_passed_runtime_admission_pending",
+  "suite_id": "hrvla_recovery_v0",
+  "suite_sha256": "72601cd2135f30e26fbcfb456732b31921354313319b5141245a2140a02b76b6",
+  "tasks": [
+    {
+      "admission_status": "draft",
+      "humanoidarena_task_key": "pp_box",
+      "predicate": "HumanoidArena raw reward is 1 when the box center is judged on a live or fallback shelf support surface",
+      "predicate_source": {
+        "path": "tasks/g1_tasks/move_pickplace_box_g1_29dof_dex3_wholedoby/mdp/rewards.py",
+        "reference": "tasks/g1_tasks/move_pickplace_box_g1_29dof_dex3_wholedoby/mdp/rewards.py:compute_success_mask",
+        "source_sha256": "395436e337663f5aef4b69b817fc923716707d96cb536689e3586548c71e6340",
+        "symbol": "compute_success_mask"
+      },
+      "task_id": "pick_and_place_box"
+    },
+    {
+      "admission_status": "draft",
+      "humanoidarena_task_key": "open_door",
+      "predicate": "HumanoidArena strict raw reward with OPEN_DOOR_STRICT_REQUIRE_GEOMETRY=1 is 1 when the robot is upright and through the live door frame, the latch is unlocked, and absolute door-leaf angle is at least 60 degrees; the upstream OpenDoor row remains diagnostic while its locked self-tests fail",
+      "predicate_source": {
+        "path": "tasks/g1_tasks/move_open_door_g1_29dof_dex3_wholebody/mdp/rewards.py",
+        "reference": "tasks/g1_tasks/move_open_door_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
+        "source_sha256": "eb96177977c0ac6af6d05f1e9967f60b9e8ddb351b0cee8eadb628f3ebf3b1b0",
+        "symbol": "compute_success_mask"
+      },
+      "task_id": "open_door"
+    },
+    {
+      "admission_status": "draft",
+      "humanoidarena_task_key": "doubledesk",
+      "predicate": "HumanoidArena raw reward is 1 when object_l (the hammer) center of mass is inside any discovered basket goal box and is not below the ground-drop threshold",
+      "predicate_source": {
+        "path": "tasks/g1_tasks/move_pickplace_doubledesk_g1_29dof_dex3_wholebody/mdp/rewards.py",
+        "reference": "tasks/g1_tasks/move_pickplace_doubledesk_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_reward",
+        "source_sha256": "901cf2fcbdb5d8f1d2964d7cbcc5ec8f3f520bc612f0ae6960e9241df7347fd7",
+        "symbol": "compute_reward"
+      },
+      "task_id": "double_desk"
+    },
+    {
+      "admission_status": "draft",
+      "humanoidarena_task_key": "football",
+      "predicate": "HumanoidArena raw reward is 1 when the football center crosses a goal-line inner edge within the goal-mouth X and height bounds; fall and safety are reported separately",
+      "predicate_source": {
+        "path": "tasks/g1_tasks/move_football_g1_29dof_dex3_wholebody/mdp/rewards.py",
+        "reference": "tasks/g1_tasks/move_football_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_reward",
+        "source_sha256": "3c38d184de232e89d36f27781db253eb31f07ec1978fa05bc4d1101fd1bf4dbd",
+        "symbol": "compute_reward"
+      },
+      "task_id": "football"
+    },
+    {
+      "admission_status": "draft",
+      "humanoidarena_task_key": "sit_sofa",
+      "predicate": "HumanoidArena raw reward is 1 when a pelvis/hip proxy is in the live sofa-seat volume with at least 5 N contact, or the upstream multi-body seated-geometry fallback passes",
+      "predicate_source": {
+        "path": "tasks/g1_tasks/move_sit_sofa_g1_29dof_dex3_wholebody/mdp/rewards.py",
+        "reference": "tasks/g1_tasks/move_sit_sofa_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
+        "source_sha256": "9e8a5deda5a04249c1751920e3146062b46d7c10df342c48c8e094ac2ee6a8e1",
+        "symbol": "compute_success_mask"
+      },
+      "task_id": "sit_sofa"
+    },
+    {
+      "admission_status": "draft",
+      "humanoidarena_task_key": "boxing",
+      "predicate": "HumanoidArena raw reward is 1 when any configured punch body enters the per-target hit radius; fall and safety are reported separately",
+      "predicate_source": {
+        "path": "tasks/g1_tasks/move_boxing_bag_g1_29dof_dex3_wholebody/mdp/rewards.py",
+        "reference": "tasks/g1_tasks/move_boxing_bag_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
+        "source_sha256": "406c39c86ec3d883a9fe64f18e0ffa98348019ef9cda0715dce095f9812cf0e4",
+        "symbol": "compute_success_mask"
+      },
+      "task_id": "boxing"
+    },
+    {
+      "admission_status": "draft",
+      "humanoidarena_task_key": "vision_navi",
+      "predicate": "HumanoidArena raw reward is 1 when all configured left- and right-foot proxy points are inside the live target region and the robot is upright; collision and safety are reported separately",
+      "predicate_source": {
+        "path": "tasks/g1_tasks/move_small_warehouse_vision_navigation_g1_29dof_dex3_wholebody/mdp/rewards.py",
+        "reference": "tasks/g1_tasks/move_small_warehouse_vision_navigation_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
+        "source_sha256": "6d60a8abb15784953f4573019b1f2702844b527192776e52a41b8ce50fc93d59",
+        "symbol": "compute_success_mask"
+      },
+      "task_id": "visual_navigation"
+    }
+  ]
+}

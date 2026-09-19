@@ -1,0 +1,320 @@
+{
+  "schema_version": "1.0",
+  "suite_id": "hrvla_recovery_v0",
+  "status": "semantic40_interface_ready_admission_artifacts_pending",
+  "robot": "Unitree G1",
+  "reference_stack": {
+    "vla": "NVIDIA GR00T N1.7 with the pending common HumanoidArena state64/action40 adaptation checkpoint",
+    "whole_body_controller": "GEAR-SONIC through HumanoidArena's released semantic-v3 action provider",
+    "simulator": "Isaac Lab 2.2.0 / Isaac Sim 5.0.0",
+    "humanoidarena_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
+    "isaac_lab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb"
+  },
+  "controller_contract": {
+    "embodiment_tag": "NEW_EMBODIMENT",
+    "action_interface": "40-dimensional semantic reference pose: root local-XY delta, root Z, root rotation-6D, 29 joints, 2 hands",
+    "observation_interface": "64-dimensional state: root heading canonical rotation-6D, 29 joint positions, 29 joint velocities",
+    "joint_actions": 29,
+    "hand_actions": 2,
+    "vla_action_rate_hz": 2.5,
+    "control_rate_hz": 50,
+    "sonic_manifest_sha256": "8cfb946c56344636f69be22f92492f9a4d039e351d4409ec1c60debb0c5c661c",
+    "sonic_file_sha256": {
+      "model_encoder.onnx": "013ab0287236aa2721e13f1e936d699db982302d0de0bfcdae76d5c3245362d3",
+      "model_decoder.onnx": "c7241a123eaa36b5d64bad19540efde93cac1ad443bd4572fd12ca99898118ed",
+      "observation_config.yaml": "466d05947c78af6c76388adfb86e3a2a77b2a1d921a64883ed3d085ebf58de1b"
+    },
+    "sonic_model_revision": "6733128a3d8a523b1418b06bca3cdf61c8b0987f",
+    "source_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
+    "isaac_lab_revision": "46dff135f44683f031edf346e544fcfd8456b2bb"
+  },
+  "protocols": {
+    "nominal": {
+      "failure_injection": false,
+      "purpose": "Measure ordinary task success and recovery-module regression"
+    },
+    "failure_start": {
+      "failure_injection": false,
+      "start_state": "shared immutable post-failure simulator snapshot",
+      "purpose": "Isolate recovery competence from pre-failure execution quality"
+    },
+    "online_failure": {
+      "failure_injection": true,
+      "trigger": "shared semantic event or sub-task boundary",
+      "purpose": "Evaluate detection, diagnosis, recovery, and continuation end to end"
+    }
+  },
+  "recovery_levels": {
+    "L1": "Action retry; task state is materially unchanged",
+    "L2": "Action adaptation; object state changed but remains directly usable",
+    "L3": "Object-state restoration before the original task can continue",
+    "L4": "Environment restoration involving a blocking non-target state or object"
+  },
+  "humanoid_axes": {
+    "H1": "Body-state recovery: support, balance, foot placement, or recoverable fall state",
+    "H2": "Policy-tracker failure: valid high-level intent is not realized by the tracker",
+    "H3": "Coupled failure: body-state and task/object-state disruption co-occur"
+  },
+  "replication": {
+    "training_seeds": [0, 1, 2],
+    "rollouts_per_seed_per_cell": 20,
+    "paired_rollout_seeds_across_methods": true
+  },
+  "admission_capture": {
+    "snapshot_seed": 20260915,
+    "capture_control_rate_hz": 50,
+    "minimum_capture_steps": 20,
+    "post_evidence_tail_steps": 10,
+    "failure_snapshot_policy": "capture after the locked injector settle interval and before any recovery instruction",
+    "boundary_reachability_protocol": "pre_registered_deterministic_driver_v1",
+    "boundary_driver_selection_rule": "Every runtime-admission scenario uses a suite-hashed deterministic driver so injector qualification never depends on released-policy task competence; the same pre-failure fixture is shared unchanged by oracle and internal comparisons",
+    "boundary_driver_claim_boundary": "The driver establishes only the pre-failure semantic boundary; it is disabled immediately when the locked detector fires and never supplies a recovery action"
+  },
+  "artifact_policy": {
+    "dataset_remote": "https://huggingface.co/datasets/shin0412/HRVLA",
+    "required_before_admission": [
+      "immutable initial and failure snapshot hashes",
+      "injector implementation revision",
+      "oracle checkpoint and 20/20 recovery trials",
+      "task and safety predicate tests"
+    ],
+    "draft_execution": "forbidden in claim-bearing reports"
+  },
+  "tasks": [
+    {
+      "id": "pick_and_place_box",
+      "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "pp_box",
+      "initial_snapshot_id": "pending:pick_and_place_box/initial",
+      "success_predicate": "HumanoidArena raw reward is 1 when the box center is judged on a live or fallback shelf support surface",
+      "success_predicate_source": "tasks/g1_tasks/move_pickplace_box_g1_29dof_dex3_wholedoby/mdp/rewards.py:compute_success_mask",
+      "horizon_s": 90,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "box-missed-grasp-retry",
+          "protocol": "online_failure",
+          "event_id": "after-first-grasp-close",
+          "event_boundary": "the first semantic-action40 hand bit rising edge at the locked 0.5 close threshold",
+          "event_detector": {"id": "first-hand-close", "parameters": {"close_threshold": 0.5, "hand_indices": [38, 39]}},
+          "boundary_driver": {"id": "semantic-hand-close-pulse", "parameters": {"hand_indices": [38, 39], "value": 1.0, "max_action_samples": 1}},
+          "level": "L1",
+          "humanoid_axes": [],
+          "severity": "low",
+          "injector": {"id": "release-grasp-contact", "parameters": {"duration_s": 0.2}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        },
+        {
+          "id": "box-drop-and-body-push",
+          "protocol": "failure_start",
+          "failure_snapshot_id": "pending:pick_and_place_box/box-drop-and-body-push",
+          "failure_snapshot_settle_s": 0.5,
+          "event_id": "after-stable-grasp",
+          "event_boundary": "box root is at least 0.05 m above its reset height with speed at most 0.08 m/s continuously for 0.5 s, before task success",
+          "event_detector": {"id": "stable-object-lift", "parameters": {"asset_name": "box", "minimum_lift_m": 0.05, "maximum_speed_mps": 0.08, "stable_duration_s": 0.5}},
+          "boundary_driver": {"id": "stable-object-lift-fixture", "parameters": {"asset_name": "box", "lift_m": 0.06, "linear_velocity_mps": [0.0, 0.0, 0.0], "angular_velocity_rps": [0.0, 0.0, 0.0]}},
+          "level": "L3",
+          "humanoid_axes": ["H3"],
+          "severity": "medium",
+          "injector": {"id": "drop-object-and-root-velocity", "parameters": {"object_asset_name": "box", "release_duration_s": 0.2, "lateral_mps": 0.35, "lateral_direction_robot": "left"}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "open_door",
+      "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "open_door",
+      "initial_snapshot_id": "pending:open_door/initial",
+      "success_predicate": "HumanoidArena strict raw reward with OPEN_DOOR_STRICT_REQUIRE_GEOMETRY=1 is 1 when the robot is upright and through the live door frame, the latch is unlocked, and absolute door-leaf angle is at least 60 degrees; the upstream OpenDoor row remains diagnostic while its locked self-tests fail",
+      "success_predicate_source": "tasks/g1_tasks/move_open_door_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
+      "runtime_environment": {"OPEN_DOOR_STRICT_REQUIRE_GEOMETRY": "1"},
+      "horizon_s": 90,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "door-handle-pose-shift",
+          "protocol": "online_failure",
+          "event_id": "before-handle-contact",
+          "event_boundary": "a configured wrist proxy first enters 0.30 m of the live door-handle body while strict task success is false",
+          "event_detector": {"id": "wrist-handle-approach", "parameters": {"door_asset_name": "door", "maximum_distance_m": 0.3}},
+          "boundary_driver": {"id": "door-to-wrist-fixture", "parameters": {"door_asset_name": "door", "target_distance_m": 0.25}},
+          "level": "L2",
+          "humanoid_axes": [],
+          "severity": "medium",
+          "injector": {"id": "shift-door-assembly-handle-frame", "parameters": {"door_asset_name": "door", "translation_m": 0.04, "translation_axis_door_local": "x"}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        },
+        {
+          "id": "doorway-obstruction",
+          "protocol": "failure_start",
+          "failure_snapshot_id": "pending:open_door/doorway-obstruction",
+          "failure_snapshot_settle_s": 0.1,
+          "event_id": "after-door-open",
+          "event_boundary": "latch is unlocked and absolute live door-leaf angle first reaches 60 degrees while the geometry-required task predicate remains false",
+          "event_detector": {"id": "door-open-before-traversal", "parameters": {"minimum_leaf_angle_deg": 60.0}},
+          "boundary_driver": {"id": "open-door-joint-fixture", "parameters": {"door_asset_name": "door", "leaf_joint_name": "RevoluteJoint_door001", "leaf_angle_deg": 62.0, "mark_latch_unlocked": true}},
+          "level": "L4",
+          "humanoid_axes": [],
+          "severity": "high",
+          "injector": {"id": "place-doorway-obstacle", "parameters": {"mass_kg": 1.0, "size_m": [0.45, 0.25, 0.55], "door_local_center_m": [0.0, 0.35, 0.275]}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "double_desk",
+      "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "doubledesk",
+      "initial_snapshot_id": "pending:double_desk/initial",
+      "success_predicate": "HumanoidArena raw reward is 1 when object_l (the hammer) center of mass is inside any discovered basket goal box and is not below the ground-drop threshold",
+      "success_predicate_source": "tasks/g1_tasks/move_pickplace_doubledesk_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_reward",
+      "horizon_s": 120,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "tracker-underexecution",
+          "protocol": "online_failure",
+          "event_id": "during-hammer-transport",
+          "event_boundary": "hammer CoM has moved at least 0.20 m from reset and lifted at least 0.05 m while the single-stage goal predicate remains false",
+          "event_detector": {"id": "object-in-transport", "parameters": {"asset_name": "object_l", "minimum_displacement_m": 0.2, "minimum_lift_m": 0.05}},
+          "boundary_driver": {"id": "object-transport-fixture", "parameters": {"asset_name": "object_l", "translation_world_m": [0.21, 0.0, 0.06]}},
+          "level": "L2",
+          "humanoid_axes": ["H2"],
+          "severity": "medium",
+          "injector": {"id": "attenuate-sonic-latent", "parameters": {"scale": 0.55, "duration_s": 0.6}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "football",
+      "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "football",
+      "initial_snapshot_id": "pending:football/initial",
+      "success_predicate": "HumanoidArena raw reward is 1 when the football center crosses a goal-line inner edge within the goal-mouth X and height bounds; fall and safety are reported separately",
+      "success_predicate_source": "tasks/g1_tasks/move_football_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_reward",
+      "horizon_s": 60,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "support-state-push",
+          "protocol": "online_failure",
+          "event_id": "after-ball-first-motion",
+          "event_boundary": "football speed first exceeds 0.25 m/s while the goal predicate remains false",
+          "event_detector": {"id": "object-first-motion", "parameters": {"asset_name": "object", "minimum_speed_mps": 0.25}},
+          "boundary_driver": {"id": "object-speed-fixture", "parameters": {"asset_name": "object", "linear_velocity_mps": [0.3, 0.0, 0.0], "angular_velocity_rps": [0.0, 0.0, 0.0]}},
+          "level": "L1",
+          "humanoid_axes": ["H1"],
+          "severity": "medium",
+          "injector": {"id": "root-lateral-velocity-delta", "parameters": {"lateral_mps": 0.45, "lateral_direction_robot": "left"}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "sit_sofa",
+      "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "sit_sofa",
+      "initial_snapshot_id": "pending:sit_sofa/initial",
+      "success_predicate": "HumanoidArena raw reward is 1 when a pelvis/hip proxy is in the live sofa-seat volume with at least 5 N contact, or the upstream multi-body seated-geometry fallback passes",
+      "success_predicate_source": "tasks/g1_tasks/move_sit_sofa_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
+      "horizon_s": 60,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "sofa-approach-slip",
+          "protocol": "failure_start",
+          "failure_snapshot_id": "pending:sit_sofa/sofa-approach-slip",
+          "failure_snapshot_settle_s": 0.5,
+          "event_id": "before-seat-contact",
+          "event_boundary": "a pelvis or hip proxy first comes within 0.75 m XY of the live sofa-seat AABB while the seated predicate remains false and the robot is upright",
+          "event_detector": {"id": "seat-approach", "parameters": {"maximum_xy_distance_m": 0.75, "minimum_root_height_m": 0.45, "minimum_up_axis_z": 0.6}},
+          "boundary_driver": {"id": "seat-approach-fixture", "parameters": {"target_clearance_m": 0.5}},
+          "level": "L2",
+          "humanoid_axes": ["H1"],
+          "severity": "medium",
+          "injector": {"id": "support-foot-lateral-impulse", "parameters": {"impulse_ns": 12.0, "lateral_direction_robot": "left", "body_selection": "max-contact-ankle-roll"}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "boxing",
+      "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "boxing",
+      "initial_snapshot_id": "pending:boxing/initial",
+      "success_predicate": "HumanoidArena raw reward is 1 when any configured punch body enters the per-target hit radius; fall and safety are reported separately",
+      "success_predicate_source": "tasks/g1_tasks/move_boxing_bag_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
+      "horizon_s": 60,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "contact-recoil",
+          "protocol": "online_failure",
+          "event_id": "during-first-strike-approach",
+          "event_boundary": "a configured punch proxy approaches for three consecutive samples and enters the shell 0.08–0.20 m outside the live hit threshold while success remains false",
+          "event_detector": {"id": "strike-approach-shell", "parameters": {"inner_margin_m": 0.08, "outer_margin_m": 0.2, "decreasing_samples": 3}},
+          "boundary_driver": {"id": "strike-shell-fixture", "parameters": {"clearance_schedule_m": [0.18, 0.14, 0.1]}},
+          "level": "L1",
+          "humanoid_axes": ["H1"],
+          "severity": "high",
+          "injector": {"id": "upper-body-contact-impulse", "parameters": {"impulse_ns": 18.0, "body_name": "torso_link", "direction": "away-from-target"}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    },
+    {
+      "id": "visual_navigation",
+      "coverage_source": "HumanoidArena",
+      "humanoidarena_task_key": "vision_navi",
+      "initial_snapshot_id": "pending:visual_navigation/initial",
+      "success_predicate": "HumanoidArena raw reward is 1 when all configured left- and right-foot proxy points are inside the live target region and the robot is upright; collision and safety are reported separately",
+      "success_predicate_source": "tasks/g1_tasks/move_small_warehouse_vision_navigation_g1_29dof_dex3_wholebody/mdp/rewards.py:compute_success_mask",
+      "horizon_s": 120,
+      "admission": {"status": "draft"},
+      "scenarios": [
+        {
+          "id": "new-blocking-obstacle",
+          "protocol": "online_failure",
+          "event_id": "after-start-zone-exit",
+          "event_boundary": "robot root first moves at least 1.0 m in XY from its immutable initial snapshot while the target predicate remains false",
+          "event_detector": {"id": "root-displacement", "parameters": {"minimum_xy_displacement_m": 1.0}},
+          "boundary_driver": {"id": "root-displacement-fixture", "parameters": {"translation_world_m": [1.05, 0.0, 0.0]}},
+          "level": "L4",
+          "humanoid_axes": [],
+          "severity": "medium",
+          "injector": {"id": "place-path-obstacle", "parameters": {"clearance_m": 0.0, "asset_name": "obstacle_02_c", "distance_ahead_m": 1.0}},
+          "admission": {"status": "draft", "oracle_id": null, "success_rate": null}
+        }
+      ]
+    }
+  ],
+  "fairness_requirements": [
+    "Identical initial and failure snapshots for every method in a comparison cell",
+    "Identical semantic boundary, perturbation parameters, and rollout seed",
+    "Identical observation permissions, action rate, horizon, and success predicate",
+    "Controller identity and revision reported; controller changes form a separate comparison",
+    "No retry outside the episode budget and no silent reset after failure",
+    "Every scored recovery scenario is independently oracle-verified recoverable",
+    "All episode records, failures, exclusions, seeds, and manifests are retained"
+  ],
+  "primary_metrics": [
+    "nominal_success_rate",
+    "macro_recovery_success_rate_by_protocol",
+    "recovery_success_rate_by_L_level",
+    "recovery_success_rate_by_H_axis",
+    "fall_rate",
+    "safety_violation_rate"
+  ],
+  "diagnostic_metrics": [
+    "detection_precision_recall_f1",
+    "detection_latency_s",
+    "successful_recovery_time_s",
+    "replans",
+    "retries",
+    "recovery_degradation",
+    "recovery_consistency",
+    "paired_mcnemar_exact"
+  ]
+}

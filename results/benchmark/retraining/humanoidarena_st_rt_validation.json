@@ -1,0 +1,118 @@
+{
+  "audit_sha256": "808e7b3e6e3a3713799ef744c15b375d725436aa27e18be1fe297f67d782a365",
+  "candidates": [
+    {
+      "common_mean_seed_macro_task_mse": 0.2918230500959214,
+      "mean_paired_reduction_percent": 0.7238667140793197,
+      "paired_by_seed": {
+        "0": {
+          "absolute_reduction": 0.0020441263914108276,
+          "common_macro_task_mse": 0.2908681486334119,
+          "reduction_percent": 0.7027673538731424,
+          "st_rt_macro_task_mse": 0.2888240222420011
+        },
+        "1": {
+          "absolute_reduction": 0.001506796479225081,
+          "common_macro_task_mse": 0.2931271753140858,
+          "reduction_percent": 0.5140418924347593,
+          "st_rt_macro_task_mse": 0.2916203788348607
+        },
+        "2": {
+          "absolute_reduction": 0.0027829655579158508,
+          "common_macro_task_mse": 0.29147382634026664,
+          "reduction_percent": 0.9547908959300572,
+          "st_rt_macro_task_mse": 0.2886908607823508
+        }
+      },
+      "st_rt_mean_seed_macro_task_mse": 0.28971175395307086,
+      "step": 100
+    },
+    {
+      "common_mean_seed_macro_task_mse": 0.2906913315966016,
+      "mean_paired_reduction_percent": 0.23930510244368242,
+      "paired_by_seed": {
+        "0": {
+          "absolute_reduction": 0.0010604790278843645,
+          "common_macro_task_mse": 0.29078850661005295,
+          "reduction_percent": 0.364690833295714,
+          "st_rt_macro_task_mse": 0.2897280275821686
+        },
+        "1": {
+          "absolute_reduction": 0.0005700332777840433,
+          "common_macro_task_mse": 0.2866945722273418,
+          "reduction_percent": 0.1988294627817442,
+          "st_rt_macro_task_mse": 0.28612453894955775
+        },
+        "2": {
+          "absolute_reduction": 0.00045483367783677453,
+          "common_macro_task_mse": 0.29459091595241,
+          "reduction_percent": 0.15439501125358907,
+          "st_rt_macro_task_mse": 0.2941360822745732
+        }
+      },
+      "st_rt_mean_seed_macro_task_mse": 0.28999621626876654,
+      "step": 200
+    },
+    {
+      "common_mean_seed_macro_task_mse": 0.28952600998537886,
+      "mean_paired_reduction_percent": 0.2941457144428742,
+      "paired_by_seed": {
+        "0": {
+          "absolute_reduction": 0.0010400478328977392,
+          "common_macro_task_mse": 0.288964809690203,
+          "reduction_percent": 0.35992196904971463,
+          "st_rt_macro_task_mse": 0.28792476185730526
+        },
+        "1": {
+          "absolute_reduction": 0.000540610722133128,
+          "common_macro_task_mse": 0.2861248293093273,
+          "reduction_percent": 0.18894226112361537,
+          "st_rt_macro_task_mse": 0.2855842185871942
+        },
+        "2": {
+          "absolute_reduction": 0.0009789977754865453,
+          "common_macro_task_mse": 0.29348839095660617,
+          "reduction_percent": 0.3335729131552925,
+          "st_rt_macro_task_mse": 0.2925093931811196
+        }
+      },
+      "st_rt_mean_seed_macro_task_mse": 0.28867279120853967,
+      "step": 300
+    }
+  ],
+  "claim_boundary": "validation-only open-loop action error; this is neither held-out evidence nor a closed-loop task-success or recovery-success claim",
+  "common_selected_step": 300,
+  "common_selection_sha256": "d9c291cbf17832b387ece65c8c2262f42f91448cecd7bce581b6d31ad2aebc26",
+  "common_validation_manifest_sha256": "7695a09acc9d94fe3152fd4822ddae81371ed5b90360ef0825209a1132e255d3",
+  "hidden_test_accessed": false,
+  "schema_version": 1,
+  "selected_comparison": {
+    "common_mean_seed_macro_task_mse": 0.28952600998537886,
+    "mean_paired_reduction_percent": 0.2941457144428742,
+    "paired_by_seed": {
+      "0": {
+        "absolute_reduction": 0.0010400478328977392,
+        "common_macro_task_mse": 0.288964809690203,
+        "reduction_percent": 0.35992196904971463,
+        "st_rt_macro_task_mse": 0.28792476185730526
+      },
+      "1": {
+        "absolute_reduction": 0.000540610722133128,
+        "common_macro_task_mse": 0.2861248293093273,
+        "reduction_percent": 0.18894226112361537,
+        "st_rt_macro_task_mse": 0.2855842185871942
+      },
+      "2": {
+        "absolute_reduction": 0.0009789977754865453,
+        "common_macro_task_mse": 0.29348839095660617,
+        "reduction_percent": 0.3335729131552925,
+        "st_rt_macro_task_mse": 0.2925093931811196
+      }
+    },
+    "st_rt_mean_seed_macro_task_mse": 0.28867279120853967,
+    "step": 300
+  },
+  "st_rt_selected_step": 300,
+  "st_rt_selection_sha256": "b09c3e6b03f00e62c2e202fcb2ffbbe18d475a8ddbbb6e48d48bca4c2a234a56",
+  "st_rt_validation_manifest_sha256": "b1ee2f9fc399e18a25388318d8b24c704aee15628e941d02da944dad007e812c"
+}

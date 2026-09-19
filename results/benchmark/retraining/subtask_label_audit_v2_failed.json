@@ -1,0 +1,80 @@
+{
+  "audit_sha256": "a11424256fc2f9e8032f828f322e9165f5f39ade14dc66eff9d1a9fede332ba2",
+  "claim_boundary": "training-label audit only; not a closed-loop subtask score",
+  "maximum_episode_fallback_rate": 0.05,
+  "method_program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "schema_version": 1,
+  "source_manifest_sha256": "7695a09acc9d94fe3152fd4822ddae81371ed5b90360ef0825209a1132e255d3",
+  "splits": {
+    "train": {
+      "by_task": {
+        "boxing": {
+          "episodes": 70,
+          "fallback_episodes": 0
+        },
+        "doubledesk": {
+          "episodes": 70,
+          "fallback_episodes": 0
+        },
+        "football": {
+          "episodes": 70,
+          "fallback_episodes": 0
+        },
+        "open_door": {
+          "episodes": 70,
+          "fallback_episodes": 59
+        },
+        "pp_box": {
+          "episodes": 70,
+          "fallback_episodes": 10
+        },
+        "sit_sofa": {
+          "episodes": 70,
+          "fallback_episodes": 0
+        },
+        "vision_navi": {
+          "episodes": 70,
+          "fallback_episodes": 0
+        }
+      },
+      "episodes": 490,
+      "fallback_episodes": 69,
+      "fallback_rate": 0.14081632653061224
+    },
+    "validation": {
+      "by_task": {
+        "boxing": {
+          "episodes": 10,
+          "fallback_episodes": 0
+        },
+        "doubledesk": {
+          "episodes": 10,
+          "fallback_episodes": 0
+        },
+        "football": {
+          "episodes": 10,
+          "fallback_episodes": 0
+        },
+        "open_door": {
+          "episodes": 10,
+          "fallback_episodes": 10
+        },
+        "pp_box": {
+          "episodes": 10,
+          "fallback_episodes": 1
+        },
+        "sit_sofa": {
+          "episodes": 10,
+          "fallback_episodes": 0
+        },
+        "vision_navi": {
+          "episodes": 10,
+          "fallback_episodes": 0
+        }
+      },
+      "episodes": 70,
+      "fallback_episodes": 11,
+      "fallback_rate": 0.15714285714285714
+    }
+  }
+}

@@ -1,0 +1,572 @@
+#!/usr/bin/env python3
+"""Run one upstream HumanoidArena episode with an audited recovery scenario."""
+
+from __future__ import annotations
+
+import argparse
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from hrvla_bench.humanoidarena_recovery_runtime import (  # noqa: E402
+    HumanoidArenaRecoveryRuntime,
+    configure_recovery_scene,
+)
+from hrvla_bench.plan import canonical_sha256, load_json  # noqa: E402
+from hrvla_bench.isaac_snapshot import load_snapshot  # noqa: E402
+from hrvla_bench.recovery_demonstration import CompactRecoveryDemonstration  # noqa: E402
+from hrvla_bench.recovery_restore import restore_snapshot_for_trial  # noqa: E402
+
+
+EVALUATOR = (
+    ROOT
+    / "_vendor/HumanoidArena/isaaclab_twist2_g1/script/eval_scripts/sonic_pi05/sim_eval_vla.py"
+)
+ISAACLAB_REVISION = "46dff135f44683f031edf346e544fcfd8456b2bb"
+TASK_IDS = {
+    "pick_and_place_box": "Isaac-Move-PickPlace-Box-G129-Dex3-Wholedoby",
+    "open_door": "Isaac-Move-Open-Door-G129-Dex3-Wholebody",
+    "double_desk": "Isaac-Move-PickPlace-DoubleDesk-G129-Dex3-Wholebody",
+    "football": "Isaac-Move-Football-Single-G129-Dex3-Wholebody",
+    "sit_sofa": "Isaac-Move-Sit-Sofa-G129-Dex3-Wholebody",
+    "boxing": "Isaac-Move-Boxing-Bag-G129-Dex3-Wholebody",
+    "visual_navigation": "Isaac-Move-SmallWarehouse-VisionNavigation-G129-Dex3-Wholebody",
+}
+
+
+def _repository_revision() -> str:
+    revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    dirty = subprocess.run(
+        ["git", "status", "--short", "--untracked-files=no"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    if dirty:
+        raise RuntimeError("recovery evidence requires a clean tracked worktree")
+    if len(revision) != 40 or set(revision) - set("0123456789abcdef"):
+        raise RuntimeError("could not resolve a full Git implementation revision")
+    return revision
+
+
+class _EncoderProxy:
+    def __init__(self, encoder: Any, runtime_state: dict[str, Any]) -> None:
+        self._encoder = encoder
+        self._runtime_state = runtime_state
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._encoder, name)
+
+    def run(self, *args, **kwargs):
+        outputs = list(self._encoder.run(*args, **kwargs))
+        runtime = self._runtime_state.get("runtime")
+        env = self._runtime_state.get("env")
+        if runtime is not None and env is not None:
+            outputs[0] = runtime.transform_vla_action(
+                env,
+                outputs[0],
+                task_success=bool(self._runtime_state.get("task_success", False)),
+            )
+        return outputs
+
+
+def _episode_contract(
+    remaining: list[str], *, allow_batch: bool
+) -> tuple[str, list[int]]:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--task", required=True)
+    parser.add_argument("--episode_seed", type=int)
+    parser.add_argument("--seed", type=int, required=True)
+    parser.add_argument("--episode_batch_json", default="")
+    values, _ = parser.parse_known_args(remaining)
+    if values.episode_batch_json:
+        payload = json.loads(Path(values.episode_batch_json).read_text(encoding="utf-8"))
+        episodes = payload.get("episodes", [])
+        if not isinstance(episodes, list) or not episodes:
+            raise ValueError("recovery runtime requires a non-empty episode batch")
+        if not allow_batch and len(episodes) != 1:
+            raise ValueError("recovery runtime requires exactly one episode per process")
+        indices = [int(episode["episode_index"]) for episode in episodes]
+        if len(set(indices)) != len(indices) or any(index < 0 for index in indices):
+            raise ValueError("recovery episode indices must be unique and non-negative")
+        episode_seeds = [int(episode["episode_seed"]) for episode in episodes]
+    else:
+        episode_seeds = [
+            int(values.episode_seed if values.episode_seed is not None else values.seed)
+        ]
+    return values.task, episode_seeds
+
+
+def _single_episode_contract(remaining: list[str]) -> tuple[str, int]:
+    task, episode_seeds = _episode_contract(remaining, allow_batch=False)
+    return task, episode_seeds[0]
+
+
+def _load_evaluator():
+    spec = importlib.util.spec_from_file_location("hrvla_upstream_sim_eval_vla", EVALUATOR)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"could not load upstream evaluator: {EVALUATOR}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _install_open_door_recovery_profile(module: Any, task_id: str) -> None:
+    """Apply the behavior already required by the locked upstream self-tests.
+
+    The pinned HumanoidArena revision accidentally maps live inference to a
+    welded XForm asset even though its tests require the articulated validation
+    door. Recovery needs joint state for snapshot/restore and semantic signals,
+    so keep the vendor checkout immutable and repair only this recovery process.
+    """
+
+    if task_id != "open_door":
+        return
+    import task_runtime_profiles as profiles
+
+    relative_paths = profiles.OPEN_DOOR_DOOR_ASSET_RELATIVE_PATHS
+    variant = profiles.OPEN_DOOR_DOOR_ASSET_VARIANT_INFERENCE_VALI
+    relative_paths[variant] = (
+        "assets/objects/small_warehouse/small_warehouse_opendoor/interaction_obj/"
+        "door001/model_door001_vali.usd"
+    )
+    original = module.apply_task_runtime_profile
+
+    def recovery_profile(args_cli):
+        applied = original(args_cli)
+        if applied.profile != profiles.TASK_RUNTIME_PROFILE_INFERENCE:
+            raise RuntimeError("recovery OpenDoor requires the live-inference profile")
+        os.environ["OPEN_DOOR_SCENE_AS_ARTICULATION"] = "1"
+        return applied
+
+    module.apply_task_runtime_profile = recovery_profile
+
+
+def _install_runtime_hooks(
+    module: Any,
+    suite: dict[str, Any],
+    scenario_id: str,
+    task_id: str,
+    output_dir: Path,
+    *,
+    capture_initial_snapshot: bool,
+    capture_failure_snapshot: bool,
+    start_snapshot_path: Path | None = None,
+    expected_start_snapshot_sha256: str | None = None,
+    restore_only: bool = False,
+    per_episode_output: bool = False,
+    implementation_revision: str,
+    record_recovery_demonstration: bool = False,
+    recovery_instruction: str | None = None,
+    method_program_sha256: str | None = None,
+) -> dict[str, Any]:
+    state: dict[str, Any] = {
+        "runtime": None,
+        "env": None,
+        "task_success": False,
+        "inside_episode": False,
+        "provider_hooked": False,
+        "restore_audit": None,
+        "episode_output_dir": None,
+        "episode_control_step": 0,
+        "demonstration": None,
+    }
+
+    import gymnasium as gym
+
+    original_make = gym.make
+
+    def recovery_make(env_id, *args, **kwargs):
+        configure_recovery_scene(kwargs["cfg"], suite, task_id)
+        return original_make(env_id, *args, **kwargs)
+
+    gym.make = recovery_make
+
+    original_run_episode = module._run_episode_once
+
+    def recovery_run_episode(*args, **kwargs):
+        spec = kwargs.get("spec")
+        if spec is None and len(args) > 6:
+            spec = args[6]
+        if not isinstance(spec, dict):
+            raise RuntimeError("could not resolve upstream episode specification")
+        episode_output_dir = output_dir
+        if per_episode_output:
+            episode_output_dir = output_dir / f"trial-{int(spec['episode_index']):04d}"
+        state["episode_output_dir"] = episode_output_dir
+        state["inside_episode"] = True
+        try:
+            return original_run_episode(*args, **kwargs)
+        finally:
+            state["inside_episode"] = False
+            state["episode_output_dir"] = None
+
+    module._run_episode_once = recovery_run_episode
+
+    original_reset = module._reset_environment_for_episode
+
+    start_snapshot = (
+        None if start_snapshot_path is None else load_snapshot(start_snapshot_path.resolve())
+    )
+
+    def recovery_reset(env, env_cfg, episode_seed):
+        environment_seed = (
+            int(episode_seed)
+            if start_snapshot is None
+            else int(start_snapshot["episode_seed"])
+        )
+        result = original_reset(env, env_cfg, environment_seed)
+        if not state["inside_episode"]:
+            return result
+        episode_output_dir = state.get("episode_output_dir")
+        if not isinstance(episode_output_dir, Path):
+            raise RuntimeError("recovery episode output directory is unresolved")
+        restore_audit = None
+        if start_snapshot is not None:
+            expected_event = scenario_id if restore_only else "initial"
+            assert start_snapshot_path is not None
+            assert expected_start_snapshot_sha256 is not None
+            restore_audit = restore_snapshot_for_trial(
+                env,
+                start_snapshot_path,
+                expected_snapshot_sha256=expected_start_snapshot_sha256,
+                expected_task_id=task_id,
+                expected_event_id=expected_event,
+                expected_simulator_revision=ISAACLAB_REVISION,
+                policy_rollout_seed=int(episode_seed),
+                audit_path=episode_output_dir / "restore-audit.json",
+            )
+        control_dt = getattr(env, "step_dt", None)
+        if control_dt is None:
+            control_dt = float(env.physics_dt) * int(env_cfg.decimation)
+        demonstration = None
+        if record_recovery_demonstration:
+            if not recovery_instruction or not method_program_sha256:
+                raise RuntimeError("recovery demonstration contract is incomplete")
+            demonstration = CompactRecoveryDemonstration(
+                scenario_id=scenario_id,
+                task_id=task_id,
+                episode_seed=int(episode_seed),
+                instruction=recovery_instruction,
+                method_program_sha256=method_program_sha256,
+                control_dt_s=float(control_dt),
+            )
+        state.update(
+            episode_control_step=0,
+            demonstration=demonstration,
+        )
+        if restore_only:
+            state.update(
+                runtime=None,
+                env=env,
+                task_success=False,
+                restore_audit=restore_audit,
+            )
+            return result
+        runtime = HumanoidArenaRecoveryRuntime(
+            suite,
+            scenario_id,
+            control_dt_s=float(control_dt),
+            simulator_revision=ISAACLAB_REVISION,
+            implementation_revision=implementation_revision,
+            output_dir=episode_output_dir,
+            capture_initial_snapshot=capture_initial_snapshot,
+            capture_failure_snapshot=capture_failure_snapshot,
+            start_snapshot_sha256=(
+                None if restore_audit is None else restore_audit["snapshot_sha256"]
+            ),
+            restore_audit_sha256=(
+                None if restore_audit is None else restore_audit["audit_sha256"]
+            ),
+        )
+        runtime.reset(env, episode_seed=int(episode_seed))
+        state.update(
+            runtime=runtime,
+            env=env,
+            task_success=False,
+            restore_audit=restore_audit,
+        )
+        return result
+
+    module._reset_environment_for_episode = recovery_reset
+
+    original_reward = module._extract_reward_info
+
+    def recovery_reward(env):
+        result = original_reward(env)
+        state["task_success"] = float(result["raw_total"]) >= 1.0
+        return result
+
+    module._extract_reward_info = recovery_reward
+
+    original_notify = module._notify_action_provider_env_reset
+
+    def recovery_notify(provider):
+        result = original_notify(provider)
+        env = state.get("env")
+        if env is None:
+            raise RuntimeError("recovery runtime was not initialized at episode reset")
+        if restore_only and not record_recovery_demonstration:
+            return result
+        runtime = state.get("runtime")
+        if runtime is None and not restore_only:
+            raise RuntimeError("recovery runtime was not initialized at episode reset")
+        if state["provider_hooked"]:
+            return result
+
+        original_get_action = provider.get_action
+
+        def recovery_get_action(current_env):
+            active_runtime = state.get("runtime")
+            if active_runtime is None and not restore_only:
+                raise RuntimeError("recovery runtime disappeared during action acquisition")
+            if active_runtime is not None:
+                active_runtime.before_control_step(
+                    current_env, task_success=bool(state["task_success"])
+                )
+            output = original_get_action(current_env)
+            demonstration = state.get("demonstration")
+            failure_active = bool(restore_only) or bool(
+                active_runtime is not None and active_runtime.triggered
+            )
+            if demonstration is not None and failure_active:
+                demonstration.append(
+                    provider._build_lerobot_vla_observation_state(),
+                    provider._latest_vla_action,
+                    video_frame_index=int(state["episode_control_step"]),
+                    control_step=int(state["episode_control_step"]),
+                )
+            state["episode_control_step"] = int(state["episode_control_step"]) + 1
+            return output
+
+        provider.get_action = recovery_get_action
+
+        seam = None if runtime is None else runtime.contract["interface_seam"]
+        if seam in {"semantic-action40", "scene+semantic-action40"}:
+            original_pop_action = provider._pop_lerobot_action
+
+            def recovery_pop_action():
+                action = original_pop_action()
+                active_runtime = state.get("runtime")
+                active_env = state.get("env")
+                if active_runtime is None or active_env is None:
+                    raise RuntimeError("recovery runtime disappeared during action transform")
+                return active_runtime.transform_vla_action(
+                    active_env,
+                    action,
+                    task_success=bool(state["task_success"]),
+                )
+
+            provider._pop_lerobot_action = recovery_pop_action
+        elif seam == "post-encoder-latent64":
+            if provider._encoder is None:
+                raise RuntimeError("SONIC encoder is unavailable for latent64 perturbation")
+            provider._encoder = _EncoderProxy(provider._encoder, state)
+        state["provider_hooked"] = True
+        return result
+
+    module._notify_action_provider_env_reset = recovery_notify
+
+    original_payload = module._build_result_payload
+
+    def recovery_payload(*args, **kwargs):
+        payload = original_payload(*args, **kwargs)
+        runtime = state.get("runtime")
+        restore_audit = state.get("restore_audit")
+        episode_output_dir = state.get("episode_output_dir")
+        if not isinstance(episode_output_dir, Path):
+            raise RuntimeError("recovery episode output directory is unresolved")
+        if restore_only:
+            if restore_audit is None:
+                raise RuntimeError("failure-start trial did not produce restore evidence")
+            recovery = {
+                "schema_version": 1,
+                "suite_sha256": canonical_sha256(suite),
+                "task_id": task_id,
+                "scenario_id": scenario_id,
+                "episode_seed": int(payload["episode_seed"]),
+                "protocol": "failure_start",
+                "failure_injected": False,
+                "start_snapshot_sha256": restore_audit["snapshot_sha256"],
+                "restore_audit_sha256": restore_audit["audit_sha256"],
+                "restore_validated": True,
+                "claim_boundary": "snapshot restore evidence; task success remains in the episode result",
+            }
+        else:
+            if runtime is None:
+                raise RuntimeError("recovery runtime did not produce an episode summary")
+            recovery = runtime.summary()
+        demonstration = state.get("demonstration")
+        if demonstration is not None:
+            demonstration_manifest = demonstration.finalize(
+                episode_output_dir,
+                success=bool(payload["success"]),
+                failure_reason=str(payload["failure_reason"]),
+                video_path=str(payload.get("video_path", "")),
+            )
+            payload["hrvla_recovery_demonstration"] = {
+                "manifest_sha256": demonstration_manifest["manifest_sha256"],
+                "arrays_sha256": demonstration_manifest["arrays_sha256"],
+                "frames": demonstration_manifest["frames"],
+                "eligible_for_recovery_training": demonstration_manifest[
+                    "eligible_for_recovery_training"
+                ],
+            }
+        payload["hrvla_recovery"] = recovery
+        episode_output_dir.mkdir(parents=True, exist_ok=True)
+        target = episode_output_dir / (
+            "trial-summary.json" if restore_only else "runtime-summary.json"
+        )
+        temporary = target.with_suffix(target.suffix + ".tmp")
+        temporary.write_text(
+            json.dumps(recovery, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        os.replace(temporary, target)
+        return payload
+
+    module._build_result_payload = recovery_payload
+    return state
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument(
+        "--recovery-suite",
+        type=Path,
+        default=ROOT / "benchmark/suites/hrvla_recovery_v0.json",
+    )
+    parser.add_argument("--recovery-scenario", required=True)
+    parser.add_argument("--recovery-output-dir", type=Path, required=True)
+    parser.add_argument("--capture-initial-snapshot", action="store_true")
+    parser.add_argument("--capture-failure-snapshot", action="store_true")
+    parser.add_argument("--start-snapshot", type=Path)
+    parser.add_argument("--expected-start-snapshot-sha256")
+    parser.add_argument("--restore-only", action="store_true")
+    parser.add_argument("--per-episode-output", action="store_true")
+    parser.add_argument("--record-recovery-demonstration", action="store_true")
+    parser.add_argument(
+        "--recovery-demonstration-programs",
+        type=Path,
+        default=ROOT / "benchmark/humanoidarena_method_programs.json",
+    )
+    args, remaining = parser.parse_known_args()
+    suite = load_json(args.recovery_suite.resolve())
+    implementation_revision = _repository_revision()
+    upstream_task, episode_seeds = _episode_contract(
+        remaining, allow_batch=args.per_episode_output
+    )
+    task = next(
+        (
+            task
+            for task in suite["tasks"]
+            if any(item["id"] == args.recovery_scenario for item in task["scenarios"])
+        ),
+        None,
+    )
+    if task is None:
+        raise ValueError(f"unknown recovery scenario: {args.recovery_scenario}")
+    scenario = next(
+        item for item in task["scenarios"] if item["id"] == args.recovery_scenario
+    )
+    expected_task = TASK_IDS[task["id"]]
+    if upstream_task != expected_task:
+        raise ValueError(
+            f"scenario {args.recovery_scenario} requires task {expected_task}, got {upstream_task}"
+        )
+    if args.capture_initial_snapshot:
+        expected_seed = int(suite["admission_capture"]["snapshot_seed"])
+        if len(episode_seeds) != 1 or episode_seeds[0] != expected_seed:
+            raise ValueError(
+                f"initial snapshot capture requires one episode at seed {expected_seed}"
+            )
+    if args.per_episode_output and (
+        args.capture_initial_snapshot or args.capture_failure_snapshot
+    ):
+        raise ValueError("per-episode oracle output cannot capture admission snapshots")
+    if (args.start_snapshot is None) != (
+        args.expected_start_snapshot_sha256 is None
+    ):
+        raise ValueError("--start-snapshot and --expected-start-snapshot-sha256 are required together")
+    if args.start_snapshot is not None and (
+        args.capture_initial_snapshot or args.capture_failure_snapshot
+    ):
+        raise ValueError("snapshot capture and snapshot restore are mutually exclusive")
+    if args.restore_only and args.start_snapshot is None:
+        raise ValueError("--restore-only requires --start-snapshot")
+    if args.restore_only and scenario["protocol"] != "failure_start":
+        raise ValueError("--restore-only is valid only for failure_start scenarios")
+    if not args.restore_only and args.start_snapshot is not None and scenario["protocol"] != "online_failure":
+        raise ValueError("online restore-and-inject mode requires an online_failure scenario")
+    if args.start_snapshot is not None:
+        snapshot = load_snapshot(args.start_snapshot.resolve())
+        expected_event = args.recovery_scenario if args.restore_only else "initial"
+        expected_snapshot = {
+            "snapshot_sha256": args.expected_start_snapshot_sha256,
+            "task_id": task["id"],
+            "event_id": expected_event,
+            "simulator_revision": ISAACLAB_REVISION,
+            "environment_index": 0,
+        }
+        for key, expected in expected_snapshot.items():
+            if snapshot.get(key) != expected:
+                raise ValueError(f"start snapshot {key} differs from the trial contract")
+        if int(snapshot["episode_seed"]) != int(suite["admission_capture"]["snapshot_seed"]):
+            raise ValueError("start snapshot does not use the locked capture seed")
+    for key, value in task.get("runtime_environment", {}).items():
+        existing = os.environ.get(key)
+        if existing is not None and existing != value:
+            raise ValueError(f"runtime environment conflict for {key}: {existing!r} != {value!r}")
+        os.environ[key] = value
+
+    recovery_instruction = None
+    method_program_sha256 = None
+    if args.record_recovery_demonstration:
+        programs = load_json(args.recovery_demonstration_programs.resolve())
+        instructions = programs.get("recovery_instructions", {})
+        recovery_instruction = instructions.get(args.recovery_scenario)
+        if not isinstance(recovery_instruction, str) or not recovery_instruction.strip():
+            raise ValueError("method programs lack the recovery demonstration instruction")
+        method_program_sha256 = canonical_sha256(programs)
+
+    sys.argv = [sys.argv[0], *remaining]
+    module = _load_evaluator()
+    _install_open_door_recovery_profile(module, task["id"])
+    _install_runtime_hooks(
+        module,
+        suite,
+        args.recovery_scenario,
+        task["id"],
+        args.recovery_output_dir.resolve(),
+        capture_initial_snapshot=args.capture_initial_snapshot,
+        capture_failure_snapshot=args.capture_failure_snapshot,
+        start_snapshot_path=(
+            None if args.start_snapshot is None else args.start_snapshot.resolve()
+        ),
+        expected_start_snapshot_sha256=args.expected_start_snapshot_sha256,
+        restore_only=args.restore_only,
+        per_episode_output=args.per_episode_output,
+        implementation_revision=implementation_revision,
+        record_recovery_demonstration=args.record_recovery_demonstration,
+        recovery_instruction=recovery_instruction,
+        method_program_sha256=method_program_sha256,
+    )
+    return int(module.main())
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,157 @@
+from __future__ import annotations
+
+import json
+import math
+from pathlib import Path
+import types
+
+import numpy as np
+import pytest
+
+from hrvla_bench.humanoidarena_recovery_runtime import (
+    HumanoidArenaRecoveryRuntime,
+    _scaled_unit_vector,
+)
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SUITE = json.loads(
+    (ROOT / "benchmark/suites/hrvla_recovery_v0.json").read_text(encoding="utf-8")
+)
+
+
+class _Asset:
+    def __init__(self, torch_module) -> None:
+        self.device = torch_module.device("cpu")
+        pose = torch_module.zeros((1, 7))
+        pose[:, 3] = 1.0
+        self.body_names = ["torso_link", "left_ankle_roll_link", "right_ankle_roll_link"]
+        self.data = types.SimpleNamespace(
+            root_link_pose_w=pose,
+            root_state_w=torch_module.cat((pose, torch_module.zeros((1, 6))), dim=1),
+            root_vel_w=torch_module.zeros((1, 6)),
+            body_names=self.body_names,
+        )
+
+    def write_root_velocity_to_sim(self, values, *, env_ids) -> None:
+        self.data.root_vel_w[env_ids] = values
+        self.data.root_state_w[env_ids, 7:13] = values
+
+    def write_root_pose_to_sim(self, values, *, env_ids) -> None:
+        self.data.root_link_pose_w[env_ids] = values
+        self.data.root_state_w[env_ids, :7] = values
+
+    def write_root_state_to_sim(self, values, *, env_ids) -> None:
+        self.data.root_state_w[env_ids] = values
+        self.data.root_link_pose_w[env_ids] = values[:, :7]
+        self.data.root_vel_w[env_ids] = values[:, 7:13]
+
+    def set_external_force_and_torque(self, *args, **kwargs) -> None:
+        pass
+
+
+class _Scene(dict):
+    def __init__(self, torch_module) -> None:
+        super().__init__(
+            robot=_Asset(torch_module),
+            box=_Asset(torch_module),
+            object=_Asset(torch_module),
+        )
+        self.num_envs = 1
+
+
+class _Env:
+    def __init__(self, torch_module) -> None:
+        self.device = torch_module.device("cpu")
+        self.num_envs = 1
+        self.scene = _Scene(torch_module)
+        self.episode_length_buf = torch_module.zeros(1, dtype=torch_module.long)
+
+
+def test_scaled_unit_vector_removes_float32_direction_roundoff() -> None:
+    direction = (-0.2949928641319275, 0.955435037612915, -0.011089751496911049)
+    impulse = _scaled_unit_vector(direction, 18.0)
+    assert math.sqrt(math.fsum(value * value for value in impulse)) == pytest.approx(
+        18.0, abs=1e-12
+    )
+
+
+@pytest.mark.parametrize("direction", [(), (0.0, 0.0, 0.0), (float("nan"), 0.0)])
+def test_scaled_unit_vector_rejects_invalid_directions(direction) -> None:
+    with pytest.raises(ValueError, match="finite non-zero"):
+        _scaled_unit_vector(direction, 18.0)
+
+
+def test_runtime_triggers_and_modifies_the_first_close_action(tmp_path) -> None:
+    torch = pytest.importorskip("torch")
+    env = _Env(torch)
+    runtime = HumanoidArenaRecoveryRuntime(
+        SUITE,
+        "box-missed-grasp-retry",
+        control_dt_s=0.02,
+        simulator_revision="isaac-test",
+        implementation_revision="a" * 40,
+        output_dir=tmp_path,
+    )
+    runtime.reset(env, episode_seed=7)
+    runtime.before_control_step(env, task_success=False)
+    action = np.zeros(40, dtype=np.float32)
+    modified = runtime.transform_vla_action(env, action, task_success=False)
+    assert runtime.triggered
+    np.testing.assert_array_equal(modified[38:], [0.0, 0.0])
+    assert runtime.summary()["action_samples_modified"] == 1
+    assert runtime.summary()["runtime_validated"] is False
+    events = [json.loads(line)["event"] for line in runtime.trace_path.read_text().splitlines()]
+    assert events == [
+        "episode_reset",
+        "boundary_driver_prepared",
+        "boundary_driver_action_pulse",
+        "semantic_boundary_triggered",
+        "action_window_applied",
+    ]
+    assert runtime.summary()["boundary_driver_id"] == "semantic-hand-close-pulse"
+    action_event = json.loads(runtime.trace_path.read_text().splitlines()[-1])
+    assert action_event["changed"] is True
+    assert action_event["shape"] == [40]
+    assert action_event["input_sha256"] != action_event["output_sha256"]
+
+
+def test_runtime_applies_locked_root_velocity_when_ball_moves(tmp_path) -> None:
+    torch = pytest.importorskip("torch")
+    env = _Env(torch)
+    runtime = HumanoidArenaRecoveryRuntime(
+        SUITE,
+        "support-state-push",
+        control_dt_s=0.02,
+        simulator_revision="isaac-test",
+        implementation_revision="a" * 40,
+        output_dir=tmp_path,
+    )
+    runtime.reset(env, episode_seed=9)
+    runtime.before_control_step(env, task_success=False)
+    assert runtime.triggered
+    velocity = env.scene["robot"].data.root_vel_w[0, :3]
+    torch.testing.assert_close(velocity, torch.tensor([0.0, 0.45, 0.0]))
+    audit = json.loads((tmp_path / "injector-audit.jsonl").read_text())
+    assert audit["episode_steps"] == [1]
+
+
+def test_stable_lift_driver_holds_until_the_locked_detector_edge(tmp_path) -> None:
+    torch = pytest.importorskip("torch")
+    env = _Env(torch)
+    runtime = HumanoidArenaRecoveryRuntime(
+        SUITE,
+        "box-drop-and-body-push",
+        control_dt_s=0.02,
+        simulator_revision="isaac-test",
+        implementation_revision="a" * 40,
+        output_dir=tmp_path,
+    )
+    runtime.reset(env, episode_seed=11)
+    assert env.scene["box"].data.root_state_w[0, 2].item() == pytest.approx(0.06)
+    for _ in range(24):
+        runtime.before_control_step(env, task_success=False)
+        assert not runtime.triggered
+    runtime.before_control_step(env, task_success=False)
+    assert runtime.triggered
+    assert runtime.summary()["trigger_control_step"] == 25

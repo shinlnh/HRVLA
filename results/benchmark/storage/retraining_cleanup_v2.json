@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-09-17",
+  "claim_boundary": "Operational storage evidence only; this is not a benchmark metric.",
+  "bytes_reclaimed": 114636878264,
+  "gib_reclaimed": 106.76391261070967,
+  "filesystem_free_gib_rounded": {
+    "before": 233,
+    "after": 340
+  },
+  "removed": {
+    "unselected_numbered_checkpoints": {
+      "families": [
+        "humanoidarena-common",
+        "humanoidarena-st-rt"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "steps": [
+        100,
+        200
+      ],
+      "directories": 12,
+      "recoverability": "deterministic retraining from the frozen code, datasets, seeds, and locks"
+    },
+    "redundant_final_root_shards": {
+      "families": [
+        "humanoidarena-common",
+        "humanoidarena-st-rt"
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "files": 12,
+      "recoverability": "byte-equivalent selected checkpoint-300 shards remain local"
+    }
+  },
+  "preserved": {
+    "selected_step": 300,
+    "selected_checkpoints_local": 6,
+    "validation_metrics": true,
+    "selection_reports": true,
+    "source_datasets": true,
+    "code_and_locks": true,
+    "immutable_hf_receipts_git_commit": "6a60923"
+  }
+}

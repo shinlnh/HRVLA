@@ -1,0 +1,116 @@
+{
+  "claim_boundary": "validation-only infrastructure profile; batched amortized timing is not a single-request policy-latency claim",
+  "equivalence_gate": {
+    "maximum_mse_delta": 0.0001,
+    "maximum_rate_delta": 0.002,
+    "passes": true
+  },
+  "rows": [
+    {
+      "label": "serial",
+      "maximum_mse_delta_on_shared_rows": 0.0,
+      "maximum_rate_delta_on_shared_rows": 0.0,
+      "mean_mse_delta_on_shared_rows": 0.0,
+      "name": "serial-32traj",
+      "peak_vram_gib": 5.930886268615723,
+      "profile": "serial_reference",
+      "seconds_per_trajectory": 5.573952910125172,
+      "speedup_over_serial": 1.0,
+      "trajectories": 32
+    },
+    {
+      "label": "batch 2 / workers 4",
+      "maximum_mse_delta_on_shared_rows": 2.7507543563842773e-05,
+      "maximum_rate_delta_on_shared_rows": 0.0004166666666666763,
+      "mean_mse_delta_on_shared_rows": 1.0910630226135255e-05,
+      "name": "batch-2-workers-4",
+      "peak_vram_gib": 5.977437973022461,
+      "profile": "cpu_prefetch_gpu_batch",
+      "seconds_per_trajectory": 1.5636589569985517,
+      "speedup_over_serial": 3.5646858192302955,
+      "trajectories": 2
+    },
+    {
+      "label": "batch 4 / workers 4",
+      "maximum_mse_delta_on_shared_rows": 4.011392593383789e-05,
+      "maximum_rate_delta_on_shared_rows": 0.0004166666666666763,
+      "mean_mse_delta_on_shared_rows": 1.753270626068115e-05,
+      "name": "batch-4-workers-4",
+      "peak_vram_gib": 6.074314117431641,
+      "profile": "cpu_prefetch_gpu_batch",
+      "seconds_per_trajectory": 1.4344285674960702,
+      "speedup_over_serial": 3.885835123776871,
+      "trajectories": 2
+    },
+    {
+      "label": "batch 8 / workers 4",
+      "maximum_mse_delta_on_shared_rows": 2.7745962142944336e-05,
+      "maximum_rate_delta_on_shared_rows": 0.0004166666666666763,
+      "mean_mse_delta_on_shared_rows": 1.2475252151489258e-05,
+      "name": "batch-8-workers-4",
+      "peak_vram_gib": 6.2670392990112305,
+      "profile": "cpu_prefetch_gpu_batch",
+      "seconds_per_trajectory": 1.3635848325066036,
+      "speedup_over_serial": 4.087719940298014,
+      "trajectories": 2
+    },
+    {
+      "label": "batch 15 / workers 8",
+      "maximum_mse_delta_on_shared_rows": 5.6236982345581055e-05,
+      "maximum_rate_delta_on_shared_rows": 0.0008333333333333526,
+      "mean_mse_delta_on_shared_rows": 1.7366185784339904e-05,
+      "name": "batch-15-workers-8-16traj",
+      "peak_vram_gib": 6.596382141113281,
+      "profile": "cpu_prefetch_gpu_batch",
+      "seconds_per_trajectory": 0.5660096789379168,
+      "speedup_over_serial": 9.847804936099964,
+      "trajectories": 16
+    },
+    {
+      "label": "batch 30 / workers 8",
+      "maximum_mse_delta_on_shared_rows": 5.6236982345581055e-05,
+      "maximum_rate_delta_on_shared_rows": 0.0008333333333333526,
+      "mean_mse_delta_on_shared_rows": 1.7366185784339904e-05,
+      "name": "batch-30-workers-8-16traj",
+      "peak_vram_gib": 7.294293403625488,
+      "profile": "cpu_prefetch_gpu_batch",
+      "seconds_per_trajectory": 0.5525110416256211,
+      "speedup_over_serial": 10.088400937156393,
+      "trajectories": 16
+    },
+    {
+      "label": "batch 60 / workers 8",
+      "maximum_mse_delta_on_shared_rows": 8.308887481689453e-05,
+      "maximum_rate_delta_on_shared_rows": 0.0008333333333333526,
+      "mean_mse_delta_on_shared_rows": 1.9605830311775206e-05,
+      "name": "batch-60-workers-8-16traj",
+      "peak_vram_gib": 8.704371452331543,
+      "profile": "cpu_prefetch_gpu_batch",
+      "seconds_per_trajectory": 0.550776649686668,
+      "speedup_over_serial": 10.120169243369604,
+      "trajectories": 16
+    },
+    {
+      "label": "batch 30 / workers 16",
+      "maximum_mse_delta_on_shared_rows": 5.728006362915039e-05,
+      "maximum_rate_delta_on_shared_rows": 0.0008333333333333526,
+      "mean_mse_delta_on_shared_rows": 1.6493909060955048e-05,
+      "name": "batch-30-workers-16-pending-1-telemetry-32traj",
+      "peak_vram_gib": 7.294293403625488,
+      "profile": "cpu_prefetch_gpu_batch",
+      "seconds_per_trajectory": 0.4518071770935421,
+      "speedup_over_serial": 12.337017189461648,
+      "telemetry": {
+        "maximum_gpu_utilization_percent": 95.0,
+        "maximum_process_cpu_percent": 650.0,
+        "maximum_process_rss_gib": 18.786842346191406,
+        "mean_active_gpu_utilization_percent": 47.291666666666664,
+        "minimum_available_memory_gib": 10.625144958496094,
+        "samples": 149
+      },
+      "trajectories": 32
+    }
+  ],
+  "schema_version": 1,
+  "selected": "batch-30-workers-16-pending-1-telemetry-32traj"
+}

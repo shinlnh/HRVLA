@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "status": "subtask_rt_ready_waiting_for_recovery_dataset",
+  "claim_boundary": "ST-RT and STR-RT are in-domain action-decoder adaptations; neither row is ours and neither open-loop metric is a closed-loop SR/RSR claim.",
+  "method_program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "source_dataset": {
+    "path": "_artifacts/datasets/humanoidarena-gr00t-refpose",
+    "manifest_sha256": "7695a09acc9d94fe3152fd4822ddae81371ed5b90360ef0825209a1132e255d3"
+  },
+  "subtask_rt_dataset": {
+    "path": "_artifacts/datasets/humanoidarena-st-rt",
+    "label_source": "robot-state/action weak temporal proxies with explicit fallback audit; evaluation uses different source-backed simulator predicates",
+    "minimum_phase_frames": 40,
+    "maximum_episode_fallback_rate": 0.05,
+    "temporal_video_adjudication": {
+      "status": "ready",
+      "eligible_tasks": ["open_door", "pp_box"],
+      "policy": "only episodes rejected by the frozen state/action proxy; one shared subset of at least two among three staggered contact-sheet samples must satisfy every confidence, boundary-spread, ordering, and minimum-phase gate",
+      "protocol_amendment": "robust same-subset consensus selected on train/validation development evidence only after all-three consensus failed; heldout remained inaccessible and all negative protocols are retained",
+      "model_repo_id": "nvidia/Cosmos-Reason2-2B",
+      "model_revision": "9ce19a195e423419c349abfc86fd07178b230561",
+      "sample_frames_per_variant": 24,
+      "sampling_variants": 3,
+      "minimum_consensus_variants": 2,
+      "minimum_boundary_confidence": 0.7,
+      "maximum_boundary_spread_fraction": 0.08,
+      "report_path": "results/benchmark/retraining/subtask_video_adjudication.json",
+      "report_sha256": "f7a03a5c9ac5c722925a75d18d5a917e63c1bc6bd6b6e7c9c2a4c6cbca8fbfb2"
+    },
+    "splits_materialized_before_selection": ["train", "validation"],
+    "hidden_locked_until_validation_selection": true,
+    "manifests": {
+      "train": "40a713454ae3dbd053f91892518cc008b039e14e94bc15083516ad09c441a132",
+      "validation": "b1ee2f9fc399e18a25388318d8b24c704aee15628e941d02da944dad007e812c",
+      "heldout": null
+    }
+  },
+  "recovery_rt_dataset": {
+    "path": "_artifacts/datasets/humanoidarena-str-rt",
+    "source": "successful independent PI0.5 oracle behavior after the locked failure becomes active",
+    "language_relabel": "frozen scenario-specific recovery instruction",
+    "required_scenarios": 9,
+    "required_demonstrations_per_scenario": 20,
+    "split_derivation": "sort SHA-256(hrvla-recovery-data-v1|<scenario>|<trial>) then allocate 14 train, 3 validation, 3 heldout",
+    "splits_per_scenario": {"train": 14, "validation": 3, "heldout": 3},
+    "hidden_locked_until_validation_selection": true,
+    "manifests": {"train": null, "validation": null, "heldout": null}
+  },
+  "training_seeds": [0, 1, 2],
+  "initialization": "seed-matched common HumanoidArena checkpoint selected globally on validation",
+  "methods": {
+    "gr00t_st_rt": {
+      "dataset_family": "subtask_rt_dataset",
+      "validation_episodes": 70,
+      "output_name": "st-rt"
+    },
+    "gr00t_str_rt": {
+      "dataset_family": "recovery_rt_dataset",
+      "validation_episodes": 27,
+      "output_name": "str-rt"
+    }
+  },
+  "training": {
+    "profile": "action_decoder_only",
+    "candidate_steps": [100, 200, 300],
+    "max_steps": 300,
+    "save_steps": 100,
+    "learning_rate": 0.00005,
+    "physical_batch_size": 4,
+    "gradient_accumulation_steps": 4,
+    "effective_batch_size": 16,
+    "dataloader_workers": 4,
+    "dataloader_worker_rationale": "match the common-adaptation memory-safe profile; the 28-worker infrastructure probe exhausted 31 GiB host RAM before optimizer step 1",
+    "state_dropout_probability": 0.2,
+    "color_jitter": true
+  },
+  "selection": {
+    "split": "validation",
+    "criterion": "one global optimizer step per method with lowest mean of three seed-level macro-per-task action MSE values",
+    "tie_break": "lowest optimizer step",
+    "hidden_access_before_selection": false
+  },
+  "validation_execution": {
+    "profile": "cpu_prefetch_gpu_batch",
+    "throughput_batch_size": 30,
+    "prefetch_workers": 16,
+    "prefetch_pending_per_worker": 1,
+    "latency_claim_eligible": false,
+    "admission_report": "results/benchmark/readiness/vla_evaluator_throughput.json",
+    "speedup_over_serial": 12.337017189461648,
+    "equivalence_gate_passed": true
+  },
+  "output_root": "_artifacts/retraining/humanoidarena-rt",
+  "resource_exclusion": {
+    "blocking_process_pattern": "run_humanoidarena_baseline_matrix_fast.py",
+    "maximum_preexisting_compute_vram_mib": 1024
+  }
+}

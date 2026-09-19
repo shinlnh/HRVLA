@@ -1,21 +1,28 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "hrvla-subtask"
+name = "hrvla"
 version = "0.1.0"
-description = "Closed-loop world-model-guided subtask planning for GR00T + SONIC"
+description = "Recovery-aware planning and evaluation for humanoid VLA systems"
 requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
-gpu = ["torch>=2.7", "transformers>=4.57", "accelerate>=1.10"]
+gpu = [
+  "torch>=2.7",
+  "transformers>=4.57",
+  "accelerate>=1.10",
+  "bitsandbytes==0.50.2",
+]
 plots = ["matplotlib>=3.8"]
 
 [project.scripts]
 hrvla-subtask = "hrvla_subtask.cli:main"
 hrvla-recovery = "hrvla_subtask.recovery_cli:main"
+hrvla-bench = "hrvla_bench.cli:main"
+hrvla-score = "hrvla_bench.score:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -25,3 +32,7 @@ line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

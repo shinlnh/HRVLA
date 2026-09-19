@@ -75,6 +75,49 @@ def _install_action_decoder_profile(save_dir: Path) -> None:
     Gr00tN1d7Pipeline._create_model = create_action_decoder_model
 
 
+def _install_redundant_final_save_guard(max_steps: int, save_steps: int) -> None:
+    """Skip the upstream root save when the final numbered checkpoint exists.
+
+    Hugging Face already writes ``checkpoint-<max_steps>`` when the final step
+    is aligned with ``save_steps``.  GR00T then calls ``trainer.save_model()``
+    once more at the output root, serializing the same 3.1B-parameter model a
+    second time.  The numbered checkpoint is the locked evaluation artifact,
+    so the duplicate adds I/O latency and disk use without adding recoverability.
+    """
+    if max_steps % save_steps:
+        return
+
+    from gr00t.experiment.trainer import Gr00tTrainer
+
+    original_save_model = Gr00tTrainer.save_model
+
+    def save_model_without_duplicate(trainer, output_dir=None, *args, **kwargs):
+        final_checkpoint = (
+            Path(trainer.args.output_dir) / f"checkpoint-{trainer.state.global_step}"
+        )
+        final_state = final_checkpoint / "trainer_state.json"
+        is_final_root_save = (
+            output_dir is None
+            and trainer.state.global_step == max_steps
+            and final_state.is_file()
+        )
+        if is_final_root_save:
+            print(
+                json.dumps(
+                    {
+                        "checkpoint": str(final_checkpoint),
+                        "event": "skip_redundant_final_root_save",
+                        "global_step": trainer.state.global_step,
+                    },
+                    sort_keys=True,
+                )
+            )
+            return None
+        return original_save_model(trainer, output_dir, *args, **kwargs)
+
+    Gr00tTrainer.save_model = save_model_without_duplicate
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-model-path", type=Path, required=True)
@@ -109,6 +152,13 @@ def main() -> None:
     torch.backends.cudnn.allow_tf32 = True
     torch.set_float32_matmul_precision("high")
     _load_modality_config(args.modality_config_path.resolve())
+
+    # HumanoidArena LeRobot-v3 views keep immutable packed videos as symlinks
+    # and record each episode's exact starting frame in episodes.jsonl.  The
+    # patch is a no-op for ordinary v2 datasets (offset defaults to zero).
+    from humanoidarena_gr00t_video import install_packed_video_offset_patch
+
+    install_packed_video_offset_patch()
 
     from gr00t.configs.base_config import get_default_config
     from gr00t.data.embodiment_tags import EmbodimentTag
@@ -174,6 +224,7 @@ def main() -> None:
     config.training.use_wandb = False
 
     _install_action_decoder_profile(args.output_dir.resolve() / "experiment_cfg")
+    _install_redundant_final_save_guard(args.max_steps, args.save_steps)
     run(config)
 
 

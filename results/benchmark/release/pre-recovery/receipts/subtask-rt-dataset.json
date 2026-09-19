@@ -1,0 +1,12 @@
+{
+  "artifact_id": "subtask-rt-dataset",
+  "manifest_sha256": "fda7a818363c42a2299e9799412bc1ae44f1ff2eb2e0c6afdc2c3f287c274882",
+  "path_in_repo": "humanoidarena-v1/subtask-rt-dataset",
+  "published_revision": "7e82c2031b4675a6cc5aab84c32a1c64adbf9e13",
+  "receipt_sha256": "517fde55d6709d485214bd9ccbd84b759ff64850cb86f6a40500b7fcc9b63780",
+  "remote_manifest_path": "humanoidarena-v1/subtask-rt-dataset/hrvla-release-manifest.json",
+  "remote_manifest_verified": true,
+  "repo_id": "shin0412/HRVLA",
+  "repo_type": "dataset",
+  "schema_version": 1
+}

@@ -1,0 +1,528 @@
+#!/usr/bin/env python3
+"""Render compact, claim-bounded plots from committed benchmark evidence."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_RETRAINING = ROOT / "results" / "retraining" / "paper-seeds" / "summary.json"
+DEFAULT_HUMANOID = ROOT / "results" / "humanoidarena" / "baseline-matrix" / "summary.json"
+DEFAULT_PERFORMANCE = (
+    ROOT / "results" / "benchmark" / "performance" / "pi05_cpu_thread_profile.json"
+)
+DEFAULT_GR00T_BRIDGE = (
+    ROOT / "results" / "humanoidarena" / "gr00t-bridge" / "validation.json"
+)
+DEFAULT_RECOVERY_PREFLIGHT = (
+    ROOT / "results" / "humanoidarena" / "admission" / "predicate-source-audit.json"
+)
+DEFAULT_STORAGE_CLEANUP = ROOT / "results" / "benchmark" / "storage" / "cleanup.json"
+DEFAULT_CHECKPOINT_LOCK = ROOT / "config" / "humanoidarena-internal-checkpoints.lock.json"
+DEFAULT_ADMITTED_SUITE = (
+    ROOT / "_artifacts" / "HumanoidArena" / "recovery-admission" / "hrvla_recovery_v0.admitted.json"
+)
+DEFAULT_INTERNAL_PROGRESS = (
+    ROOT / "_artifacts" / "HumanoidArena" / "internal-benchmark" / "runs" / "hidden_final" / "progress.json"
+)
+DEFAULT_PRE_RECOVERY_RECEIPTS = (
+    ROOT / "results" / "benchmark" / "release" / "pre-recovery" / "receipts"
+)
+DEFAULT_OUTPUT = ROOT / "results" / "benchmark" / "readiness"
+
+
+def readiness_rows(
+    humanoid: dict[str, Any] | None,
+    checkpoint_lock: dict[str, Any] | None = None,
+    admitted_suite: dict[str, Any] | None = None,
+    internal_progress: dict[str, Any] | None = None,
+    rt_release_receipts: list[dict[str, Any]] | None = None,
+) -> list[dict[str, Any]]:
+    matrix = (humanoid or {}).get("matrix", {})
+    cells_complete = int(matrix.get("cells_complete", 0))
+    cells_expected = int(matrix.get("cells_expected", 84))
+    rt_complete = 0
+    if (checkpoint_lock or {}).get("status") == "ready_for_frozen_execution":
+        checkpoints = checkpoint_lock.get("checkpoints", {})
+        rt_complete = sum(
+            isinstance((row := checkpoints.get(method, {}).get(str(seed))), dict)
+            and isinstance(row.get("published_revision"), str)
+            and len(row["published_revision"]) == 40
+            and isinstance(row.get("manifest_sha256"), str)
+            and len(row["manifest_sha256"]) == 64
+            for method in ("gr00t_st_rt", "gr00t_str_rt")
+            for seed in (0, 1, 2)
+        )
+    else:
+        expected_ids = {
+            f"{family}-seed-{seed}"
+            for family in ("subtask_rt", "recovery_rt")
+            for seed in (0, 1, 2)
+        }
+        published_ids = {
+            receipt.get("artifact_id")
+            for receipt in (rt_release_receipts or [])
+            if receipt.get("artifact_id") in expected_ids
+            and receipt.get("remote_manifest_verified") is True
+            and isinstance(receipt.get("published_revision"), str)
+            and len(receipt["published_revision"]) == 40
+            and isinstance(receipt.get("manifest_sha256"), str)
+            and len(receipt["manifest_sha256"]) == 64
+            and isinstance(receipt.get("receipt_sha256"), str)
+            and len(receipt["receipt_sha256"]) == 64
+        }
+        rt_complete = len(published_ids)
+    scenarios_complete = sum(
+        scenario.get("admission", {}).get("status") == "admitted"
+        for task in (admitted_suite or {}).get("tasks", [])
+        for scenario in task.get("scenarios", [])
+    )
+    internal_complete = 0
+    if internal_progress:
+        methods = internal_progress.get("methods", {})
+        expected = int(internal_progress.get("records_expected", 0))
+        expected_per_method = expected // 5 if expected and expected % 5 == 0 else -1
+        internal_complete = sum(
+            int(methods.get(method, -1)) == expected_per_method
+            for method in (
+                "gr00t_sonic",
+                "gr00t_st",
+                "gr00t_st_rt",
+                "gr00t_str",
+                "gr00t_str_rt",
+            )
+        )
+    return [
+        {
+            "workstream": "Planner component",
+            "completed": 5,
+            "expected": 5,
+            "unit": "algorithm variants",
+            "scope": "symbolic/Cosmos component evidence",
+        },
+        {
+            "workstream": "Recovery component",
+            "completed": 6,
+            "expected": 6,
+            "unit": "mechanism variants",
+            "scope": "symbolic fault-injection evidence",
+        },
+        {
+            "workstream": "Legacy 43-D retraining",
+            "completed": 6,
+            "expected": 6,
+            "unit": "training seeds",
+            "scope": "context-only held-out open-loop evaluation",
+        },
+        {
+            "workstream": "HA 40-D RT training",
+            "completed": rt_complete,
+            "expected": 6,
+            "unit": "training seeds",
+            "scope": "in-domain ST-RT and STR-RT checkpoints",
+        },
+        {
+            "workstream": "PI0.5 + SONIC",
+            "completed": cells_complete,
+            "expected": cells_expected,
+            "unit": "HumanoidArena cells",
+            "scope": "direct external rerun; partial non-claim",
+        },
+        {
+            "workstream": "Scenario admission",
+            "completed": scenarios_complete,
+            "expected": 9,
+            "unit": "recovery scenarios",
+            "scope": "oracle 20/20 plus immutable failure artifacts",
+        },
+        {
+            "workstream": "Internal closed loop",
+            "completed": internal_complete,
+            "expected": 5,
+            "unit": "registered methods",
+            "scope": "same frozen paired HumanoidArena plan",
+        },
+    ]
+
+
+def _load_optional(path: Path) -> dict[str, Any] | None:
+    if not path.is_file():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _load_receipts(path: Path) -> list[dict[str, Any]]:
+    if not path.is_dir():
+        return []
+    return [
+        json.loads(receipt.read_text(encoding="utf-8"))
+        for receipt in sorted(path.glob("*.json"))
+    ]
+
+
+def _write_readiness(rows: list[dict[str, Any]], output_dir: Path) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "schema_version": 1,
+        "claim_boundary": "workstreams are not interchangeable; do not average percentages",
+        "workstreams": [
+            {
+                **row,
+                "percent": 100.0 * row["completed"] / row["expected"],
+            }
+            for row in rows
+        ],
+    }
+    (output_dir / "status.json").write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    with (output_dir / "status.csv").open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(
+            stream,
+            fieldnames=("workstream", "completed", "expected", "unit", "percent", "scope"),
+            lineterminator="\n",
+        )
+        writer.writeheader()
+        writer.writerows(payload["workstreams"])
+
+
+def _render_retraining(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    conditions = list(summary["protocol"]["conditions"])
+    labels = [condition.replace("_", "\n") for condition in conditions]
+    positions = list(range(len(conditions)))
+    figure, axes = plt.subplots(1, 2, figsize=(13, 4.8), constrained_layout=True)
+    width = 0.36
+    series = (("ST-RT", -width / 2, "#718096"), ("STR-RT", width / 2, "#2b6cb0"))
+    for method, offset, color in series:
+        means = [summary["methods"][method][condition]["mean_mse"] for condition in conditions]
+        errors = [
+            summary["methods"][method][condition]["sample_std_mse"]
+            for condition in conditions
+        ]
+        axes[0].bar(
+            [position + offset for position in positions],
+            means,
+            width,
+            yerr=errors,
+            capsize=3,
+            label=method,
+            color=color,
+        )
+    axes[0].set_xticks(positions, labels)
+    axes[0].set_ylabel("held-out action MSE (mean ± seed SD)")
+    axes[0].set_title("Three-seed VLA replication")
+    axes[0].grid(axis="y", alpha=0.25)
+    axes[0].legend()
+
+    reductions = [
+        summary["paired_str_rt_minus_st_rt"][condition]["mean_reduction_percent"]
+        for condition in conditions
+    ]
+    bars = axes[1].bar(labels, reductions, color="#2f855a")
+    axes[1].bar_label(bars, fmt="%.3f%%")
+    axes[1].axhline(0, color="black", linewidth=0.8)
+    axes[1].set_ylabel("paired MSE reduction (%)")
+    axes[1].set_title("STR-RT improvement over ST-RT")
+    axes[1].grid(axis="y", alpha=0.25)
+    figure.suptitle(
+        "Open-loop evidence only — not closed-loop task or recovery success", fontsize=10
+    )
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
+def _render_readiness(rows: list[dict[str, Any]], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    labels = [row["workstream"] for row in rows]
+    percentages = [100.0 * row["completed"] / row["expected"] for row in rows]
+    colors = [
+        "#2f855a" if value == 100 else "#dd6b20" if value > 0 else "#c53030"
+        for value in percentages
+    ]
+    figure, axis = plt.subplots(figsize=(10.5, 5.2), constrained_layout=True)
+    bars = axis.barh(labels[::-1], percentages[::-1], color=colors[::-1])
+    axis.set_xlim(0, 108)
+    axis.set_xlabel("protocol completion (%)")
+    axis.set_title(
+        "Benchmark readiness by independent workstream\n"
+        "Rows use different units and must not be averaged"
+    )
+    axis.grid(axis="x", alpha=0.25)
+    for bar, row in zip(bars, rows[::-1]):
+        axis.text(
+            min(bar.get_width() + 1.2, 102),
+            bar.get_y() + bar.get_height() / 2,
+            f"{row['completed']}/{row['expected']}",
+            va="center",
+            fontsize=9,
+        )
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
+def _render_humanoid(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    by_task_mode = summary.get("by_task_mode", {})
+    keys = list(by_task_mode)
+    labels = [key.replace("base_test/", "base/").replace("_", " ") for key in keys]
+    rates = [100.0 * by_task_mode[key]["success_rate"] for key in keys]
+    trials = [int(by_task_mode[key]["episodes"]) for key in keys]
+    matrix = summary["matrix"]
+    figure, axes = plt.subplots(1, 2, figsize=(13, 4.8), constrained_layout=True)
+    if keys:
+        bars = axes[0].barh(labels[::-1], rates[::-1], color="#2b6cb0")
+        for bar, count in zip(bars, trials[::-1]):
+            axes[0].text(
+                min(bar.get_width() + 1, 96),
+                bar.get_y() + bar.get_height() / 2,
+                f"n={count}",
+                va="center",
+                fontsize=9,
+            )
+    axes[0].set_xlim(0, 100)
+    axes[0].set_xlabel("observed success rate (%)")
+    axes[0].set_title("Observed task/mode slices")
+    axes[0].grid(axis="x", alpha=0.25)
+
+    observed = int(matrix["episodes_complete"])
+    expected = int(matrix["episodes_expected"])
+    completion = [
+        100 * observed / expected,
+        100 * matrix["cells_complete"] / matrix["cells_expected"],
+    ]
+    axes[1].bar(
+        ["episodes", "complete cells"], completion, color=["#dd6b20", "#805ad5"]
+    )
+    axes[1].set_ylim(0, 100)
+    axes[1].set_ylabel("matrix completion (%)")
+    axes[1].set_title(f"PI0.5+SONIC: {observed}/{expected} observed episodes")
+    axes[1].grid(axis="y", alpha=0.25)
+    figure.suptitle("Running partial evidence — non-claim until all locked cells pass", fontsize=10)
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
+def _render_performance(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    rows = sorted(summary["rows"], key=lambda row: int(row["threads"]))
+    threads = [int(row["threads"]) for row in rows]
+    latency = [float(row["median_seconds"]) for row in rows]
+    selected = int(summary["selected_threads"])
+    colors = ["#2f855a" if value == selected else "#718096" for value in threads]
+    figure, axis = plt.subplots(figsize=(8.4, 4.8), constrained_layout=True)
+    bars = axis.bar([str(value) for value in threads], latency, color=colors)
+    axis.bar_label(bars, fmt="%.2fs")
+    axis.set_xlabel("PI0.5 CPU intra-op threads")
+    axis.set_ylabel("steady-state median request latency (s)")
+    axis.set_title(
+        "i9-14900K thread scaling — exact released PI0.5 precision\n"
+        "Synthetic fixed input for orchestration tuning, not task-success evidence"
+    )
+    axis.grid(axis="y", alpha=0.25)
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
+def _render_gr00t_bridge(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    tasks = summary["tasks"]
+    labels = [
+        row["task"].replace("HOI_", "").replace("HSI_", "").replace("_", "\n")
+        for row in tasks
+    ]
+    positions = list(range(len(tasks)))
+    splits = ["train"]
+    if tasks and "validation_episodes" in tasks[0]:
+        splits.append("validation")
+    splits.append("heldout")
+    colors = {
+        "train": "#2b6cb0",
+        "validation": "#805ad5",
+        "heldout": "#dd6b20",
+    }
+    display = {
+        "train": "train",
+        "validation": "validation",
+        "heldout": "hidden test",
+    }
+    width = 0.8 / len(splits)
+    figure, axes = plt.subplots(1, 2, figsize=(14, 5.2), constrained_layout=True)
+    for axis, suffix, scale, ylabel, title in (
+        (axes[0], "episodes", 1.0, "episodes", "Frozen per-task split"),
+        (axes[1], "frames", 1000.0, "frames (thousands)", "Frame coverage"),
+    ):
+        center = (len(splits) - 1) / 2
+        for split_index, split in enumerate(splits):
+            values = [int(row[f"{split}_{suffix}"]) / scale for row in tasks]
+            axis.bar(
+                [position + (split_index - center) * width for position in positions],
+                values,
+                width,
+                label=display[split],
+                color=colors[split],
+            )
+        axis.set_xticks(positions, labels)
+        axis.set_ylabel(ylabel)
+        axis.set_title(title)
+        axis.grid(axis="y", alpha=0.25)
+        axis.legend()
+    checks = summary["checks"]
+    figure.suptitle(
+        "HumanoidArena → GR00T state64/action40 bridge validation\n"
+        f"{checks['packed_video_symlinks']} episode links; "
+        f"{checks['pixel_exact_samples']} pixel-exact packed-video samples — "
+        "interface evidence only",
+        fontsize=10,
+    )
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
+def _render_recovery_preflight(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    gates = summary["gates"]
+    order = (
+        "task_predicate_sources",
+        "static_injector_contracts",
+        "initial_snapshots",
+        "failure_snapshots",
+        "runtime_injectors",
+        "oracle_20_of_20",
+    )
+    label_by_gate = {
+        "task_predicate_sources": "task predicate\nsources",
+        "static_injector_contracts": "static injector\ncontracts",
+        "initial_snapshots": "initial\nsnapshots",
+        "failure_snapshots": "failure\nsnapshots",
+        "runtime_injectors": "runtime\ninjectors",
+        "oracle_20_of_20": "oracle\n20/20",
+    }
+    labels = [label_by_gate[name] for name in order]
+    complete = [int(gates[name]["complete"]) for name in order]
+    required = [int(gates[name]["required"]) for name in order]
+    percentages = [100.0 * done / total for done, total in zip(complete, required)]
+    colors = ["#2f855a" if value == 100 else "#c53030" for value in percentages]
+    figure, axis = plt.subplots(figsize=(10.5, 5.2), constrained_layout=True)
+    bars = axis.bar(labels, percentages, color=colors)
+    axis.set_ylim(0, 110)
+    axis.set_ylabel("gate completion (%)")
+    axis.set_title(
+        "HumanoidArena recovery admission preflight\n"
+        "Static predicate provenance is not runtime/oracle admission"
+    )
+    axis.grid(axis="y", alpha=0.25)
+    axis.bar_label(
+        bars,
+        labels=[f"{done}/{total}" for done, total in zip(complete, required)],
+    )
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
+def _render_storage_cleanup(summary: dict[str, Any], output_path: Path) -> None:
+    import matplotlib.pyplot as plt
+
+    free = summary["free_space"]
+    footprint = summary["current_project_footprint"]
+    figure, axes = plt.subplots(1, 2, figsize=(12, 4.8), constrained_layout=True)
+    bars = axes[0].bar(
+        ["before cleanup", "after cleanup"],
+        [float(free["before"]), float(free["after"])],
+        color=["#c53030", "#2f855a"],
+    )
+    axes[0].bar_label(bars, fmt="%.0f GiB")
+    axes[0].set_ylabel("free filesystem space (GiB, rounded)")
+    axes[0].set_title(f"Local cleanup reclaimed ≈{summary['reclaimed_total']} GiB")
+    axes[0].grid(axis="y", alpha=0.25)
+
+    labels = [key.replace("_", "\n") for key in footprint]
+    values = [float(value) for value in footprint.values()]
+    bars = axes[1].bar(labels, values, color=["#4a5568", "#2b6cb0", "#805ad5"])
+    axes[1].bar_label(bars, fmt="%.1f")
+    axes[1].set_ylabel("local footprint (GiB, rounded)")
+    axes[1].set_title("Retained because required or user-owned")
+    axes[1].grid(axis="y", alpha=0.25)
+    figure.suptitle("HRVLA storage audit — operational evidence, not a paper metric", fontsize=10)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(output_path, dpi=180)
+    plt.close(figure)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--retraining-summary", type=Path, default=DEFAULT_RETRAINING)
+    parser.add_argument("--humanoidarena-summary", type=Path, default=DEFAULT_HUMANOID)
+    parser.add_argument("--performance-summary", type=Path, default=DEFAULT_PERFORMANCE)
+    parser.add_argument("--gr00t-bridge-summary", type=Path, default=DEFAULT_GR00T_BRIDGE)
+    parser.add_argument(
+        "--recovery-preflight", type=Path, default=DEFAULT_RECOVERY_PREFLIGHT
+    )
+    parser.add_argument("--storage-cleanup", type=Path, default=DEFAULT_STORAGE_CLEANUP)
+    parser.add_argument("--checkpoint-lock", type=Path, default=DEFAULT_CHECKPOINT_LOCK)
+    parser.add_argument("--admitted-suite", type=Path, default=DEFAULT_ADMITTED_SUITE)
+    parser.add_argument("--internal-progress", type=Path, default=DEFAULT_INTERNAL_PROGRESS)
+    parser.add_argument(
+        "--pre-recovery-receipts", type=Path, default=DEFAULT_PRE_RECOVERY_RECEIPTS
+    )
+    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
+    args = parser.parse_args()
+
+    import matplotlib
+
+    matplotlib.use("Agg")
+    output_dir = args.output_dir.resolve()
+    humanoid = _load_optional(args.humanoidarena_summary.resolve())
+    retraining = _load_optional(args.retraining_summary.resolve())
+    performance = _load_optional(args.performance_summary.resolve())
+    gr00t_bridge = _load_optional(args.gr00t_bridge_summary.resolve())
+    recovery_preflight = _load_optional(args.recovery_preflight.resolve())
+    storage_cleanup = _load_optional(args.storage_cleanup.resolve())
+    checkpoint_lock = _load_optional(args.checkpoint_lock.resolve())
+    admitted_suite = _load_optional(args.admitted_suite.resolve())
+    internal_progress = _load_optional(args.internal_progress.resolve())
+    rt_release_receipts = _load_receipts(args.pre_recovery_receipts.resolve())
+    rows = readiness_rows(
+        humanoid,
+        checkpoint_lock,
+        admitted_suite,
+        internal_progress,
+        rt_release_receipts,
+    )
+    _write_readiness(rows, output_dir)
+    _render_readiness(rows, output_dir / "benchmark_readiness.png")
+    if retraining is not None:
+        retraining_output = args.retraining_summary.resolve().parent / "multiseed_comparison.png"
+        _render_retraining(retraining, retraining_output)
+    if humanoid is not None:
+        humanoid_output = args.humanoidarena_summary.resolve().parent / "partial_progress.png"
+        _render_humanoid(humanoid, humanoid_output)
+    if performance is not None:
+        performance_output = (
+            args.performance_summary.resolve().parent / "pi05_cpu_thread_scaling.png"
+        )
+        _render_performance(performance, performance_output)
+    if gr00t_bridge is not None:
+        bridge_output = args.gr00t_bridge_summary.resolve().parent / "dataset_split.png"
+        _render_gr00t_bridge(gr00t_bridge, bridge_output)
+    if recovery_preflight is not None:
+        preflight_output = args.recovery_preflight.resolve().parent / "admission_preflight.png"
+        _render_recovery_preflight(recovery_preflight, preflight_output)
+    if storage_cleanup is not None:
+        storage_output = args.storage_cleanup.resolve().parent / "storage_cleanup.png"
+        _render_storage_cleanup(storage_cleanup, storage_output)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

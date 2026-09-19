@@ -6,15 +6,30 @@ from __future__ import annotations
 import argparse
 import csv
 from copy import deepcopy
+from dataclasses import dataclass
 import json
+import math
 from pathlib import Path
 import platform
 import shutil
 import statistics
+import sys
+import threading
 import time
+from typing import Any
 
 import numpy as np
 import torch
+
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from hrvla_bench.evaluation_batching import (
+    bounded_ordered_prefetch,
+    inject_seeded_action_noise,
+    stack_observations,
+)
 
 
 CONDITIONS = ("clean", "vision_noise", "occlusion", "state_noise", "combined")
@@ -40,6 +55,212 @@ def _corrupt_observation(observation: dict, condition: str, rng: np.random.Gener
 
 def _concatenate_columns(frame, columns: list[str]) -> np.ndarray:
     return np.concatenate([np.vstack(frame[column].to_numpy()) for column in columns], axis=-1)
+
+
+@dataclass(frozen=True)
+class PreparedRequest:
+    condition: str
+    step: int
+    seed: int
+    observation: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class PreparedTrajectory:
+    trajectory_id: int
+    frame: Any
+    actual_steps: int
+    ground_truth: np.ndarray
+    phase_text: np.ndarray
+    requests: tuple[PreparedRequest, ...]
+
+
+def _prepare_trajectory(
+    loader,
+    trajectory_id: int,
+    conditions: list[str],
+    *,
+    embodiment_tag,
+    language_key: str,
+    execution_horizon: int,
+    steps: int,
+    seed: int,
+) -> PreparedTrajectory:
+    """Decode one trajectory once and materialize every deterministic condition."""
+
+    from gr00t.data.dataset.sharded_single_step_dataset import extract_step_data
+    from gr00t.data.utils import parse_observation_gr00t
+
+    trajectory = loader[trajectory_id]
+    actual_steps = min(steps, len(trajectory))
+    input_config = deepcopy(loader.modality_configs)
+    input_config.pop("action")
+    requests = []
+    for condition in conditions:
+        for step in range(0, actual_steps, execution_horizon):
+            request_seed = seed + step
+            point = extract_step_data(trajectory, step, input_config, embodiment_tag)
+            flat_observation = {
+                **{f"video.{key}": np.asarray(value) for key, value in point.images.items()},
+                **{
+                    f"state.{key}": np.asarray(value, dtype=np.float32)
+                    for key, value in point.states.items()
+                },
+                language_key: point.text,
+            }
+            parsed = parse_observation_gr00t(flat_observation, loader.modality_configs)
+            _corrupt_observation(parsed, condition, np.random.default_rng(request_seed))
+            requests.append(
+                PreparedRequest(
+                    condition=condition,
+                    step=step,
+                    seed=request_seed,
+                    observation=parsed,
+                )
+            )
+    action_keys = loader.modality_configs["action"].modality_keys
+    ground_truth = _concatenate_columns(
+        trajectory, [f"action.{key}" for key in action_keys]
+    )[:actual_steps]
+    phase_text = np.asarray(trajectory[f"language.{language_key}"].tolist())[:actual_steps]
+    return PreparedTrajectory(
+        trajectory_id=trajectory_id,
+        frame=trajectory,
+        actual_steps=actual_steps,
+        ground_truth=ground_truth,
+        phase_text=phase_text,
+        requests=tuple(requests),
+    )
+
+
+def _trajectory_metrics(
+    prepared: PreparedTrajectory,
+    condition: str,
+    predicted: np.ndarray,
+    inference_latencies: list[float],
+    *,
+    timing_semantics: str,
+) -> tuple[dict, dict[str, np.ndarray]]:
+    ground_truth = prepared.ground_truth
+    absolute_error = np.abs(ground_truth - predicted)
+    squared_error = np.square(ground_truth - predicted)
+    phase_metrics = {}
+    for phase in sorted(set(prepared.phase_text.tolist())):
+        mask = prepared.phase_text == phase
+        phase_metrics[phase] = {
+            "frames": int(mask.sum()),
+            "mse": float(squared_error[mask].mean()),
+            "mae": float(absolute_error[mask].mean()),
+        }
+    metrics = {
+        "trajectory_id": prepared.trajectory_id,
+        "condition": condition,
+        "frames": prepared.actual_steps,
+        "mse": float(squared_error.mean()),
+        "mae": float(absolute_error.mean()),
+        "rmse": float(np.sqrt(squared_error.mean())),
+        "p95_absolute_error": float(np.quantile(absolute_error, 0.95)),
+        "within_0_1_rate": float((absolute_error < 0.1).mean()),
+        "mean_inference_ms": statistics.fmean(inference_latencies),
+        "p95_inference_ms": float(np.quantile(inference_latencies, 0.95)),
+        "inference_timing_semantics": timing_semantics,
+        "phase_metrics": phase_metrics,
+    }
+    return metrics, {
+        "ground_truth": ground_truth,
+        "predicted": predicted,
+        "phase_text": prepared.phase_text,
+    }
+
+
+def evaluate_prepared_trajectory(
+    policy,
+    loader,
+    prepared: PreparedTrajectory,
+    conditions: list[str],
+    *,
+    batch_size: int,
+    execution_horizon: int,
+) -> list[tuple[dict, dict[str, np.ndarray]]]:
+    """Consume one CPU-prepared trajectory in deterministic GPU batches."""
+
+    return [
+        (row, arrays)
+        for _, row, arrays in evaluate_prepared_trajectories(
+            policy,
+            loader,
+            [prepared],
+            conditions,
+            batch_size=batch_size,
+            execution_horizon=execution_horizon,
+        )
+    ]
+
+
+def evaluate_prepared_trajectories(
+    policy,
+    loader,
+    prepared_trajectories: list[PreparedTrajectory],
+    conditions: list[str],
+    *,
+    batch_size: int,
+    execution_horizon: int,
+) -> list[tuple[PreparedTrajectory, dict, dict[str, np.ndarray]]]:
+    """Batch requests across trajectories while retaining per-row provenance."""
+
+    action_keys = loader.modality_configs["action"].modality_keys
+    keys = [
+        (prepared.trajectory_id, condition)
+        for prepared in prepared_trajectories
+        for condition in conditions
+    ]
+    chunks: dict[tuple[int, str], list[tuple[int, np.ndarray]]] = {
+        key: [] for key in keys
+    }
+    latencies: dict[tuple[int, str], list[float]] = {key: [] for key in keys}
+    requests = [
+        (prepared, request)
+        for prepared in prepared_trajectories
+        for request in prepared.requests
+    ]
+    for start in range(0, len(requests), batch_size):
+        batch = requests[start : start + batch_size]
+        observation = stack_observations([request.observation for _, request in batch])
+        torch.cuda.synchronize()
+        started = time.perf_counter()
+        with inject_seeded_action_noise(policy, [request.seed for _, request in batch]):
+            action, _ = policy.get_action(observation)
+        torch.cuda.synchronize()
+        elapsed_ms = (time.perf_counter() - started) * 1_000
+        amortized_ms = elapsed_ms / len(batch)
+        for batch_index, (prepared, request) in enumerate(batch):
+            action_chunk = np.concatenate(
+                [np.asarray(action[key])[batch_index] for key in action_keys], axis=-1
+            )
+            remaining = prepared.actual_steps - request.step
+            key = (prepared.trajectory_id, request.condition)
+            chunks[key].append(
+                (request.step, action_chunk[: min(execution_horizon, remaining)])
+            )
+            latencies[key].append(amortized_ms)
+
+    output = []
+    for prepared in prepared_trajectories:
+        for condition in conditions:
+            key = (prepared.trajectory_id, condition)
+            predicted = np.concatenate(
+                [value for _, value in sorted(chunks[key], key=lambda item: item[0])],
+                axis=0,
+            )[: prepared.actual_steps]
+            row, arrays = _trajectory_metrics(
+                    prepared,
+                    condition,
+                    predicted,
+                    latencies[key],
+                    timing_semantics="amortized_gpu_batch_wall_time_non_claim",
+            )
+            output.append((prepared, row, arrays))
+    return output
 
 
 def evaluate_trajectory(
@@ -126,7 +347,11 @@ def evaluate_trajectory(
 
 
 def _write_charts(
-    rows: list[dict], sample_arrays: dict[str, np.ndarray], sample_trajectory, output_dir: Path
+    rows: list[dict],
+    sample_arrays: dict[str, np.ndarray],
+    sample_trajectory,
+    output_dir: Path,
+    video_key: str,
 ) -> None:
     import matplotlib
 
@@ -182,7 +407,7 @@ def _write_charts(
         np.square(sample_arrays["ground_truth"] - sample_arrays["predicted"]).mean(axis=1)
     )
     for axis, frame_index in zip(axes, frames):
-        axis.imshow(sample_trajectory["video.ego_view"].iloc[frame_index])
+        axis.imshow(sample_trajectory[f"video.{video_key}"].iloc[frame_index])
         axis.set_title(f"frame {frame_index}\naction RMSE={frame_error[frame_index]:.3f}")
         axis.axis("off")
     figure.suptitle("Held-out Isaac Lab G1 demonstration and GR00T action error")
@@ -201,12 +426,42 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--steps", type=int, default=120)
     parser.add_argument("--denoising-steps", type=int, default=4)
     parser.add_argument("--seed", type=int, default=20260913)
-    return parser.parse_args()
+    parser.add_argument(
+        "--throughput-batch-size",
+        type=int,
+        default=1,
+        help="batch independent observations on GPU; 1 retains the serial reference path",
+    )
+    parser.add_argument(
+        "--prefetch-workers",
+        type=int,
+        default=1,
+        help="bounded CPU trajectory preparation workers for the batched path",
+    )
+    parser.add_argument(
+        "--prefetch-pending-per-worker",
+        type=int,
+        default=2,
+        help="maximum prepared/in-flight trajectories per CPU worker",
+    )
+    args = parser.parse_args()
+    if args.throughput_batch_size < 1:
+        parser.error("--throughput-batch-size must be positive")
+    if args.prefetch_workers < 1:
+        parser.error("--prefetch-workers must be positive")
+    if args.prefetch_pending_per_worker < 1:
+        parser.error("--prefetch-pending-per-worker must be positive")
+    if args.throughput_batch_size == 1 and args.prefetch_workers != 1:
+        parser.error("--prefetch-workers requires --throughput-batch-size greater than one")
+    return args
 
 
 def main() -> None:
     args = parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
+    from humanoidarena_gr00t_video import install_packed_video_offset_patch
+
+    install_packed_video_offset_patch()
     from gr00t.data.dataset.lerobot_episode_loader import LeRobotEpisodeLoader
     from gr00t.data.embodiment_tags import EmbodimentTag
     from gr00t.policy.gr00t_policy import Gr00tPolicy
@@ -223,20 +478,90 @@ def main() -> None:
     torch.cuda.reset_peak_memory_stats()
     rows = []
     sample_arrays = None
-    for condition in args.conditions:
-        for trajectory_id in args.trajectory_ids:
-            row, arrays = evaluate_trajectory(
-                policy,
-                loader,
+    sample_trajectory = None
+    evaluation_started = time.perf_counter()
+    if args.throughput_batch_size == 1:
+        for condition in args.conditions:
+            for trajectory_id in args.trajectory_ids:
+                row, arrays = evaluate_trajectory(
+                    policy,
+                    loader,
+                    trajectory_id,
+                    condition,
+                    execution_horizon=args.execution_horizon,
+                    steps=args.steps,
+                    seed=args.seed + trajectory_id * 10_000,
+                )
+                row["inference_timing_semantics"] = "serial_request_wall_time"
+                rows.append(row)
+                if sample_arrays is None and condition == "clean":
+                    sample_arrays = arrays
+    else:
+        worker_state = threading.local()
+        modality_configs = deepcopy(policy.get_modality_config())
+
+        def prepare(trajectory_id: int) -> PreparedTrajectory:
+            if not hasattr(worker_state, "loader"):
+                worker_state.loader = LeRobotEpisodeLoader(
+                    args.dataset_path, deepcopy(modality_configs)
+                )
+            return _prepare_trajectory(
+                worker_state.loader,
                 trajectory_id,
-                condition,
+                args.conditions,
+                embodiment_tag=policy.embodiment_tag,
+                language_key=policy.language_key,
                 execution_horizon=args.execution_horizon,
                 steps=args.steps,
                 seed=args.seed + trajectory_id * 10_000,
             )
-            rows.append(row)
-            if sample_arrays is None and condition == "clean":
-                sample_arrays = arrays
+
+        requests_per_trajectory = len(args.conditions) * math.ceil(
+            args.steps / args.execution_horizon
+        )
+        trajectory_group_size = max(
+            1, math.ceil(args.throughput_batch_size / requests_per_trajectory)
+        )
+        prepared_group = []
+        prepared_iterator = bounded_ordered_prefetch(
+            args.trajectory_ids,
+            prepare,
+            workers=args.prefetch_workers,
+            pending_per_worker=args.prefetch_pending_per_worker,
+        )
+        for prepared in prepared_iterator:
+            prepared_group.append(prepared)
+            if len(prepared_group) < trajectory_group_size:
+                continue
+            evaluated = evaluate_prepared_trajectories(
+                policy,
+                loader,
+                prepared_group,
+                args.conditions,
+                batch_size=args.throughput_batch_size,
+                execution_horizon=args.execution_horizon,
+            )
+            for source, row, arrays in evaluated:
+                rows.append(row)
+                if sample_arrays is None and row["condition"] == "clean":
+                    sample_arrays = arrays
+                    sample_trajectory = source.frame
+            prepared_group = []
+        if prepared_group:
+            evaluated = evaluate_prepared_trajectories(
+                policy,
+                loader,
+                prepared_group,
+                args.conditions,
+                batch_size=args.throughput_batch_size,
+                execution_horizon=args.execution_horizon,
+            )
+            for source, row, arrays in evaluated:
+                rows.append(row)
+                if sample_arrays is None and row["condition"] == "clean":
+                    sample_arrays = arrays
+                    sample_trajectory = source.frame
+    evaluation_wall_seconds = time.perf_counter() - evaluation_started
 
     summary = {
         "schema_version": 1,
@@ -247,6 +572,23 @@ def main() -> None:
         "execution_horizon": args.execution_horizon,
         "denoising_steps": args.denoising_steps,
         "seed": args.seed,
+        "execution": {
+            "profile": (
+                "serial_reference"
+                if args.throughput_batch_size == 1
+                else "cpu_prefetch_gpu_batch"
+            ),
+            "throughput_batch_size": args.throughput_batch_size,
+            "prefetch_workers": args.prefetch_workers,
+            "prefetch_pending_per_worker": args.prefetch_pending_per_worker,
+            "wall_seconds": evaluation_wall_seconds,
+            "latency_claim_eligible": args.throughput_batch_size == 1,
+            "batched_timing_semantics": (
+                None
+                if args.throughput_batch_size == 1
+                else "amortized_gpu_batch_wall_time_non_claim"
+            ),
+        },
         "hardware": {
             "platform": platform.platform(),
             "gpu": torch.cuda.get_device_name(0),
@@ -290,11 +632,22 @@ def main() -> None:
         writer.writerows({key: row[key] for key in writer.fieldnames} for row in rows)
     if sample_arrays is not None:
         np.savez_compressed(args.output_dir / "heldout_predictions.npz", **sample_arrays)
-        sample_trajectory = loader[args.trajectory_ids[0]]
-        _write_charts(rows, sample_arrays, sample_trajectory, args.output_dir)
+        if sample_trajectory is None:
+            sample_trajectory = loader[args.trajectory_ids[0]]
+        video_keys = loader.modality_configs["video"].modality_keys
+        if len(video_keys) != 1:
+            raise ValueError(f"evaluation expects exactly one video modality, got {video_keys}")
+        video_key = video_keys[0]
+        _write_charts(
+            rows,
+            sample_arrays,
+            sample_trajectory,
+            args.output_dir,
+            video_key,
+        )
         source_video = (
             args.dataset_path
-            / "videos/chunk-000/observation.images.ego_view"
+            / f"videos/chunk-000/observation.images.{video_key}"
             / f"episode_{args.trajectory_ids[0]:06d}.mp4"
         )
         shutil.copy2(source_video, args.output_dir / "isaaclab_heldout_demonstration.mp4")

@@ -1,0 +1,54 @@
+{
+  "artifacts": [
+    {
+      "artifact_id": "common-seed-0",
+      "manifest_path": "_artifacts/HumanoidArena/release/pre-recovery/manifests/common-seed-0.json",
+      "manifest_sha256": "e258c4933ee1bfd8c5fd748e60e7ce85e5aec5a8efd3de6a68bedb8b8f511789",
+      "receipt_path": "_artifacts/HumanoidArena/release/pre-recovery/receipts/common-seed-0.json"
+    },
+    {
+      "artifact_id": "common-seed-1",
+      "manifest_path": "_artifacts/HumanoidArena/release/pre-recovery/manifests/common-seed-1.json",
+      "manifest_sha256": "b948bec9b5703b4e222f904a3f6c90a99609b475e2a4895236182721a44d0caa",
+      "receipt_path": "_artifacts/HumanoidArena/release/pre-recovery/receipts/common-seed-1.json"
+    },
+    {
+      "artifact_id": "common-seed-2",
+      "manifest_path": "_artifacts/HumanoidArena/release/pre-recovery/manifests/common-seed-2.json",
+      "manifest_sha256": "d23ab116f10c2b08b238d5d2bde8ea2dc28b653ce5a4d916866d0d72187ad371",
+      "receipt_path": "_artifacts/HumanoidArena/release/pre-recovery/receipts/common-seed-2.json"
+    },
+    {
+      "artifact_id": "subtask_rt-seed-0",
+      "manifest_path": "_artifacts/HumanoidArena/release/pre-recovery/manifests/subtask_rt-seed-0.json",
+      "manifest_sha256": "37745d805cc657f85d1ce208db08e926c2b33fc3ff94f7cdad8937165d44f2af",
+      "receipt_path": "_artifacts/HumanoidArena/release/pre-recovery/receipts/subtask_rt-seed-0.json"
+    },
+    {
+      "artifact_id": "subtask_rt-seed-1",
+      "manifest_path": "_artifacts/HumanoidArena/release/pre-recovery/manifests/subtask_rt-seed-1.json",
+      "manifest_sha256": "ad01bbbcbea1a2708098dbc2cccadf7fb793e267c17040cccdd750ccc49bc2f5",
+      "receipt_path": "_artifacts/HumanoidArena/release/pre-recovery/receipts/subtask_rt-seed-1.json"
+    },
+    {
+      "artifact_id": "subtask_rt-seed-2",
+      "manifest_path": "_artifacts/HumanoidArena/release/pre-recovery/manifests/subtask_rt-seed-2.json",
+      "manifest_sha256": "da9a9c32d0ea5de3f3c60dc23b17a45b38bc7fb83ca7120d4787fce74088f06c",
+      "receipt_path": "_artifacts/HumanoidArena/release/pre-recovery/receipts/subtask_rt-seed-2.json"
+    },
+    {
+      "artifact_id": "subtask-rt-dataset",
+      "manifest_path": "_artifacts/HumanoidArena/release/pre-recovery/manifests/subtask-rt-dataset.json",
+      "manifest_sha256": "fda7a818363c42a2299e9799412bc1ae44f1ff2eb2e0c6afdc2c3f287c274882",
+      "receipt_path": "_artifacts/HumanoidArena/release/pre-recovery/receipts/subtask-rt-dataset.json"
+    }
+  ],
+  "families": [
+    "common",
+    "subtask_rt"
+  ],
+  "release_plan_sha256": "6caa1eff1dd2523a1f083509d0faf9618f575c2b675b06418388e8858e5493b6",
+  "schema_version": 1,
+  "source_revision": "7cdfac38c3c0f8007cc28a361c04006195dbee78",
+  "status": "partial_staged_waiting_for_immutable_publication"
+}

@@ -1,63 +1,100 @@
-# HRVLA baseline reproduction
+# HRVLA recovery benchmark
 
-This branch is the reproducible baseline substrate for a Unitree G1 humanoid
-driven by NVIDIA GR00T N1.7 and the official GEAR-SONIC whole-body controller.
-It does not contain a replacement controller or a locally invented robot
-interface.
+This repository defines the evaluation contract for comparing HRVLA with official
+baselines and integrates it with the ST/STR implementation. It intentionally
+contains no pre-filled paper results and makes no claim that unlike tasks are
+directly comparable.
 
-The upstream sources are locked in [`config/upstreams.lock.json`](config/upstreams.lock.json):
+The live pre-`ours` completion checklist, pipeline state, and exact exit gates are
+maintained in [`BENCHMARK_STATUS.md`](BENCHMARK_STATUS.md). Read it before starting,
+stopping, or interpreting any benchmark job.
 
-- NVIDIA Isaac-GR00T N1.7 for the VLA policy server;
-- NVIDIA GR00T-WholeBodyControl / GEAR-SONIC for the 64-dimensional latent
-  action interface and 50 Hz whole-body control;
-- Unitree `unitree_sim_isaaclab` for the G1 simulation/DDS reference;
-- NVIDIA Isaac Lab 2.3.2 on Isaac Sim 5.1 for the simulation runtime.
+The benchmark separates three questions:
 
-Two evaluation profiles are intentionally distinct:
+1. `nominal`: does adding recovery preserve normal task execution?
+2. `failure_start`: can a method recover when every method starts from the same
+   post-failure simulator snapshot?
+3. `online_failure`: can the complete system detect, diagnose, recover, and
+   continue after the same event-triggered failure injection?
 
-- zero-shot base-model audit: the N1.7 release source, a baked-in pretrain
-  embodiment, and no fine-tuning;
-- Unitree G1 + SONIC integration: current locked integration source and the
-  `UNITREE_G1_SONIC` post-training embodiment.
+Recovery difficulty follows LIBERO-RECOVER's L1-L4 taxonomy. Humanoid-specific
+body/tracker failures are an orthogonal H1-H3 axis, not invented L5-L7 levels.
 
-The base checkpoint is not a zero-shot SONIC checkpoint. See
-[`docs/ZERO_SHOT_AUDIT.md`](docs/ZERO_SHOT_AUDIT.md) for the first measured
-zero-shot run and its limitations.
-
-The VLA and simulator/controller dependencies require different Python
-versions. Keep them in separate environments:
-
-- `hrvla-sim`: Python 3.11, Isaac Sim 5.1, Isaac Lab 2.3.2, GEAR-SONIC;
-- `hrvla-vla`: Python 3.12, Isaac-GR00T N1.7.
-
-## Start here
+## Validate the specification
 
 ```bash
-python3 scripts/verify_lock.py
-python3 scripts/bootstrap_upstreams.py
+python3 -m json.tool benchmark/spec/episode.schema.json >/dev/null
+python3 -m json.tool benchmark/spec/plan.schema.json >/dev/null
+python3 -m json.tool benchmark/spec/run-manifest.schema.json >/dev/null
+python3 -m json.tool benchmark/suites/hrvla_recovery_v0.json >/dev/null
+python3 -m json.tool benchmark/baselines/registry.json >/dev/null
+PYTHONPATH=src python3 -m unittest discover -s tests -v
 ```
 
-The bootstrap command clones only source code and checks out immutable commits.
-It deliberately does not install packages or download model/data artifacts.
-Follow [`docs/BASELINE.md`](docs/BASELINE.md) for the official install, artifact,
-preflight, and smoke-test commands.
-
-The tested SONIC-only simulator baseline is documented in
-[`docs/SONIC_BASELINE.md`](docs/SONIC_BASELINE.md). After its isolated runtime
-and locked artifacts are present, run either:
+Generate a deterministic paired plan and provenance manifest (draft scenarios
+are excluded unless explicitly requested):
 
 ```bash
-python3 scripts/run_sonic_release.py metrics
-python3 scripts/run_sonic_release.py viewer
+python3 scripts/benchmark.py plan benchmark/suites/hrvla_recovery_v0.json \
+  --method gear_sonic_original_release --method hrvla \
+  --output outputs/plan.json --manifest outputs/run-manifest.json
 ```
 
-## Verified Isaac Sim demo
+Before any claim-bearing run, require the suite admission audit to exit zero:
 
-The official SONIC checkpoint was validated on an RTX 5070 Ti with Isaac Sim
-5.1.0, Isaac Lab 2.3.2, and NVIDIA driver 580.173.02. The G1 completed both
-bundled walk-forward motions (`4,004` frames) without termination. See the
-[machine-readable result](results/sonic-default-sample.json) and the full
-[reproduction notes](docs/SONIC_BASELINE.md).
+```bash
+python3 scripts/benchmark.py claim-readiness \
+  benchmark/suites/hrvla_recovery_v0.json \
+  --output outputs/claim-readiness.json
+```
+
+The current v0 suite intentionally fails this gate while simulator snapshots,
+predicate tests, injector revisions, and 20/20 oracle trials are pending. A draft
+run may still be used for harness development, but cannot become publication
+evidence.
+
+## Score episode records
+
+```bash
+python3 scripts/benchmark.py score path/to/episodes.jsonl \
+  --output outputs/summary.json
+```
+
+After every method has run the same frozen plan, verify exact paired coverage and
+the shared controller/simulator contract before scoring:
+
+```bash
+python3 scripts/benchmark.py audit-evidence outputs/plan.json \
+  outputs/baseline.jsonl outputs/candidate.jsonl \
+  --output outputs/evidence-audit.json
+```
+
+See [`docs/BENCHMARK.md`](docs/BENCHMARK.md) for fairness rules, metrics, and the
+boundary between direct reruns and paper-reported reference results.
+
+Large checkpoints and prepared dataset splits are mapped to their exact local and
+Hugging Face locations in [`docs/ARTIFACTS.md`](docs/ARTIFACTS.md). The checked-in
+artifact lock provides file size and SHA-256 verification for the selected ST-RT
+and STR-RT step-300 checkpoints and both deterministic dataset splits.
+
+The runnable baseline matrix is frozen in
+[`benchmark/methods/registry.json`](benchmark/methods/registry.json). It preserves
+the project taxonomy (`ST`, `STR`, and `RT`) and predeclares the four controlled
+comparisons used to isolate planning, recovery, and retraining contributions.
+
+## Validated SONIC backend
+
+This branch includes the locked GEAR-SONIC reproduction used as the benchmark
+execution backend. On the RTX 5070 Ti workstation, Isaac Sim 5.1.0 and Isaac
+Lab 2.3.2 completed both bundled walk-forward motions (`4,004` frames) without
+termination. The [machine-readable result](results/sonic-default-sample.json),
+[runtime instructions](docs/SONIC_BASELINE.md), and source/artifact lock files
+are part of the benchmark provenance.
+
+The executed controller-track artifacts are committed under
+[`results/benchmark/`](results/benchmark/): nominal SONIC motion tracking and an
+audited one-shot H1 lateral-push diagnostic. Raw simulator metrics are retained
+beside their scored reports so every recorded SHA-256 can be checked locally.
 
 ![GEAR-SONIC controlling Unitree G1 in Isaac Sim 5.1](docs/assets/sonic-isaac-sim-5.1.png)
 
@@ -156,3 +193,18 @@ also exposes approach/grasp regressions relative to the base.
 See [`docs/RECOVERY_VLA_RETRAINING.md`](docs/RECOVERY_VLA_RETRAINING.md) for the
 three-model statistics, hardware telemetry, failed probe, plots, visual evidence,
 and end-to-end claim boundary.
+
+## Multi-seed paper replication
+
+The predeclared ST-RT and STR-RT step-300 runs were repeated with training seeds
+0, 1, and 2 and evaluated on all 42 held-out trajectories under five observation
+conditions. STR-RT improves over its seed-matched ST-RT model for every seed and
+condition; clean MSE is `0.100809 ± 0.000120` for ST-RT and
+`0.100233 ± 0.000024` for STR-RT, a mean reduction of `0.571%` with a
+hierarchical-bootstrap 95% CI of `[0.000429, 0.000721]` in absolute MSE.
+
+See [`docs/PAPER_RETRAINING_REPLICATION.md`](docs/PAPER_RETRAINING_REPLICATION.md)
+for the protocol, full condition table, raw retained metrics, reproducibility
+commands, and the remaining closed-loop claim boundary.
+
+![Three-seed ST-RT versus STR-RT comparison](results/retraining/paper-seeds/multiseed_comparison.png)
