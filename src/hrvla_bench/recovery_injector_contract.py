@@ -86,7 +86,11 @@ BOUNDARY_DRIVER_BINDINGS = {
     "box-drop-and-body-push": "stable-object-lift-fixture",
     "door-handle-pose-shift": "door-to-wrist-fixture",
     "doorway-obstruction": "open-door-joint-fixture",
+    "tracker-underexecution": "object-transport-fixture",
     "support-state-push": "object-speed-fixture",
+    "sofa-approach-slip": "seat-approach-fixture",
+    "contact-recoil": "strike-shell-fixture",
+    "new-blocking-obstacle": "root-displacement-fixture",
 }
 
 
@@ -317,6 +321,31 @@ def _validate_boundary_driver(driver_id: str, parameters: Any, label: str) -> No
         if math.sqrt(sum(value * value for value in linear)) < 0.25:
             raise ValueError(f"{label}.linear_velocity_mps: norm must be at least 0.25")
         _vector(p["angular_velocity_rps"], 3, f"{label}.angular_velocity_rps", low=-2.0, high=2.0)
+    elif driver_id == "object-transport-fixture":
+        p = _exact_keys(parameters, {"asset_name", "translation_world_m"}, label)
+        _name(p["asset_name"], f"{label}.asset_name")
+        translation = _vector(
+            p["translation_world_m"], 3, f"{label}.translation_world_m", low=-2.0, high=2.0
+        )
+        if math.sqrt(sum(value * value for value in translation)) < 0.2 or translation[2] < 0.05:
+            raise ValueError(f"{label}.translation_world_m: must prove transport displacement and lift")
+    elif driver_id == "seat-approach-fixture":
+        p = _exact_keys(parameters, {"target_clearance_m"}, label)
+        _number(p["target_clearance_m"], f"{label}.target_clearance_m", low=0.1, high=0.74)
+    elif driver_id == "strike-shell-fixture":
+        p = _exact_keys(parameters, {"clearance_schedule_m"}, label)
+        values = _vector(
+            p["clearance_schedule_m"], 3, f"{label}.clearance_schedule_m", low=0.08, high=0.2
+        )
+        if not all(later < earlier for earlier, later in zip(values, values[1:])):
+            raise ValueError(f"{label}.clearance_schedule_m: must be strictly decreasing")
+    elif driver_id == "root-displacement-fixture":
+        p = _exact_keys(parameters, {"translation_world_m"}, label)
+        translation = _vector(
+            p["translation_world_m"], 3, f"{label}.translation_world_m", low=-3.0, high=3.0
+        )
+        if math.hypot(translation[0], translation[1]) < 1.0 or translation[2] != 0.0:
+            raise ValueError(f"{label}.translation_world_m: must prove horizontal root displacement")
     else:
         raise ValueError(f"{label}: unsupported boundary driver {driver_id!r}")
 
@@ -330,6 +359,9 @@ def validate_recovery_injector_contract(suite: dict[str, Any]) -> list[dict[str,
         suite.get("admission_capture"),
         {
             "snapshot_seed",
+            "capture_control_rate_hz",
+            "minimum_capture_steps",
+            "post_evidence_tail_steps",
             "failure_snapshot_policy",
             "boundary_reachability_protocol",
             "boundary_driver_selection_rule",
@@ -339,6 +371,12 @@ def validate_recovery_injector_contract(suite: dict[str, Any]) -> list[dict[str,
     )
     if type(capture["snapshot_seed"]) is not int or capture["snapshot_seed"] < 0:
         raise ValueError("admission_capture.snapshot_seed must be a non-negative integer")
+    if capture["capture_control_rate_hz"] != 50:
+        raise ValueError("admission_capture.capture_control_rate_hz must be 50")
+    if capture["minimum_capture_steps"] != 20:
+        raise ValueError("admission_capture.minimum_capture_steps must be 20")
+    if capture["post_evidence_tail_steps"] != 10:
+        raise ValueError("admission_capture.post_evidence_tail_steps must be 10")
     _name(capture["failure_snapshot_policy"], "admission_capture.failure_snapshot_policy")
     if capture["boundary_reachability_protocol"] != "pre_registered_deterministic_driver_v1":
         raise ValueError("admission_capture boundary reachability protocol differs")
@@ -390,17 +428,14 @@ def validate_recovery_injector_contract(suite: dict[str, Any]) -> list[dict[str,
         driver = scenario.get("boundary_driver")
         expected_driver = BOUNDARY_DRIVER_BINDINGS.get(scenario_id)
         if expected_driver is None:
-            if driver is not None:
-                raise ValueError(f"{scenario_id}: natural boundary scenario must not define a driver")
-            driver_sha256 = None
-        else:
-            driver = _exact_keys(driver, {"id", "parameters"}, f"{scenario_id}.boundary_driver")
-            if driver["id"] != expected_driver:
-                raise ValueError(f"{scenario_id}: boundary driver differs from the locked binding")
-            _validate_boundary_driver(
-                expected_driver, driver["parameters"], f"{scenario_id}.boundary_driver"
-            )
-            driver_sha256 = canonical_sha256(driver)
+            raise ValueError(f"{scenario_id}: every runtime-admission scenario requires a driver")
+        driver = _exact_keys(driver, {"id", "parameters"}, f"{scenario_id}.boundary_driver")
+        if driver["id"] != expected_driver:
+            raise ValueError(f"{scenario_id}: boundary driver differs from the locked binding")
+        _validate_boundary_driver(
+            expected_driver, driver["parameters"], f"{scenario_id}.boundary_driver"
+        )
+        driver_sha256 = canonical_sha256(driver)
         rows.append(
             {
                 "task_id": task_id,

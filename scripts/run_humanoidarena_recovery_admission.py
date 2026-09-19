@@ -12,6 +12,7 @@ import argparse
 from datetime import datetime, timezone
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import signal
@@ -66,6 +67,7 @@ def _task_rows(suite: dict[str, Any], scenario_filter: set[str]) -> list[dict[st
                         "task_key": task_key,
                         "scenario_id": scenario["id"],
                         "protocol": scenario["protocol"],
+                        "scenario": scenario,
                     }
                 )
     found = {row["scenario_id"] for row in rows}
@@ -80,6 +82,7 @@ def _episode_job(
     output_dir: Path,
     model_path: Path,
     episode_seed: int,
+    max_steps: int,
 ) -> dict[str, Any]:
     spec = FAST.TASKS[task_key]
     return {
@@ -93,10 +96,24 @@ def _episode_job(
         "recording_save_dir": str(output_dir / "recordings"),
         "model_label": FAST._model_label(model_path),
         "eval_model_path": str(model_path),
-        "max_steps": int(spec["max_steps"]),
+        "max_steps": int(max_steps),
         "video_fps": 30,
         "post_termination_record_steps": 10,
     }
+
+
+def _capture_max_steps(suite: dict[str, Any], scenario: dict[str, Any]) -> int:
+    capture = suite["admission_capture"]
+    rate = int(capture["capture_control_rate_hz"])
+    detector = scenario["event_detector"]
+    detector_samples = 1
+    if detector["id"] == "stable-object-lift":
+        detector_samples = math.ceil(float(detector["parameters"]["stable_duration_s"]) * rate)
+    elif detector["id"] == "strike-approach-shell":
+        detector_samples = int(detector["parameters"]["decreasing_samples"])
+    settle_samples = math.ceil(float(scenario.get("failure_snapshot_settle_s", 0.0)) * rate)
+    required = detector_samples + settle_samples + int(capture["post_evidence_tail_steps"])
+    return max(int(capture["minimum_capture_steps"]), required)
 
 
 def build_recovery_command(
@@ -351,7 +368,11 @@ def main() -> int:
                             {
                                 "episodes": [
                                     _episode_job(
-                                        task_key, output_dir, model_path, episode_seed
+                                        task_key,
+                                        output_dir,
+                                        model_path,
+                                        episode_seed,
+                                        _capture_max_steps(suite, row["scenario"]),
                                     )
                                 ]
                             },

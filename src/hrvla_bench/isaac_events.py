@@ -176,7 +176,7 @@ def apply_root_local_lateral_velocity_once(
             "episode_steps": _episode_steps(env, pending, control_step),
             "lateral_mps": float(lateral_mps),
             "lateral_direction_robot": lateral_direction_robot,
-            "world_velocity_delta": world.detach().cpu().tolist(),
+            "world_velocity_delta": world[0].detach().cpu().tolist(),
             "velocity_before": before.detach().cpu().tolist(),
             "velocity_after": after.detach().cpu().tolist(),
         },

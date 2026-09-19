@@ -29,6 +29,20 @@ def test_task_rows_cover_all_nine_locked_scenarios() -> None:
         "sit_sofa",
         "vision_navi",
     }
+    assert all(row["scenario"].get("boundary_driver") for row in rows)
+
+
+def test_capture_horizon_is_bounded_by_evidence_not_task_rollout() -> None:
+    rows = RUNNER._task_rows(SUITE, set())
+    steps = {
+        row["scenario_id"]: RUNNER._capture_max_steps(SUITE, row["scenario"])
+        for row in rows
+    }
+    assert steps["box-drop-and-body-push"] == 60
+    assert steps["sofa-approach-slip"] == 36
+    assert steps["doorway-obstruction"] == 20
+    assert steps["contact-recoil"] == 20
+    assert max(steps.values()) == 60
 
 
 def test_failure_start_command_captures_both_snapshots(tmp_path: Path) -> None:

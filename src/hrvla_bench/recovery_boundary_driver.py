@@ -88,6 +88,11 @@ class DeterministicBoundaryDriver:
         self.active = self.spec is not None
         self._target_root_state = None
         self._target_asset_name: str | None = None
+        self._target_root_schedule: list[Any] = []
+        self._target_root_schedule_index = 0
+        self._target_joint_asset_name: str | None = None
+        self._target_joint_positions = None
+        self._target_joint_velocities = None
         self._action_samples = 0
 
     @property
@@ -206,6 +211,9 @@ class DeterministicBoundaryDriver:
             positions = door.data.joint_pos[env_ids].clone()
             velocities = torch.zeros_like(door.data.joint_vel[env_ids])
             positions[:, matches[0]] = math.radians(float(parameters["leaf_angle_deg"]))
+            self._target_joint_asset_name = door_name
+            self._target_joint_positions = positions
+            self._target_joint_velocities = velocities
             door.write_joint_state_to_sim(positions, velocities, env_ids=env_ids)
             latch_set = getattr(env.cfg, "_open_door_latch_unlocked_env_ids", None)
             if not isinstance(latch_set, set):
@@ -213,7 +221,7 @@ class DeterministicBoundaryDriver:
             latch_set.add(self.env_id)
             _flush(env)
             details = {
-                "mode": "one_shot_scene_state",
+                "mode": "held_joint_state_until_detector_edge",
                 "door_asset_name": door_name,
                 "leaf_joint_name": str(parameters["leaf_joint_name"]),
                 "leaf_angle_deg": float(parameters["leaf_angle_deg"]),
@@ -238,6 +246,96 @@ class DeterministicBoundaryDriver:
                 "asset_name": asset_name,
                 "target_root_velocity_w": velocity[0].detach().cpu().tolist(),
             }
+        elif driver_id in {"object-transport-fixture", "root-displacement-fixture"}:
+            asset_name = str(parameters.get("asset_name", "robot"))
+            asset = env.scene[asset_name]
+            state = asset.data.root_state_w[self.env_id : self.env_id + 1].clone()
+            translation = torch.as_tensor(
+                parameters["translation_world_m"], dtype=state.dtype, device=state.device
+            ).reshape(1, 3)
+            state[:, :3] += translation
+            state[:, 7:13] = 0.0
+            self._target_asset_name = asset_name
+            self._target_root_state = state
+            self._apply_target_root_state(env)
+            details = {
+                "mode": "held_scene_state_until_detector_edge",
+                "asset_name": asset_name,
+                "translation_world_m": translation[0].detach().cpu().tolist(),
+                "target_root_state_w": state[0].detach().cpu().tolist(),
+            }
+        elif driver_id == "seat-approach-fixture":
+            rewards = __import__(
+                "tasks.g1_tasks.move_sit_sofa_g1_29dof_dex3_wholebody.mdp.rewards",
+                fromlist=["rewards"],
+            )
+            boxes = rewards._get_sofa_seat_boxes_world(env)  # noqa: SLF001
+            box = boxes[self.env_id]
+            if box is None:
+                raise ValueError("seat-approach fixture cannot resolve the live seat AABB")
+            body_positions = rewards._get_body_positions_w(env)  # noqa: SLF001
+            body_ids = rewards._get_sit_body_indices(env)  # noqa: SLF001
+            proxy = body_positions[self.env_id, int(body_ids[0]), :2]
+            clearance = float(parameters["target_clearance_m"])
+            target_xy = torch.as_tensor(
+                [(float(box[0]) + float(box[1])) / 2.0, float(box[3]) + clearance],
+                dtype=proxy.dtype,
+                device=proxy.device,
+            )
+            robot = env.scene["robot"]
+            state = robot.data.root_state_w[self.env_id : self.env_id + 1].clone()
+            delta_xy = target_xy - proxy
+            state[:, :2] += delta_xy.reshape(1, 2)
+            state[:, 7:13] = 0.0
+            self._target_asset_name = "robot"
+            self._target_root_state = state
+            self._apply_target_root_state(env)
+            details = {
+                "mode": "held_scene_state_until_detector_edge",
+                "asset_name": "robot",
+                "target_clearance_m": clearance,
+                "root_translation_xy_m": delta_xy.detach().cpu().tolist(),
+            }
+        elif driver_id == "strike-shell-fixture":
+            rewards = __import__(
+                "tasks.g1_tasks.move_boxing_bag_g1_29dof_dex3_wholebody.mdp.rewards",
+                fromlist=["rewards"],
+            )
+            body_positions = rewards._get_body_positions_w(env)  # noqa: SLF001
+            body_ids = rewards._get_punch_body_indices(env)  # noqa: SLF001
+            punches = body_positions[self.env_id, list(body_ids), :3]
+            target = rewards._get_boxing_target_positions_world(env)[self.env_id]  # noqa: SLF001
+            threshold = rewards._get_boxing_target_hit_distance_thresholds(env)[  # noqa: SLF001
+                self.env_id
+            ]
+            distances = torch.linalg.vector_norm(punches - target.reshape(1, 3), dim=-1)
+            punch = punches[int(distances.argmin().detach().cpu().item())]
+            direction = punch - target
+            norm = torch.linalg.vector_norm(direction)
+            if float(norm.detach().cpu().item()) <= 1e-8:
+                direction = torch.tensor(
+                    [1.0, 0.0, 0.0], dtype=punch.dtype, device=punch.device
+                )
+                norm = torch.linalg.vector_norm(direction)
+            unit = direction / norm
+            robot = env.scene["robot"]
+            base_state = robot.data.root_state_w[self.env_id : self.env_id + 1].clone()
+            for clearance in parameters["clearance_schedule_m"]:
+                desired = target + unit * (float(threshold) + float(clearance))
+                state = base_state.clone()
+                state[:, :3] += (desired - punch).reshape(1, 3)
+                state[:, 7:13] = 0.0
+                self._target_root_schedule.append(state)
+            self._target_asset_name = "robot"
+            self._target_root_state = self._target_root_schedule[0]
+            self._apply_target_root_state(env)
+            details = {
+                "mode": "scheduled_scene_state_until_detector_edge",
+                "asset_name": "robot",
+                "clearance_schedule_m": [
+                    float(value) for value in parameters["clearance_schedule_m"]
+                ],
+            }
         else:
             raise ValueError(f"unsupported boundary driver: {driver_id}")
         self._record_prepared(details)
@@ -252,9 +350,35 @@ class DeterministicBoundaryDriver:
         _write_root_state(asset, self._target_root_state, env_ids)
         _flush(env)
 
+    def _apply_target_joint_state(self, env: Any) -> None:
+        if (
+            self._target_joint_asset_name is None
+            or self._target_joint_positions is None
+            or self._target_joint_velocities is None
+        ):
+            return
+        import torch
+
+        asset = env.scene[self._target_joint_asset_name]
+        env_ids = torch.tensor([self.env_id], dtype=torch.long, device=asset.device)
+        asset.write_joint_state_to_sim(
+            self._target_joint_positions,
+            self._target_joint_velocities,
+            env_ids=env_ids,
+        )
+        _flush(env)
+
     def before_observe(self, env: Any) -> None:
         if self.active:
+            if self._target_root_schedule:
+                index = min(
+                    self._target_root_schedule_index,
+                    len(self._target_root_schedule) - 1,
+                )
+                self._target_root_state = self._target_root_schedule[index]
+                self._target_root_schedule_index += 1
             self._apply_target_root_state(env)
+            self._apply_target_joint_state(env)
 
     def transform_semantic_action(self, action: Any) -> Any:
         if not self.active or self.driver_id != "semantic-hand-close-pulse":
