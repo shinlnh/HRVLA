@@ -25,6 +25,7 @@ from hrvla_bench.pi05_hybrid_backend import (
     normalize_backend,
 )
 from hrvla_bench.pi05_cuda_int8_backend import configure_cuda_int8_weight_only
+from hrvla_bench.pi05_task_routing import locked_task_route
 
 ROOT = Path(__file__).resolve().parents[1]
 HUMANOIDARENA_ROOT = ROOT / "_vendor" / "HumanoidArena"
@@ -37,6 +38,21 @@ if spec is None or spec.loader is None:
     raise RuntimeError(f"Could not load upstream server: {UPSTREAM_SERVER}")
 upstream = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(upstream)
+
+
+_upstream_resolve_task_instruction = upstream.LeRobotServerState.resolve_task_instruction
+
+
+def _resolve_task_instruction_with_locked_route(self, task_value):
+    route = locked_task_route(task_value, upstream.TASK_LANGUAGE_INSTRUCTIONS)
+    if route is not None:
+        return route
+    return _upstream_resolve_task_instruction(self, task_value)
+
+
+upstream.LeRobotServerState.resolve_task_instruction = (
+    _resolve_task_instruction_with_locked_route
+)
 
 
 def _configure_cpu_runtime() -> None:
