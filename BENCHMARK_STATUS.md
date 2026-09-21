@@ -4,7 +4,35 @@ This file is the persistent source of truth for finishing the pre-`ours`
 benchmark. Update it whenever a pipeline stage starts, stops, fails, or reaches
 a frozen evidence revision. Do not infer paper readiness from branch names.
 
-Last audited: **2026-09-17 (Asia/Bangkok)**.
+Last audited: **2026-09-21 (Asia/Bangkok)**.
+
+## Latest machine audit — 2026-09-21
+
+The separate CUDA INT8 external run completed 84/84 cells and 1,680/1,680
+atomic episodes. Structural checks found 1,680 unique identities, 168 present
+videos, zero invalid JSONs, and zero infrastructure-failure outcomes. The
+released HTTP server failed to canonicalize the exact PickPlaceBox Gym ID;
+its 240 rows used the literal Gym ID as the language prompt and are retained
+as **invalid-route diagnostic evidence**, not a valid PI0.5 task baseline.
+Six other task routes match their published task instructions. A same-seed,
+same-model, same-object-seed Isaac Sim pilot with the corrected route succeeded
+at step 557, where the original row timed out at step 1,450. Its video is
+retained under `_artifacts/HumanoidArena/backend-pilots/`.
+
+The correction is isolated in the wrapper, without editing the locked vendor
+checkout. The affected 240 PickPlaceBox episodes must run in a new output root
+and be joined only by a provenance-explicit amended report. No old row will be
+overwritten or rerolled for unfavorable outcome. The older 356 CPU rows match
+356 GPU rows in seed/model/task/horizon: 37 CPU-only and 42 INT8-only successes.
+This post-hoc, task-limited sensitivity comparison cannot prove global
+CPU–INT8 equivalence. The rest of this file records earlier history and must
+not be read as a newer live counter.
+
+Recovery capture already has 9/9 validated runtime traces, 7/7 initial
+snapshots, and 3/3 failure-start snapshots in the local manifest. Oracle
+admission remains 0/9 scenarios and 0/180 accepted trials. Existing capture
+evidence is preserved; any necessary backend/revision correction must be
+recorded as a new attempt, not rewritten.
 
 ## Current state
 
@@ -13,8 +41,8 @@ Last audited: **2026-09-17 (Asia/Bangkok)**.
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
 | VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena common adaptation: 3/3 seeds trained, global step 300 selected, hidden evaluation complete at 700 rows per seed; HumanoidArena 40-D ST-RT/STR-RT: 3/6 seeds trained, selected, and published | Materialize the admitted recovery dataset, train/select/publish 3 STR-RT checkpoints, then measure closed-loop task and recovery success; validation MSE is not SR/RSR |
-| External HumanoidArena | Operator-paused at 17/84 evidence-complete seed-cells (15 finalized plus two complete cells inside the interrupted batch); 356/1680 valid episode JSONs at tracked checkpoint | Decide the external runtime path, then resume the locked PI0.5+SONIC matrix without mixing execution backends; treat OpenDoor separately until its upstream contract is fixed |
-| Scenario admission | 0/9 scenarios | Immutable snapshot/injector/predicate evidence and independent oracle 20/20 per scenario |
+| External HumanoidArena | CUDA INT8 raw run 84/84 cells and 1,680/1,680 episodes; 240 `pp_box` rows are invalid-route diagnostics | Corrected PickPlaceBox rerun, provenance-explicit amended audit, CPU–INT8 sensitivity; OpenDoor remains separately diagnostic |
+| Scenario admission | 9/9 runtime traces, 7/7 initial snapshots, 3/3 failure snapshots; 0/9 oracle-admitted scenarios | Validate capture provenance and independent oracle 20/20 per scenario |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
 Recovery admission remains 0/9. Static provenance now resolves and hashes all
