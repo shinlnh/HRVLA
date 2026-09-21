@@ -20,16 +20,25 @@ at step 557, where the original row timed out at step 1,450. Its video is
 retained under `_artifacts/HumanoidArena/backend-pilots/`.
 
 The correction is isolated in the wrapper, without editing the locked vendor
-checkout. The affected 240 PickPlaceBox episodes must run in a new output root
-and be joined only by a provenance-explicit amended report. No old row will be
-overwritten or rerolled for unfavorable outcome. The older 356 CPU rows match
+checkout. The affected 240 PickPlaceBox episodes completed in a separate output
+root: **12/12 cells, 240/240 episodes, 145 successes**. The fail-closed amended
+compiler validated the locked model/source/simulator/backend, all episode
+identities and horizons, 168 video files, original evidence hashes, and all
+corrected prompt requests. The provenance-explicit result is
+`results/benchmark/external/pi05_cuda_int8_v1_amended_summary.json`, visualized
+by `results/benchmark/external/pi05_cuda_int8_v1_amended_summary.png`. It selects
+the original six unaffected tasks plus the corrected PickPlaceBox run:
+**726/1,680 successes (43.21%)** overall; **638/1,440 (44.31%)** for the six-task
+primary aggregate excluding diagnostic OpenDoor. The 240 invalid-prompt rows
+remain untouched and excluded. No full external rerun is required if the
+evidence hashes remain unchanged. The older 356 CPU rows match
 356 GPU rows in seed/model/task/horizon: 37 CPU-only and 42 INT8-only successes.
 This post-hoc, task-limited sensitivity comparison cannot prove global
 CPU–INT8 equivalence. The rest of this file records earlier history and must
 not be read as a newer live counter.
 
-The corrected 240-episode task rerun started on 2026-09-21 as PID `3194009`
-using main commit `654c48d`. Its immutable launch metadata is in
+The corrected 240-episode task rerun finished on 2026-09-21; it started as PID
+`3194009` using main commit `654c48d`. Its immutable launch metadata is in
 `_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-ppbox-route-corrected-v1/launch.json`.
 The pilot and first live request both logged the exact `HOI_pp_box` prompt.
 
@@ -49,7 +58,7 @@ Existing capture evidence is preserved; the new attempt uses a separate root.
 | Planner component | 5/5 algorithm variants, symbolic/Cosmos evaluation | Matched closed-loop rollout of the registered methods |
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
 | VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena common adaptation: 3/3 seeds trained, global step 300 selected, hidden evaluation complete at 700 rows per seed; HumanoidArena 40-D ST-RT/STR-RT: 3/6 seeds trained, selected, and published | Materialize the admitted recovery dataset, train/select/publish 3 STR-RT checkpoints, then measure closed-loop task and recovery success; validation MSE is not SR/RSR |
-| External HumanoidArena | CUDA INT8 raw run 84/84 cells and 1,680/1,680 episodes; 240 `pp_box` rows are invalid-route diagnostics | Corrected PickPlaceBox rerun, provenance-explicit amended audit, CPU–INT8 sensitivity; OpenDoor remains separately diagnostic |
+| External HumanoidArena | Amended CUDA INT8 matrix 84/84 cells and 1,680/1,680 episodes, including corrected `pp_box` 240/240; 168 videos and provenance passed | Broader paired CPU–INT8 sensitivity; OpenDoor remains separately diagnostic; INT8/CPU equivalence is not proven |
 | Scenario admission | Historical raw: 9/9 runtime, 7/7 initial, 3/3 failure; corrected capture 0/9; oracle-admitted 0/9 | Re-capture all scenarios under corrected prompt/revision, then independent oracle 20/20 |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 

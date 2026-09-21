@@ -25,9 +25,17 @@ are retained as history; the following GPU audit supersedes their live counters.
 - Rerun only the **240 affected PickPlaceBox episodes** into a new directory,
   retain both raw sets, then compile a provenance-explicit amended matrix.
   Never silently overwrite or pool the invalid-route rows.
-  This corrected rerun started on 2026-09-21 as PID `3194009` under Git
-  revision `654c48d`, with its launch manifest and live progress in
+  The corrected rerun finished **12/12 cells, 240/240 episodes, 145 successes**
+  on 2026-09-21. It started as PID `3194009` under Git revision `654c48d`;
+  the launch manifest and progress are in
   `_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-ppbox-route-corrected-v1/`.
+- The fail-closed amendment compiler passed. It selects the original six
+  unaffected tasks and the corrected PickPlaceBox episodes, verifying all
+  1,680 identities, 168 videos, source hashes, prompt routes, and the locked
+  protocol. The aggregate is **726/1,680 (43.21%)**; the six-task primary
+  aggregate excluding diagnostic OpenDoor is **638/1,440 (44.31%)**. The
+  versioned JSON and plot are in `results/benchmark/external/`. The original
+  wrong-prompt outcomes remain preserved and excluded from these figures.
 - The earlier 356 CPU episodes match 356 GPU episodes in model, task, episode
   seed, object seed, and horizon. Their retrospective paired counts are CPU-only
   37 and GPU-only 42 (net +5/356 for INT8). This is a sensitivity check over
@@ -47,13 +55,13 @@ are retained as history; the following GPU audit supersedes their live counters.
 | Recovery component | 6 variants | 6 | 100% | Symbolic fault-injection evidence only |
 | Legacy 43-D retraining | 6 seeds | 6 | 100% | Context-only open-loop evidence |
 | HumanoidArena 40-D RT training | 3 seeds | 6 | 50% | ST-RT complete; STR-RT waits for recovery data |
-| PI0.5 + SONIC external matrix | 84 raw INT8 cells | 84 | Raw 100%; admission pending | `pp_box` route invalid in original run; corrected 240-episode rerun required |
+| PI0.5 + SONIC external matrix | 84 amended INT8 cells | 84 | Amended 100%; CPU-equivalence unproven | Corrected `pp_box` selected with explicit provenance; broader paired CPU–INT8 sensitivity pending |
 | Recovery scenario admission | 9 historical runtime captures; 0 oracle-admitted scenarios | 9 | Raw capture exists; admission 0% | Two PickPlaceBox prompts were wrong; repeat capture under one corrected revision, then oracle |
 | Internal closed-loop matrix | 0 methods | 5 | 0% | Claim-bearing paired simulation has not started |
 
 The prior 17-cell count was the 2026-09-17 CPU checkpoint, not the current GPU
-run. The GPU driver has finalized 84 cells; one task remains scientifically
-inadmissible until its prompt route is corrected and rerun transparently.
+run. The amended GPU matrix is structurally and prompt-route admitted; this
+does not itself establish INT8 equivalence to the original CPU backend.
 
 ## Complete benchmark checklist
 
@@ -64,7 +72,7 @@ inadmissible until its prompt route is corrected and rerun transparently.
 | 3 | Planner component evidence | All five planner/component variants retained | 5/5 complete | Closed-loop evidence remains separate |
 | 4 | Recovery component evidence | All six mechanism/fault-injection variants retained | 6/6 complete | Validate in the live simulator |
 | 5 | Legacy VLA context | Three ST-RT and three STR-RT legacy 43-D seeds | 6/6 complete | Never present this as the 40-D HumanoidArena rerun |
-| 6 | External PI0.5+SONIC matrix | 7 tasks × 4 modes × 3 seeds × 20 rollouts = 84 cells and 1,680 episodes | GPU INT8 raw 1,680/1,680; 240 `pp_box` invalid-route rows isolated | Rerun only affected task into a new root, compile amended provenance, audit CPU–INT8 sensitivity |
+| 6 | External PI0.5+SONIC matrix | 7 tasks × 4 modes × 3 seeds × 20 rollouts = 84 cells and 1,680 episodes | Amended GPU INT8 1,680/1,680, including corrected `pp_box` 240/240; audit and plot complete | Run broader paired CPU–INT8 sensitivity; do not claim equivalence from existing partial CPU data |
 | 7 | Common GR00T adaptation | Train seeds 0/1/2, select one global step on validation, then open hidden evaluation | 3/3 complete; step 300 selected; hidden evaluation complete | Preserve the selected checkpoints and receipts |
 | 8 | ST label admission | Audit state/action temporal proxies and adjudicate only rejected episodes under the frozen video-consensus gate | Complete | No threshold changes after outcomes |
 | 9 | ST dataset | Materialize and hash-lock 490 train and 70 validation episodes | Complete | Hidden remains locked by protocol |
