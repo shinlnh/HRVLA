@@ -25,14 +25,19 @@ are retained as history; the following GPU audit supersedes their live counters.
 - Rerun only the **240 affected PickPlaceBox episodes** into a new directory,
   retain both raw sets, then compile a provenance-explicit amended matrix.
   Never silently overwrite or pool the invalid-route rows.
+  This corrected rerun started on 2026-09-21 as PID `3194009` under Git
+  revision `654c48d`, with its launch manifest and live progress in
+  `_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-ppbox-route-corrected-v1/`.
 - The earlier 356 CPU episodes match 356 GPU episodes in model, task, episode
   seed, object seed, and horizon. Their retrospective paired counts are CPU-only
   37 and GPU-only 42 (net +5/356 for INT8). This is a sensitivity check over
   only Boxing and part of DoubleDesk, **not** pre-registered equivalence.
-- Recovery runtime capture and snapshot gates are **9/9 injectors, 7/7 initial
-  snapshots, and 3/3 failure snapshots**. Independent 20/20 oracle admission
-  remains **0/9**; step 14 cannot open until the corrected external row and
-  backend/provenance audit are settled.
+- Recovery runtime capture has **9/9 injector traces, 7/7 initial snapshots,
+  and 3/3 failure snapshots** as raw evidence, but the two PickPlaceBox
+  captures used the same wrong prompt. Their prior manifest is historical,
+  **not an admissible recovery suite**. Repeat the nine-scenario capture under
+  one corrected implementation revision, then rebuild its manifest.
+  Independent 20/20 oracle admission remains **0/9**.
 
 ## Executive status
 
@@ -43,7 +48,7 @@ are retained as history; the following GPU audit supersedes their live counters.
 | Legacy 43-D retraining | 6 seeds | 6 | 100% | Context-only open-loop evidence |
 | HumanoidArena 40-D RT training | 3 seeds | 6 | 50% | ST-RT complete; STR-RT waits for recovery data |
 | PI0.5 + SONIC external matrix | 84 raw INT8 cells | 84 | Raw 100%; admission pending | `pp_box` route invalid in original run; corrected 240-episode rerun required |
-| Recovery scenario admission | 9 runtime captures; 0 oracle-admitted scenarios | 9 | Capture complete; admission 0% | 7/7 initial and 3/3 failure snapshots exist; independent 20/20 oracle pending |
+| Recovery scenario admission | 9 historical runtime captures; 0 oracle-admitted scenarios | 9 | Raw capture exists; admission 0% | Two PickPlaceBox prompts were wrong; repeat capture under one corrected revision, then oracle |
 | Internal closed-loop matrix | 0 methods | 5 | 0% | Claim-bearing paired simulation has not started |
 
 The prior 17-cell count was the 2026-09-17 CPU checkpoint, not the current GPU
@@ -66,7 +71,7 @@ inadmissible until its prompt route is corrected and rerun transparently.
 | 10 | ST-RT training | Three seeds at candidate steps 100/200/300 | 3/3 seeds and 9/9 candidate evaluations complete | No retraining required |
 | 11 | ST-RT selection | Select one step without accessing hidden data | Step 300 selected | Validation-only result: common MSE 0.289526, ST-RT MSE 0.288673, paired reduction 0.294% |
 | 12 | ST publication | Publish three selected ST-RT checkpoints and the ST dataset at immutable revisions | 4/4 artifacts complete | Receipts are retained in Git |
-| 13 | Recovery runtime capture | Validate all nine injectors, seven initial snapshots, and three failure-start snapshots in Isaac Sim | 9/9 runtime; 7/7 initial; 3/3 failure snapshots | Audit implementation/backend provenance before reusing; do not discard raw captures |
+| 13 | Recovery runtime capture | Validate all nine injectors, seven initial snapshots, and three failure-start snapshots in Isaac Sim | Historical raw 9/9 runtime, 7/7 initial, 3/3 failure; corrected run 0/9 | Re-capture under one corrected code revision because two PickPlaceBox prompts were wrong; preserve originals |
 | 14 | Independent recovery oracle | Released PI0.5 succeeds 20/20 for each of nine scenarios | 0/9 scenarios and 0/180 trials | Run all trials; retain behavioral failures and never reroll them |
 | 15 | Admitted recovery suite | Capture, source predicate, injector, snapshot, and oracle hashes agree for all scenarios | 0/9 admitted | Compile the immutable admitted suite after gates 13–14 |
 | 16 | Recovery RT dataset | Per scenario: 14 train, 3 validation, 3 hidden episodes | 0/180 episodes | Materialize 126 train, 27 validation, and 27 hidden episodes |
