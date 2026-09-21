@@ -5,7 +5,34 @@ pre-`ours` benchmark. It separates implementation readiness from experimental
 evidence. Percentages from different rows must not be averaged because their
 units differ.
 
-Last audited: **2026-09-17 (Asia/Bangkok)** at Git revision `1fce079`.
+Last audited: **2026-09-21 (Asia/Bangkok)**. The older CPU-resume notes below
+are retained as history; the following GPU audit supersedes their live counters.
+
+## 2026-09-21 GPU matrix audit and amendment
+
+- The separate INT8 GPU matrix finished **84/84 cells and 1,680/1,680 atomic
+  episodes**. All identities are unique, all 168 declared videos exist, and no
+  episode has an infrastructure-failure reason. It has not yet passed the
+  scientific prompt-route gate.
+- The released server did not recognize the exact PickPlaceBox Gym ID. All
+  **240 `pp_box` episodes received the literal Gym ID as the language prompt**
+  instead of the checkpoint's published `HOI_pp_box` instruction. Their 0/240
+  success count is preserved as invalid-route diagnostic evidence, not a valid
+  task-policy baseline. The other six task routes were correct.
+- An exact-seed Isaac Sim pilot with only the route corrected succeeded at
+  step **557**; the original same-seed episode timed out at step **1,450**.
+  The pilot is a causal diagnostic, not a result to substitute into the matrix.
+- Rerun only the **240 affected PickPlaceBox episodes** into a new directory,
+  retain both raw sets, then compile a provenance-explicit amended matrix.
+  Never silently overwrite or pool the invalid-route rows.
+- The earlier 356 CPU episodes match 356 GPU episodes in model, task, episode
+  seed, object seed, and horizon. Their retrospective paired counts are CPU-only
+  37 and GPU-only 42 (net +5/356 for INT8). This is a sensitivity check over
+  only Boxing and part of DoubleDesk, **not** pre-registered equivalence.
+- Recovery runtime capture and snapshot gates are **9/9 injectors, 7/7 initial
+  snapshots, and 3/3 failure snapshots**. Independent 20/20 oracle admission
+  remains **0/9**; step 14 cannot open until the corrected external row and
+  backend/provenance audit are settled.
 
 ## Executive status
 
@@ -15,13 +42,13 @@ Last audited: **2026-09-17 (Asia/Bangkok)** at Git revision `1fce079`.
 | Recovery component | 6 variants | 6 | 100% | Symbolic fault-injection evidence only |
 | Legacy 43-D retraining | 6 seeds | 6 | 100% | Context-only open-loop evidence |
 | HumanoidArena 40-D RT training | 3 seeds | 6 | 50% | ST-RT complete; STR-RT waits for recovery data |
-| PI0.5 + SONIC external matrix | 17 evidence-complete cells | 84 | 20.24% | Partial non-claim until the locked matrix is complete |
-| Recovery scenario admission | 0 scenarios | 9 | 0% | Static contracts pass; runtime/oracle evidence is absent |
+| PI0.5 + SONIC external matrix | 84 raw INT8 cells | 84 | Raw 100%; admission pending | `pp_box` route invalid in original run; corrected 240-episode rerun required |
+| Recovery scenario admission | 9 runtime captures; 0 oracle-admitted scenarios | 9 | Capture complete; admission 0% | 7/7 initial and 3/3 failure snapshots exist; independent 20/20 oracle pending |
 | Internal closed-loop matrix | 0 methods | 5 | 0% | Claim-bearing paired simulation has not started |
 
-The external driver has finalized 15 cells, while two additional cells contain
-20/20 valid atomic episode records. The filesystem therefore has 17
-evidence-complete cells even though the mutable driver counter is 15.
+The prior 17-cell count was the 2026-09-17 CPU checkpoint, not the current GPU
+run. The GPU driver has finalized 84 cells; one task remains scientifically
+inadmissible until its prompt route is corrected and rerun transparently.
 
 ## Complete benchmark checklist
 
@@ -32,14 +59,14 @@ evidence-complete cells even though the mutable driver counter is 15.
 | 3 | Planner component evidence | All five planner/component variants retained | 5/5 complete | Closed-loop evidence remains separate |
 | 4 | Recovery component evidence | All six mechanism/fault-injection variants retained | 6/6 complete | Validate in the live simulator |
 | 5 | Legacy VLA context | Three ST-RT and three STR-RT legacy 43-D seeds | 6/6 complete | Never present this as the 40-D HumanoidArena rerun |
-| 6 | External PI0.5+SONIC matrix | 7 tasks × 4 modes × 3 seeds × 20 rollouts = 84 cells and 1,680 episodes | 356/1,680 episodes; 17/84 evidence-complete cells | Resume the exact CPU PI0.5 backend for the remaining 1,324 episodes; do not pool a different backend |
+| 6 | External PI0.5+SONIC matrix | 7 tasks × 4 modes × 3 seeds × 20 rollouts = 84 cells and 1,680 episodes | GPU INT8 raw 1,680/1,680; 240 `pp_box` invalid-route rows isolated | Rerun only affected task into a new root, compile amended provenance, audit CPU–INT8 sensitivity |
 | 7 | Common GR00T adaptation | Train seeds 0/1/2, select one global step on validation, then open hidden evaluation | 3/3 complete; step 300 selected; hidden evaluation complete | Preserve the selected checkpoints and receipts |
 | 8 | ST label admission | Audit state/action temporal proxies and adjudicate only rejected episodes under the frozen video-consensus gate | Complete | No threshold changes after outcomes |
 | 9 | ST dataset | Materialize and hash-lock 490 train and 70 validation episodes | Complete | Hidden remains locked by protocol |
 | 10 | ST-RT training | Three seeds at candidate steps 100/200/300 | 3/3 seeds and 9/9 candidate evaluations complete | No retraining required |
 | 11 | ST-RT selection | Select one step without accessing hidden data | Step 300 selected | Validation-only result: common MSE 0.289526, ST-RT MSE 0.288673, paired reduction 0.294% |
 | 12 | ST publication | Publish three selected ST-RT checkpoints and the ST dataset at immutable revisions | 4/4 artifacts complete | Receipts are retained in Git |
-| 13 | Recovery runtime capture | Validate all nine injectors, seven initial snapshots, and three failure-start snapshots in Isaac Sim | 0/9 runtime; 0/7 initial; 0/3 failure snapshots | Execute the live recovery capture workload |
+| 13 | Recovery runtime capture | Validate all nine injectors, seven initial snapshots, and three failure-start snapshots in Isaac Sim | 9/9 runtime; 7/7 initial; 3/3 failure snapshots | Audit implementation/backend provenance before reusing; do not discard raw captures |
 | 14 | Independent recovery oracle | Released PI0.5 succeeds 20/20 for each of nine scenarios | 0/9 scenarios and 0/180 trials | Run all trials; retain behavioral failures and never reroll them |
 | 15 | Admitted recovery suite | Capture, source predicate, injector, snapshot, and oracle hashes agree for all scenarios | 0/9 admitted | Compile the immutable admitted suite after gates 13–14 |
 | 16 | Recovery RT dataset | Per scenario: 14 train, 3 validation, 3 hidden episodes | 0/180 episodes | Materialize 126 train, 27 validation, and 27 hidden episodes |
@@ -62,7 +89,7 @@ evidence-complete cells even though the mutable driver counter is 15.
 
 ## CPU-bound work deliberately left for last
 
-### 1. External PI0.5 + SONIC
+### 1. External PI0.5 + SONIC (historical CPU pause)
 
 - Paused safely at 356/1,680 valid episodes.
 - Seventeen cells contain 20/20 atomic records; 15 are finalized by the driver.
