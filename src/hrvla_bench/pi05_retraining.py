@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import json
 from pathlib import Path
 
@@ -17,8 +18,33 @@ class PI05TrainingJob:
     python: Path
     seed: int = 0
     steps: int = 100_000
-    batch_size: int = 8
-    num_workers: int = 8
+    batch_size: int = 1
+    num_workers: int = 4
+    source_dataset: str | None = None
+
+
+def _selected_episodes(job: PI05TrainingJob, info: dict) -> list[int] | None:
+    if "hrvla_packed_video_export" not in info:
+        return None
+    if info.get("hrvla_subtask_relabel", {}).get("split") != "train":
+        raise ValueError("PI0.5 ST-RT can only train on the audited train split")
+    audit_path = job.dataset / "meta/hrvla_export_audit.json"
+    provenance = job.dataset / "meta/hrvla_source_episodes.jsonl"
+    if not audit_path.is_file() or not provenance.is_file():
+        raise FileNotFoundError("verified v3 export audit/provenance is missing")
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+    digest = hashlib.sha256(provenance.read_bytes()).hexdigest()
+    if audit.get("status") != "loader_pass" or audit.get("provenance_sha256") != digest:
+        raise ValueError("v3 dataset has not passed the LeRobot loader audit")
+    if not job.source_dataset or job.source_dataset not in job.base_policy.parts:
+        raise ValueError("source dataset and task-matched base checkpoint are required")
+    rows = [json.loads(line) for line in provenance.read_text(encoding="utf-8").splitlines()
+            if line]
+    episodes = [int(row["episode_index"]) for row in rows
+                if str(row["source_dataset"]).split("/", 1)[0] == job.source_dataset]
+    if not episodes:
+        raise ValueError(f"no training episodes for {job.source_dataset}")
+    return episodes
 
 
 def validate_training_job(job: PI05TrainingJob) -> None:
@@ -51,11 +77,14 @@ def validate_training_job(job: PI05TrainingJob) -> None:
         raise FileExistsError("output directory is not empty; use a fresh run or explicit resume")
     if job.seed < 0 or min(job.steps, job.batch_size, job.num_workers) < 1:
         raise ValueError("seed must be nonnegative and training dimensions positive")
+    _selected_episodes(job, info)
 
 
 def build_training_command(job: PI05TrainingJob) -> list[str]:
     validate_training_job(job)
-    return [
+    info = json.loads((job.dataset / "meta/info.json").read_text(encoding="utf-8"))
+    episodes = _selected_episodes(job, info)
+    command = [
         str(job.python),
         str(job.train_script),
         f"--dataset.repo_id=local/{job.dataset.name}",
@@ -74,12 +103,15 @@ def build_training_command(job: PI05TrainingJob) -> list[str]:
         "--policy.gradient_checkpointing=true",
         "--policy.dtype=bfloat16",
         "--policy.freeze_vision_encoder=true",
-        "--policy.train_expert_only=false",
+        "--policy.train_expert_only=true",
         "--wandb.enable=false",
         f"--seed={job.seed}",
         f"--batch_size={job.batch_size}",
         f"--num_workers={job.num_workers}",
         f"--steps={job.steps}",
         f"--output_dir={job.output_dir}",
-        f"--job_name={job.method_id}-seed-{job.seed}",
+        f"--job_name={job.method_id}-{job.source_dataset or 'all'}-seed-{job.seed}",
     ]
+    if episodes is not None:
+        command.append(f"--dataset.episodes={json.dumps(episodes, separators=(',', ':'))}")
+    return command

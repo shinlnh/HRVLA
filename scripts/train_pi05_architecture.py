@@ -22,8 +22,10 @@ def main() -> int:
     parser.add_argument("--python", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--steps", type=int, default=100_000)
-    parser.add_argument("--batch-size", type=int, default=8)
-    parser.add_argument("--num-workers", type=int, default=8)
+    parser.add_argument("--batch-size", type=int, default=1)
+    parser.add_argument("--num-workers", type=int, default=4)
+    parser.add_argument("--source-dataset", type=str,
+                        help="e.g. HOI_pp_box; required for task-specific ST v3 export")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     job = PI05TrainingJob(
@@ -37,6 +39,7 @@ def main() -> int:
         steps=args.steps,
         batch_size=args.batch_size,
         num_workers=args.num_workers,
+        source_dataset=args.source_dataset,
     )
     command = build_training_command(job)
     print(shlex.join(command), flush=True)

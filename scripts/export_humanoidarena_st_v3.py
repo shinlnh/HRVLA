@@ -160,7 +160,8 @@ def plan_split(source_root: Path, reference_root: Path, split: str) -> dict:
         total_frames += length
     if total_frames != int(info["total_frames"]):
         raise ValueError("total frame count differs from info.json")
-    return {"source": source, "info": info, "tasks": tasks, "episodes": episodes,
+    return {"source": source, "info": info, "tasks": tasks, "source_rows": rows,
+            "episodes": episodes,
             "videos": video_ids, "references": cache, "total_frames": total_frames,
             "source_info_sha256": _sha256(info_path),
             "source_episodes_sha256": _sha256(source / "meta/episodes.jsonl")}
@@ -197,6 +198,9 @@ def export_split(plan: dict, output_root: Path, split: str) -> Path:
             json.dumps(info, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
         shutil.copy2(source / "meta/stats.json", building / "meta/stats.json")
+        shutil.copy2(
+            source / "meta/episodes.jsonl", building / "meta/hrvla_source_episodes.jsonl"
+        )
         modality = source / "meta/modality.json"
         if modality.is_file():
             shutil.copy2(modality, building / "meta/modality.json")
