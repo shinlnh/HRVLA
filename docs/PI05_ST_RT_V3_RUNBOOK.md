@@ -51,9 +51,20 @@ The pinned model has 4,143,421,208 parameters; expert-only adaptation updates
 This preserves the released weights and avoids LeRobot's host-RAM OOM during
 ordinary full-model construction. It also binds the released preprocessor's
 stale absolute tokenizer path to the pinned local PaliGemma tokenizer by SHA.
-The one-step `HOI_pp_box` smoke run completed and saved a checkpoint; an expert
-tensor differed from the base, proving an optimizer update occurred. This
-smoke checkpoint is **not** a selected method checkpoint.
+The loader also regenerates all five non-persistent SigLIP/Gemma position and
+rotary buffers after `to_empty`; exact checkpoint-key matching alone does not
+cover these buffers. The one-step `HOI_pp_box` smoke run completed and saved a
+checkpoint; an expert tensor differed from the base, proving an optimizer
+update occurred. That pre-fix smoke checkpoint is **invalid for evaluation**;
+it only demonstrated that the optimizer path could step.
+
+The initial 300-step pilot at `pp_box/pilot-300-seed0-v3` is **invalid**: it
+predated non-persistent-buffer restoration. The issue surfaced when its saved
+checkpoint triggered a CUDA position-embedding assert during validation. Its
+log and checkpoint are retained for diagnosis, never for method selection or
+paper metrics. The pre-fix base-only MSE printed by that failed validator is
+also invalid because its non-persistent buffers were not restored. A fresh
+corrected 300-step pilot must be used instead.
 
 ## Memory-safe throughput probe (HOI_pp_box, 10 steps, no checkpoint)
 
@@ -74,16 +85,40 @@ reserved-VRAM margin on the 16 GiB RTX 5070 Ti. More workers will not
 materially help this profile and previously exhausted host RAM at 28 workers.
 These are infrastructure measurements, not paper metrics.
 
+The v2.1 view remains required by the frozen GR00T-ST-RT lock. Its Parquet
+inodes have link count two and are shared with the v3 view; deleting its old
+directory would reclaim only about 0.82 MiB of unshared files from the roughly
+268 MiB logical view while breaking GR00T reproduction. Preserve it until that
+contract is migrated and tested.
+
+## Corrected bounded pilot (HOI_pp_box, seed zero)
+
+The fresh run at `_artifacts/retraining/pi05-st-rt/pp_box/pilot-300-seed0-v3-corrected`
+finished 300/300 optimizer steps in 313.1 s including checkpoint save. Its
+loader log confirms all 813 persisted weights plus the five regenerated
+non-persistent buffers. CUDA peak was 12.88 GiB allocated / 13.66 GiB
+reserved. The last reported training loss was 0.048; this is *not* a
+generalization metric. The run consumed 2,400 sampled frames, about 0.05 of
+one epoch over this task's training frames.
+
+The paired open-loop diagnostic used the same fixed eight frames from each of
+the ten task-matched validation episodes (indices 20–29), the same diffusion
+seeds, and the training-split normalization statistics for both policies. The
+corrected loader was used for both base and tuned checkpoints. Macro-average
+first-action MSE was 0.081130 for the released base and 0.005383 for the
+300-step fine-tune; tuned was lower on all ten episodes. The full per-episode
+values and checkpoint hashes live in `validation-8frames-v1.json` under the
+run directory. This is a promising engineering result for one task, **not** a
+HumanoidArena closed-loop success claim, a hidden-split result, or a paper
+comparison across architectures.
+
 ## Next gates
 
-1. Run a bounded task-matched 300-step pilot on `HOI_pp_box`, seed zero, batch
-   eight/workers four; retain its exact command, source/checkpoint hashes,
-   optimizer log and final checkpoint.
-2. Evaluate that checkpoint and its unchanged base on the same ten validation
-   episodes with one fixed open-loop metric and, later, paired closed-loop HA
-   simulator seeds. Do not select on hidden results.
-3. Predeclare candidate step/seed selection and storage budget, then run the
-   remaining six tasks and seeds. A completed train alone does not make the
-   PI05-ST-RT benchmark rows `complete`.
-4. After the GR00T-ST-RT input is migrated or archived with a tested restore
+1. Freeze the open-loop evaluator and run paired closed-loop HA simulator
+   seeds for the corrected pilot versus its unchanged task-matched base. Do
+   not select on hidden results.
+2. Predeclare candidate step/seed selection and storage budget, then run the
+   remaining six tasks and seeds. A one-task pilot does not make any
+   PI05-ST-RT benchmark row `complete`.
+3. After the GR00T-ST-RT input is migrated or archived with a tested restore
    path, re-evaluate whether to remove the 268 MiB v2.1 view locally.
