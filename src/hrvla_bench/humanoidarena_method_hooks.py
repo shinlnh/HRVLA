@@ -223,6 +223,7 @@ def install_method_hooks(
             **runtime.summary(),
             "program_sha256": canonical_sha256(programs),
             "implementation_revision": implementation_revision,
+            "trace_path": str(episode_output / "method-trace.jsonl"),
             "trace_sha256": canonical_sha256(
                 [
                     json.loads(line)
