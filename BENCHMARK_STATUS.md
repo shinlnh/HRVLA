@@ -23,6 +23,14 @@ remain closed. A new oracle/model or revised scenario suite would be a new,
 explicitly versioned protocol and require fresh independent validation, not a
 retroactive reclassification of these outcomes.
 
+Dependency decision: the v0 step-15 admitted-suite compiler requires all nine
+scenarios, so steps **15–20 are rejected by dependency**, not executed with
+partial evidence. Steps **22–32 remain blocked** because they require the full
+recovery dataset and checkpoint lock. This does not score any unrun internal
+method. Step **21 is independent** and proceeds as a measured GR00T/Isaac
+coexistence probe. The original step-13 and step-14 runs are complete and will
+not be rerolled for a favorable outcome.
+
 ## Latest machine audit — 2026-09-21
 
 The separate CUDA INT8 external run completed 84/84 cells and 1,680/1,680

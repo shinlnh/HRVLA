@@ -26,6 +26,18 @@ are retained as history; the following GPU audit supersedes their live counters.
   protocol and fresh validation; v0 remains available for the paper as a
   negative feasibility result.
 
+## 2026-09-22 dependency decision
+
+The frozen v0 protocol requires all nine scenarios to pass the 20/20 oracle
+before compiling the admitted suite. Because seven failed behaviorally, mark
+**steps 15–20 rejected by dependency under v0**; this is not a negative result
+for the unrun internal methods. Do not spend compute on a dependent step or
+silently promote the two passing scenarios as the nine-scenario suite. Steps
+22–32 that require the full recovery dataset/lock are also blocked under v0.
+Step 21 (GR00T + Isaac coexistence) is independent of recovery admission and
+may run now. The external CPU–INT8 sensitivity study is likewise independent
+but remains separately scheduled. No step-13 or step-14 rerun is required.
+
 ## 2026-09-21 GPU matrix audit and amendment
 
 - The separate INT8 GPU matrix finished **84/84 cells and 1,680/1,680 atomic
@@ -96,24 +108,24 @@ does not itself establish INT8 equivalence to the original CPU backend.
 | 12 | ST publication | Publish three selected ST-RT checkpoints and the ST dataset at immutable revisions | 4/4 artifacts complete | Receipts are retained in Git |
 | 13 | Recovery runtime capture | Validate all nine injectors, seven initial snapshots, and three failure-start snapshots in Isaac Sim | Corrected 9/9 runtime, 7/7 initial, 3/3 failure; manifest passed | Complete; preserve original wrong-prompt capture separately |
 | 14 | Independent recovery oracle | Released PI0.5 succeeds 20/20 for each of nine scenarios | 180/180 trials executed and audited; 2/9 scenarios admitted, seven rejected | Admission gate failed; diagnose or propose new versioned protocol rather than reroll behavioral failures |
-| 15 | Admitted recovery suite | Capture, source predicate, injector, snapshot, and oracle hashes agree for all scenarios | 2/9 oracle-admitted; nine-scenario suite blocked | Do not compile as complete until a scientifically valid new admission protocol passes |
-| 16 | Recovery RT dataset | Per scenario: 14 train, 3 validation, 3 hidden episodes | 0/180 episodes | Materialize 126 train, 27 validation, and 27 hidden episodes |
-| 17 | Full RT dataset lock | ST and recovery train/validation manifests are canonical and frozen | ST frozen; recovery manifests null | Compile, review, and commit the full candidate lock |
-| 18 | STR-RT training | Train recovery-conditioned 40-D action decoders for three seeds | 0/3 seeds | Train steps 100/200/300 after the recovery dataset opens |
-| 19 | STR-RT validation | Evaluate 3 seeds × 3 candidate steps and freeze one global step | 0/9 evaluations | Retain JSON, per-seed data, and plots |
-| 20 | Final immutable release | Common 3 + ST-RT 3 + STR-RT 3 + ST/recovery datasets = 11 artifacts | 7/11 published and verified | Publish three STR-RT checkpoints and the recovery dataset |
-| 21 | GR00T/Isaac coexistence | One real camera+SONIC+GR00T request is measured under hardware telemetry | Pending | Use CUDA only if measured peak is at most 15,500 MiB; otherwise freeze the validated CPU fallback |
-| 22 | Frozen checkpoint lock | Nine checkpoint entries bind HF revisions, local manifests, selections, runtime source hashes, and device policy | Pending | Compile, review, and commit after release and coexistence probe |
-| 23 | Immutable internal plans | Development, validation, and hidden-final plans have frozen hashes | 0/3 | Compile only from the admitted suite and checkpoint lock |
-| 24 | Internal development | Five methods × 192 records per method | 0/960 records | Execute identical paired plans; development is not the final claim |
-| 25 | Internal validation | Five methods × 288 records per method | 0/1,440 records | Audit all raw records before opening hidden-final |
-| 26 | Hidden-final gate | Validation audit is complete and a reviewed `proceed_unchanged` decision is committed | Pending | Compile, review, and commit the candidate gate |
-| 27 | Internal hidden-final | Five methods × 1,248 records per method | 0/6,240 records | Execute the one-shot claim-bearing matrix |
-| 28 | Final metrics | SR, macro/micro RSR, RD, RC, L/H slices, falls, safety, detector P/R/F1, recovery time, policy latency, wall time, utilization, and peak memory | Reporting code ready; evidence absent | Compute only from complete audited matrices |
-| 29 | Paper statistics | Wilson intervals, paired risk differences, matched odds ratios, exact McNemar tests, Holm correction, per-seed dispersion, and frozen power analysis | Protocol frozen; outcomes absent | Render final tables and plots after hidden-final |
-| 30 | Visual evidence | Hash-bound representative frames/videos for external, recovery, and internal cells | Partial | Produce the final 52 contact sheets and their SHA-256 manifest |
-| 31 | Final audit | `claim-readiness` and `audit-evidence` both exit zero | Pending | Verify every result, artifact, revision, manifest, video, and plot |
-| 32 | Benchmark freeze | All evidence is committed and tagged before `ours` exists | Pending | Create `benchmark/hrvla-v1-frozen`, then branch `ours` from that tag |
+| 15 | Admitted recovery suite | Capture, source predicate, injector, snapshot, and oracle hashes agree for all scenarios | Rejected by v0 dependency: 2/9 oracle-admitted | Do not compile a nine-scenario suite from partial evidence |
+| 16 | Recovery RT dataset | Per scenario: 14 train, 3 validation, 3 hidden episodes | Rejected by v0 dependency: no admitted nine-scenario suite | Do not materialize 126/27/27 episodes without a valid source |
+| 17 | Full RT dataset lock | ST and recovery train/validation manifests are canonical and frozen | Rejected by v0 dependency | Recovery manifests unavailable |
+| 18 | STR-RT training | Train recovery-conditioned 40-D action decoders for three seeds | Rejected by v0 dependency; 0/3 seeds | Do not train on unadmitted recovery data |
+| 19 | STR-RT validation | Evaluate 3 seeds × 3 candidate steps and freeze one global step | Rejected by v0 dependency; 0/9 evaluations | Requires valid STR-RT checkpoints |
+| 20 | Final immutable release | Common 3 + ST-RT 3 + STR-RT 3 + ST/recovery datasets = 11 artifacts | Rejected by v0 dependency; 7/11 published | Four recovery-dependent artifacts cannot be promoted |
+| 21 | GR00T/Isaac coexistence | One real camera+SONIC+GR00T request is measured under hardware telemetry | Independent probe launched | Use CUDA only if measured peak is at most 15,500 MiB; otherwise freeze the validated CPU fallback |
+| 22 | Frozen checkpoint lock | Nine checkpoint entries bind HF revisions, local manifests, selections, runtime source hashes, and device policy | Blocked under v0 despite independent step 21 | Requires four recovery-dependent artifacts from step 20 |
+| 23 | Immutable internal plans | Development, validation, and hidden-final plans have frozen hashes | Blocked under v0; 0/3 | Requires admitted suite and checkpoint lock |
+| 24 | Internal development | Five methods × 192 records per method | Blocked under v0; 0/960 records | Requires immutable paired plan |
+| 25 | Internal validation | Five methods × 288 records per method | Blocked under v0; 0/1,440 records | Requires development/validation plan |
+| 26 | Hidden-final gate | Validation audit is complete and a reviewed `proceed_unchanged` decision is committed | Blocked under v0 | Requires validation evidence |
+| 27 | Internal hidden-final | Five methods × 1,248 records per method | Blocked under v0; 0/6,240 records | Requires hidden-final gate |
+| 28 | Final metrics | SR, macro/micro RSR, RD, RC, L/H slices, falls, safety, detector P/R/F1, recovery time, policy latency, wall time, utilization, and peak memory | Internal claim blocked under v0; external/recovery diagnostics retained | Compute final paired metrics only from complete audited matrices |
+| 29 | Paper statistics | Wilson intervals, paired risk differences, matched odds ratios, exact McNemar tests, Holm correction, per-seed dispersion, and frozen power analysis | Internal claim blocked under v0 | Do not report nonexistent hidden-final comparisons |
+| 30 | Visual evidence | Hash-bound representative frames/videos for external, recovery, and internal cells | Partial; internal visuals blocked under v0 | Preserve existing external and recovery video evidence |
+| 31 | Final audit | `claim-readiness` and `audit-evidence` both exit zero | Blocked under v0 | Do not claim paper readiness |
+| 32 | Benchmark freeze | All evidence is committed and tagged before `ours` exists | Blocked under v0 | Do not tag a complete benchmark or branch `ours` from it |
 
 ## Historical CPU-bound handoff (superseded)
 

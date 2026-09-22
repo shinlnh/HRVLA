@@ -162,6 +162,11 @@ def build_probe_job(
     }
 
 
+def build_probe_batch(output_dir: Path, checkpoint: Path, *, steps: int, seed: int) -> dict[str, Any]:
+    """Use the frozen upstream evaluator's ``episodes`` batch schema."""
+    return {"episodes": [build_probe_job(output_dir, checkpoint, steps=steps, seed=seed)]}
+
+
 def _attempt(
     *,
     checkpoint: Path,
@@ -175,7 +180,7 @@ def _attempt(
 ) -> dict[str, Any]:
     output_dir.mkdir(parents=True)
     batch = output_dir / "episode-batch.json"
-    _write_json_once(batch, {"schema_version": 1, "jobs": [build_probe_job(output_dir, checkpoint, steps=steps, seed=seed)]})
+    _write_json_once(batch, build_probe_batch(output_dir, checkpoint, steps=steps, seed=seed))
     server_log_path = output_dir / "server.log"
     simulator_log_path = output_dir / "simulator.log"
     telemetry = Telemetry(output_dir / "hardware-telemetry.jsonl", telemetry_interval)
