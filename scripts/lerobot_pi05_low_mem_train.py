@@ -106,6 +106,31 @@ def install_streaming_loader() -> None:
 
             model.to_empty(device="cuda")
             destination = model.state_dict()
+            # `to_empty` also discards non-persistent buffers, which are not
+            # represented in safetensors. SigLIP's position_ids would
+            # otherwise contain allocator garbage and can silently train on
+            # incorrect image positions or assert during inference.
+            nonpersistent = {
+                name for name, _ in model.named_buffers() if name not in destination
+            }
+            unexpected_buffers = sorted(
+                name for name in nonpersistent if not name.endswith(".position_ids")
+            )
+            if unexpected_buffers:
+                raise RuntimeError(
+                    f"unrestored non-persistent PI0.5 buffers: {unexpected_buffers[:8]}"
+                )
+            if not nonpersistent:
+                raise RuntimeError("expected PI0.5 position_ids buffers were not found")
+            for module in model.modules():
+                if "position_ids" not in module._non_persistent_buffers_set:
+                    continue
+                positions = module.position_ids
+                if positions.ndim != 2 or positions.shape[0] != 1:
+                    raise RuntimeError("unexpected PI0.5 position_ids buffer shape")
+                module.position_ids = torch.arange(
+                    positions.shape[1], device="cuda", dtype=positions.dtype
+                ).unsqueeze(0)
             loaded = set()
             with torch.no_grad():
                 for source_key in source_keys:
@@ -124,6 +149,7 @@ def install_streaming_loader() -> None:
         model.eval()
         print(
             f"HRVLA: loaded all {len(loaded)} PI0.5 tensors to CUDA; "
+            f"restored {len(nonpersistent)} non-persistent position buffers; "
             f"allocated={torch.cuda.memory_allocated() / 2**30:.2f} GiB",
             flush=True,
         )
