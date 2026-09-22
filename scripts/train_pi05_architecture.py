@@ -34,7 +34,9 @@ def main() -> int:
         base_policy=args.base_policy.resolve(),
         output_dir=args.output_dir.resolve(),
         train_script=(args.lerobot_root / "src/lerobot/scripts/lerobot_train.py").resolve(),
-        python=args.python.resolve(),
+        # Preserve the venv entry point: resolving this symlink bypasses its
+        # site-packages and silently launches the system interpreter.
+        python=args.python.absolute(),
         seed=args.seed,
         steps=args.steps,
         batch_size=args.batch_size,
