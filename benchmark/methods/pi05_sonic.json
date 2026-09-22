@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "pi05_sonic",
+  "label": "PI0.5 + GEAR-SONIC",
+  "family": "pi05",
+  "controller": "gear_sonic",
+  "features": {
+    "subtask": false,
+    "recovery": false,
+    "retrained": false
+  },
+  "runtime": {
+    "server": "scripts/serve_humanoidarena_vla_low_memory.py",
+    "cuda_backend": "cuda_int8_weight_only",
+    "cuda_backend_implementation": "src/hrvla_bench/pi05_cuda_int8_backend.py",
+    "task_route_implementation": "src/hrvla_bench/pi05_task_routing.py"
+  },
+  "checkpoint_source": {
+    "lock": "config/humanoidarena-admission.lock.json",
+    "repository": "WilliamWang16/HumanoidArena_models",
+    "task_specific": true
+  },
+  "evidence": {
+    "humanoidarena_amended_summary": "results/benchmark/external/pi05_cuda_int8_v1_amended_summary.json",
+    "simple": null
+  },
+  "claim_boundary": "Existing HumanoidArena INT8 baseline only; no ST, STR, RT, SIMPLE, or matched ten-method result is implied."
+}
