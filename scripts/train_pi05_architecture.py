@@ -25,6 +25,9 @@ def main() -> int:
     parser.add_argument("--steps", type=int, default=100_000)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--num-workers", type=int, default=4)
+    parser.add_argument("--log-freq", type=int, default=200)
+    parser.add_argument("--no-save-checkpoint", action="store_true",
+                        help="profiling only; never use for a selected candidate")
     parser.add_argument("--source-dataset", type=str,
                         help="e.g. HOI_pp_box; required for task-specific ST v3 export")
     parser.add_argument("--dry-run", action="store_true")
@@ -43,6 +46,8 @@ def main() -> int:
         batch_size=args.batch_size,
         num_workers=args.num_workers,
         source_dataset=args.source_dataset,
+        save_checkpoint=not args.no_save_checkpoint,
+        log_freq=args.log_freq,
     )
     command = build_training_command(job)
     wrapper = Path(__file__).with_name("lerobot_pi05_low_mem_train.py").resolve()

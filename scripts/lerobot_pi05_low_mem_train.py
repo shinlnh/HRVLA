@@ -11,6 +11,7 @@ training; no randomly initialized parameter may survive.
 
 from __future__ import annotations
 
+import atexit
 import functools
 import hashlib
 import json
@@ -18,6 +19,7 @@ import os
 from pathlib import Path
 import runpy
 import sys
+import time
 
 from safetensors import safe_open
 import torch
@@ -135,6 +137,18 @@ def main() -> None:
     if len(sys.argv) < 2:
         raise SystemExit("usage: lerobot_pi05_low_mem_train.py LEROBOT_TRAIN.py [options]")
     upstream = Path(sys.argv[1]).resolve(strict=True)
+    started = time.monotonic()
+
+    def report_peak() -> None:
+        if torch.cuda.is_available():
+            print(
+                f"HRVLA: elapsed={time.monotonic() - started:.1f}s "
+                f"cuda_peak_allocated={torch.cuda.max_memory_allocated() / 2**30:.2f}GiB "
+                f"cuda_peak_reserved={torch.cuda.max_memory_reserved() / 2**30:.2f}GiB",
+                flush=True,
+            )
+
+    atexit.register(report_peak)
     install_streaming_loader()
     install_tokenizer_override()
     sys.argv = [str(upstream), *sys.argv[2:]]

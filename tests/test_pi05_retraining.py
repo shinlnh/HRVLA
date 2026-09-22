@@ -46,6 +46,12 @@ class TestPI05Retraining(unittest.TestCase):
         self.assertIn(f"--dataset.root={self.dataset}", command)
         self.assertIn("--dataset.use_imagenet_stats=false", command)
         self.assertIn("--policy.push_to_hub=false", command)
+        self.assertIn("--save_checkpoint=true", command)
+
+    def test_profile_disables_checkpoint_explicitly(self) -> None:
+        command = build_training_command(replace(self.job, save_checkpoint=False, log_freq=1))
+        self.assertIn("--save_checkpoint=false", command)
+        self.assertIn("--log_freq=1", command)
 
     def test_rejects_old_dataset_without_mutating_it(self) -> None:
         payload = json.loads(self.info.read_text(encoding="utf-8"))

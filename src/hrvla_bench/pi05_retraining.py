@@ -21,6 +21,8 @@ class PI05TrainingJob:
     batch_size: int = 1
     num_workers: int = 4
     source_dataset: str | None = None
+    save_checkpoint: bool = True
+    log_freq: int = 200
 
 
 def _selected_episodes(job: PI05TrainingJob, info: dict) -> list[int] | None:
@@ -75,7 +77,7 @@ def validate_training_job(job: PI05TrainingJob) -> None:
         raise FileNotFoundError("LeRobot dataset data directory is missing")
     if job.output_dir.exists() and any(job.output_dir.iterdir()):
         raise FileExistsError("output directory is not empty; use a fresh run or explicit resume")
-    if job.seed < 0 or min(job.steps, job.batch_size, job.num_workers) < 1:
+    if job.seed < 0 or min(job.steps, job.batch_size, job.num_workers, job.log_freq) < 1:
         raise ValueError("seed must be nonnegative and training dimensions positive")
     _selected_episodes(job, info)
 
@@ -113,6 +115,8 @@ def build_training_command(job: PI05TrainingJob) -> list[str]:
         f"--batch_size={job.batch_size}",
         f"--num_workers={job.num_workers}",
         f"--steps={job.steps}",
+        f"--save_checkpoint={str(job.save_checkpoint).lower()}",
+        f"--log_freq={job.log_freq}",
         f"--output_dir={job.output_dir}",
         f"--job_name={job.method_id}-{job.source_dataset or 'all'}-seed-{job.seed}",
     ]
