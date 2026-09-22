@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "architecture_token": "PI05",
+  "architecture_branch": "feat(PI05)/reproduce-pi05-sonic-whole-body",
+  "architecture_revision": "8efb895e8f943b7ac522728884e8b0aae58020b5",
+  "suite": "SP",
+  "suite_revision": null,
+  "checkpoint_lock": null,
+  "sonic_lock": null,
+  "protocol_lock": null,
+  "seed_plan_lock": null,
+  "precision": null,
+  "expected_episodes": null,
+  "status": "pending",
+  "result_manifest": null
+}
