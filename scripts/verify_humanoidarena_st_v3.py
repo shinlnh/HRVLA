@@ -21,7 +21,7 @@ def _same_inode(left: Path, right: Path) -> bool:
     return (a.st_dev, a.st_ino, a.st_size) == (b.st_dev, b.st_ino, b.st_size)
 
 
-def verify_split(plan: dict, output_root: Path, split: str) -> dict:
+def verify_split(plan: dict, output_root: Path, split: str, *, repair_stats: bool = False) -> dict:
     from lerobot.datasets.lerobot_dataset import LeRobotDataset
 
     target = output_root / split
@@ -41,6 +41,19 @@ def verify_split(plan: dict, output_root: Path, split: str) -> dict:
         shutil.copy2(plan["source"] / "meta/episodes.jsonl", provenance)
     if _sha256(provenance) != plan["source_episodes_sha256"]:
         raise ValueError(f"v3 source episode provenance mismatch: {split}")
+    source_stats = json.loads((plan["source"] / "meta/stats.json").read_text(encoding="utf-8"))
+    numeric_stats = {key: value for key, value in source_stats.items()
+                     if key != "__fingerprints__"}
+    stats_path = target / "meta/stats.json"
+    exported_stats = json.loads(stats_path.read_text(encoding="utf-8"))
+    if exported_stats != numeric_stats:
+        if not repair_stats or exported_stats != source_stats:
+            raise ValueError(f"v3 numeric stats differ from the audited source: {split}")
+        temporary_stats = stats_path.with_suffix(".json.tmp")
+        temporary_stats.write_text(
+            json.dumps(numeric_stats, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        os.replace(temporary_stats, stats_path)
     tasks = pd.read_parquet(target / "meta/tasks.parquet")
     if len(tasks) != len(plan["tasks"]):
         raise ValueError(f"v3 task count mismatch: {split}")
@@ -101,6 +114,7 @@ def verify_split(plan: dict, output_root: Path, split: str) -> dict:
     audit = json.loads(audit_path.read_text(encoding="utf-8"))
     audit.update({"status": "loader_pass", "loader_probes": probes,
                   "provenance_sha256": _sha256(provenance),
+                  "numeric_stats_sha256": _sha256(stats_path),
                   "data_hardlinks_checked": len(plan["episodes"]),
                   "video_hardlinks_checked": len(plan["videos"])})
     temporary = audit_path.with_suffix(".json.tmp")
@@ -114,10 +128,12 @@ def main() -> int:
     parser.add_argument("--source-root", type=Path, required=True)
     parser.add_argument("--reference-root", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--repair-stats", action="store_true",
+                        help="remove only the nonnumeric v2 __fingerprints__ map")
     args = parser.parse_args()
     for split in ("train", "validation"):
         plan = plan_split(args.source_root, args.reference_root, split)
-        audit = verify_split(plan, args.output_root, split)
+        audit = verify_split(plan, args.output_root, split, repair_stats=args.repair_stats)
         print(json.dumps({"split": split, "status": audit["status"],
                           "episodes": audit["episodes"], "frames": audit["frames"],
                           "loader_probes": len(audit["loader_probes"]) }), flush=True)

@@ -197,7 +197,14 @@ def export_split(plan: dict, output_root: Path, split: str) -> Path:
         (building / "meta/info.json").write_text(
             json.dumps(info, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
-        shutil.copy2(source / "meta/stats.json", building / "meta/stats.json")
+        # `__fingerprints__` is a v2 view provenance map of strings, not a
+        # numeric feature. LeRobot's processor attempts to tensorize every
+        # stats key during PI0.5 training and crashes on this private map.
+        stats = _json(source / "meta/stats.json")
+        stats.pop("__fingerprints__", None)
+        (building / "meta/stats.json").write_text(
+            json.dumps(stats, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
         shutil.copy2(
             source / "meta/episodes.jsonl", building / "meta/hrvla_source_episodes.jsonl"
         )
