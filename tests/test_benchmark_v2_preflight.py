@@ -32,6 +32,10 @@ class BenchmarkV2PreflightTest(unittest.TestCase):
             "architecture_revision": REVISION,
             "suite": "HA",
             "suite_revision": SUITE_REVISION,
+            "suite_observation_dim": 64,
+            "suite_action_dim": 40,
+            "policy_observation_dim": 64,
+            "policy_action_dim": 40,
             "precision": "bf16",
             "expected_episodes": 2,
             "status": "ready",
@@ -74,3 +78,13 @@ class BenchmarkV2PreflightTest(unittest.TestCase):
             "episodes_observed": 1, "audit_passed": True,
         }), encoding="utf-8")
         self.assertIn("result manifest does not match expected episode count", self.inspect())
+
+    def test_simple_rejects_humanoidarena_only_policy_interface(self):
+        self.contract.update({
+            "architecture_token": "PI05",
+            "suite": "SP",
+            "suite_observation_dim": 43,
+            "suite_action_dim": 78,
+        })
+        errors = self.inspect(branch="feat(PI05-benchmark-SP)/evaluate")
+        self.assertIn("policy and suite interfaces differ; no validated adapter is bound", errors)
