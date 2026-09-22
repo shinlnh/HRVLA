@@ -15,6 +15,7 @@ from typing import Any
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 ALLOWED_STATUS = {"pending", "ready", "complete"}
+SUITE_INTERFACE = {"HA": (64, 40), "SP": (43, 78)}
 
 
 def _inside(root: Path, relative: str) -> Path:
@@ -76,6 +77,18 @@ def inspect_contract(
         errors.append("public suite revision is not frozen")
     elif suite_head != suite_revision:
         errors.append("public suite checkout differs from frozen revision")
+    expected_interface = SUITE_INTERFACE.get(suite)
+    if expected_interface is not None:
+        suite_interface = (
+            contract.get("suite_observation_dim"), contract.get("suite_action_dim")
+        )
+        policy_interface = (
+            contract.get("policy_observation_dim"), contract.get("policy_action_dim")
+        )
+        if suite_interface != expected_interface:
+            errors.append("public suite observation/action interface is not frozen correctly")
+        if policy_interface != suite_interface:
+            errors.append("policy and suite interfaces differ; no validated adapter is bound")
     for name in ("checkpoint_lock", "sonic_lock", "protocol_lock", "seed_plan_lock"):
         _check_lock(repo_root, name, contract.get(name), errors)
     if contract.get("precision") not in {"bf16", "fp16", "cuda_int8", "cpu_int8"}:
