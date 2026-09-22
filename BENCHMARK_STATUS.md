@@ -27,9 +27,14 @@ Dependency decision: the v0 step-15 admitted-suite compiler requires all nine
 scenarios, so steps **15–20 are rejected by dependency**, not executed with
 partial evidence. Steps **22–32 remain blocked** because they require the full
 recovery dataset and checkpoint lock. This does not score any unrun internal
-method. Step **21 is independent** and proceeds as a measured GR00T/Isaac
-coexistence probe. The original step-13 and step-14 runs are complete and will
-not be rerolled for a favorable outcome.
+method. Step **21 is independent** and passed a measured GR00T/Isaac coexistence
+probe: two real inferences on CUDA at 13,011 MiB compute VRAM peak, below the
+locked 15,500 MiB limit. Its result, telemetry, short video, and plot are
+tracked under `results/benchmark/performance/gr00t_isaac_coexistence_v2*`.
+The first attempt used an invalid batch key and is retained locally as a
+diagnostic; the fixed second attempt is the valid evidence. The original
+step-13 and step-14 runs are complete and will not be rerolled for a favorable
+outcome.
 
 ## Latest machine audit — 2026-09-21
 
