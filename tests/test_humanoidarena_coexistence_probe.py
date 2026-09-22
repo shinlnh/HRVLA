@@ -18,3 +18,10 @@ def test_probe_job_forces_real_short_camera_episode(tmp_path: Path) -> None:
     assert job["video_fps"] == 30
     assert job["post_termination_record_steps"] == 2
     assert job["result_json"].endswith("episode.json")
+
+
+def test_probe_batch_matches_upstream_evaluator_schema(tmp_path: Path) -> None:
+    batch = PROBE.build_probe_batch(tmp_path / "evidence", tmp_path / "checkpoint", steps=40, seed=17)
+    assert set(batch) == {"episodes"}
+    assert len(batch["episodes"]) == 1
+    assert batch["episodes"][0]["episode_seed"] == 17
