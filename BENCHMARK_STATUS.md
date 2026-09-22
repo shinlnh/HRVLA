@@ -18,7 +18,7 @@ is `ready` and running its own paired 1,440-episode primary matrix, so it is
 audits/comparison are queued automatically. The live job IDs, output paths,
 resume command, and completion gates are in
 [`results/benchmark/pi05-st-ha/README.md`](results/benchmark/pi05-st-ha/README.md).
-Five historical ST/STR method failures are not grounds to skip another row or
+Historical ST/STR method failures are not grounds to skip another row or
 reroll a valid episode. The old step-14 admission outcome remains unchanged.
 
 ## Recovery oracle outcome — 2026-09-22
