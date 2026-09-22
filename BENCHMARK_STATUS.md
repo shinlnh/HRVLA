@@ -6,6 +6,21 @@ a frozen evidence revision. Do not infer paper readiness from branch names.
 
 Last audited: **2026-09-22 (Asia/Bangkok)**.
 
+## Current thirty-branch matrix — 2026-09-22
+
+The newer thirty-branch architecture/benchmark organization supersedes the
+older numbered recovery pipeline below; that older history is retained for
+provenance, not treated as a dependency that blocks independent methods.
+Exactly **1/20 benchmark branches is complete**: PI0.5+SONIC on HumanoidArena,
+with 638/1,440 successes on its six-task primary set. This PI05-ST HA branch
+is `ready` and running its own paired 1,440-episode primary matrix, so it is
+**not yet 2/20**. A separate 240-episode OpenDoor diagnostic and strict
+audits/comparison are queued automatically. The live job IDs, output paths,
+resume command, and completion gates are in
+[`results/benchmark/pi05-st-ha/README.md`](results/benchmark/pi05-st-ha/README.md).
+Five historical ST/STR method failures are not grounds to skip another row or
+reroll a valid episode. The old step-14 admission outcome remains unchanged.
+
 ## Recovery oracle outcome — 2026-09-22
 
 The corrected-prompt step-13 capture passed its complete manifest: **9/9
