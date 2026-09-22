@@ -52,13 +52,15 @@ If interrupted, confirm the old driver and its child simulator/server are no
 longer running, then rerun the exact full-matrix command above. Valid atomic
 episode rows are skipped; never remove them to improve the outcome.
 
-An unattended continuation was started at `2026-09-22T07:09:41Z` as PID
-`4028209`. Its script is `scripts/continue_pi05_st_ha_after_primary.py` on
+An unattended continuation was started at `2026-09-22T07:09:41Z` and upgraded
+while waiting; its current PID is `4032647`. The primary benchmark PID was
+not interrupted. Its script is `scripts/continue_pi05_st_ha_after_primary.py` on
 this branch. It waits for primary PID `4021344`, audits the primary 1,440
 rows, runs the 240 OpenDoor diagnostic episodes separately, then audits those
-rows. Its status is
+rows, then compiles the exact paired 1,440-identity comparison, SVG chart, and
+six deterministic sample videos. Its status is
 `_artifacts/HumanoidArena/pi05-st-ha-release-v1/continuation-status.json`.
-An `audits_passed_review_required` status means raw evidence passed automatic
+An `audits_and_comparison_passed_review_required` status means raw evidence passed automatic
 checks; it does **not** silently mark this branch complete. Review the audit
 manifests, generate/verify the paired comparison chart and video index, then
 commit the final manifest and change `benchmark/v2_contract.json` to
