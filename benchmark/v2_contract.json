@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "architecture_token": "GR00T-ST-RT",
+  "architecture_branch": "feat(GR00T-ST)/retrain-sub-task-vla-for-gr00t-sonic",
+  "architecture_revision": "4ed1578be8ce5f2cad2d335f61781691dc3448d3",
+  "suite": "SP",
+  "suite_revision": null,
+  "checkpoint_lock": null,
+  "sonic_lock": null,
+  "protocol_lock": null,
+  "seed_plan_lock": null,
+  "precision": null,
+  "expected_episodes": null,
+  "status": "pending",
+  "result_manifest": null
+}
