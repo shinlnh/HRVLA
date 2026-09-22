@@ -1,4 +1,4 @@
-"""Source-observed language-program runtime for the five internal HA rows."""
+"""Source-observed language-program runtime shared by VLA families."""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from hrvla_subtask.planner import PlannerConfig, WorldModelGuidedPlanner
 
 from .humanoidarena_recovery_signals import signals_for_detector
 from .methods import EXPECTED_FEATURES
+from .pi05_method_features import PI05_METHOD_FEATURES
 from .recovery_event_detector import SemanticEventDetector
 
 
@@ -98,7 +99,7 @@ class MethodInstruction:
 
 
 class HumanoidArenaMethodRuntime:
-    """Choose only the language instruction; GR00T/SONIC action contracts stay unchanged."""
+    """Choose instructions without changing the VLA or SONIC action contract."""
 
     def __init__(
         self,
@@ -110,13 +111,14 @@ class HumanoidArenaMethodRuntime:
         seed: int,
     ) -> None:
         validate_method_programs(programs)
-        if method_id not in EXPECTED_FEATURES:
+        features = {**EXPECTED_FEATURES, **PI05_METHOD_FEATURES}.get(method_id)
+        if features is None:
             raise ValueError(f"unknown internal method: {method_id}")
         program = next((row for row in programs["tasks"] if row["task_id"] == task_id), None)
         if program is None:
             raise ValueError(f"unknown method-program task: {task_id}")
         self.programs = programs
-        self.features = EXPECTED_FEATURES[method_id]
+        self.features = features
         self.method_id = method_id
         self.task_id = task_id
         self.program = program

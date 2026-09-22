@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "pi05_st",
+  "parent": "pi05_sonic",
+  "family": "pi05",
+  "controller": "gear_sonic",
+  "features": {
+    "subtask": true,
+    "recovery": false,
+    "retrained": false
+  },
+  "language_program": "benchmark/humanoidarena_method_programs.json",
+  "router": "src/hrvla_bench/humanoidarena_method_runtime.py",
+  "hook": "src/hrvla_bench/humanoidarena_method_hooks.py",
+  "checkpoint": "Reuse the exact PI0.5+SONIC task checkpoint; no retraining",
+  "claim_boundary": "ST instruction routing is implemented and unit-tested; PI0.5 HTTP hook integration and closed-loop benchmark are not yet validated."
+}
