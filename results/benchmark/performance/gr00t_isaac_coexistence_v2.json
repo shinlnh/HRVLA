@@ -1,0 +1,51 @@
+{
+  "checkpoint_manifest_sha256": "e258c4933ee1bfd8c5fd748e60e7ce85e5aec5a8efd3de6a68bedb8b8f511789",
+  "checkpoint_path": "_artifacts/retraining/humanoidarena-common/seed-0/checkpoints/checkpoint-300",
+  "cpu_fallback": null,
+  "gpu_attempt": {
+    "device": "cuda:0",
+    "episode_result": {
+      "duration_sec": 2.8044910430908203,
+      "episode_index": 0,
+      "episode_object_seed": 11400714785057071796,
+      "episode_object_seed_source": "env_seed",
+      "episode_seed": 20260915,
+      "episode_steps": 40,
+      "failure_reason": "timeout",
+      "final_reward": 0.0,
+      "final_reward_scaled": 0.0,
+      "finished_at": 1790040069.9588835,
+      "max_reward": 0.0,
+      "max_reward_scaled": 0.0,
+      "max_steps": 40,
+      "model_label": "seed-0__checkpoints",
+      "model_path": "/HELIOS/Robotics/HRVLA/_artifacts/retraining/humanoidarena-common/seed-0/checkpoints/checkpoint-300",
+      "repeat_idx": 0,
+      "seed": 20260915,
+      "server_url": "http://127.0.0.1:18446",
+      "started_at": 1790040067.1543925,
+      "success": false,
+      "task": "Isaac-Move-Boxing-Bag-G129-Dex3-Wholebody",
+      "video_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/release/step21-coexistence-v2/gpu-attempt/videos/failure/seed-0__checkpoints__seed_20260915__repeat_0__episode_0__timeout.mp4",
+      "video_recorded": true
+    },
+    "error": null,
+    "finished_at_utc": "2026-09-22T01:21:12.424028+00:00",
+    "health": {
+      "infer_count": 2,
+      "ok": true,
+      "reset_count": 4
+    },
+    "peak_compute_vram_mib": 13011,
+    "simulator_returncode": 0,
+    "started_at_utc": "2026-09-22T01:20:31.449421+00:00",
+    "status": "pass",
+    "telemetry_samples": 76
+  },
+  "maximum_peak_compute_vram_mib": 15500,
+  "measured_peak_compute_vram_mib": 13011,
+  "policy_device": "cuda:0",
+  "schema_version": 1,
+  "source_revision": "cf8253df0d3abb18b612ff72c0d179021667a97a",
+  "status": "passed"
+}

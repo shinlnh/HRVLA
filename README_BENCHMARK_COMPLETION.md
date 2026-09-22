@@ -35,8 +35,19 @@ for the unrun internal methods. Do not spend compute on a dependent step or
 silently promote the two passing scenarios as the nine-scenario suite. Steps
 22–32 that require the full recovery dataset/lock are also blocked under v0.
 Step 21 (GR00T + Isaac coexistence) is independent of recovery admission and
-may run now. The external CPU–INT8 sensitivity study is likewise independent
+has now passed on CUDA. The external CPU–INT8 sensitivity study is likewise independent
 but remains separately scheduled. No step-13 or step-14 rerun is required.
+
+The first step-21 probe was an **invalid implementation attempt**: its batch
+JSON used `jobs` while the locked Isaac evaluator requires `episodes`, so no
+GR00T inference occurred. Its local logs were retained. After a tested schema
+fix on a feature branch, a fresh `step21-coexistence-v2` probe executed one
+40-step boxing episode with **two real GR00T inferences** while camera, SONIC,
+and Isaac were active. Compute VRAM peaked at **13,011 MiB**, below the frozen
+15,500 MiB limit; CUDA is therefore the validated device for this probe.
+The 40-step timeout is not a task-success metric. Raw result, telemetry,
+video, and reproducible plot are under `results/benchmark/performance/` as
+`gr00t_isaac_coexistence_v2*`.
 
 ## 2026-09-21 GPU matrix audit and amendment
 
@@ -114,7 +125,7 @@ does not itself establish INT8 equivalence to the original CPU backend.
 | 18 | STR-RT training | Train recovery-conditioned 40-D action decoders for three seeds | Rejected by v0 dependency; 0/3 seeds | Do not train on unadmitted recovery data |
 | 19 | STR-RT validation | Evaluate 3 seeds × 3 candidate steps and freeze one global step | Rejected by v0 dependency; 0/9 evaluations | Requires valid STR-RT checkpoints |
 | 20 | Final immutable release | Common 3 + ST-RT 3 + STR-RT 3 + ST/recovery datasets = 11 artifacts | Rejected by v0 dependency; 7/11 published | Four recovery-dependent artifacts cannot be promoted |
-| 21 | GR00T/Isaac coexistence | One real camera+SONIC+GR00T request is measured under hardware telemetry | Independent probe launched | Use CUDA only if measured peak is at most 15,500 MiB; otherwise freeze the validated CPU fallback |
+| 21 | GR00T/Isaac coexistence | One real camera+SONIC+GR00T request is measured under hardware telemetry | Passed on CUDA: 2 real inferences, 13,011 MiB peak versus 15,500 MiB limit; video and plot retained | The 40-step timeout is not task SR; device choice is CUDA for the frozen probe |
 | 22 | Frozen checkpoint lock | Nine checkpoint entries bind HF revisions, local manifests, selections, runtime source hashes, and device policy | Blocked under v0 despite independent step 21 | Requires four recovery-dependent artifacts from step 20 |
 | 23 | Immutable internal plans | Development, validation, and hidden-final plans have frozen hashes | Blocked under v0; 0/3 | Requires admitted suite and checkpoint lock |
 | 24 | Internal development | Five methods × 192 records per method | Blocked under v0; 0/960 records | Requires immutable paired plan |
