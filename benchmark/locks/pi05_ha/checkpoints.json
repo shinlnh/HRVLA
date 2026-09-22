@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "policy_family": "released task-specific PI0.5",
+  "upstream_model_revision": "da13e072902840e2682afde360b763f1edb76d32",
+  "weight_file": "model.safetensors",
+  "weight_size_bytes": 9354116320,
+  "weights_sha256_by_task": {
+    "boxing": "5c96c9cfefb2e3cdfe18473a45363acd7b9a39498c64257de6892e1e9f86483a",
+    "doubledesk": "54f85313adc3beefe526778ce88e2b1852ba118c747890615d0f76925a2d4e9e",
+    "football": "6b079e72b0cebb2832dbcc4cb076e91dd909952c1f0d85bd0f70dfeb98f9eda0",
+    "open_door_diagnostic": "ab63898d5c7f7164f0fbf2f49a6ede070f25e8c376bd04bdc4fc9c808494f006",
+    "pp_box": "a4e94d0eec988673705d5ca128a2aca4fb35da86205eaf630d929c7475029378",
+    "sit_sofa": "9a4cf610df4dc7b47e405e43654b497e3df7da696154cf7ae142e6b8993e0c4e",
+    "vision_navi": "4bf0f5c48e07db8bd0a710afa910194ac1c8e3489cbfccb3191486b348ede82c"
+  },
+  "small_file_manifest_sha256_by_task": {
+    "boxing": "7184ceb5e3356a7189f85f739ed7e2e722e2db7eb0a5e999a2904d58b74be408",
+    "doubledesk": "48e548de8858f573b3b64c0a4bd4b272f327aaba8d2ce676445a91f6bbe1393b",
+    "football": "33d8f2799123fa5b8cc9c5a8db1a4bdd4ec714234680e7feb8bfa67cba2094f8",
+    "open_door_diagnostic": "35016b2b710d003771f45f9ced698aaf3da3cae90bfb8c2d98726b5e7ea0309e",
+    "pp_box": "c53df4f8114d94c370a6ab7048fe1e0cd8d3fde344f230a2f360b2b46f2d200c",
+    "sit_sofa": "b5ff1dddcbe1558cb1d70b6efb63327cfaf4bdcbffe2529e808667870d06538d",
+    "vision_navi": "8afe15f782b92285c712457fed76fd1d33ac9ca5a6e39dbd966f316682bc1ee4"
+  },
+  "small_file_manifest_rule": "sorted files directly inside pretrained_model excluding model.safetensors; canonical compact JSON of name and sha256",
+  "runtime_path_source": "scripts/run_humanoidarena_baseline_matrix_fast.py:TASKS",
+  "note": "OpenDoor is retained as diagnostic, not pooled into the six-task primary result."
+}
