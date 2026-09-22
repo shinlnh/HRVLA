@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "architecture_token": "PI05-ST",
+  "architecture_branch": "feat(PI05-ST)/import-sub-task-feature-into-pi05-sonic",
+  "architecture_revision": "bb195f7a7e8d76e3c6de814c88a895b86d8b4deb",
+  "suite": "SP",
+  "suite_revision": null,
+  "checkpoint_lock": null,
+  "sonic_lock": null,
+  "protocol_lock": null,
+  "seed_plan_lock": null,
+  "precision": null,
+  "expected_episodes": null,
+  "status": "pending",
+  "result_manifest": null
+}
