@@ -1,6 +1,6 @@
 # PI0.5 + SONIC + sub-task on HumanoidArena
 
-Status: **pending**, not a paper result. The baseline-only PI0.5 HA branch is
+Status: **ready for full matrix**, not a paper result. The baseline-only PI0.5 HA branch is
 complete; this branch must independently evaluate the ST hook on its frozen
 six-task primary identities. OpenDoor is diagnostic, never pooled into the
 primary denominator.
@@ -16,6 +16,11 @@ that the batch runner produces atomic episode JSON, trace hashes, 40-D policy
 actions, and at least one observed sub-task transition. A task failure or zero
 transitions in an individual episode is an outcome, not permission to discard
 or reroll it. This pilot is development evidence, not part of the 1,440 rows.
+The pilot at architecture revision `573ef3da6ff80595e6f53cd2bcaa20ae1464968a`
+completed 7/7 full-horizon episodes: 2 successes, 2 observed sub-task
+transitions (SitSofa and OpenDoor), and 7/7 trace/summary/video integrity
+checks. Five failures and all zero-transition rows remain recorded. The raw
+pilot is at `_artifacts/HumanoidArena/pi05-st-pilot-v1/` on HELIOS.
 
 Full-matrix command on the pinned workstation, after readiness passes:
 

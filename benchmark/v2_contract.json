@@ -27,6 +27,6 @@
   },
   "precision": "cuda_int8",
   "expected_episodes": 1440,
-  "status": "pending",
+  "status": "ready",
   "result_manifest": null
 }
