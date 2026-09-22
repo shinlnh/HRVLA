@@ -190,8 +190,9 @@ def validate_policy_contract(policy: Any) -> None:
 class HumanoidArenaGr00tState:
     """Serialize GPU inference and expose the released HA reset/infer semantics."""
 
-    def __init__(self, policy: Any, default_instruction: str | None = None):
+    def __init__(self, policy: Any, default_instruction: str | None = None, instruction_router: Any = None):
         self.policy = policy
+        self.instruction_router = instruction_router
         self.default_instruction = (default_instruction or "").strip() or None
         self.lock = threading.Lock()
         self.reset_count = 0
@@ -214,6 +215,8 @@ class HumanoidArenaGr00tState:
                 except ImportError:
                     pass
             self.policy.reset({"seed": self.current_seed})
+            if self.instruction_router is not None:
+                self.instruction_router.reset()
             self.reset_count += 1
             self.infer_count = 0
             return self.reset_count
@@ -227,9 +230,11 @@ class HumanoidArenaGr00tState:
         instruction = instruction or self.default_instruction
         if instruction is None:
             raise ValueError("request has no task and server has no default instruction")
-        observation = build_gr00t_observation(image, state, instruction)
-
         with self.lock:
+            skill_id = None
+            if self.instruction_router is not None:
+                instruction, skill_id = self.instruction_router.select(task_value, payload)
+            observation = build_gr00t_observation(image, state, instruction)
             result = self.policy.get_action(observation)
             action = result[0] if isinstance(result, tuple) else result
             action_chunk = flatten_gr00t_action(action)
@@ -241,6 +246,7 @@ class HumanoidArenaGr00tState:
             "chunk_size": int(action_chunk.shape[0]),
             "task_name": task_name,
             "instruction": instruction,
+            "selected_skill_id": skill_id,
             "infer_count": infer_count,
         }
 
