@@ -5,8 +5,26 @@ pre-`ours` benchmark. It separates implementation readiness from experimental
 evidence. Percentages from different rows must not be averaged because their
 units differ.
 
-Last audited: **2026-09-21 (Asia/Bangkok)**. The older CPU-resume notes below
+Last audited: **2026-09-22 (Asia/Bangkok)**. The older CPU-resume notes below
 are retained as history; the following GPU audit supersedes their live counters.
+
+## 2026-09-22 recovery step 13–14 result
+
+- Step 13 passed with the corrected PickPlaceBox prompt: **9/9 validated
+  runtime traces, 7/7 initial snapshots, and 3/3 failure-start snapshots**.
+  The earlier wrong-prompt capture remains preserved but inadmissible.
+- Step 14 executed all **180/180** frozen PI0.5 trials, with 180 videos,
+  prompt routes verified for all seven task policies, 180 unique locked seeds,
+  and zero infrastructure-failure outcomes. The independent result is **82
+  successes, 95 timeouts, 3 falls**. Only **2/9 scenarios passed the registered
+  20/20 requirement**; seven were rejected behaviorally. See
+  `results/benchmark/recovery/oracle_pi05_int8_v0_audit.{json,png}`.
+- This is a **completed experiment with a failed admission gate**, not a
+  completed nine-scenario benchmark. Do not reroll rejected seeds, weaken the
+  threshold after observing outcomes, or promote step 15. A stronger
+  independent oracle or changed scenario design requires a new versioned
+  protocol and fresh validation; v0 remains available for the paper as a
+  negative feasibility result.
 
 ## 2026-09-21 GPU matrix audit and amendment
 
@@ -40,12 +58,9 @@ are retained as history; the following GPU audit supersedes their live counters.
   seed, object seed, and horizon. Their retrospective paired counts are CPU-only
   37 and GPU-only 42 (net +5/356 for INT8). This is a sensitivity check over
   only Boxing and part of DoubleDesk, **not** pre-registered equivalence.
-- Recovery runtime capture has **9/9 injector traces, 7/7 initial snapshots,
-  and 3/3 failure snapshots** as raw evidence, but the two PickPlaceBox
-  captures used the same wrong prompt. Their prior manifest is historical,
-  **not an admissible recovery suite**. Repeat the nine-scenario capture under
-  one corrected implementation revision, then rebuild its manifest.
-  Independent 20/20 oracle admission remains **0/9**.
+- The corrected recovery capture and frozen oracle result above supersede the
+  old wrong-prompt capture and its 0/9 pending counter. Both historical and
+  corrected evidence roots remain separate and untouched.
 
 ## Executive status
 
@@ -56,7 +71,7 @@ are retained as history; the following GPU audit supersedes their live counters.
 | Legacy 43-D retraining | 6 seeds | 6 | 100% | Context-only open-loop evidence |
 | HumanoidArena 40-D RT training | 3 seeds | 6 | 50% | ST-RT complete; STR-RT waits for recovery data |
 | PI0.5 + SONIC external matrix | 84 amended INT8 cells | 84 | Amended 100%; CPU-equivalence unproven | Corrected `pp_box` selected with explicit provenance; broader paired CPU–INT8 sensitivity pending |
-| Recovery scenario admission | 9 historical runtime captures; 0 oracle-admitted scenarios | 9 | Raw capture exists; admission 0% | Two PickPlaceBox prompts were wrong; repeat capture under one corrected revision, then oracle |
+| Recovery scenario admission | 9/9 corrected captures; 2/9 scenarios admitted by 180/180 oracle trials | 9 | Capture 100%; oracle experiment 100%; admission 2/9 | Seven frozen behavioral rejections block the registered suite; version a new protocol before further admission trials |
 | Internal closed-loop matrix | 0 methods | 5 | 0% | Claim-bearing paired simulation has not started |
 
 The prior 17-cell count was the 2026-09-17 CPU checkpoint, not the current GPU
@@ -79,9 +94,9 @@ does not itself establish INT8 equivalence to the original CPU backend.
 | 10 | ST-RT training | Three seeds at candidate steps 100/200/300 | 3/3 seeds and 9/9 candidate evaluations complete | No retraining required |
 | 11 | ST-RT selection | Select one step without accessing hidden data | Step 300 selected | Validation-only result: common MSE 0.289526, ST-RT MSE 0.288673, paired reduction 0.294% |
 | 12 | ST publication | Publish three selected ST-RT checkpoints and the ST dataset at immutable revisions | 4/4 artifacts complete | Receipts are retained in Git |
-| 13 | Recovery runtime capture | Validate all nine injectors, seven initial snapshots, and three failure-start snapshots in Isaac Sim | Historical raw 9/9 runtime, 7/7 initial, 3/3 failure; corrected run 0/9 | Re-capture under one corrected code revision because two PickPlaceBox prompts were wrong; preserve originals |
-| 14 | Independent recovery oracle | Released PI0.5 succeeds 20/20 for each of nine scenarios | 0/9 scenarios and 0/180 trials | Run all trials; retain behavioral failures and never reroll them |
-| 15 | Admitted recovery suite | Capture, source predicate, injector, snapshot, and oracle hashes agree for all scenarios | 0/9 admitted | Compile the immutable admitted suite after gates 13–14 |
+| 13 | Recovery runtime capture | Validate all nine injectors, seven initial snapshots, and three failure-start snapshots in Isaac Sim | Corrected 9/9 runtime, 7/7 initial, 3/3 failure; manifest passed | Complete; preserve original wrong-prompt capture separately |
+| 14 | Independent recovery oracle | Released PI0.5 succeeds 20/20 for each of nine scenarios | 180/180 trials executed and audited; 2/9 scenarios admitted, seven rejected | Admission gate failed; diagnose or propose new versioned protocol rather than reroll behavioral failures |
+| 15 | Admitted recovery suite | Capture, source predicate, injector, snapshot, and oracle hashes agree for all scenarios | 2/9 oracle-admitted; nine-scenario suite blocked | Do not compile as complete until a scientifically valid new admission protocol passes |
 | 16 | Recovery RT dataset | Per scenario: 14 train, 3 validation, 3 hidden episodes | 0/180 episodes | Materialize 126 train, 27 validation, and 27 hidden episodes |
 | 17 | Full RT dataset lock | ST and recovery train/validation manifests are canonical and frozen | ST frozen; recovery manifests null | Compile, review, and commit the full candidate lock |
 | 18 | STR-RT training | Train recovery-conditioned 40-D action decoders for three seeds | 0/3 seeds | Train steps 100/200/300 after the recovery dataset opens |
@@ -100,7 +115,12 @@ does not itself establish INT8 equivalence to the original CPU backend.
 | 31 | Final audit | `claim-readiness` and `audit-evidence` both exit zero | Pending | Verify every result, artifact, revision, manifest, video, and plot |
 | 32 | Benchmark freeze | All evidence is committed and tagged before `ours` exists | Pending | Create `benchmark/hrvla-v1-frozen`, then branch `ours` from that tag |
 
-## CPU-bound work deliberately left for last
+## Historical CPU-bound handoff (superseded)
+
+The following was the 2026-09-17 operator handoff, not the current plan. The
+corrected external matrix and step-13 capture have finished; the step-14
+experiment finished with seven behavioral rejections. Do not resume the old
+CPU matrix or launch step 15 from this historical command block.
 
 ### 1. External PI0.5 + SONIC (historical CPU pause)
 
@@ -148,7 +168,10 @@ External matrix 84/84
   -> Create the future ours branch
 ```
 
-## Resume commands
+This chain is currently stopped at the recovery oracle admission gate, despite
+all 180 v0 trials having executed. The arrows after that gate are conditional.
+
+## Historical resume commands (do not use for the current gate)
 
 Run the remaining CPU-bound work package when the machine is available:
 

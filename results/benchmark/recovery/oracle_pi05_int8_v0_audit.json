@@ -1,0 +1,2319 @@
+{
+  "admission_gate_passed": false,
+  "audited_at_utc": "2026-09-22T01:10:26.918977+00:00",
+  "by_scenario": [
+    {
+      "admitted": true,
+      "reason_counts": {
+        "success": 20
+      },
+      "report_sha256": "8e901d51e5c33b633ada0e1638a5868b412f3aaaf79f3995a2513ecd72493fbb",
+      "scenario_id": "box-missed-grasp-retry",
+      "successes": 20,
+      "trials": 20
+    },
+    {
+      "admitted": false,
+      "reason_counts": {
+        "success": 15,
+        "timeout": 5
+      },
+      "report_sha256": "65453a3b5542ed99bd9e92e8a4cbbdb469f50c8430544b77e6261d260eacbcb7",
+      "scenario_id": "box-drop-and-body-push",
+      "successes": 15,
+      "trials": 20
+    },
+    {
+      "admitted": false,
+      "reason_counts": {
+        "timeout": 20
+      },
+      "report_sha256": "83bf63e6222da06282e3183fff5bbd87b247713156af8b221e7b240ef6fab421",
+      "scenario_id": "door-handle-pose-shift",
+      "successes": 0,
+      "trials": 20
+    },
+    {
+      "admitted": false,
+      "reason_counts": {
+        "timeout": 20
+      },
+      "report_sha256": "d0604f785037231f90e38c529437dcbf454cfc3e40ed7afda23a9f379c56917f",
+      "scenario_id": "doorway-obstruction",
+      "successes": 0,
+      "trials": 20
+    },
+    {
+      "admitted": false,
+      "reason_counts": {
+        "fall": 3,
+        "success": 10,
+        "timeout": 7
+      },
+      "report_sha256": "fd8e4407780a02e4cb20ba0ae12e1971e7b5f80f26655feecf47ffa588e193f0",
+      "scenario_id": "tracker-underexecution",
+      "successes": 10,
+      "trials": 20
+    },
+    {
+      "admitted": false,
+      "reason_counts": {
+        "success": 11,
+        "timeout": 9
+      },
+      "report_sha256": "65e859f909ecf50fac14f3171226b06dfbe7c4e1f846e3178524d48cceedbcc6",
+      "scenario_id": "support-state-push",
+      "successes": 11,
+      "trials": 20
+    },
+    {
+      "admitted": false,
+      "reason_counts": {
+        "success": 1,
+        "timeout": 19
+      },
+      "report_sha256": "70f99dc02dc64b9bcc7acbadfaf71571e370d1edf4f53084d742db2493bbe775",
+      "scenario_id": "sofa-approach-slip",
+      "successes": 1,
+      "trials": 20
+    },
+    {
+      "admitted": true,
+      "reason_counts": {
+        "success": 20
+      },
+      "report_sha256": "47275a29ada8cad829f276205155f91bb230edae8772e66d08cbbed642c988a5",
+      "scenario_id": "contact-recoil",
+      "successes": 20,
+      "trials": 20
+    },
+    {
+      "admitted": false,
+      "reason_counts": {
+        "success": 5,
+        "timeout": 15
+      },
+      "report_sha256": "3235b94f669c64220699ac74205ca4e0181583994e0fb12ee6fa55b936d09eb7",
+      "scenario_id": "new-blocking-obstacle",
+      "successes": 5,
+      "trials": 20
+    }
+  ],
+  "capture_manifest_path": "_artifacts/HumanoidArena/recovery-admission/capture-manifest-corrected-pi05-int8-v1.json",
+  "capture_manifest_sha256": "1d1abdc50ea4567461223861c5b6210f587c8aacf719602d26f6f55087ba6401",
+  "claim_boundary": "frozen independent PI0.5 recoverability witness; rejected trials are retained, not rerolled",
+  "evidence_manifest": [
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0000/episode.json",
+      "sha256": "d7d3b5dfcea5649e2c3760880c3f067f1cbe786e39170cbd1508fe111b227fda"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0000/oracle-record.json",
+      "sha256": "a08c5525717c82ab62374388d3a41a9772a87e16986ca39db793787ba7b10a2a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0000/videos/failure/pi05_sonic_ppbox_0529__100000__seed_0__repeat_0__episode_0__timeout.mp4",
+      "sha256": "cbe61c2af2ac9f9e2765eb9c8c505b96199414816c3720a883384879741115bf"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0001/episode.json",
+      "sha256": "d3e5c28578ae3ef45c2723a69d06ceea1a4571c7056be89ba84e7ab2b25a5bd3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0001/oracle-record.json",
+      "sha256": "35997c059e742a313340508cce7eef1f8e7ac14bfddca4b978021fab675f8495"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0001/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_1__episode_1__success.mp4",
+      "sha256": "45cf5a541f776dabbf544e913ff2f6f863c814364323a5412d9a8bf60a46b436"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0002/episode.json",
+      "sha256": "4562dd327c762101dfa8b7e33a652fc217b201a5ab5efaac08f3814e9e25c91c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0002/oracle-record.json",
+      "sha256": "ca7fa0bcd035716e40391c31a66390c896dfa439d4f923927524c35e17cde877"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0002/videos/failure/pi05_sonic_ppbox_0529__100000__seed_0__repeat_2__episode_2__timeout.mp4",
+      "sha256": "ee2e6631da6d6adade81216a5b69233dce892cac7065077aac896de1a2bd348c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0003/episode.json",
+      "sha256": "3a237099551bff5001e5c957788893ecad5174272f8bcd322ef3a8cebcbf41b1"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0003/oracle-record.json",
+      "sha256": "53f5192305e19615f0d4ef9ccda7ed8a30ed4d0805abf144c9c41f8156f21e16"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0003/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_3__episode_3__success.mp4",
+      "sha256": "a26cfcc3e85530f915170076c0d1124f1c50f26804463ee079c8ccc8de91b891"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0004/episode.json",
+      "sha256": "6deff225c4d8acd367a40b5d0046fb55131420f87bc07d84ea3a8e731feb6056"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0004/oracle-record.json",
+      "sha256": "0be1ede7ea2afe6da5768d62cff9898364d539f983687b2fc418dd14786b6f6b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0004/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_4__episode_4__success.mp4",
+      "sha256": "742564930cedcba5a69e43cf533c73d452f1be3ca6e6f04e5b54f1e921ad6b37"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0005/episode.json",
+      "sha256": "74204946506f104268b653eadc8545cb7acde6098d327f61b829f13a48bcdf4f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0005/oracle-record.json",
+      "sha256": "d65c0bbad184fd3fa11591f341dc4ff36a597f36cc8963d390a7d003b8a30356"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0005/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_5__episode_5__success.mp4",
+      "sha256": "2c6ed5859ec034b2dc33fa94f7e432ee82115e5ee40de984f8adf8c85ea86726"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0006/episode.json",
+      "sha256": "bb96cf4f2e160d839445f4246ad2d32c73ff4fdc8f12999aa77042bca8a1c970"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0006/oracle-record.json",
+      "sha256": "4ac62108719e2d469abc53d4736158d3c7023a01754d3d0a1515a9ffa03f870e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0006/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_6__episode_6__success.mp4",
+      "sha256": "951d39ccbeab0370a0bc775f947c2fb290e2c63ca877b0ac652a14b9e4391cfb"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0007/episode.json",
+      "sha256": "b88238a8ebd06fa7b098fa13d93518002a648be5024da63bdef3a88c0f1dfdb3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0007/oracle-record.json",
+      "sha256": "82109b6758ec9e17976a41b3fab8a8ed239ad7b5b2441533a94a9e42762a7f5f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0007/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_7__episode_7__success.mp4",
+      "sha256": "4ff96a88151ce9346295441a57b3bcedb77c7f05b7e22d2f5fa59e35d311ebfb"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0008/episode.json",
+      "sha256": "f6d9ff72dd6bd7c442cc549cdf2e18c37de9b2919eb57c72754dd177911328cd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0008/oracle-record.json",
+      "sha256": "db52faa68cbf0e9a5c73ac9a90a4e4556f4c6b260a2a41e71aa772d7b112bf92"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0008/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_8__episode_8__success.mp4",
+      "sha256": "fe6b9e48c85ab0af1ada60b6cd8f498c156c2914553e610eccd224e05f77d9ea"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0009/episode.json",
+      "sha256": "7d18ce21fb32646bd12af8324f3427c5a936c5cda64710af5ffb9c746a8f3301"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0009/oracle-record.json",
+      "sha256": "220bcfeadfbbfb5e54e106a1d85348dee060ff86c6a9a2cae6e8fcd536a10428"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0009/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_9__episode_9__success.mp4",
+      "sha256": "cc66a5cb981b094d48b70f410f0bc8325c78008bd0d95eae1e37587657c7b5ca"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0010/episode.json",
+      "sha256": "11d3246112934bd4466c4c345e63f382db9d70e751848bd6bc523a3ea6cc5ac6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0010/oracle-record.json",
+      "sha256": "e3f36308e8aced8dced5b8bd37304a556c75dbc494a431be4718b304185a2bd5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0010/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_10__episode_10__success.mp4",
+      "sha256": "288259861b4cc092b9856441f16cf5a735e1a91ec46d15d26c6fa78ed3941d88"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0011/episode.json",
+      "sha256": "1991053a563965660ff0db820a7d6a8a9ad058646699e9ecc0aff81d3e89f541"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0011/oracle-record.json",
+      "sha256": "4e8f681c7ce7ade2799e8500445298a4e6e547dca332b7685e96695a2ee19d92"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0011/videos/failure/pi05_sonic_ppbox_0529__100000__seed_0__repeat_11__episode_11__timeout.mp4",
+      "sha256": "77c19864a0c6d310aec86945adf5f4d881b5eea277073a493f796ab1ea94fe79"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0012/episode.json",
+      "sha256": "6ee464f98aff426a3ce4c17ebbba29ff9e39611414c6b07cc10b706d2d8f8d36"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0012/oracle-record.json",
+      "sha256": "d24575c9aebdc83925cc570abc529e461f5ccf77b5fceb0b276e4e8696ec9708"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0012/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_12__episode_12__success.mp4",
+      "sha256": "a9ea07568a6e5b2b8a2568111a711afa7a68a873f8839dd870ddcb56f3d97902"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0013/episode.json",
+      "sha256": "e0e3ae4a95e4027cb0ce4dc14d02bd35b2665fdbc28e0baac5b9dfea330b3e07"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0013/oracle-record.json",
+      "sha256": "be068d746d0fff11e1c1baf5afa35e3bdf1d2129075d7d274d256ce654ff2697"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0013/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_13__episode_13__success.mp4",
+      "sha256": "b24a5597e8c403cdd7470e2a5722bd82abf1af8bc3a9c3129e0617ccd819a5dd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0014/episode.json",
+      "sha256": "4a3833e8a51db910dcbb7aaa3e32aaa045c4d8371ef9c1ac1278af61cceb869d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0014/oracle-record.json",
+      "sha256": "e6adec357d1de6108d4749358e98f3a8dbaaaad056e9b7a13936af398c78b453"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0014/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_14__episode_14__success.mp4",
+      "sha256": "750cbfa6ba81fdcbf2017866425448bfa2e8e0a4b6c64382dd5a4f7bd9fec3d6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0015/episode.json",
+      "sha256": "4b6e0c70c033d0f105356eb1f5623d4c87642f63a13a50ebc81a20f63b89f1c0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0015/oracle-record.json",
+      "sha256": "960f5d162637f03fc12ae30c670a86990f2b239520d30c171395f100776ac1e3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0015/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_15__episode_15__success.mp4",
+      "sha256": "145ee6d20fa048ef63af3ef46b0f662590602aa971ea1bc60da69f7ca9aa63fa"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0016/episode.json",
+      "sha256": "25084773d984d9b78869e6d9fdba4e050bebdbac0677318ed590ad31800124f1"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0016/oracle-record.json",
+      "sha256": "b3ed79ce6ae7f771c420d996779f171b413db231d84dce5387e7de01374d1689"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0016/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_16__episode_16__success.mp4",
+      "sha256": "92795f01ba68b255b87588a81578d8ced1361f537c26c03ba9d48fb0355b59e6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0017/episode.json",
+      "sha256": "d1f43bac49cc6ce23e740f9c31e8fadcedb7998c63cb2dfb3648859d12a85611"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0017/oracle-record.json",
+      "sha256": "d190f53b21ad4895830f705604d770e20687b61d9b80f93e02918bbfd00932a7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0017/videos/failure/pi05_sonic_ppbox_0529__100000__seed_0__repeat_17__episode_17__timeout.mp4",
+      "sha256": "7df212af0694ce1c4033fb6f47cc4651a4e29798b72f710016621b1f25da41ea"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0018/episode.json",
+      "sha256": "37a74caf32a19a487c74841474cd63b5c927b24ad61581167079a626034b92b6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0018/oracle-record.json",
+      "sha256": "8f6fdb5d85c7491608d88c2f8b8653f30d9dd77b22ac6142c9fe3c72606fb984"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0018/videos/failure/pi05_sonic_ppbox_0529__100000__seed_0__repeat_18__episode_18__timeout.mp4",
+      "sha256": "8926cdf4d4ea39525b1c4a1785544ad705cdfdcfaaad855229f2d61436b8e979"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0019/episode.json",
+      "sha256": "2f77f26c13f1080d980e56f39f5d25d60cdc78ac0e9a8efc3094d578925d05ff"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0019/oracle-record.json",
+      "sha256": "c82f27e49b80b511db4ef6fe56f0c0d002c4f10de4b49ff91c7f42438b0d912e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-drop-and-body-push/attempt-0001/trial-0019/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_19__episode_19__success.mp4",
+      "sha256": "0be41396a288149b20693c9404ea56dc9a0954e596a02c08438f89833ff8defd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0000/episode.json",
+      "sha256": "dfaadadf10b9bc2cd8e96ab20e0b5451e481504990a6253a4a79c82f859ed73b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0000/oracle-record.json",
+      "sha256": "4a30a372256a25720f320b510f100feb039feefbd19b18c37dbf8653e3fc9a4a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0000/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_0__episode_0__success.mp4",
+      "sha256": "d3fae23f962cef2d3c5af62ca2957ffa81b0ab821c8927a11e197830ae0b98e0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0001/episode.json",
+      "sha256": "5f2e9c8c7bec7064f0ae5168645d75b604d840c178e554f01f1b365f187cdc81"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0001/oracle-record.json",
+      "sha256": "31e145094bc3f048ffea51d40fcf68f7da7238235fe87f6d490b086cec49cb4d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0001/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_1__episode_1__success.mp4",
+      "sha256": "20fb70349f3731ae01b92d9c27e5fd3793572c30b0f76f66fac8f43ab49f9e5c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0002/episode.json",
+      "sha256": "1a18fc18dc11aa280ca1bf34026d4d7b70c2264896e4404d894a26ad73c3ab91"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0002/oracle-record.json",
+      "sha256": "f3192eaa2cf927fc7588624e87c16263fbb8cddb839c35002c1c31f8ff5d7a4a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0002/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_2__episode_2__success.mp4",
+      "sha256": "e95a2e0929e009f9b2dcb4aae2df94263218f75658aecb0d609733f9af1044c0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0003/episode.json",
+      "sha256": "79e3e1a9e4b4b2fdd1c58729502d63dd2dd154be8d53b3ed02bc2433a5801c65"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0003/oracle-record.json",
+      "sha256": "5162ace06a361585cd670229e0e4017d9a65321536bef68c59af06417213204e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0003/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_3__episode_3__success.mp4",
+      "sha256": "cf614db1a7177e57559352a597cd34643b40587c466de021dce299dc654da8b8"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0004/episode.json",
+      "sha256": "6b1989464df19376f581650e54338cce9489fafe2c5479c86e84b4678f6cc7a0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0004/oracle-record.json",
+      "sha256": "80503ce0addfe2ca53e73ce73d62c9ad0eac31d6dae86a1c0cb75df2e8aefcf9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0004/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_4__episode_4__success.mp4",
+      "sha256": "9cc0df26f9790996d91ee8363af63df19cfddcc82cd2031121025d945fdc65c8"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0005/episode.json",
+      "sha256": "7cf83cbd953cea9850074eb3639bd2ce2fc4981a60ba2fa6e97d34d6da857399"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0005/oracle-record.json",
+      "sha256": "e928f4daac8ead70cc2cd9228ff310f1a34b07f0a9b079400f90b7256f85dddb"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0005/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_5__episode_5__success.mp4",
+      "sha256": "ed2dfeebdcd3e4ec08ef88aefb1f3b0fc3de57d0ef61f50d6f8b7e297f529a02"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0006/episode.json",
+      "sha256": "657d4ddf034fa5e8d52350c16abf7bef5b3d053661ca789784b4e0680a4c1b91"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0006/oracle-record.json",
+      "sha256": "7ca163b6b40f36963a629f8a9be253e27fb36903b3c05fa9ef9d8657b4d301f0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0006/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_6__episode_6__success.mp4",
+      "sha256": "1c393c8e883dbb9ef1cc48d1e50ea5c9736b6f518fdc187d9d10097daec0785d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0007/episode.json",
+      "sha256": "5a998effc58bec445db489966c6b0a519d15185f033b7849cd763f2930412fcb"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0007/oracle-record.json",
+      "sha256": "fae8ef19971bc846a9506502d6b2aae763fc10007d1f8b5b36fa40309fe1d1a8"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0007/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_7__episode_7__success.mp4",
+      "sha256": "23554ece589c8042e0343b8a3557871503872d3b3261c4347058db38263b768c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0008/episode.json",
+      "sha256": "34246236e6d496f6715cfdb9689359a287a8ac4c6427b0eda5397366d2a56032"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0008/oracle-record.json",
+      "sha256": "4de48facea44ce0f10bd1231fdedd3412e608bcc8cd5cfb35f8d623a4ecb8fd0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0008/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_8__episode_8__success.mp4",
+      "sha256": "5d211f930a5ea1021c7cf01f237fb31a2c31808f0722e26bfd8e23462e64a5be"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0009/episode.json",
+      "sha256": "b1e6c0f30f9cde33a6dc7f814f54f93a0bbb35465956c72f7323822ce660974c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0009/oracle-record.json",
+      "sha256": "9aa5524de961c1d7a52c09c885c60a2a741567889dd5c926f59f96f0499bd368"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0009/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_9__episode_9__success.mp4",
+      "sha256": "87a3fc0c392f65b3a0573b1015035f39be482d03f9e4e675a24638e3250d3824"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0010/episode.json",
+      "sha256": "1b80cd28e706e00f500943f33bff8739a2ee41baa6ac7010e1c427501fd792b0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0010/oracle-record.json",
+      "sha256": "c4a7bd96fc1e58fd69bec6e177ea816355d901a849f944b3cd815c80b9da77da"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0010/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_10__episode_10__success.mp4",
+      "sha256": "a74d3e40f74704e8e2c7ab67d95c7f8d3878993450fc430fb36b50754a6b8f27"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0011/episode.json",
+      "sha256": "4f83291182a4d1b62902c19ae79e19effb6109910b57978ff364222750355221"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0011/oracle-record.json",
+      "sha256": "aa3ca91ff4f19ebdce8114b66d2b7ea9a88aeae259f219cb0f42ce4f37f1f075"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0011/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_11__episode_11__success.mp4",
+      "sha256": "41cb4e035ad9e48b5cd463451eef7403a108506c92ecdf9643759d91aecd6a6e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0012/episode.json",
+      "sha256": "bd5c1d30387b51c87e204d44b857993620b8cb2bd77252902c6be6df541bceb1"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0012/oracle-record.json",
+      "sha256": "dfa9c3aa698dc6566ecde5892baa16f57a42c981557fee1e21adc59ea3258885"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0012/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_12__episode_12__success.mp4",
+      "sha256": "5e6e4dd7508138921a70089b9706470daf49a8c388b64af46fb1d39d4918a877"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0013/episode.json",
+      "sha256": "b67effa260a938957c6d7c1c474dcdb1630b615ebbae568889bc46b4866d1ba7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0013/oracle-record.json",
+      "sha256": "4c8be7165d4e18a27b4e59792cfc25ea1d90004a84bc4250bcc313cf2e1c4ece"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0013/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_13__episode_13__success.mp4",
+      "sha256": "de0ff24a313d98bfd3b644128aca1d4a1f00dd070e4e3223e45c5030aac288a8"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0014/episode.json",
+      "sha256": "1f1c1f766eabca343f5a200f4054ddfa50c2e030cdb61c71480feb4807a88513"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0014/oracle-record.json",
+      "sha256": "8d1e139df2cc0762c04169f384ae28f6ac2a6169cd26fb9a35214737d3898011"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0014/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_14__episode_14__success.mp4",
+      "sha256": "3a702bd72146ec2619497b8e5571ae9bbf331bb331d5851ca6515fcffcd560c7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0015/episode.json",
+      "sha256": "1ab49f5ee07c190861f1257d106c444195d76b5130fb1106dd7af669d3862c04"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0015/oracle-record.json",
+      "sha256": "91b9db24b1460b295dd8d70493bf7839c5616dc108023e2b14b6b262c9b5634d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0015/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_15__episode_15__success.mp4",
+      "sha256": "757b1fd03ce129e5a183e26ff301007a96cf9dc359dfc49a1f4f2ba417f771a9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0016/episode.json",
+      "sha256": "2ea0cac5bbf7bcad613fa7d18489b7cdb85a7edfa75f2ec26b5f64200bf334e5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0016/oracle-record.json",
+      "sha256": "af9b21a548e482023425330e388bdaa26db8a743f24cb5de2f21db6e903502ac"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0016/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_16__episode_16__success.mp4",
+      "sha256": "5e9dbb745cd09b8ef90b7906d3b327909661d37d2785f296846d8508f2b1272f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0017/episode.json",
+      "sha256": "3e9a7304bab9132e249a40c6d497c8251d094bbe6946e75620f3c8e3595c739e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0017/oracle-record.json",
+      "sha256": "f5ab227d68c194eba692083fe34f77d19bcedf59c538e068e1c50fbcbe093fca"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0017/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_17__episode_17__success.mp4",
+      "sha256": "3da1f29a99b1136f588b973f25878ad6f18f335fd5e8cc50370ed84ee17449c9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0018/episode.json",
+      "sha256": "7677ff2367b33b0f5a1a248495c05d7229d3f34158c0c13b7a8ab910315df518"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0018/oracle-record.json",
+      "sha256": "332f551cfbe10cf3553a2c206106e2e6a45acf6f124f7c2710ce4db01b11019b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0018/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_18__episode_18__success.mp4",
+      "sha256": "8e3135e296c99e0f1784fa9ee09038af4d6cb42fcae6edba38a8721f5a508394"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0019/episode.json",
+      "sha256": "5208b5af24857e54d8714683ba61876e33ae9649fbb417af33ef36650c66e424"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0019/oracle-record.json",
+      "sha256": "81fda1e28fbbc3dc01a983bdf1ff374572757ca37e4f4659a1871facf4407f16"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/box-missed-grasp-retry/attempt-0001/trial-0019/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_19__episode_19__success.mp4",
+      "sha256": "5c313f7ac7777270022654800a64b912bb5cd430882e5169865a88dd9930c51d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0000/episode.json",
+      "sha256": "8a7e58f944e904da7c1f75dbc7a241ecd5cea5db101011805d9429d786cb27b4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0000/oracle-record.json",
+      "sha256": "375125ea5ab42ff5942f5bf369ffa4451ab4f2cc78ac4a98e8c88f7af61b0215"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0000/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_0__episode_0__success.mp4",
+      "sha256": "7fe7db0ffe90cf0c3860188f63e0fc37c240062e9dde610d8580fe6ed33d4fbb"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0001/episode.json",
+      "sha256": "20a0d908d74f12664e327448b257929066515d088f156cfa139ec205c2a060e3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0001/oracle-record.json",
+      "sha256": "e6d88d44cf31e5500616743912ef1cccef183185d76c906a0c6399d8c4e8614c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0001/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_1__episode_1__success.mp4",
+      "sha256": "f0275ca05efe4580f29d1c84c956a2cfa8ce12f7ad211a19c72d0d73d1d31223"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0002/episode.json",
+      "sha256": "a448c7f9ffee2677119cceb1523b9e18aff88ba7480930e80f990a954b948411"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0002/oracle-record.json",
+      "sha256": "3541f7e53d19215c30dc05e221703f73ba6f8f1575bbdece92aa2656493fea65"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0002/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_2__episode_2__success.mp4",
+      "sha256": "b0c6a76923ed3b01d49e1a7e90fbd43317d600f9890efa8742ae80068c2f2322"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0003/episode.json",
+      "sha256": "c3c8bb93850b67798b95a8da315c2188e97e1926f5c0ad6c42cc4726a7f94631"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0003/oracle-record.json",
+      "sha256": "43e8b971167883f5d1015edd900d933b672bfc08ec96179bac06a868ac806226"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0003/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_3__episode_3__success.mp4",
+      "sha256": "fd45e22f90c7ab93c7d7a8f76b06bc66d39f3f9d45a0e82dcb36c51a93780ba6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0004/episode.json",
+      "sha256": "48b1542e7c64e61a114bc7265e4155981cdad5a400c2d540b0cee05d9486cffb"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0004/oracle-record.json",
+      "sha256": "ae1d80d378e7d1fa7491a9b12643ae033a6798565218c4a380c80658d7a906ba"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0004/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_4__episode_4__success.mp4",
+      "sha256": "d5403149b09e73392f4c6a192536e84d2f40b86ce32011ee52ac09e3636d1ac7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0005/episode.json",
+      "sha256": "36c08d842b52950fa91d62a918460f71200917264aae225c3c24a4ffb3c48ea2"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0005/oracle-record.json",
+      "sha256": "324242d0f76211c1366313c6fb7b6f8dc37fd00631ebb4c27120343dc2e25723"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0005/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_5__episode_5__success.mp4",
+      "sha256": "5080989f722b9cc84816dc8582029113f74e19e979ad9904eee54e326ac350ca"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0006/episode.json",
+      "sha256": "37fd7d01b80e4e8065e72251d38637b5233da787ce280025cbd9d7ac63f7fe1a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0006/oracle-record.json",
+      "sha256": "c6fe1469e8d43a95fed2fd299855c455239d94bc2dca2c9fef044bfbf231b7f0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0006/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_6__episode_6__success.mp4",
+      "sha256": "7d7eb640b9a62de7a0af572a189e71c53c4da8739f78edddcb1ae081c58e0c7f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0007/episode.json",
+      "sha256": "571d07039ba5e63653546608b6079c7ccfa0d01556e548945e5370150c0e79c9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0007/oracle-record.json",
+      "sha256": "64c3e6d45d9ed65d156921cf8d2bc3cf5b7ceeb08e8e6f322cf2dbc7448e5feb"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0007/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_7__episode_7__success.mp4",
+      "sha256": "b95f98f06d94100d15ec9ded65a508925d20588cb82ab343cfd1adb967d39892"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0008/episode.json",
+      "sha256": "510240183de744de2e8f2c114f858362b6e76b3d19229ad2dfd4f9a3437ef0f9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0008/oracle-record.json",
+      "sha256": "7adc6977c0ce05085a442317924fe597d26cf6f62050d3af3599ef98269a8438"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0008/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_8__episode_8__success.mp4",
+      "sha256": "54ad9b023698133c53d917da7c7a99db8cc3530becedb31fd57173abcb8fd2cc"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0009/episode.json",
+      "sha256": "d481ecb26588413d7517bc6c89f8132f77a4b587930227ba1c120b31682ab10c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0009/oracle-record.json",
+      "sha256": "59835f38b659acb912e407bb11cb15706ed74cdd786825e64862c34130cb7ac8"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0009/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_9__episode_9__success.mp4",
+      "sha256": "5f8906baf9ad2b21b19e3cc05d41d98d1f6e8ad74e962206df96f46252565874"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0010/episode.json",
+      "sha256": "f3653c2663480f585d2d3dccd43a7568115c4bf17b668c91d2765781f9f7cf43"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0010/oracle-record.json",
+      "sha256": "3cac9a83185a8cd261f1a04e57613f3bd2429af1d8fad5a578eeac9b82b14c5a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0010/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_10__episode_10__success.mp4",
+      "sha256": "7eb15f9870bc8135acc552fff7110ea34d182a7f39776f87e3f9c68d74515474"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0011/episode.json",
+      "sha256": "60d595ddc39747baf74b1580d6bdb7ad6f7d9fe0647bd5d593e3418004a30100"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0011/oracle-record.json",
+      "sha256": "6a665c687dd43b4032ff32d26ebca06df5e35b90b8e191693bdf2b68f741d76f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0011/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_11__episode_11__success.mp4",
+      "sha256": "ae8f82fb218b6e0bf8519a25a10a536e4df2d7cb3e8acff181c389579f76082b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0012/episode.json",
+      "sha256": "df1fc080f395644ffb65591b89eab69a17c7f7fd228a8d2b8d345656b11e6a63"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0012/oracle-record.json",
+      "sha256": "f0503b9d5a7882c28c3e716135ea18c0e0a7eab19dacb5fcad245aabe94b796f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0012/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_12__episode_12__success.mp4",
+      "sha256": "77a0961bee185da8f07bf868d123760aec9f0c18e9608fe1eaba916028e261c2"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0013/episode.json",
+      "sha256": "19596d15f4d7c590cd1ea7b03b5dd70e10fb7a90805b93b6ceb94f358552483c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0013/oracle-record.json",
+      "sha256": "17bb8afc2ae861bf030cb914f92dc4ad3d4c4d108c652eab9fea1966be699379"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0013/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_13__episode_13__success.mp4",
+      "sha256": "6e3294deaae51baca844fdcb2c0b10d40d72bd73f8d8eeb3fa75b977487db57f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0014/episode.json",
+      "sha256": "78f3ec8c9a67c4af548882efcfd2d4e72823a548197f606a91c7a2caa5c1548d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0014/oracle-record.json",
+      "sha256": "3e6bbefd877d6a55cfd63e763d477d389cb448aed5f633cdface992fa0041d40"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0014/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_14__episode_14__success.mp4",
+      "sha256": "2a43868faead3febc442410accfce1383bf76926a0cc009afb227bb3509a024a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0015/episode.json",
+      "sha256": "872b615fbe1db8f2dca28867792ad479d85fb32dd8441d6b1171a72f6289c7e2"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0015/oracle-record.json",
+      "sha256": "8a409586271f6c6eb082dcc37d751fbdf73a70e2c30070ee071eee1c2b5d5fe5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0015/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_15__episode_15__success.mp4",
+      "sha256": "e59276bdff557ff5b24254fd52c3891e567ce27a7e605dd7b2846d2667617bde"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0016/episode.json",
+      "sha256": "bc7e7a07dc9db3e1b21aa1fc7d799dba7747edd59e48fe95ce816a177cad1e79"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0016/oracle-record.json",
+      "sha256": "49a0d2ffdcdb64215a59700f4c9a3160174b0a646af5676e27cd9f6f77de7fef"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0016/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_16__episode_16__success.mp4",
+      "sha256": "952ed006357119b3094abd77331ff0a2f0030982bf87ed43f916f8e37083e38a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0017/episode.json",
+      "sha256": "5a18d8cf73a2dde566d28c470ed36e71060131a106d43ddcef85d4526d4184b7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0017/oracle-record.json",
+      "sha256": "e88f311756b61681187faaef5b3da4efc62c0637d7f0b864146e91117e9628ad"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0017/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_17__episode_17__success.mp4",
+      "sha256": "8fc924d24ff43a6acd52ce453894f56ca91997f68a3e8b48acc50f0f5e155451"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0018/episode.json",
+      "sha256": "fc37de8e319110edcb3efdea5448f59e769935d404f1f184ef1929bf861fea53"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0018/oracle-record.json",
+      "sha256": "6d6b6867e8ce48b6d6f4a685543840500e6e989acfcd37df6ecafe97b40d93d5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0018/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_18__episode_18__success.mp4",
+      "sha256": "722a65e92407f5c6be5ec933efa340753f7bc99fa7fac0f400cf2e89df9413ff"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0019/episode.json",
+      "sha256": "d876429aeac48473bced6ea21c7687e6ffc2e3b93af7ff69d7fbfda824724b23"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0019/oracle-record.json",
+      "sha256": "3847df67206ee39086125ad95a39b8b870120578d4b07f039649dd4ac05a80b3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/contact-recoil/attempt-0001/trial-0019/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_19__episode_19__success.mp4",
+      "sha256": "fac6871f3b8f0b49752d75cf584790485cf521c8d8aa3db4f4754d8be27a9749"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0000/episode.json",
+      "sha256": "77b25c3b8aa298045bf00e7c260e466f9057f01c4fe5e63b33a9402e0617e20e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0000/oracle-record.json",
+      "sha256": "de1063d5c094c3ad61d4c8e38905419c7fa37335d669062c070557c46a4a65cc"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0000/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_0__episode_0__timeout.mp4",
+      "sha256": "90779e485bd272ece6ad0b1e744be1ef239181981e863ac6853352b9ba6ce696"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0001/episode.json",
+      "sha256": "da38585f29534c5cfd4cfbe28cca6dc91e9fd9370234b5810bb615c1cac204b9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0001/oracle-record.json",
+      "sha256": "113c921174bdbce1d9c36346dce7549a30fa62c28ff9e7b84ec20ad05ea4ea4b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0001/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_1__episode_1__timeout.mp4",
+      "sha256": "0c5c5f9b1dd1a2fbb90e64ccaa7e59eba46bc154182a8d1bac59883057fb70d3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0002/episode.json",
+      "sha256": "94dc9f0637d162c959518ee7339c93b7fd015140385bfd36f19f02afb6600c53"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0002/oracle-record.json",
+      "sha256": "fd329c724702444b3d2cccf0209252eb4674f175d3502c1e72359f58cb7527ff"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0002/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_2__episode_2__timeout.mp4",
+      "sha256": "32f2aad897a96ab5eab37d3f51c330743a672174d1c55959c1018fd50d6c2574"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0003/episode.json",
+      "sha256": "cc9a3c7ae729b8b4c2f327a08aeb520a47f274bd0383234ef43940c2d1a72891"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0003/oracle-record.json",
+      "sha256": "477d8249b2c8dc03b41a8095fe617aabf6a0b596bbecb9567952e921dd1fcfdd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0003/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_3__episode_3__timeout.mp4",
+      "sha256": "6e3a7805217189c0201f9e83f09d8593a6b6e02e56824c4477d32d0094985f7c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0004/episode.json",
+      "sha256": "749ea31b476c4ce8bb751253bc801f7a8a4b55487cc5065bfd1bec17ef51fec9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0004/oracle-record.json",
+      "sha256": "4643c28c0015d60ece1023908893010063923ad95dc43c9f3d1e63be84a42080"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0004/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_4__episode_4__timeout.mp4",
+      "sha256": "1916620153224bbca495de37fb690db904eed88ea0764646a44b527635493d48"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0005/episode.json",
+      "sha256": "44013535c9bca4c589b80747de34747b59b9bfc2cb3584b2320027656ce61bc7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0005/oracle-record.json",
+      "sha256": "2360d81029995ff626a663dae1a7b2ae7fe6b5a8427ab967fa9cce4bd96294f4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0005/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_5__episode_5__timeout.mp4",
+      "sha256": "1584fb5cbe409de5a843b7da223028a220faf87b2b6e7782402c97c75244ed15"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0006/episode.json",
+      "sha256": "d36dda5ef459ccc2b5f575759b07ccc31235482949e8006d1a00f46bd6f7dbc3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0006/oracle-record.json",
+      "sha256": "87e1b4982aa6ccf0f62d9e601fb3eef72405d727caeb6733b74fed404092315d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0006/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_6__episode_6__timeout.mp4",
+      "sha256": "2ee13711b61e060eeaf00fdf58d0eb01c23599aa64c166e921e2802ac2092faf"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0007/episode.json",
+      "sha256": "023ddb9dd2d7c9efbf9524a817c8f1b5cc9f0664690a60603a0acc918ae52a63"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0007/oracle-record.json",
+      "sha256": "e4a0b02e4ccfd63a51bd73fde5fe64f95bbe055a0903ab37a1c1443ea08595ed"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0007/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_7__episode_7__timeout.mp4",
+      "sha256": "d92966dd3100ab43239e8363de3bdb1253dd8023133ea5bdd272f99cf6f93dcd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0008/episode.json",
+      "sha256": "728a6b57a1e0303c514ea2754ca46c3454e7a410c7c8d10f116bcdbdad9b7298"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0008/oracle-record.json",
+      "sha256": "34ec6ab68c5ea61e5b87d93788e9038d8edcc7f2851d90f4c044cabf09f566d6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0008/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_8__episode_8__timeout.mp4",
+      "sha256": "5a5636b8705f9ddfdaebcc5dfdeb79565405fa90431f71b43381c4f2028a4b5e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0009/episode.json",
+      "sha256": "e62979d39e49c21900b14b87d7df7ecb5a632e956fa1778601c13e00c8a563de"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0009/oracle-record.json",
+      "sha256": "fca635b9b7afeab8f94c7d9689523e6fea2df97217b128994212c9fb1b3d6f69"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0009/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_9__episode_9__timeout.mp4",
+      "sha256": "ad3eebc5a958efc99c0da31e8dcf29fc815e5aaacf182dcf788ad31ab6e20849"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0010/episode.json",
+      "sha256": "7c41de0d178c610c60dd9168c80dc801f960703a2b1f2915dae2357789bf33d5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0010/oracle-record.json",
+      "sha256": "eb6dcbabd4e5cdfcd1567b71dd855ae06ec9b81ca04971190559b137717c6ee2"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0010/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_10__episode_10__timeout.mp4",
+      "sha256": "4fd0a7666ae5bd00c64678b3fbb845ed87d80996243c53397bd9643ab0f2c6c3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0011/episode.json",
+      "sha256": "5bf7b25d15a3a21c2ee3b3e57bd7c0ae3733bb1acf1eafc90dd0e39c763e7a0f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0011/oracle-record.json",
+      "sha256": "30bae796edaecff976a3dd0b14c50aaff9191e93a49b7879d81ad3e582496819"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0011/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_11__episode_11__timeout.mp4",
+      "sha256": "3166209d8cbaa10a91a825bbe6b74939c4258739a2e3544033299d92f4c092ff"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0012/episode.json",
+      "sha256": "305fcc98244aa02b0d2f3923a03c64ed5340a2e96cda73295d88b75f142c46a5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0012/oracle-record.json",
+      "sha256": "bb54974fcd9b2d9adedc42f0c43e5a1d7bc51c4cb35ce0cd3a94470595df08b5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0012/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_12__episode_12__timeout.mp4",
+      "sha256": "738c2e5be3e3b2cf64841a32cfee9c3844b1b26b3ad1b70343e1d815d843f59e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0013/episode.json",
+      "sha256": "45d823e57af5a1bc84c0208cd713e8a7958d514fd1493d335a90422f46dc2ae0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0013/oracle-record.json",
+      "sha256": "9bcaf475742088b9866cbce38c4e832351fe12acd6d0178b7a21675a96047fa5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0013/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_13__episode_13__timeout.mp4",
+      "sha256": "36117263c7fc7f9a431be51398ce5dd33353c463d03a60f90bf9af18f8879f65"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0014/episode.json",
+      "sha256": "591002be44c75c6c553621ab83019d35b77a355a5a0a86029195da1757351ec6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0014/oracle-record.json",
+      "sha256": "54d162f5d0a9a435c4845319386a37366374b80dceeeb34aca7bb0e0909c0c36"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0014/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_14__episode_14__timeout.mp4",
+      "sha256": "13fd7efdea13835f20562b7da2d41ae5cb02543c4f086fd3dcbcf88947216036"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0015/episode.json",
+      "sha256": "09eb92aa572ecc3bc9e17874cdc5a981736b7f2c00f9b530133b1c414325896e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0015/oracle-record.json",
+      "sha256": "f360fc961b3689e9cf4854465a12f7ee7533c6cf270e733e322da492391001ce"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0015/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_15__episode_15__timeout.mp4",
+      "sha256": "eb09b2d1dc7b6dda022a59d2d9469889bfbf4696afe3a88d30d7d278f3880f50"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0016/episode.json",
+      "sha256": "5ebefc8e26660dadfe76382be42c4126572b87408bdd1e8fde55ba9a7e4d10e6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0016/oracle-record.json",
+      "sha256": "22fcbb1fd6983756016dfe230612f3c427b78a11409835d11296f528ee1e55ba"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0016/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_16__episode_16__timeout.mp4",
+      "sha256": "2c2da000a3842147968edfc713a050856d1ed2607d354bcd28953f5cb2587864"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0017/episode.json",
+      "sha256": "27b9d7a1f5c3d96249b6d75f43a088a544692e774be6629956f6acdb67ed0465"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0017/oracle-record.json",
+      "sha256": "86be1e4e7cead954e5214a8749e4daec2197055e759801606167ac56454f17a5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0017/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_17__episode_17__timeout.mp4",
+      "sha256": "92deaab99d82ab376d1f576e53c6107e163666bb9b918b62ea0e6aef612131c7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0018/episode.json",
+      "sha256": "e119526253eba1f9ebe6777c0299a4bdbf4409dd8d2e4bed08e5837c464063dd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0018/oracle-record.json",
+      "sha256": "1ab345e2a11220c33987bc5176ac817d697c6117bddf657327b87454e1f54b31"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0018/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_18__episode_18__timeout.mp4",
+      "sha256": "4cb1999c70d6491d063a78184b40525c96e19c862036bfa066d8fff70d5ac133"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0019/episode.json",
+      "sha256": "5c1ae03fc932d50c7e8ad32dc8b97aec78aca0ba87bb67b82a439e61a15bd3f1"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0019/oracle-record.json",
+      "sha256": "06d430e625cf155f7df1586e0fc9f320b98b72468d2867c9803126b8da04c06d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/door-handle-pose-shift/attempt-0001/trial-0019/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_19__episode_19__timeout.mp4",
+      "sha256": "55dbd5e336e31bf13147094170487b4acdce120fb80dd95bcfe84ac08973662e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0000/episode.json",
+      "sha256": "b0766a9793ecd0011db8ec74258af5f2ee322f8eed379f00f1b9ec7f2e4a997a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0000/oracle-record.json",
+      "sha256": "4d2e60c8880a9365376c22fb1ffa53767cd03496c3666497308156ac822a4f73"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0000/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_0__episode_0__timeout.mp4",
+      "sha256": "cfc65caa973721d3ec55dd878d99006399b93be7fad170407534b03833897342"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0001/episode.json",
+      "sha256": "6fc8be080b74c05625849cb3e4358e09823fc02367e56de7e8021abc91757c78"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0001/oracle-record.json",
+      "sha256": "222a3f178991c0c836c659de1fa0037e550ce21d5104281b96d625b7d5d77a29"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0001/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_1__episode_1__timeout.mp4",
+      "sha256": "2995bbb30d7394ae2c3fd444f5f8085e9b9bb7770b72d9ceb03a2c11f80c67a0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0002/episode.json",
+      "sha256": "096ab287ab6b961add51cb0949ab6247064863cbe44ce5c100d5cf1331eb1cee"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0002/oracle-record.json",
+      "sha256": "c715e140cd3a7960a8137e91fdb89e554b3b397eb3a762a4c87ba0c9d7e2f8ac"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0002/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_2__episode_2__timeout.mp4",
+      "sha256": "0dadc7574e54decab88171b4af4109e79b3a625b363388487731d7bcd0f81ca1"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0003/episode.json",
+      "sha256": "45d1e5e63bc14ddda4a28a86f81c7af68c10a670ce457e496bb52163278eaec6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0003/oracle-record.json",
+      "sha256": "73a09162fb9b1d5400bce340da303a90e1599e0f10ff63032b8b5a71516139cd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0003/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_3__episode_3__timeout.mp4",
+      "sha256": "a46950e45fea3e6d03373ac44348625b4f738cc4a8e186884b8bdb780fc8156f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0004/episode.json",
+      "sha256": "04927b47c9c79b18c223dc50c6afaa5e6473f20412dc39b1e3d496d8918af0bb"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0004/oracle-record.json",
+      "sha256": "999a60be73117f8dd49066d56248fbf2a0eea0068cb9942079a3171f55bfcc9c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0004/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_4__episode_4__timeout.mp4",
+      "sha256": "8c7bb21beba8a775161261d7c33da70737abca22a5fd1eaa8193a944c3a06759"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0005/episode.json",
+      "sha256": "3b7dde127591212948a74ee7f375133010026e5148b7f30cd19f030e3e60c161"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0005/oracle-record.json",
+      "sha256": "25da70c381da7f32d7e5a090956ead9974d2008e43dd8f4fc570efa38d6a858a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0005/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_5__episode_5__timeout.mp4",
+      "sha256": "5bf0fe177be74c5e3e28318fa313f8ed39d6cf62c47f94bc75a330d9b219e868"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0006/episode.json",
+      "sha256": "93058f6579de06f7cc279d8820e8422f08065e8673cd8dbde2c836375bb847ad"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0006/oracle-record.json",
+      "sha256": "ae7dbad8a72cfa432f05f455e0b7ccf9ed049ec0f2a4575caed794092243baee"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0006/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_6__episode_6__timeout.mp4",
+      "sha256": "bdbe4a634c356d309cf56e4734949ebe64d51d8ac78419fa9948485240e1911d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0007/episode.json",
+      "sha256": "b08a9cdd67695299228a32bb39ae34f50efd048d98b61761c05d6237a7946b81"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0007/oracle-record.json",
+      "sha256": "63007480e26824d97369512644e72e46053ac9f9c40b18567216c9272d3a59f5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0007/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_7__episode_7__timeout.mp4",
+      "sha256": "8576ff9f3ba0f61fb3f11110f480a9f6d975aca50c9d0054a1f88af6196aae7d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0008/episode.json",
+      "sha256": "eb1d890177a2d59eed8ebefcd125a755e2fdfe1c7d2ef84aa87c19e5d9ff32d0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0008/oracle-record.json",
+      "sha256": "bd49fbeaf87b5c384fa4a46081bba0b731c4ec7d5d8b54a4066b54ec602b88b4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0008/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_8__episode_8__timeout.mp4",
+      "sha256": "aa5d920263145440fa8c199e021e7966de958b35fb8e57323e1a730b04590906"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0009/episode.json",
+      "sha256": "7f2f569c2d11bfe951b085917abe671ffd57b093b7d350f1705480b9afdcc011"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0009/oracle-record.json",
+      "sha256": "bef4a1e0d7c9947c4d88cf555599ba019d2cb6280d700d64bdb68375ef581de6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0009/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_9__episode_9__timeout.mp4",
+      "sha256": "03ad1b442ee972dbfc31d6cb096a921e44a574b79b57646df3ba0a93c3666d09"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0010/episode.json",
+      "sha256": "9a6f70baee73ff5b30872b61fdc90eb20cd11bf0c90fba20ec0bce5ad3080c25"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0010/oracle-record.json",
+      "sha256": "2ea112c7f0cbeb8d41d099dd33b2dce9aaa0950a4313950823f945530df25380"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0010/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_10__episode_10__timeout.mp4",
+      "sha256": "53fe891536b2ab60ad765b84f18e7d531218bffd92a54eab209760f84cd1a898"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0011/episode.json",
+      "sha256": "68251d19d54549d169793e996f378f4a70183596f01ffb6407b6da6718431334"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0011/oracle-record.json",
+      "sha256": "947b9372ddf12d9898603ea5437a3a3800194820705a19d244f67e1a1b755fc2"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0011/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_11__episode_11__timeout.mp4",
+      "sha256": "8ad78b85b59575f114bd3d1eb68204983fd41b3db365afd17aaad69e8161a52a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0012/episode.json",
+      "sha256": "ca84d202d0bcba0ac9fe75881e03e8222feb20568a6293afa750ea3ae8daff3b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0012/oracle-record.json",
+      "sha256": "c4514367a89c19d0700d0fbe142e771cc2bd959b334d1d504b57ad7c3e76abed"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0012/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_12__episode_12__timeout.mp4",
+      "sha256": "008cf499f76995ee15eb2bcaa2654b46f83db0f25322bd7769d1186004fbf487"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0013/episode.json",
+      "sha256": "42eda8116cd4e32b5c4fed9b77a84de9db4fc69a4ff3b9c9655938c69a01d7bf"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0013/oracle-record.json",
+      "sha256": "e7ccf764e3a3ac9c14b054b4fca85bc6e458082d19490c651f167d6f84972ad2"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0013/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_13__episode_13__timeout.mp4",
+      "sha256": "c7d297bc23564afc7ba6d8d1e3df748b340458dc85f456c3b228ab58e4c6b3ad"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0014/episode.json",
+      "sha256": "50fbc1388b44cac51110112efd48f7d520aaba6e08d69b2f98e8f2dd4cea0a06"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0014/oracle-record.json",
+      "sha256": "a57abf551e33c3f80c9d1b94bc60f508a15f88c0aac20f9a8e5eecde6b949923"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0014/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_14__episode_14__timeout.mp4",
+      "sha256": "162036d723b47bebd79314c36185cb740c7e4a674979f8c6188b1900ced7d2ae"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0015/episode.json",
+      "sha256": "3019175af5750f1130027e50c755509ae22df2841492094cf275c1fee7542d15"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0015/oracle-record.json",
+      "sha256": "5f32caa0c8e6b820bce8ba1d4875d10aa8e28256f92fa45d4cb830b1ed67fb7a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0015/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_15__episode_15__timeout.mp4",
+      "sha256": "87e04908774daee776c16a23776b0b90858ce6d4ab626daaad02301fc6d91f38"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0016/episode.json",
+      "sha256": "6adb21d1a2678d0eb6a3cf3cf9452f7ac5f1b7e8fb631f14960574bd0ea46ea7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0016/oracle-record.json",
+      "sha256": "caebf58741d5a7910f9e3165d29f074467ab504bf22dbdbd5739d7acac4b724c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0016/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_16__episode_16__timeout.mp4",
+      "sha256": "00247402bea773c8fe9a13422100788d7b5c91b30b74bb57f0a20aba22deca40"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0017/episode.json",
+      "sha256": "353a48a868edd957f8eed5edcc2e399a654dcbbc3df659dd4a849724c0f30853"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0017/oracle-record.json",
+      "sha256": "31b6c8200e61b94b5fb7d8732eef1cccc466b0131db3e45a2d8647a86ca57654"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0017/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_17__episode_17__timeout.mp4",
+      "sha256": "fa1b0d89060cb4d94ffb4b663679931e17e735ce8c13f8e1ba948df92e19da2f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0018/episode.json",
+      "sha256": "9657eba6a23a5ac0e61f1a3add93676aff954703bfae825401f468e5295bb1a5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0018/oracle-record.json",
+      "sha256": "fe3c2dfae36b762f6d678fec64d0142bab27088adbc6feb0ae0d2f732a3868e0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0018/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_18__episode_18__timeout.mp4",
+      "sha256": "391a4b0aaea8f41f17246ddea2ad1fb1433c5ed5cf41e29f10d8778cad46913d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0019/episode.json",
+      "sha256": "e2e90d2d20ad03726094239d35477e8c75cec18e0aa84a3775ca4693cff4d431"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0019/oracle-record.json",
+      "sha256": "c1eb1cf55b369f0f5fbaa9fb1fd09a7563f6c72627c795fa45d64109099f02b9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/doorway-obstruction/attempt-0001/trial-0019/videos/failure/pi05_sonic_opendoor_0529__100000__seed_0__repeat_19__episode_19__timeout.mp4",
+      "sha256": "628ab15fd1dd249764779a83da12369e672b91fed6f62b8e6823f5fe1d4e30fa"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0000/episode.json",
+      "sha256": "61bac9cd29ea970cbeac6b51b7b94e539c0d86d011e26cdd583764807e060302"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0000/oracle-record.json",
+      "sha256": "646d52961bbc3f4dc931c0a87094c06e5d2434d156162e2b02db1bee908946d7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0000/videos/success/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_0__episode_0__success.mp4",
+      "sha256": "0806cd77c3075a508b78d3f62569a2558dab1ee732385abbd4b68ba9cb0dc89d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0001/episode.json",
+      "sha256": "f789121de86435d1cdefd19274c169d105f077253e9e2bc40fd7165e912c9b5a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0001/oracle-record.json",
+      "sha256": "3c92848db00241dfa4f3c20aa9f4b58c0a94d415bdd08855429c1bba3a2ec5b0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0001/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_1__episode_1__timeout.mp4",
+      "sha256": "72a12f25ae1f24494d74bb1324107cf6690445c955ad36baaaaa591608b48c52"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0002/episode.json",
+      "sha256": "7999f12d953d9793c6c5eb69599fb843c583c5222b221654808656f7beecaec6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0002/oracle-record.json",
+      "sha256": "f05c8a2365f4e8f785447b49770f0772e20391fb04bbb206077ef2443bc12000"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0002/videos/success/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_2__episode_2__success.mp4",
+      "sha256": "ba4184963349dd459f94ec5b7b8d00835dc8711cb7b9c8c0427f482cebc6befd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0003/episode.json",
+      "sha256": "4b401a1c1dc8956764bbc469db85babcd563cadd53c465c3a9378e1fb6ca5bed"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0003/oracle-record.json",
+      "sha256": "117cab739fdd0b404a79bbc3b9f5955e3d878f47436045b527d7670d2ad13e64"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0003/videos/success/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_3__episode_3__success.mp4",
+      "sha256": "bb77df4ce5718577f8a45fe84b4183b7ddf3ff6112ac75c15711ac2247a22fe2"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0004/episode.json",
+      "sha256": "40321891e7cec86f07ceca8998a993ea455533db3040c2ffde82251becc7654f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0004/oracle-record.json",
+      "sha256": "c4f2cfacdc3f5261797d72242bac9cfed61e3540bbe2198b58cfbc51b85f61c0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0004/videos/success/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_4__episode_4__success.mp4",
+      "sha256": "ad4887fc16579d0a9a1370d7bb0ce44ed105881936fb85f70c7fd59762e8c36b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0005/episode.json",
+      "sha256": "17735df7e63a03f737e00f136051cc5ab7bfc2167d844d9981e810f4b683bcc9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0005/oracle-record.json",
+      "sha256": "854063899ea0e73454c5d71fdbdce0ddc86d418f4376686de11227e3d337f397"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0005/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_5__episode_5__timeout.mp4",
+      "sha256": "443bf993a255adaefc4e9dbc292a3b674ce7c271bbf47aa3446a8c460ca98840"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0006/episode.json",
+      "sha256": "729a8b7c742bc398a7174a4b177e95a0245a3fdabbfb6cb5e063df2e1636e4e9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0006/oracle-record.json",
+      "sha256": "a6304faf16c889c49ca607d002528e3176a89984483c687edf130210f71c6d9f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0006/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_6__episode_6__timeout.mp4",
+      "sha256": "eec46bcb2d2ecb192a51be1095ab461925fe38971f1c394df57f405432ec23c1"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0007/episode.json",
+      "sha256": "992878468a145f3aa87370e0170b39f6e162bff01c65e31cb96223590debeabd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0007/oracle-record.json",
+      "sha256": "f57e8b6abc87ed479e3939149bfe4e34e657ca1fd1ca3255a2259888c16c088c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0007/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_7__episode_7__timeout.mp4",
+      "sha256": "66966e35a8631f2cc47bf7ff1628110132968be85867722248b0df834b38a913"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0008/episode.json",
+      "sha256": "24b1a85b61cae2422628d8a00de5ffd1b046e7434635a9e7dc5ec19e3776e29e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0008/oracle-record.json",
+      "sha256": "5d3d32492bcbba9ee1f25127561da7b92382e813fc575e2de29343b7d5455f43"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0008/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_8__episode_8__timeout.mp4",
+      "sha256": "f9825271607186efd854faf56f4b1b58b3e4d25ba38b87fba8281a1dacac0036"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0009/episode.json",
+      "sha256": "7c876f21a3cbe128ebb96c877a4d0d4f1492d0337629a97124a1f38a636652f8"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0009/oracle-record.json",
+      "sha256": "6d6227005dfb6782aa04d0d1ad82b60fb909ecc23e8bcbf8f024e7dde6b37dc6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0009/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_9__episode_9__timeout.mp4",
+      "sha256": "c54f35f35f4d82ec223f26db9fd85445dac5435f72b1849e3bcc6e4f82d2f9dd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0010/episode.json",
+      "sha256": "d40849984d66f120b06c00526d4b24832e92bf48dd20dd4d259530b2776e30a7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0010/oracle-record.json",
+      "sha256": "ea73c1ad589c4a246ab9dcd63b6dad562d0451ed6db39c1d80a02ba0de39a517"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0010/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_10__episode_10__timeout.mp4",
+      "sha256": "c5fa8c0156a3c2fd9e1e782f8b591a96a5094fe646269a426820e97084854a4f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0011/episode.json",
+      "sha256": "20c57b51d55a2961e236dbf9e924b415e4616c9ac3270e8c508c01ab9e9f6c08"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0011/oracle-record.json",
+      "sha256": "587c7d83a1d6db95a8f3c50ed27422acb700a07689520be401a92e58dc5354cb"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0011/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_11__episode_11__timeout.mp4",
+      "sha256": "d8960f891ef97c61e151d509aff159aafd068e837f0c617211723e40d7becbc7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0012/episode.json",
+      "sha256": "1e9471fcb22ac7ac21787b67bea8d51e177339b2b7b5a4cb6f6f86a450d290e3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0012/oracle-record.json",
+      "sha256": "ddd3966e633edd31b654f87171ab746d97580f047f45c703af2fd795b764edf9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0012/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_12__episode_12__timeout.mp4",
+      "sha256": "c8bacd64c34663a8812273b2cb4bc2acf35ae6f210eb37a94b032f4c165c1aca"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0013/episode.json",
+      "sha256": "ab3c953183f97ce8753ca9bc9f83ed6b00bd0735ec53281ba08512210cbac42b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0013/oracle-record.json",
+      "sha256": "89039e66cb98e52d947c3573438be5301829c5ff4a3621cc4e2fe539aa0e2a9b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0013/videos/success/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_13__episode_13__success.mp4",
+      "sha256": "7fa7da0a8a93f0c19e47989975143c0454d8b8b1f047cd4d548506ced9826b3b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0014/episode.json",
+      "sha256": "4d756b85838609a43fb16ebc9ebc65a99e4a180d33751926c6a15fa3c597999f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0014/oracle-record.json",
+      "sha256": "32324d7f0c3b62d398e7f2611d620585dee137ffd64c9f8a88ff78fd1ffd1225"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0014/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_14__episode_14__timeout.mp4",
+      "sha256": "33017361f9d0e1f1f5207dce1bd72320f9d539fa2bfaed5767af0dd882f31193"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0015/episode.json",
+      "sha256": "2aedc7483cc32006e96df46f45ec944b6d3ecbb6a31aa25c4a7cd3963a8bb001"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0015/oracle-record.json",
+      "sha256": "08da26dead6066eb66f35f7149a85ed67d6cca10d58c253bf9d79d799338399a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0015/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_15__episode_15__timeout.mp4",
+      "sha256": "588a5e6049728453c5f255e1489cb880defb598f562ddc4bc2023a4fbb4938e4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0016/episode.json",
+      "sha256": "cb14b8c67a4cbf9cf48fa27d43f2e74558f2c0e86fb08ee782d710e650c43c14"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0016/oracle-record.json",
+      "sha256": "b8d3296bf2b8141e30e7ae2ad69a3f4ba2f0a4a1f6ba7936110ce28611b2448b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0016/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_16__episode_16__timeout.mp4",
+      "sha256": "b3518112110048e5901714c74fd7c2ed75fbd034f389c41971a5462a3e8caf85"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0017/episode.json",
+      "sha256": "eb47e695c475ab23ffc7e2b5d8b270642e7039be603352c78a22fe8439e551f9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0017/oracle-record.json",
+      "sha256": "76b434e0f18d5a090cc27cc5ceae5867ca113b431a2dc57943f6cc7da533bdec"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0017/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_17__episode_17__timeout.mp4",
+      "sha256": "ac6bd179de6f4985d44ed706b6cd93f6745d56b38938243e86e83d9b44dbf840"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0018/episode.json",
+      "sha256": "933317f71b862f4fd1f436f01317c96250cf3eaa3e4c62674bf2fa1ab271ddf4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0018/oracle-record.json",
+      "sha256": "da2d311727f5100a187d58e7e83ac9bd72f88b96fbc1612e5d3746a983478471"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0018/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_18__episode_18__timeout.mp4",
+      "sha256": "062f32e2b199ab1024d87bff95a7ff7d5d2082323d2c916b39c327909bf1923f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0019/episode.json",
+      "sha256": "f66f2081a42e722c2d4d5c61ab7c191cc5899e8cecce184a7ce8b7014c8dac8f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0019/oracle-record.json",
+      "sha256": "0637fd9183b4620ec9e6a035753d22863bc0716308305347b5873bb6042a221a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/new-blocking-obstacle/attempt-0001/trial-0019/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_19__episode_19__timeout.mp4",
+      "sha256": "4fadab4452f26e1528fd2564301662c630ea890b0be0f91b4bdb33707a03d86f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0000/episode.json",
+      "sha256": "da5bc5bc5c41cd444425ebda0ca2e4a68e256d6bb0b2b935750ad8bd19e33431"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0000/oracle-record.json",
+      "sha256": "5c1e9cc1f582dcb5e650243e53a08fca9eb63ec662850fe9ce8303b06eb898f0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0000/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_0__episode_0__timeout.mp4",
+      "sha256": "2b3ea113308452104a820d72936d5bab9971201eeeed543a0ce5e8a93cabe8e3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0001/episode.json",
+      "sha256": "ce3422dacef9a9ec9257b31135419b59fa928014276ecc2c8a6c3845779c6e35"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0001/oracle-record.json",
+      "sha256": "51c526a84b3dbf6d2e843363438fc88c3c7d2def92dd9e18c47a6ae1a607ce6b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0001/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_1__episode_1__timeout.mp4",
+      "sha256": "0e5bfc0592a10edc974cdb15ac15ffb41ea00f316fb5b8bafd149f7f5a0049ef"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0002/episode.json",
+      "sha256": "746d0a1d088298d7f15578cea0e7747796bf9d636dd1decbaebb9fa799aab750"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0002/oracle-record.json",
+      "sha256": "bd4753f7062441175b36b5f61eff931486a2293bd278910d7e1201cff9782a31"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0002/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_2__episode_2__timeout.mp4",
+      "sha256": "9a55721285654520fa046157d255663904848a70cc8863d0d107cf4fd9c6b992"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0003/episode.json",
+      "sha256": "f777fb5c2da40b082544a2e699fe71e33a4a638c1ffb46bc3fa9909115a84ac0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0003/oracle-record.json",
+      "sha256": "d186aa02d39aeb79be23824a3639ec6888a98ae7e249fc6129b974d371de71bc"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0003/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_3__episode_3__timeout.mp4",
+      "sha256": "bcc145eb30507ac158014e6710cee3a93f9995ca1d57049899de6959411da7ee"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0004/episode.json",
+      "sha256": "c1e1db03bd017a73379c2e7b526ba866d191c896c40ab1db3c5f83ee878a092e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0004/oracle-record.json",
+      "sha256": "f820665dcfc338e44421ec3cde0902b74eb87c60346e4eef276a1e087c00a952"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0004/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_4__episode_4__timeout.mp4",
+      "sha256": "37d21e0ea70551f47f9407ef6da4efa70759857520b1f66edf497eab4de33d1f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0005/episode.json",
+      "sha256": "f0527d186ca0dbe50fdbda7cbbcd81d1ff4473ee879adb1af87305e877eb659b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0005/oracle-record.json",
+      "sha256": "777ac727d59aecc435fa0b7d876d7946dbd50245ab940769db98d9cf06386194"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0005/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_5__episode_5__timeout.mp4",
+      "sha256": "cd8770686b7f05dadd68854c9da78a5c29d7bedb8a9114d40436d635358e4902"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0006/episode.json",
+      "sha256": "067e808723236c1c62b8a23629e9b713895fe157c6e3d700a2efc1e6e9007278"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0006/oracle-record.json",
+      "sha256": "ba8e28943f323365322dbeaa8245c9061a8615dbe52ad4468531ebd8623c9446"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0006/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_6__episode_6__timeout.mp4",
+      "sha256": "2607ef4d5c30a517e4b16131426f5bd86e11bb09264a4446ece8dc637ad72918"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0007/episode.json",
+      "sha256": "1023f9a8413b71ef73b10b0f735e9bf824648b39786a714c79adb430402b452a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0007/oracle-record.json",
+      "sha256": "ac4cc0424e1bef6825d47ceb64e8a45c9f8085868958d4a0509cbd0f12dc0ab9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0007/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_7__episode_7__timeout.mp4",
+      "sha256": "7e2b818b58efe62e0ff48f20bf1f53b0a00e2ff0280cd47eb6c5b35633c848d5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0008/episode.json",
+      "sha256": "c01bdd8afbedd6191a97efbb94f94b4c9b50e76cf0870ea05c7078d401a699e9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0008/oracle-record.json",
+      "sha256": "7e8185478a825ac65e63e51ff823e2dfe2f46567d610b7c3d157483ad217e6e4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0008/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_8__episode_8__timeout.mp4",
+      "sha256": "359b6f3291d9862d2d3f2a85a75ac25898b19c5d4d545121c64695183dc4e126"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0009/episode.json",
+      "sha256": "7f7968cb3dfbc90c4035a7ab21ce11c157b4fd3a2186ea55ff66050527fd6cdf"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0009/oracle-record.json",
+      "sha256": "ec0504c2f529fefbe9c398f0a658583b85a481bf406ad96e85735a56cf5e046a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0009/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_9__episode_9__timeout.mp4",
+      "sha256": "36b0088173bf0a15feb0aacead4f449de1732d1365348904316d62ec544d03e6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0010/episode.json",
+      "sha256": "5fa360de8e6fe24d650dc6e0eb7643958b9d0693995527003598ed2d81ce339d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0010/oracle-record.json",
+      "sha256": "59862a7445106e2b651ed4765bd0b4b7a14289430efd2ca5f71a78cee6ab9525"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0010/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_10__episode_10__timeout.mp4",
+      "sha256": "6fbb1b0818a3f6668ce1c28d8d79d3a1bb30a352b7b68f6c81e5e9260e76500c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0011/episode.json",
+      "sha256": "40a3652d8a420506205a76b1f08c846284ca6d00119e364f1dce40bcedc475fc"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0011/oracle-record.json",
+      "sha256": "653383e44b0e22861b1988960ad78c366cc9acd8dd86aed1b7a0fe5855a4cd75"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0011/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_11__episode_11__timeout.mp4",
+      "sha256": "2f3b1ad60716d35856bc3186c0c98e2018408998dbc0fbd923e95d6f0b7918c1"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0012/episode.json",
+      "sha256": "7adec33a15c126012a75d44fdb6d48f6bd35cfbcb74d23b39df178122090cdb5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0012/oracle-record.json",
+      "sha256": "9de90f1ceae37139605a1d18f938ecc58336b5a5508833a2ecaa02e09377678e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0012/videos/success/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_12__episode_12__success.mp4",
+      "sha256": "6c9cc49eb11881e7934f6da11d9851f291875a843b805bc053cb392cccb500b4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0013/episode.json",
+      "sha256": "432b911e8725023b536bb482ab55aba233117b3cfe22f4db1c97d8f19a350c3c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0013/oracle-record.json",
+      "sha256": "0c4843db37b2c4b254a28e1c178d923f51817df2f473e74dec45247d771fe5a7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0013/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_13__episode_13__timeout.mp4",
+      "sha256": "5d0ecbf8afc2fb8403664ca1f0206c84120c3890e110ca907f436a57326f758c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0014/episode.json",
+      "sha256": "8863a6c4c7ba50c60cafac3a4999f4afe51b0fd67889cf98274f324b931974ab"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0014/oracle-record.json",
+      "sha256": "e64f892142d20240c882198245481e6ffc8dfcff009ffa20354dfdaabbb210ee"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0014/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_14__episode_14__timeout.mp4",
+      "sha256": "08174abe0740aa8da2e8700c9d71342720174d821ca03e814fed3801e2b01398"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0015/episode.json",
+      "sha256": "55b56613113f17ee736b0cbb5fe6994ab7a104168de6d366edb7384862a74442"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0015/oracle-record.json",
+      "sha256": "fbb344c8e09743b8df0561f71d369806099a854c01327a6dc9651a5ed4de29f7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0015/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_15__episode_15__timeout.mp4",
+      "sha256": "8d10042db617636dc566d8f8907f742476d5b72007d8c85bd8bbc90078e0ccca"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0016/episode.json",
+      "sha256": "5fe7e11432b2cf9c89351ce7cf03c64cdd0a99f78b178f518388b493c46e9170"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0016/oracle-record.json",
+      "sha256": "9ce85b8c26643d9558c079802336d58d79459aec18ad82ab47962a916f7334af"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0016/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_16__episode_16__timeout.mp4",
+      "sha256": "0d0c4989a99b9a0e80c6ede6e28022974f6030fdf290a4c3d05f0de28158b379"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0017/episode.json",
+      "sha256": "e298ba9aa7f435a1db517a556f78a024acc2169c2bcced7edbfc704312e674a9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0017/oracle-record.json",
+      "sha256": "54c3101fd580aec65ba0d80ba33d1e9e2339167f87d540a1a744b50fb882b261"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0017/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_17__episode_17__timeout.mp4",
+      "sha256": "05eebf461ff60857fd1b615db6cf265090a2e88b7a35e1a4ed96aa9cd59c79ab"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0018/episode.json",
+      "sha256": "f9e5dcd5b2f71a389f7268c9d00a37f25f10196cc39fcb19bce255fc41766e72"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0018/oracle-record.json",
+      "sha256": "608e5c48aa8303a75dedad20c35a1b2234df99dc4672a9257758337c410a934d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0018/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_18__episode_18__timeout.mp4",
+      "sha256": "6cf3142a73f513fae412e8a9b418e02292c64b9409ae6947f69664ef67a0b445"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0019/episode.json",
+      "sha256": "21ae980335f42ccfe3b7a2aa556f1ed9378d3402e9b89c3e587afda45bdf18f9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0019/oracle-record.json",
+      "sha256": "c9a8091b1ec2ae81f0151aeac608d61fd57834288641876b62609c43604d08de"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/sofa-approach-slip/attempt-0001/trial-0019/videos/failure/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_19__episode_19__timeout.mp4",
+      "sha256": "a04f41761fe38749b6e9b1f1c047dd76d5be594e0b1635771eddad4e1ec1ac9e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0000/episode.json",
+      "sha256": "4e07b73b557a75d671a66e09c7276467cf7a52a792554cfba058709394271708"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0000/oracle-record.json",
+      "sha256": "dfda9e830c0bf13784f22ebe26b68552600eae163f897efaddd76df66bcd2652"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0000/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_0__episode_0__timeout.mp4",
+      "sha256": "990a17d1f33342b91f4a010e96229ee9fabb34f36df6233149cd666fef6f6065"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0001/episode.json",
+      "sha256": "3a2a02540888697e530142bd9b8fa5df1172d2bcb884d366ac78cc51ebdaaa66"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0001/oracle-record.json",
+      "sha256": "acc18e6398e14f461dc1f6bd5f7373e0c687fbb2737b968aae17da2385b06769"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0001/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_1__episode_1__timeout.mp4",
+      "sha256": "5c7a725f133cdf57f570ccc3794240c896a89803676b28b560973cf05607955e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0002/episode.json",
+      "sha256": "078f2c39ece89cd04bd1dba1ac62f39d41231714460266a66eb912d31ef0c8a8"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0002/oracle-record.json",
+      "sha256": "d9164a0cf741b0f0325651216e1e269bf03f95bf1deec6177b417b9a6694607e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0002/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_2__episode_2__success.mp4",
+      "sha256": "775d1b001345ed16f44ddc7a7826c1190c4306dc3ec235fd6c0610fe56e9cc37"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0003/episode.json",
+      "sha256": "9935c9841fc69d3759dc805234d0b0ee632410cb54b64eb14c43b651742d437c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0003/oracle-record.json",
+      "sha256": "fa1ad1530a7adf7f00b29f97b3097ca0f01c9b6474ece5af31b71e49a2980598"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0003/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_3__episode_3__timeout.mp4",
+      "sha256": "8e2c675af84ae19c7be4f65a486352a44278e6d1844a08b066edd9be390b5ac0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0004/episode.json",
+      "sha256": "552da4970a73f89b1dac57349597b16423cd3ea051e74c916424b4d78e1f8eca"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0004/oracle-record.json",
+      "sha256": "d5280eaa39b184e924a372d35ae2979e82d3d933c3ea3500889244a385ed3f47"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0004/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_4__episode_4__success.mp4",
+      "sha256": "29652c0efd3bc80da597a7fcb074978b08efe0dde2d6a62cef44c3ccb94dbb11"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0005/episode.json",
+      "sha256": "ad367e5905ecf8b2cf90664af367c69b6a0152dffef2b5823ed9db02bf9546c1"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0005/oracle-record.json",
+      "sha256": "31fd5eef001b89cd3a550217fb5c57a8d3cc03d999ce7e448f5242d782eeaeb7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0005/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_5__episode_5__success.mp4",
+      "sha256": "3e50590ffbded38947b3730686c6afc539f9d66247af6bbbae516535070a6273"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0006/episode.json",
+      "sha256": "42989703128c8ef7ccb484c699679ecb1ed9d547336b6faa96b5b544440bdf2b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0006/oracle-record.json",
+      "sha256": "4ced063a36482a59a9d253438e5133b6408ea13034f7c533cc8ce889339f3d0a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0006/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_6__episode_6__success.mp4",
+      "sha256": "a74e718ef19b5f03d494b5c52cc1da7789802c4ca57c175612be0bd30b63b638"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0007/episode.json",
+      "sha256": "3d178f1e36a14217c5cdce693e5953730f577fd52607b2f07639b96d13795149"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0007/oracle-record.json",
+      "sha256": "9f64243b7bf41699ceea15e313f381f3331529a4aa4db92b87d4d1b8d4b1f2c9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0007/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_7__episode_7__success.mp4",
+      "sha256": "b9d35f87d861051231ea19feee090890806bf86607d2f59c3cde2d365f9036dc"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0008/episode.json",
+      "sha256": "86260d1a809cc0cf8213fc58651b6ae02134c1f619dc77ca091f7c0bcb949cd8"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0008/oracle-record.json",
+      "sha256": "ad54e6664f5ad674e1a2f62097bce1a183ac5f8464a7e94bf887552409e02aa4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0008/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_8__episode_8__timeout.mp4",
+      "sha256": "0a7b0f85e5cc85d0f731fe41ac921df6ce023c65f517ce963d52cf67f945cf50"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0009/episode.json",
+      "sha256": "3d13c6c5e4536f4a3bff241d8be76909f729c8fe2222c798a23a5180f10abeca"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0009/oracle-record.json",
+      "sha256": "8f5cb6b9fd4d3f97026cbb52dcc6a4f580aaed8c1746b892b5e012a30bf6bd0a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0009/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_9__episode_9__success.mp4",
+      "sha256": "d9f8052fded52826c0bd476ca151e55523a7010af18a5afc8399c0d49f5ec322"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0010/episode.json",
+      "sha256": "d1810332f2d0df74d9f5273c77fbc25de0c8684f52e83f0ee96465f47a77a513"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0010/oracle-record.json",
+      "sha256": "ceb1544be9a1637d9b05ba9de6aee8d772fec1a5c870acb4a6cc55124c65bf07"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0010/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_10__episode_10__success.mp4",
+      "sha256": "c7956ac710944c860b639ca5aa092acb31b1734af790e48bc6465c720b7d54a8"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0011/episode.json",
+      "sha256": "06c5236d66b984492ecd3a4e538f8c49d2e59caf928a4cd4d75957994ce74472"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0011/oracle-record.json",
+      "sha256": "0c35a2477e10d8f26c40f9df83a381456b77d83780cc5e6a242c525bc6b3d50b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0011/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_11__episode_11__success.mp4",
+      "sha256": "b8e13a5316c61080ec58de96b7e031a75f7ab154b4dba5a84db07ea5ce701e62"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0012/episode.json",
+      "sha256": "ed31cc13bd91694bde5fa0e85e35dfa7993b7a289de4912620e4a1f4c14a0545"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0012/oracle-record.json",
+      "sha256": "38b41ce2164cf5c74aac37ff6dac7f12c4d4a0b708b6c843e6b7b97145ff8f9f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0012/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_12__episode_12__success.mp4",
+      "sha256": "4189d11017147af167d3fe335137bb9197e2979d834060d7dc3cb03eef1ceb0c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0013/episode.json",
+      "sha256": "052b878bcc97cdf92805a38df79f086e052fa50638229d4907e9c39a9d40c084"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0013/oracle-record.json",
+      "sha256": "c4c60405b882ddb50fc34ef83d0c3d05a6737d614918f0dee8364c450590403f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0013/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_13__episode_13__timeout.mp4",
+      "sha256": "13449d25cf25cc146c270138b3c90067049ad18dd2a2da479d22abdc3394e711"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0014/episode.json",
+      "sha256": "975c37f4cc2c66a5722c4b703a9b66c76961228aff0cf4488a279e04fffb8e87"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0014/oracle-record.json",
+      "sha256": "8f5c6c4de7e4e83e9747d0358d16e8652acdd126902a90850d40521a33ba5914"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0014/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_14__episode_14__timeout.mp4",
+      "sha256": "56a046d5468586ef72ff207611842da0c4b00c51ade3d534fb0bf98b5c43b075"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0015/episode.json",
+      "sha256": "03860addc2dc570106bebb7a6c70968253940e226fb5121d1f3f4477cbf43d52"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0015/oracle-record.json",
+      "sha256": "29c44cad141c0d8f512391008c13915f02e081facd8efb5f46fee10b81ed3491"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0015/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_15__episode_15__timeout.mp4",
+      "sha256": "7dfc80b556abe9c08e9a3291069f8fe82fb09c22b6bc6a6874380c004a719def"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0016/episode.json",
+      "sha256": "b4c85d2f983376d85bce5b729af27380cc51478ab6f3852419fcca431385f5e3"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0016/oracle-record.json",
+      "sha256": "54d82fdfdeda16c7c64855fcdb479b83a8747a85fdf7847e1e5728121802fa79"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0016/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_16__episode_16__timeout.mp4",
+      "sha256": "7ab8f6312a6fc181e3b0abdeeddba11d55be85c8febdf62af0d3de66f2fe94cf"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0017/episode.json",
+      "sha256": "0a51d6a9c37d5a51112bde49ebb70d7bf2931a07651ac646d17dd809a7681a98"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0017/oracle-record.json",
+      "sha256": "3a6fb3bf5ba04551db58c4d00a25f7cacef4431faf4514aa978a9140c4282023"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0017/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_17__episode_17__timeout.mp4",
+      "sha256": "62d16fe8fa726cbd08f1545adb616f835fb6c6c4d6a36e3803b4af46dfa2a890"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0018/episode.json",
+      "sha256": "7a0811257b96c238d790d3e87f2a915981f49357e527981625c9bf081abe3748"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0018/oracle-record.json",
+      "sha256": "feb278c7d5467800b82ec37f4ffe355ad5de0182648c568cc2f20cf6e2baa887"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0018/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_18__episode_18__success.mp4",
+      "sha256": "277ac67d768b9ea81f9ef1059d71f5632f4d3eb0cd8926cc97f0ed8aebd10d49"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0019/episode.json",
+      "sha256": "dee3c334f3dd49a41c7ea7126f059074cf39dead93c622b248087b7a952f41be"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0019/oracle-record.json",
+      "sha256": "da9924988f2d44e2858ca4919bc5d6744326ffadbdc7ae0f89fecf0696afdf7e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/support-state-push/attempt-0001/trial-0019/videos/success/pi05_sonic_football_0529__100000__seed_0__repeat_19__episode_19__success.mp4",
+      "sha256": "d6bc5ea5331847a1022b7bc851a6ab7a57b0b56e45966cd2347a097dc9ed9d7f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0000/episode.json",
+      "sha256": "1102920853a4de06fdd20142ff11705352884c57849a600a7d9eb79b1c2ffb8d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0000/oracle-record.json",
+      "sha256": "950284a62fa32fd905cd4e0d6d5545988f3f160f59c1eb0d92f511c37217256f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0000/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_0__episode_0__fall.mp4",
+      "sha256": "9920d08a2efa8b5a6a186cec6dde5aa46403b13d24c2698a81d962d6953d9fd4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0001/episode.json",
+      "sha256": "ff7cd85f1080bea8839299ab52559822f6ecedaf7b7b19338a96451410ba1e9f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0001/oracle-record.json",
+      "sha256": "209f2acb3ae22ec98ba81fc8515107a3a0a8c303e0a4793522b3f7e4a9e8e546"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0001/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_1__episode_1__fall.mp4",
+      "sha256": "b12127e1ba79231bd0a5d0641cf4996efe57d237d6724a872acd1c8b9d024133"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0002/episode.json",
+      "sha256": "b0c0c5c67903a2f6defaf3f64cfc726ef91e467997acb599eba4056f82deb90a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0002/oracle-record.json",
+      "sha256": "db69cdd3bd59f567c472a5c946640d17d14dcd4eae6d0e381055ed255220739a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0002/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_2__episode_2__success.mp4",
+      "sha256": "0329917c87e7307db3116b7a489e02d4cc8dad5ee3663fc85afec1a57a30b571"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0003/episode.json",
+      "sha256": "88149ab3755078aa0f5543e945a3290bec0ccf996d3fbe39a6cd31af3d4fbe5b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0003/oracle-record.json",
+      "sha256": "47c5def6bffc194aa6de79d5968b7a4bd4df983429699c1e8e225cbbe01dfd38"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0003/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_3__episode_3__success.mp4",
+      "sha256": "645126505627f668525fc488106fe07852dd3b06f661fb6380a74be1f5c24932"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0004/episode.json",
+      "sha256": "f80a1e1a04150202c315ce243c653f48612593ba77376d4dbb72d354f8691159"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0004/oracle-record.json",
+      "sha256": "193450e7c23f6946902c0b2e60a80f24455d87ab4b8a6a5763615d09ecb15ada"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0004/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_4__episode_4__fall.mp4",
+      "sha256": "e2d98556482c19df13a9a12649258783be9ac79dbba0a03540e57ff4ccb192ca"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0005/episode.json",
+      "sha256": "844ad4ae575b1a9362025edf52d2c1ec5adf1e24e961e7f60e8794fcf9f915b5"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0005/oracle-record.json",
+      "sha256": "71dbcd834964d65ea9f85de6cbad672a1fc961e203d29e76d6c13d737dcce668"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0005/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_5__episode_5__success.mp4",
+      "sha256": "773b53f3ea847e11e76a24457bb3219d1cee3602277e6237d609df1ccf1e07c6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0006/episode.json",
+      "sha256": "1ea7058a0d0c630deb70adabc33ba659c3c691b27f8c9867492887efe89fa8a9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0006/oracle-record.json",
+      "sha256": "2e15db0af8f054db4c6f934b26d56270e551be238cbae77d33325f394cdc8f62"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0006/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_6__episode_6__timeout.mp4",
+      "sha256": "c3bc84501f9a769c18a92f1a50da0d211e3183691208f2f011fdb9c90fc82a2f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0007/episode.json",
+      "sha256": "1a0b9317b08f0abb38c68816cb910a50db28728b8d6ed613c9037559ff2b353e"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0007/oracle-record.json",
+      "sha256": "75a8503e6dcb9b8533b936b7fd7b44bf1efb996b776a3d006bc9b9c7e0df0f7b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0007/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_7__episode_7__timeout.mp4",
+      "sha256": "3b486e45cc3ab594a5bae601739eda1102f30cf5b1215b150af33f69b655ce05"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0008/episode.json",
+      "sha256": "c829693e6f8722572e3b5ab3fe3fbf657150165d11a1ecdc09dc32b8d452b62f"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0008/oracle-record.json",
+      "sha256": "a205ebe147efa8252c75c6d7e43f9ce51403da1b0fea8a4d39d8b68ebaf4eb58"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0008/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_8__episode_8__success.mp4",
+      "sha256": "d2d022ab8b78eee5d5ec77cde8c7a817e198eecd087f81cb69386199ca279a50"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0009/episode.json",
+      "sha256": "4755c66f977354515faf94e571ad70aff5b53098ffe651846439f5692d1ab333"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0009/oracle-record.json",
+      "sha256": "282d17d68c1858397818b60db6a6c23a0b1aa5129b5a23b8f3ad42f14f74fd1a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0009/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_9__episode_9__success.mp4",
+      "sha256": "c0077d3da3d89eee03d74f8a145edd117bea4408a062ceb0e95e89d5993eb893"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0010/episode.json",
+      "sha256": "9fc2d8a16b94b6dd9bb01541986cc198bb91cbc3ab26c97078d23ae82584293d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0010/oracle-record.json",
+      "sha256": "65a9db7c28a5cfd4dfb945874702f174c943a7fcc7d14235312445b7d6231ffa"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0010/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_10__episode_10__success.mp4",
+      "sha256": "801ceb7c3cd4c49081d049b2a29c971da79be45bf21bc63a54e1188e38d26194"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0011/episode.json",
+      "sha256": "6a04c8d705f8b5a06d9391f6b4057720f0b31d0282fc5e3754d28e75db54580c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0011/oracle-record.json",
+      "sha256": "288a7fa1ea7df611681ef6204e046581927e820176db8c7c89038e6585562afe"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0011/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_11__episode_11__success.mp4",
+      "sha256": "be612ff5596554ea01745ab51d540127d7363ed1ec6668aab37f495c76daad48"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0012/episode.json",
+      "sha256": "537a62ddfec0a3824e8944f44ca2857afb3c2b5bbe74937b31b5a10f35c06ba0"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0012/oracle-record.json",
+      "sha256": "0619fd410958aaf299a03ea953b97dd8707cbbacfc28803b20b012c424a5e708"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0012/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_12__episode_12__success.mp4",
+      "sha256": "218987ad199f477762334fdeb32fe725b8669210c2056cec5fec6cf801389457"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0013/episode.json",
+      "sha256": "9182d037ec6e5e47f21005cce0e98cfb5b736642382fc18b83e7a295c7e6e60d"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0013/oracle-record.json",
+      "sha256": "5eecfbcc49a97f3a80e63f5b242631adc03a30e667022184538c6e278c3b9dea"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0013/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_13__episode_13__timeout.mp4",
+      "sha256": "ec6366136181a651cce621b8285667fc352886b950ed519d831c25b4e42088f9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0014/episode.json",
+      "sha256": "b3ff514c6a1ef0701e9ed8e956680bbb6e8b22c2cd6d460d6cb34d91377894c7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0014/oracle-record.json",
+      "sha256": "2ded76b4d3e6263b3cfa4b0c05b3ebb1046f3f76879bd2c14657c746ead4a61a"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0014/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_14__episode_14__timeout.mp4",
+      "sha256": "6b8523942a8a95d9d7dffea1766259ca32ea7e13217c9638c5946677eeb25efc"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0015/episode.json",
+      "sha256": "d26330b022783b9e4d08182c9a3d14436ffe11933cb5a5da7a208757f334fd44"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0015/oracle-record.json",
+      "sha256": "1228fa0e6d851c608ae193713045314cae425e8b2fa2cd5e4f8fb66589651073"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0015/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_15__episode_15__success.mp4",
+      "sha256": "81d71ea20c4f4d2e608ceeb4687976faf844e84a9281ce1e0819c14b702988f7"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0016/episode.json",
+      "sha256": "85c8f63b82b38cfcc639706b7e6301433ac35ff4720ea09553021590b532a9dd"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0016/oracle-record.json",
+      "sha256": "1c1191989d1800850fc0a97be699df33725c30491dad94c0838a8e6afca5ea39"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0016/videos/success/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_16__episode_16__success.mp4",
+      "sha256": "ab75be5a84a05309e98944e9d32fd5aa341dc5fcc3ae67def5897851ee32a799"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0017/episode.json",
+      "sha256": "7c527007b52f29b6ad22cdb5fff093f7381671c58e02dc2f22d9b77b69285525"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0017/oracle-record.json",
+      "sha256": "f8f5ac9e14051cf561cc8d87186b090f5be8c125e5e527b023b5d9f1a66486e9"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0017/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_17__episode_17__timeout.mp4",
+      "sha256": "ec290a85f9263409a3161d2f35207373941b6cb20fcd0640fb66888b85cd0fd4"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0018/episode.json",
+      "sha256": "3b53f15229a3bac16960ed2d13f69d1ad63c597d3e811815bfc4a17301220a35"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0018/oracle-record.json",
+      "sha256": "a380a75514e98a2e25332fde48b630336b0ad3a947a6ff64948d690b2591652b"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0018/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_18__episode_18__timeout.mp4",
+      "sha256": "8ccc011363415ed17b68caff09367538d2fc00414170e643655f5aae4eac945c"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0019/episode.json",
+      "sha256": "e8d33fdaef8f8e66ca4154abfb7ecf12ce68bb612973093c96eaa949c0c62ba2"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0019/oracle-record.json",
+      "sha256": "967e68f982f38439a26cd1640a949833947f07379159117e4cfdaa839c51d7d6"
+    },
+    {
+      "path": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1/tracker-underexecution/attempt-0001/trial-0019/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_19__episode_19__timeout.mp4",
+      "sha256": "dba6c4135c35225ced64da6c9fc91f8f6899df76652906826362dffaafd4fcd7"
+    }
+  ],
+  "oracle_lock_sha256": "e53d7dd464a5617a03482c8ce4f2c459022b24cdb79f1b7b4acf652a96699b6f",
+  "oracle_root": "_artifacts/HumanoidArena/recovery-admission/oracle-corrected-pi05-int8-v1",
+  "policy_routes": {
+    "boxing": {
+      "instruction": "Strike the green markers on the punching bag.",
+      "requests": 21,
+      "task_name": "HSI_boxing"
+    },
+    "doubledesk": {
+      "instruction": "Put the hammer from the right table into the basket on the left table.",
+      "requests": 21,
+      "task_name": "HOI_double_desk"
+    },
+    "football": {
+      "instruction": "Kick the soccer ball into the goal.",
+      "requests": 21,
+      "task_name": "HOI_football"
+    },
+    "open_door": {
+      "instruction": "Open the door.",
+      "requests": 41,
+      "task_name": "HSI_open_door"
+    },
+    "pp_box": {
+      "instruction": "Move the box from the table onto the shelf.",
+      "requests": 41,
+      "task_name": "HOI_pp_box"
+    },
+    "sit_sofa": {
+      "instruction": "Sit on the sofa.",
+      "requests": 21,
+      "task_name": "HSI_sit_sofa"
+    },
+    "vision_navi": {
+      "instruction": "Avoid obstacles and move to the yellow marked area.",
+      "requests": 21,
+      "task_name": "HSI_vision_navi"
+    }
+  },
+  "progress_sha256": "0202a476eebe1952617faf786d833d80ac26f26e8f998e1608595ce0f9940d3a",
+  "reason_counts": {
+    "fall": 3,
+    "success": 82,
+    "timeout": 95
+  },
+  "run_complete": true,
+  "scenarios": 9,
+  "scenarios_admitted": 2,
+  "schema_version": 1,
+  "status": "completed_with_behavioral_rejections",
+  "successes": 82,
+  "trials": 180
+}
