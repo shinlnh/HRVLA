@@ -2,7 +2,7 @@
   "schema_version": 1,
   "architecture_token": "PI05-ST-RT",
   "architecture_branch": "feat(PI05-ST-RT)/retrain-sub-task-vla-for-pi05-sonic",
-  "architecture_revision": "40702d67de5f3ee4dd68031315d72f0833fd01b3",
+  "architecture_revision": "c72bb3866512e403667c4e421763827234d890e5",
   "suite": "HA",
   "suite_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
   "suite_observation_dim": 64,
