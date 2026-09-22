@@ -2,4 +2,5 @@
 
 PI05_METHOD_FEATURES = {
     "pi05_st": {"subtask": True, "recovery": False, "retrained": False},
+    "pi05_st_rt": {"subtask": True, "recovery": False, "retrained": True},
 }
