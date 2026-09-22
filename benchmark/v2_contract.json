@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "architecture_token": "PI05-STR-RT",
+  "architecture_branch": "feat(PI05-STR-RT)/retrain-recovery-vla-for-pi05-sonic",
+  "architecture_revision": "0c1c4af59a674a7d4a26189d2e0bb9ffc2b8225a",
+  "suite": "SP",
+  "suite_revision": null,
+  "checkpoint_lock": null,
+  "sonic_lock": null,
+  "protocol_lock": null,
+  "seed_plan_lock": null,
+  "precision": null,
+  "expected_episodes": null,
+  "status": "pending",
+  "result_manifest": null
+}
