@@ -78,6 +78,10 @@ def evaluate_one(
     cfg = PreTrainedConfig.from_pretrained(checkpoint)
     cfg.pretrained_path = str(checkpoint)
     cfg.device = "cuda"
+    # PI0.5's saved config requests max-autotune compilation. Eager inference
+    # evaluates the same weights without a many-minute compilation and avoids
+    # a CUDA device-side assert observed in the compiled validation path.
+    cfg.compile_model = False
     model = policy_factory.make_policy(cfg=cfg, ds_meta=dataset.meta)
     model.eval()
     features = {**model.config.input_features, **model.config.output_features}
@@ -119,6 +123,7 @@ def evaluate_one(
             losses = (predicted - truth).square().mean(dim=1).tolist()
             for episode, loss in zip(episode_ids[start : start + len(losses)], losses, strict=True):
                 per_episode[episode].append(float(loss))
+            print(f"HRVLA: {checkpoint.name} evaluated {min(start + batch_size, len(indices))}/{len(indices)} frames", flush=True)
         means = {str(episode): sum(values) / len(values) for episode, values in per_episode.items()}
         return {
             "checkpoint": str(checkpoint),
@@ -132,7 +137,12 @@ def evaluate_one(
     finally:
         del preprocessor, postprocessor, model
         gc.collect()
-        torch.cuda.empty_cache()
+        # Do not mask the real evaluation error if the CUDA context is poisoned.
+        if torch.cuda.is_initialized():
+            try:
+                torch.cuda.empty_cache()
+            except torch.AcceleratorError:
+                pass
 
 
 def main() -> None:
@@ -176,11 +186,12 @@ def main() -> None:
         "episode_indices": [int(row["episode_index"]) for row in rows],
         "sample_local_indices": indices,
         "seed_rule": "20260922 + sample batch start index; paired base/tuned",
-        "base": evaluate_one(args.base_policy, dataset, train_meta.stats, args.tokenizer_dir,
-                             indices, episode_ids, args.batch_size),
-        "tuned": evaluate_one(args.tuned_policy, dataset, train_meta.stats, args.tokenizer_dir,
-                              indices, episode_ids, args.batch_size),
     }
+    result["base"] = evaluate_one(args.base_policy, dataset, train_meta.stats, args.tokenizer_dir,
+                                  indices, episode_ids, args.batch_size)
+    print(f"HRVLA: base validation MSE={result['base']['macro_episode_first_action_mse']:.6f}", flush=True)
+    result["tuned"] = evaluate_one(args.tuned_policy, dataset, train_meta.stats, args.tokenizer_dir,
+                                   indices, episode_ids, args.batch_size)
     result["tuned_minus_base_mse"] = (
         result["tuned"]["macro_episode_first_action_mse"]
         - result["base"]["macro_episode_first_action_mse"]
