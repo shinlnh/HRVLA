@@ -61,6 +61,7 @@ def audit(runtime_root: Path, matrix_root: Path, *, include_diagnostic: bool = F
     protocol = json.loads((LOCKS / "protocol.json").read_text(encoding="utf-8"))
     seed_lock = json.loads((LOCKS / "seed_plan.json").read_text(encoding="utf-8"))
     sonic = json.loads((LOCKS / "sonic.json").read_text(encoding="utf-8"))
+    checkpoint = json.loads((LOCKS / "checkpoints.json").read_text(encoding="utf-8"))
     contract = json.loads((ROOT / "benchmark/v2_contract.json").read_text(encoding="utf-8"))
     tasks = protocol["primary_tasks"]
     if include_diagnostic:
@@ -82,6 +83,33 @@ def audit(runtime_root: Path, matrix_root: Path, *, include_diagnostic: bool = F
         raise ValueError("Isaac Lab source revision differs")
     if sha256(runtime_root / "scripts/run_humanoidarena_baseline_matrix_fast.py") != protocol["baseline_driver_sha256"]:
         raise ValueError("baseline orchestration driver differs")
+    sonic_root = (
+        runtime_root / "_vendor/HumanoidArena/GR00T-WholeBodyControl"
+        / "gear_sonic_deploy/policy/release"
+    )
+    for name, expected_hash in (
+        ("model_encoder.onnx", sonic["encoder_sha256"]),
+        ("model_decoder.onnx", sonic["decoder_sha256"]),
+    ):
+        if sha256(sonic_root / name) != expected_hash:
+            raise ValueError(f"SONIC {name} differs from frozen baseline")
+    models_root = runtime_root / "_artifacts/HumanoidArena/models"
+    for task in tasks:
+        key = "open_door_diagnostic" if task == "open_door" else task
+        model_dir = models_root / TASKS[task]["model"]
+        weights = model_dir / checkpoint["weight_file"]
+        if (
+            weights.stat().st_size != checkpoint["weight_size_bytes"]
+            or sha256(weights) != checkpoint["weights_sha256_by_task"][key]
+        ):
+            raise ValueError(f"PI0.5 checkpoint differs: {task}")
+        small_files = [
+            {"name": path.name, "sha256": sha256(path)}
+            for path in sorted(model_dir.iterdir())
+            if path.is_file() and path.name != checkpoint["weight_file"]
+        ]
+        if canonical_sha256(small_files) != checkpoint["small_file_manifest_sha256_by_task"][key]:
+            raise ValueError(f"PI0.5 checkpoint metadata differs: {task}")
     expected = [
         {
             "task": task, "mode": mode, "seed": group_seed,
@@ -136,7 +164,7 @@ def audit(runtime_root: Path, matrix_root: Path, *, include_diagnostic: bool = F
             or row.get("max_steps") != TASKS[task]["max_steps"]
             or type(row.get("success")) is not bool
             or not 0 < int(row.get("episode_steps", 0)) <= TASKS[task]["max_steps"]
-            or row.get("model_path") != str(runtime_root / "_artifacts/HumanoidArena/models" / TASKS[task]["model"])
+            or row.get("model_path") != str(models_root / TASKS[task]["model"])
         ):
             raise ValueError(f"episode metadata differs from plan: {identity}")
         method = row.get("hrvla_method")
@@ -178,8 +206,11 @@ def audit(runtime_root: Path, matrix_root: Path, *, include_diagnostic: bool = F
             "video_path": row.get("video_path") if video_hash else None,
             "video_sha256": video_hash,
         })
-    if len(program_hashes) != 1:
-        raise ValueError("ST program hash differs across paired episodes")
+    frozen_program = json.loads(
+        (ROOT / "benchmark/humanoidarena_method_programs.json").read_text(encoding="utf-8")
+    )
+    if program_hashes != {canonical_sha256(frozen_program)}:
+        raise ValueError("ST program hash differs from checked-in method program")
     expected_count = 240 if include_diagnostic else 1440
     if len(results) != expected_count:
         raise ValueError("episode denominator differs from frozen protocol")
