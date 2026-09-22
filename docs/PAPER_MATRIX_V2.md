@@ -5,14 +5,11 @@ plan, **not** a claim that unimplemented architectures or unrun benchmarks are
 complete. Preserve all v0 results and failed trials as historical evidence.
 Do not rewrite `main` or `dev` to make a missing result appear complete.
 
-Migration checkpoint: the six obsolete `feat(benchmark)/*` branch names were
-removed locally and from GitHub. Five tips were already reachable from `main`;
-the one unmerged hybrid PI0.5 tip (`621079b`) is recoverable from tag
-`archive/benchmark-hybrid-pi05-20260919`. Existing `fix(benchmark)/*` branches
-and their evidence were not deleted. At this checkpoint, six architecture
-branches exist (five GR00T plus PI0.5 base), zero v2 benchmark branches exist,
-and `ours` does not exist. This count measures branch organization only, not
-experimental completion.
+Current execution state is tracked in
+[`THIRTY_BRANCH_EXECUTION.md`](THIRTY_BRANCH_EXECUTION.md). The original migration
+checkpoint had six architecture branches and no v2 benchmark branches; the
+current remote has all 10 architecture and 20 benchmark branches plus `dev`
+and `main`. This count measures organization, not experimental completion.
 
 ## Architecture branches (10)
 
@@ -28,14 +25,14 @@ ST; `ST-RT` retrains the ST VLA; `STR-RT` retrains the recovery VLA.
 | GR00T+SONIC | ST-RT | `feat(GR00T-ST)/retrain-sub-task-vla-for-gr00t-sonic` | Existing user-chosen branch name; closed-loop result pending |
 | GR00T+SONIC | STR-RT | `feat(GR00T-STR-RT)/retrain-recovery-vla-for-gr00t-sonic` | Existing branch; 40-D recovery retraining pending |
 | PI0.5+SONIC | base | `feat(PI05)/reproduce-pi05-sonic-whole-body` | Existing PI0.5 deployment code/evidence, newly assigned architecture branch |
-| PI0.5+SONIC | ST | `feat(PI05-ST)/import-sub-task-feature-into-pi05-sonic` | Not implemented; do not claim runnable |
-| PI0.5+SONIC | STR | `feat(PI05-STR)/import-recovery-for-sub-task-into-pi05-sonic` | Not implemented; do not claim runnable |
-| PI0.5+SONIC | ST-RT | `feat(PI05-ST-RT)/retrain-sub-task-vla-for-pi05-sonic` | Not implemented; do not claim trained |
-| PI0.5+SONIC | STR-RT | `feat(PI05-STR-RT)/retrain-recovery-vla-for-pi05-sonic` | Not implemented; do not claim trained |
+| PI0.5+SONIC | ST | `feat(PI05-ST)/import-sub-task-feature-into-pi05-sonic` | Language routing implemented; live integration pending |
+| PI0.5+SONIC | STR | `feat(PI05-STR)/import-recovery-for-sub-task-into-pi05-sonic` | Recovery routing implemented; live integration pending |
+| PI0.5+SONIC | ST-RT | `feat(PI05-ST-RT)/retrain-sub-task-vla-for-pi05-sonic` | Training launcher implemented; no selected checkpoint |
+| PI0.5+SONIC | STR-RT | `feat(PI05-STR-RT)/retrain-recovery-vla-for-pi05-sonic` | Recovery-labelled training guard implemented; no selected checkpoint |
 
-Do not create an empty feature branch merely to reach a branch count. Create
-each missing PI0.5 branch with its first implementation commit. Retain the
-five existing GR00T branch names, including the user-chosen ST-RT spelling.
+All ten named branches now exist. Retain the five GR00T branch names,
+including the user-chosen ST-RT spelling. A branch remains partial until its
+end-to-end method and checkpoint pass the execution ledger's gates.
 
 ## Benchmark branches (20)
 
