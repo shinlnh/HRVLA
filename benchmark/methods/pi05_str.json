@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "pi05_str",
+  "parent": "pi05_st",
+  "family": "pi05",
+  "controller": "gear_sonic",
+  "features": {
+    "subtask": true,
+    "recovery": true,
+    "retrained": false
+  },
+  "language_program": "benchmark/humanoidarena_method_programs.json",
+  "router": "src/hrvla_bench/humanoidarena_method_runtime.py",
+  "recovery_runtime": "src/hrvla_bench/humanoidarena_recovery_runtime.py",
+  "checkpoint": "Reuse the exact PI0.5+SONIC task checkpoint; no retraining",
+  "claim_boundary": "Recovery instruction routing is implemented and unit-tested; live PI0.5 failure injection and closed-loop recovery are not validated."
+}
