@@ -1,6 +1,6 @@
 # PI0.5 + SONIC + sub-task on HumanoidArena
 
-Status: **ready for full matrix**, not a paper result. The baseline-only PI0.5 HA branch is
+Status: **running full matrix**, not a paper result. The baseline-only PI0.5 HA branch is
 complete; this branch must independently evaluate the ST hook on its frozen
 six-task primary identities. OpenDoor is diagnostic, never pooled into the
 primary denominator.
@@ -37,6 +37,20 @@ python3 scripts/run_humanoidarena_pi05_st_matrix.py \
 ```
 
 The same command resumes missing atomic episode JSON after an interruption.
+The primary matrix started on HELIOS at `2026-09-22T07:04:32Z` as detached
+driver PID `4021344`; the process log is
+`_artifacts/HumanoidArena/pi05-st-ha-cuda-int8-v1/driver.log` and the live
+progress file is the adjacent `progress.json`. At launch it reported 0/72
+cells and 0/1,440 episodes. To check without touching the job:
+
+```bash
+python3 -m json.tool /HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-ha-cuda-int8-v1/progress.json
+pgrep -af '^/usr/bin/python3 -u scripts/run_humanoidarena_pi05_st_matrix.py'
+```
+
+If interrupted, confirm the old driver and its child simulator/server are no
+longer running, then rerun the exact full-matrix command above. Valid atomic
+episode rows are skipped; never remove them to improve the outcome.
 Do not call this branch `complete` until all 1,440 primary rows, trace hashes,
 sampled videos, paired identities, checkpoint/controller locks, confidence
 intervals, plots, and the final result manifest have passed audit. Run the
