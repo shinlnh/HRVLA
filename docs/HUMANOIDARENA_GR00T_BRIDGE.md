@@ -69,6 +69,31 @@ The training and held-out evaluation launchers install the packed-video offset
 shim automatically. Ordinary LeRobot v2 datasets have no offset field and keep
 their original behavior.
 
+## Closed-loop inference server
+
+[`scripts/serve_humanoidarena_gr00t.py`](../scripts/serve_humanoidarena_gr00t.py)
+implements the same `/reset` and `/infer` wire protocol used by the released
+HumanoidArena client. It splits state64 into the frozen named state groups,
+routes the released task ID to its natural-language instruction, calls
+`Gr00tPolicy`, and reconstructs the named predictions in the exact semantic-40
+order. The server rejects a checkpoint whose embedded modality keys or horizons
+drift from this contract, as well as malformed/non-finite observations or
+actions. It never silently clamps, pads, truncates, or reorders a prediction.
+
+After the shared HumanoidArena adaptation checkpoint exists, launch it from the
+locked Isaac-GR00T environment:
+
+```bash
+_vendor/Isaac-GR00T/.venv/bin/python \
+  scripts/serve_humanoidarena_gr00t.py \
+  --model-path /path/to/shared-humanoidarena-checkpoint \
+  --device cuda:0 --denoising-steps 4 --port 8000
+```
+
+The server's fake-policy HTTP integration test validates the production payload
+shape without loading a model. It is interface evidence, not evidence that the
+pending learned checkpoint succeeds in simulation.
+
 ## Required validation before training
 
 - Every released task must pass the exact state/action shape and VLA protocol
@@ -81,4 +106,3 @@ their original behavior.
 - The shared adaptation checkpoint must be trained before the ST/STR-specific RT
   checkpoints, and its immutable revision must be used by all five rows.
 - No action MSE result may be presented as task success or recovery success.
-
