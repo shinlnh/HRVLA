@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the OpenDoor diagnostic and strict audits after the primary ST matrix.
+"""Run the OpenDoor diagnostic, strict audits, and paired comparison.
 
 This unattended continuation never marks a branch complete or pushes a claim.
 It records its state and leaves both raw and derived artifacts for review.
@@ -133,10 +133,28 @@ def main() -> int:
                 "--matrix-root", str(diagnostic_root),
                 "--output", str(diagnostic_audit), "--diagnostic",
             ], release_root / "diagnostic-audit.log", cwd=ROOT)
+        comparison_root = release_root / "comparison"
+        comparison_path = comparison_root / "comparison.json"
+        if comparison_path.exists():
+            if (
+                not _read_json(comparison_path).get("audit_passed")
+                or not (comparison_root / "comparison.svg").is_file()
+            ):
+                raise RuntimeError("existing paired comparison is incomplete")
+        else:
+            status("compiling_paired_comparison")
+            _run_logged([
+                sys.executable, str(ROOT / "scripts/compile_pi05_st_ha_comparison.py"),
+                "--runtime-root", str(runtime_root),
+                "--primary-audit", str(primary_audit),
+                "--output-root", str(comparison_root),
+            ], release_root / "comparison.log", cwd=ROOT)
         status(
-            "audits_passed_review_required",
+            "audits_and_comparison_passed_review_required",
             primary_audit=str(release_root / "primary-audit.json"),
             diagnostic_audit=str(release_root / "diagnostic-audit.json"),
+            comparison=str(comparison_root / "comparison.json"),
+            chart=str(comparison_root / "comparison.svg"),
         )
         return 0
     except Exception as exc:
