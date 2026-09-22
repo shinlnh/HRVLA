@@ -121,6 +121,11 @@ def main() -> int:
                 )
             if result.returncode != 0:
                 raise RuntimeError(f"Isaac smoke failed with code {result.returncode}; see {output / 'sim.log'}")
+            if not (output / "episode.json").is_file():
+                raise RuntimeError(
+                    "Isaac exited without an episode result (startup may have failed); "
+                    f"see {output / 'sim.log'}"
+                )
         finally:
             baseline._terminate_group(server)
     episode = json.loads((output / "episode.json").read_text(encoding="utf-8"))

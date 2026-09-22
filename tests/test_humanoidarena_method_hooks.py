@@ -151,3 +151,17 @@ def test_pi05_st_hook_rejects_non_action40_chunk(tmp_path: Path) -> None:
         assert "non-action40 chunk" in str(error)
     else:
         raise AssertionError("PI0.5 ST accepted a 64-D policy action")
+
+
+def test_pi05_st_ignores_isaac_startup_reset_before_episode(tmp_path: Path) -> None:
+    provider = _Provider()
+    env = _Env()
+    module = _module(provider, env)
+    install_method_hooks(
+        module, PROGRAMS, method_id="pi05_st", task_id="pick_and_place_box",
+        output_dir=tmp_path, implementation_revision="b" * 40,
+    )
+    module._reset_environment_for_episode(env, types.SimpleNamespace(decimation=1), 17)
+    assert not (tmp_path / "method-trace.jsonl").exists()
+    result = module._run_episode_once(spec={"episode_index": 0})
+    assert result["hrvla_method"]["policy_requests"] == 1

@@ -82,6 +82,12 @@ def install_method_hooks(
     def method_reset(env, env_cfg, episode_seed):
         result = original_reset(env, env_cfg, episode_seed)
         episode_output = state.get("episode_output_dir")
+        # HumanoidArena resets once during scene startup, before entering
+        # `_run_episode_once`. That is not a scored episode and has no method
+        # output context yet. Leave it untouched; the episode reset below is
+        # the one that must create a planner and trace.
+        if episode_output is None:
+            return result
         if not isinstance(episode_output, Path):
             raise RuntimeError("method episode output directory is unresolved")
         trace_path = episode_output / "method-trace.jsonl"
