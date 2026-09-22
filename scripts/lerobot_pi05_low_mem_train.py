@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Run pinned LeRobot training with transient BF16 PI0.5 initialization.
+"""Run pinned LeRobot training with a strict, streaming PI0.5 weight loader.
 
-LeRobot's PI05Policy constructs the multi-billion-parameter model in the
-process-wide default FP32 dtype, only then casts most weights to BF16. That
-transient FP32 peak was OOM-killed on the 31 GiB HELIOS host before CUDA was
-used. The checkpoint supplies every parameter, so its loaded values (not the
-initial random values) determine the policy. This changes only construction
-dtype; it restores the default before training begins.
+The upstream PI0.5 loader first constructs 4.14B parameters in host memory,
+then loads a full checkpoint into another host-memory allocation. That peak
+OOM-kills the 31 GiB HELIOS host before CUDA starts. Here the model is created
+on PyTorch's `meta` device, allocated once on CUDA, and populated tensor by
+tensor from the same safetensors file. Every key and shape must match before
+training; no randomly initialized parameter may survive.
 """
 
 from __future__ import annotations
@@ -16,50 +16,94 @@ from pathlib import Path
 import runpy
 import sys
 
+from safetensors import safe_open
 import torch
+from lerobot.configs.policies import PreTrainedConfig
 from lerobot.policies.pi05.modeling_pi05 import PI05Policy
+
+
+def install_streaming_loader() -> None:
+    original_init = PI05Policy.__init__
+
+    @functools.wraps(original_init)
+    def initialize_on_meta(self, *args, **kwargs):
+        config = args[0] if args else kwargs["config"]
+        requested_device = config.device
+        config.device = "meta"
+        try:
+            with torch.device("meta"):
+                return original_init(self, *args, **kwargs)
+        finally:
+            config.device = requested_device
+
+    @classmethod
+    def stream_from_pretrained(cls, pretrained_name_or_path, *, config=None, **kwargs):
+        checkpoint = Path(pretrained_name_or_path)
+        weights = checkpoint / "model.safetensors"
+        if not weights.is_file():
+            raise FileNotFoundError(f"local PI0.5 safetensors checkpoint missing: {weights}")
+        if config is None:
+            config = PreTrainedConfig.from_pretrained(checkpoint)
+        if config.device != "cuda":
+            raise ValueError("streaming PI0.5 training loader requires the pinned CUDA backend")
+
+        model = cls(config, **kwargs)
+        expected_keys = set(model.state_dict())
+        dummy = torch.empty(0)
+        with safe_open(weights, framework="pt", device="cpu") as reader:
+            source_keys = reader.keys()
+            mapped_keys = []
+            for source_key in source_keys:
+                remapped = model._fix_pytorch_state_dict_keys({source_key: dummy}, config)
+                mapped_keys.extend(
+                    key if key.startswith("model.") else f"model.{key}" for key in remapped
+                )
+            if len(mapped_keys) != len(set(mapped_keys)) or set(mapped_keys) != expected_keys:
+                missing = sorted(expected_keys - set(mapped_keys))[:8]
+                unexpected = sorted(set(mapped_keys) - expected_keys)[:8]
+                raise RuntimeError(
+                    f"PI0.5 checkpoint is not exact: missing={missing}, unexpected={unexpected}"
+                )
+
+            model.to_empty(device="cuda")
+            destination = model.state_dict()
+            loaded = set()
+            with torch.no_grad():
+                for source_key in source_keys:
+                    tensor = reader.get_tensor(source_key)
+                    remapped = model._fix_pytorch_state_dict_keys({source_key: tensor}, config)
+                    for key, value in remapped.items():
+                        key = key if key.startswith("model.") else f"model.{key}"
+                        target = destination[key]
+                        if target.shape != value.shape:
+                            raise ValueError(
+                                f"PI0.5 checkpoint tensor shape mismatch: {key}: "
+                                f"{tuple(value.shape)} != {tuple(target.shape)}"
+                            )
+                        target.copy_(value)
+                        loaded.add(key)
+                    del tensor, remapped
+        if loaded != expected_keys:
+            raise RuntimeError("PI0.5 streaming loader left an uninitialized tensor")
+        model.eval()
+        print(
+            f"HRVLA: loaded all {len(loaded)} PI0.5 tensors to CUDA; "
+            f"allocated={torch.cuda.memory_allocated() / 2**30:.2f} GiB",
+            flush=True,
+        )
+        return model
+
+    PI05Policy.__init__ = initialize_on_meta
+    PI05Policy.from_pretrained = stream_from_pretrained
 
 
 def main() -> None:
     if len(sys.argv) < 2:
         raise SystemExit("usage: lerobot_pi05_low_mem_train.py LEROBOT_TRAIN.py [options]")
     upstream = Path(sys.argv[1]).resolve(strict=True)
-    original = PI05Policy.__init__
-    original_load = PI05Policy.load_state_dict
-    original_from_pretrained = PI05Policy.from_pretrained.__func__
-
-    @functools.wraps(original)
-    def initialize_bf16(self, *args, **kwargs):
-        previous = torch.get_default_dtype()
-        torch.set_default_dtype(torch.bfloat16)
-        try:
-            return original(self, *args, **kwargs)
-        finally:
-            torch.set_default_dtype(previous)
-
-    PI05Policy.__init__ = initialize_bf16
-
-    @functools.wraps(original_load)
-    def record_complete_load(self, *args, **kwargs):
-        result = original_load(self, *args, **kwargs)
-        if result.missing_keys or result.unexpected_keys:
-            raise RuntimeError("PI0.5 checkpoint did not load every model key")
-        self._hrvla_loaded_full_checkpoint = True
-        return result
-
-    @classmethod
-    def verified_from_pretrained(cls, *args, **kwargs):
-        model = original_from_pretrained(cls, *args, **kwargs)
-        # LeRobot's PI0.5 loader catches weight-loading errors and can return
-        # random initialization. That must never become a benchmark candidate.
-        if not getattr(model, "_hrvla_loaded_full_checkpoint", False):
-            raise RuntimeError("PI0.5 pretrained weights were not loaded completely")
-        return model
-
-    PI05Policy.load_state_dict = record_complete_load
-    PI05Policy.from_pretrained = verified_from_pretrained
+    install_streaming_loader()
     sys.argv = [str(upstream), *sys.argv[2:]]
-    print("HRVLA: BF16-only PI0.5 construction; standard dtype restored before training", flush=True)
+    print("HRVLA: exact-key meta-device PI0.5 streaming loader enabled", flush=True)
     runpy.run_path(str(upstream), run_name="__main__")
 
 
