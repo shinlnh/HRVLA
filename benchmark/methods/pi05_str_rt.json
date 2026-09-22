@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "id": "pi05_str_rt",
+  "parent": "pi05_str",
+  "family": "pi05",
+  "controller": "gear_sonic",
+  "features": {"subtask": true, "recovery": true, "retrained": true},
+  "language_program": "benchmark/humanoidarena_method_programs.json",
+  "router": "src/hrvla_bench/humanoidarena_method_runtime.py",
+  "training_entrypoint": "scripts/train_pi05_architecture.py",
+  "checkpoint": null,
+  "claim_boundary": "Training launcher is implemented; recovery-labelled data, a trained checkpoint, and simulator validation are not yet available."
+}
