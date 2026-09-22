@@ -119,7 +119,11 @@ def main() -> int:
     branch = _git(root, "symbolic-ref", "--short", "HEAD") or "DETACHED"
     architecture = contract.get("architecture_branch")
     revision = contract.get("architecture_revision")
-    head = _git(root, "rev-parse", architecture) if isinstance(architecture, str) else None
+    head = None
+    if isinstance(architecture, str):
+        head = _git(root, "rev-parse", f"refs/remotes/origin/{architecture}")
+        if head is None:
+            head = _git(root, "rev-parse", architecture)
     ancestor = bool(
         isinstance(revision, str)
         and subprocess.run(
