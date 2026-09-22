@@ -1,0 +1,638 @@
+{
+  "cpu_rows": [
+    {
+      "episodes": 6000,
+      "generated_tokens": 6383964,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 3.1035205507463703,
+      "mean_planner_latency_ms": 0.4366667186897914,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 9.065452252743508,
+      "mean_steps": 9.780666666666667,
+      "method": "adaptive_ttc",
+      "next_subtask_accuracy": 0.9961488651080362,
+      "p95_episode_mean_latency_ms": 1.1170146363755604,
+      "proposal_error_rate": 0.15,
+      "repeated_action_rate": 0.0622486538068298,
+      "safety_fallback_rate": 1.704041987594574e-05,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.34862995024197396,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 6000,
+      "generated_tokens": 2816736,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 1.0,
+      "mean_planner_latency_ms": 0.2687156793173128,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 4.0,
+      "mean_steps": 9.780333333333333,
+      "method": "best_of_n",
+      "next_subtask_accuracy": 0.9827545073446713,
+      "p95_episode_mean_latency_ms": 0.6049128182481085,
+      "proposal_error_rate": 0.15,
+      "repeated_action_rate": 0.062370062370062374,
+      "safety_fallback_rate": 0.0,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 6000,
+      "generated_tokens": 704208,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 1.0,
+      "mean_planner_latency_ms": 0.029641593316028916,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 1.0,
+      "mean_steps": 9.780666666666667,
+      "method": "plan_once",
+      "next_subtask_accuracy": 0.9697191738804444,
+      "p95_episode_mean_latency_ms": 0.07881509991420899,
+      "proposal_error_rate": 0.15,
+      "repeated_action_rate": 0.06173744121055143,
+      "safety_fallback_rate": 0.09225683320837025,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 6000,
+      "generated_tokens": 1896168,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 2.6926249062776906,
+      "mean_planner_latency_ms": 0.049629181209971306,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 2.6926249062776906,
+      "mean_steps": 9.780666666666667,
+      "method": "recursive",
+      "next_subtask_accuracy": 0.9697191738804444,
+      "p95_episode_mean_latency_ms": 0.09337154551758431,
+      "proposal_error_rate": 0.15,
+      "repeated_action_rate": 0.06173744121055143,
+      "safety_fallback_rate": 0.09225683320837025,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 6000,
+      "generated_tokens": 17024496,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 6.043845000340808,
+      "mean_planner_latency_ms": 1.2954597392131704,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 24.175380001363234,
+      "mean_steps": 9.780666666666667,
+      "method": "ttc",
+      "next_subtask_accuracy": 0.9968304819030741,
+      "p95_episode_mean_latency_ms": 2.303663727285642,
+      "proposal_error_rate": 0.15,
+      "repeated_action_rate": 0.06248721968509304,
+      "safety_fallback_rate": 0.0,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 1.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 30000,
+      "generated_tokens": 38746404,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 3.611474672283687,
+      "mean_planner_latency_ms": 0.797172734677389,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 11.005225055727111,
+      "mean_steps": 9.7798,
+      "method": "adaptive_ttc",
+      "next_subtask_accuracy": 0.9921675289883228,
+      "p95_episode_mean_latency_ms": 2.8008663000036904,
+      "proposal_error_rate": 0.28,
+      "repeated_action_rate": 0.06161680197959059,
+      "safety_fallback_rate": 0.00027607926542465083,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.44067363340763616,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 30000,
+      "generated_tokens": 14082816,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 1.0,
+      "mean_planner_latency_ms": 0.4990766418779634,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 4.0,
+      "mean_steps": 9.779733333333333,
+      "method": "best_of_n",
+      "next_subtask_accuracy": 0.9701389267601025,
+      "p95_episode_mean_latency_ms": 1.9407244165752975,
+      "proposal_error_rate": 0.28,
+      "repeated_action_rate": 0.06237729726781916,
+      "safety_fallback_rate": 0.00013974477831706387,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 30000,
+      "generated_tokens": 3520608,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 1.0,
+      "mean_planner_latency_ms": 0.041350239767171525,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 1.0,
+      "mean_steps": 9.779466666666666,
+      "method": "plan_once",
+      "next_subtask_accuracy": 0.9468035066670303,
+      "p95_episode_mean_latency_ms": 0.11238390015932964,
+      "proposal_error_rate": 0.28,
+      "repeated_action_rate": 0.06150301311591634,
+      "safety_fallback_rate": 0.17143743353420773,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 30000,
+      "generated_tokens": 9499788,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 2.6983373326425437,
+      "mean_planner_latency_ms": 0.06800974294727892,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 2.6983373326425437,
+      "mean_steps": 9.779466666666666,
+      "method": "recursive",
+      "next_subtask_accuracy": 0.9468035066670303,
+      "p95_episode_mean_latency_ms": 0.13559270000769175,
+      "proposal_error_rate": 0.28,
+      "repeated_action_rate": 0.06150301311591634,
+      "safety_fallback_rate": 0.17143743353420773,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 30000,
+      "generated_tokens": 84473136,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 5.998067511008712,
+      "mean_planner_latency_ms": 1.4142384642676986,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 23.992270044034846,
+      "mean_steps": 9.780133333333334,
+      "method": "ttc",
+      "next_subtask_accuracy": 0.9943252307398672,
+      "p95_episode_mean_latency_ms": 2.225973545385138,
+      "proposal_error_rate": 0.28,
+      "repeated_action_rate": 0.06214298373573639,
+      "safety_fallback_rate": 0.00013973906286212867,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 1.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 6000,
+      "generated_tokens": 9385872,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 4.222396428023655,
+      "mean_planner_latency_ms": 0.7707141700534221,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 13.329402341553196,
+      "mean_steps": 9.779833333333332,
+      "method": "adaptive_ttc",
+      "next_subtask_accuracy": 0.9855144089026738,
+      "p95_episode_mean_latency_ms": 2.1646590910015884,
+      "proposal_error_rate": 0.45,
+      "repeated_action_rate": 0.06046456142742719,
+      "safety_fallback_rate": 0.0018916477785920005,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.5601833705414203,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 6000,
+      "generated_tokens": 2815728,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 1.0,
+      "mean_planner_latency_ms": 0.23444147979860436,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 4.0,
+      "mean_steps": 9.776833333333334,
+      "method": "best_of_n",
+      "next_subtask_accuracy": 0.9534614138865686,
+      "p95_episode_mean_latency_ms": 0.48066681814485823,
+      "proposal_error_rate": 0.45,
+      "repeated_action_rate": 0.06211963655580369,
+      "safety_fallback_rate": 0.0006136956410562384,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 6000,
+      "generated_tokens": 703872,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 1.0,
+      "mean_planner_latency_ms": 0.057547051304867744,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 1.0,
+      "mean_steps": 9.776,
+      "method": "plan_once",
+      "next_subtask_accuracy": 0.9163768412438625,
+      "p95_episode_mean_latency_ms": 0.1656740001075937,
+      "proposal_error_rate": 0.45,
+      "repeated_action_rate": 0.060914484451718494,
+      "safety_fallback_rate": 0.27763570649208946,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 6000,
+      "generated_tokens": 1904376,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 2.705571467539553,
+      "mean_planner_latency_ms": 0.08056482402936424,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 2.705571467539553,
+      "mean_steps": 9.776,
+      "method": "recursive",
+      "next_subtask_accuracy": 0.9163768412438625,
+      "p95_episode_mean_latency_ms": 0.17499618165443695,
+      "proposal_error_rate": 0.45,
+      "repeated_action_rate": 0.060914484451718494,
+      "safety_fallback_rate": 0.27763570649208946,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.0,
+      "valid_selection_rate": 1.0
+    },
+    {
+      "episodes": 6000,
+      "generated_tokens": 16617648,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 5.899812542603954,
+      "mean_planner_latency_ms": 1.1296988403516057,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 23.599250170415814,
+      "mean_steps": 9.78,
+      "method": "ttc",
+      "next_subtask_accuracy": 0.9893490115882754,
+      "p95_episode_mean_latency_ms": 1.941806999942249,
+      "proposal_error_rate": 0.45,
+      "repeated_action_rate": 0.0613667348329925,
+      "safety_fallback_rate": 0.0005623721881390593,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 1.0,
+      "valid_selection_rate": 1.0
+    }
+  ],
+  "cpu_sources": {
+    "0.15": "/HELIOS/Robotics/HRVLA/results/subtask/cpu-final-noise-015/summary.json",
+    "0.28": "/HELIOS/Robotics/HRVLA/results/subtask/cpu-final-primary-028/summary.json",
+    "0.45": "/HELIOS/Robotics/HRVLA/results/subtask/cpu-final-noise-045/summary.json"
+  },
+  "gpu": {
+    "backend": "nvidia/Cosmos-Reason2-2B",
+    "methods": {
+      "adaptive_ttc": {
+        "decision_points": 46,
+        "generated_tokens": 2674,
+        "mean_confidence": 0.8093446919572039,
+        "mean_latency_ms": 1194.2181267392461,
+        "mean_model_calls": 1.826086956521739,
+        "mean_search_nodes": 4.043478260869565,
+        "next_subtask_accuracy": 0.8913043478260869,
+        "p95_latency_ms": 4839.9768929994025,
+        "safety_fallback_rate": 0.043478260869565216,
+        "ttc_route_rate": 0.2608695652173913,
+        "valid_selection_rate": 1.0
+      },
+      "best_of_n": {
+        "decision_points": 46,
+        "generated_tokens": 1542,
+        "mean_confidence": 0.588253884755416,
+        "mean_latency_ms": 919.0071418696117,
+        "mean_model_calls": 1.0,
+        "mean_search_nodes": 4.0,
+        "next_subtask_accuracy": 0.8260869565217391,
+        "p95_latency_ms": 2482.1680360000755,
+        "safety_fallback_rate": 0.08695652173913043,
+        "ttc_route_rate": 0.0,
+        "valid_selection_rate": 1.0
+      },
+      "plan_once": {
+        "decision_points": 46,
+        "generated_tokens": 1917,
+        "mean_confidence": 0.6851100491960959,
+        "mean_latency_ms": 527.0898422391324,
+        "mean_model_calls": 1.0,
+        "mean_search_nodes": 1.0,
+        "next_subtask_accuracy": 0.8913043478260869,
+        "p95_latency_ms": 1061.939178999637,
+        "safety_fallback_rate": 0.21739130434782608,
+        "ttc_route_rate": 0.0,
+        "valid_selection_rate": 1.0
+      },
+      "recursive": {
+        "decision_points": 46,
+        "generated_tokens": 6026,
+        "mean_confidence": 0.6851100491960959,
+        "mean_latency_ms": 1590.059923673973,
+        "mean_model_calls": 2.9565217391304346,
+        "mean_search_nodes": 2.9565217391304346,
+        "next_subtask_accuracy": 0.8913043478260869,
+        "p95_latency_ms": 2989.5942820003256,
+        "safety_fallback_rate": 0.21739130434782608,
+        "ttc_route_rate": 0.0,
+        "valid_selection_rate": 1.0
+      },
+      "ttc": {
+        "decision_points": 46,
+        "generated_tokens": 6425,
+        "mean_confidence": 0.588253884755416,
+        "mean_latency_ms": 4031.8489335218146,
+        "mean_model_calls": 4.434782608695652,
+        "mean_search_nodes": 17.73913043478261,
+        "next_subtask_accuracy": 0.8260869565217391,
+        "p95_latency_ms": 8839.153893000002,
+        "safety_fallback_rate": 0.08695652173913043,
+        "ttc_route_rate": 1.0,
+        "valid_selection_rate": 1.0
+      }
+    },
+    "model_path": "/home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561",
+    "peak_vram_gib": 6.130204677581787,
+    "schema_version": 1
+  },
+  "gpu_source": "/HELIOS/Robotics/HRVLA/results/subtask/cosmos-reason2-release/cosmos_summary.json",
+  "schema_version": 1,
+  "sonic": {
+    "eval/all/accel_dist": 0.8038144929000344,
+    "eval/all/accel_dist_foot": 1.240876570991848,
+    "eval/all/accel_dist_legs": 1.02648132720749,
+    "eval/all/accel_dist_other_upper_bodies": 0.5949775356462393,
+    "eval/all/accel_dist_vr_3points": 0.7065422976988068,
+    "eval/all/mpjpe_g": 205.83325301634898,
+    "eval/all/mpjpe_g_foot": 203.6159264117941,
+    "eval/all/mpjpe_g_legs": 203.70124312843578,
+    "eval/all/mpjpe_g_other_upper_bodies": 207.12844827586207,
+    "eval/all/mpjpe_g_vr_3points": 207.9385932033983,
+    "eval/all/mpjpe_l": 23.553437566930818,
+    "eval/all/mpjpe_l_foot": 32.51645563936781,
+    "eval/all/mpjpe_l_legs": 29.00041645843745,
+    "eval/all/mpjpe_l_other_upper_bodies": 19.32244580834583,
+    "eval/all/mpjpe_l_vr_3points": 16.630264294935863,
+    "eval/all/mpjpe_pa": 17.31365399889341,
+    "eval/all/mpjpe_pa_foot": 1.4003827937062772e-05,
+    "eval/all/mpjpe_pa_legs": 17.66277993815592,
+    "eval/all/mpjpe_pa_other_upper_bodies": 7.917591204397801,
+    "eval/all/mpjpe_pa_vr_3points": 8.09748511161086,
+    "eval/all/vel_dist": 2.4634064803535733,
+    "eval/all/vel_dist_foot": 2.905392274565842,
+    "eval/all/vel_dist_legs": 2.653787730158358,
+    "eval/all/vel_dist_other_upper_bodies": 2.2317289231360884,
+    "eval/all/vel_dist_vr_3points": 2.468773059759183,
+    "eval/all_metrics_dict": {
+      "accel_dist": [
+        0.7743285339751999,
+        0.8333004518248688
+      ],
+      "accel_dist_foot": [
+        1.1851097156499875,
+        1.296643426333708
+      ],
+      "accel_dist_legs": [
+        0.9873943643412668,
+        1.0655682900737131
+      ],
+      "accel_dist_other_upper_bodies": [
+        0.5715383885205835,
+        0.6184166827718953
+      ],
+      "accel_dist_vr_3points": [
+        0.6861802253170289,
+        0.7269043700805847
+      ],
+      "motion_keys": [
+        "walk_forward_amateur_001__A001_M",
+        "walk_forward_amateur_001__A001"
+      ],
+      "mpjpe_g": [
+        203.1669700863854,
+        208.49953594631256
+      ],
+      "mpjpe_g_foot": [
+        198.51427411294353,
+        208.7175787106447
+      ],
+      "mpjpe_g_legs": [
+        199.74489838414127,
+        207.6575878727303
+      ],
+      "mpjpe_g_other_upper_bodies": [
+        205.3222138930535,
+        208.93468265867065
+      ],
+      "mpjpe_g_vr_3points": [
+        206.41904047976013,
+        209.45814592703647
+      ],
+      "mpjpe_l": [
+        24.406586885128863,
+        22.700288248732775
+      ],
+      "mpjpe_l_foot": [
+        32.005163433908045,
+        33.02774784482759
+      ],
+      "mpjpe_l_legs": [
+        29.023974991670833,
+        28.976857925204065
+      ],
+      "mpjpe_l_other_upper_bodies": [
+        20.71551724137931,
+        17.929374375312342
+      ],
+      "mpjpe_l_vr_3points": [
+        17.389576045310676,
+        15.870952544561053
+      ],
+      "mpjpe_pa": [
+        17.933543273006354,
+        16.69376472478047
+      ],
+      "mpjpe_pa_foot": [
+        1.4066696166992188e-05,
+        1.3940959707133357e-05
+      ],
+      "mpjpe_pa_legs": [
+        17.396484049641845,
+        17.929075826669997
+      ],
+      "mpjpe_pa_other_upper_bodies": [
+        8.796507215142428,
+        7.038675193653174
+      ],
+      "mpjpe_pa_vr_3points": [
+        8.405830938697317,
+        7.7891392845244045
+      ],
+      "progress": [
+        1.0,
+        1.0
+      ],
+      "sampling_prob": [
+        0.5,
+        0.5
+      ],
+      "terminated": [
+        false,
+        false
+      ],
+      "vel_dist": [
+        2.2743894166198153,
+        2.6524235440873314
+      ],
+      "vel_dist_foot": [
+        2.770739874203523,
+        3.040044674928161
+      ],
+      "vel_dist_legs": [
+        2.499590292744253,
+        2.807985167572464
+      ],
+      "vel_dist_other_upper_bodies": [
+        2.0075171154657045,
+        2.455940730806472
+      ],
+      "vel_dist_vr_3points": [
+        2.2687747922913544,
+        2.6687713272270117
+      ]
+    },
+    "eval/failed_metrics_dict": {
+      "accel_dist": [],
+      "accel_dist_foot": [],
+      "accel_dist_legs": [],
+      "accel_dist_other_upper_bodies": [],
+      "accel_dist_vr_3points": [],
+      "motion_keys": [],
+      "mpjpe_g": [],
+      "mpjpe_g_foot": [],
+      "mpjpe_g_legs": [],
+      "mpjpe_g_other_upper_bodies": [],
+      "mpjpe_g_vr_3points": [],
+      "mpjpe_l": [],
+      "mpjpe_l_foot": [],
+      "mpjpe_l_legs": [],
+      "mpjpe_l_other_upper_bodies": [],
+      "mpjpe_l_vr_3points": [],
+      "mpjpe_pa": [],
+      "mpjpe_pa_foot": [],
+      "mpjpe_pa_legs": [],
+      "mpjpe_pa_other_upper_bodies": [],
+      "mpjpe_pa_vr_3points": [],
+      "sampling_prob": [],
+      "vel_dist": [],
+      "vel_dist_foot": [],
+      "vel_dist_legs": [],
+      "vel_dist_other_upper_bodies": [],
+      "vel_dist_vr_3points": []
+    },
+    "eval/success/accel_dist": 0.8038144929000344,
+    "eval/success/accel_dist_foot": 1.240876570991848,
+    "eval/success/accel_dist_legs": 1.02648132720749,
+    "eval/success/accel_dist_other_upper_bodies": 0.5949775356462393,
+    "eval/success/accel_dist_vr_3points": 0.7065422976988068,
+    "eval/success/mpjpe_g": 205.83325301634898,
+    "eval/success/mpjpe_g_foot": 203.6159264117941,
+    "eval/success/mpjpe_g_legs": 203.70124312843578,
+    "eval/success/mpjpe_g_other_upper_bodies": 207.12844827586207,
+    "eval/success/mpjpe_g_vr_3points": 207.9385932033983,
+    "eval/success/mpjpe_l": 23.553437566930818,
+    "eval/success/mpjpe_l_foot": 32.51645563936781,
+    "eval/success/mpjpe_l_legs": 29.00041645843745,
+    "eval/success/mpjpe_l_other_upper_bodies": 19.32244580834583,
+    "eval/success/mpjpe_l_vr_3points": 16.630264294935863,
+    "eval/success/mpjpe_pa": 17.31365399889341,
+    "eval/success/mpjpe_pa_foot": 1.4003827937062772e-05,
+    "eval/success/mpjpe_pa_legs": 17.66277993815592,
+    "eval/success/mpjpe_pa_other_upper_bodies": 7.917591204397801,
+    "eval/success/mpjpe_pa_vr_3points": 8.09748511161086,
+    "eval/success/progress_rate": 1.0,
+    "eval/success/success_rate": 1.0,
+    "eval/success/vel_dist": 2.4634064803535733,
+    "eval/success/vel_dist_foot": 2.905392274565842,
+    "eval/success/vel_dist_legs": 2.653787730158358,
+    "eval/success/vel_dist_other_upper_bodies": 2.2317289231360884,
+    "eval/success/vel_dist_vr_3points": 2.468773059759183,
+    "failed_idxes": [],
+    "failed_keys": []
+  },
+  "sonic_source": "/HELIOS/Robotics/HRVLA/results/subtask/sonic-regression-v3/metrics_eval.json",
+  "threshold_rows": [
+    {
+      "confidence_threshold": 0.5,
+      "domain": "symbolic_cpu",
+      "mean_model_calls_per_decision": 2.2946713699026975,
+      "next_subtask_accuracy": 0.9831705945503808,
+      "safety_fallback_rate": 0.0002726513641088561,
+      "ttc_route_rate": 0.21288277695414345
+    },
+    {
+      "confidence_threshold": 0.5,
+      "domain": "cosmos_gpu",
+      "mean_model_calls_per_decision": 1.673913043478261,
+      "next_subtask_accuracy": 0.8913043478260869,
+      "safety_fallback_rate": 0.043478260869565216,
+      "ttc_route_rate": 0.2391304347826087
+    },
+    {
+      "confidence_threshold": 0.72,
+      "domain": "symbolic_cpu",
+      "mean_model_calls_per_decision": 3.611474672283687,
+      "next_subtask_accuracy": 0.9921675289883228,
+      "safety_fallback_rate": 0.00027607926542465083,
+      "ttc_route_rate": 0.44067363340763616
+    },
+    {
+      "confidence_threshold": 0.72,
+      "domain": "cosmos_gpu",
+      "mean_model_calls_per_decision": 1.826086956521739,
+      "next_subtask_accuracy": 0.8913043478260869,
+      "safety_fallback_rate": 0.043478260869565216,
+      "ttc_route_rate": 0.2608695652173913
+    },
+    {
+      "confidence_threshold": 0.85,
+      "domain": "symbolic_cpu",
+      "mean_model_calls_per_decision": 5.384589691241679,
+      "next_subtask_accuracy": 0.9934969546797727,
+      "safety_fallback_rate": 0.00027607267868889337,
+      "ttc_route_rate": 0.7377173220268506
+    },
+    {
+      "confidence_threshold": 0.85,
+      "domain": "cosmos_gpu",
+      "mean_model_calls_per_decision": 2.6739130434782608,
+      "next_subtask_accuracy": 0.8913043478260869,
+      "safety_fallback_rate": 0.043478260869565216,
+      "ttc_route_rate": 0.41304347826086957
+    }
+  ]
+}

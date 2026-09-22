@@ -1,0 +1,23 @@
+{
+  "methods": {
+    "adaptive_ttc": {
+      "episodes": 30000,
+      "generated_tokens": 21005472,
+      "hallucinated_candidates_per_decision": 0.0,
+      "injected_failure_recovery_rate": 1.0,
+      "mean_model_calls_per_decision": 2.2946713699026975,
+      "mean_planner_latency_ms": 0.2705244778882977,
+      "mean_progress": 1.0,
+      "mean_search_nodes_per_decision": 5.965802702656647,
+      "mean_steps": 9.7805,
+      "next_subtask_accuracy": 0.9831705945503808,
+      "p95_episode_mean_latency_ms": 0.7032776364377985,
+      "repeated_action_rate": 0.06067515294037455,
+      "safety_fallback_rate": 0.0002726513641088561,
+      "task_success_rate": 1.0,
+      "ttc_route_rate": 0.21288277695414345,
+      "valid_selection_rate": 1.0
+    }
+  },
+  "schema_version": 1
+}

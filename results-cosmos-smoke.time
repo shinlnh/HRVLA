@@ -1,0 +1,24 @@
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+	Command being timed: "_vendor/Isaac-GR00T/.venv/bin/python scripts/subtask_planner.py gpu-eval --model-path /home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561 --output-dir results/subtask/cosmos-smoke --methods plan_once --max-points-per-task 1"
+	User time (seconds): 10.08
+	System time (seconds): 2.56
+	Percent of CPU this job got: 173%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.28
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5570740
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 81
+	Minor (reclaiming a frame) page faults: 386649
+	Voluntary context switches: 542
+	Involuntary context switches: 246
+	Swaps: 0
+	File system inputs: 27776
+	File system outputs: 320
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

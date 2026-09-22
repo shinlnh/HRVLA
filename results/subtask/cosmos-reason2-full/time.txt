@@ -1,0 +1,23 @@
+	Command being timed: "_vendor/Isaac-GR00T/.venv/bin/python scripts/subtask_planner.py gpu-eval --model-path /home/shin/.cache/huggingface/hub/models--nvidia--Cosmos-Reason2-2B/snapshots/9ce19a195e423419c349abfc86fd07178b230561 --output-dir results/subtask/cosmos-reason2-full --methods plan_once recursive best_of_n ttc adaptive_ttc --max-points-per-task 2 --branching-factor 4 --beam-width 3 --search-depth 3 --confidence-threshold 0.72"
+	User time (seconds): 148.11
+	System time (seconds): 5.94
+	Percent of CPU this job got: 103%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:28.65
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5571544
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 4
+	Minor (reclaiming a frame) page faults: 436923
+	Voluntary context switches: 2006
+	Involuntary context switches: 95869
+	Swaps: 0
+	File system inputs: 456
+	File system outputs: 704
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
