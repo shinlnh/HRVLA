@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "scope": "six-task primary, all four modes, three group seeds, twenty repeats",
+  "derivation": "int.from_bytes(sha256(f'{gym_task_id}|{group_seed}|{repeat_idx}').digest()[-4:], 'big') & 0x7fffffff",
+  "order": "TASKS insertion order excluding open_door, then MODES, group seed, repeat index",
+  "canonical_json_identity_sha256": "f8ce3fda00a1a8c02c333b490739a87fd4f862d441e1d9f9dd1bc9dabc1a9d7c",
+  "identity_count": 1440,
+  "first_identity": {"task": "boxing", "mode": "base_test", "seed": 0, "repeat_idx": 0, "episode_seed": 1049058202},
+  "last_identity": {"task": "vision_navi", "mode": "execution", "seed": 2, "repeat_idx": 19, "episode_seed": 141916481}
+}

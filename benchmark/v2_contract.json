@@ -2,19 +2,31 @@
   "schema_version": 1,
   "architecture_token": "PI05-ST",
   "architecture_branch": "feat(PI05-ST)/import-sub-task-feature-into-pi05-sonic",
-  "architecture_revision": "e7842a9dbd1aa8df084a6149dab561c882a0c648",
+  "architecture_revision": "573ef3da6ff80595e6f53cd2bcaa20ae1464968a",
   "suite": "HA",
   "suite_revision": "68479287a784a69be9ce6ad739311d2f11f75ef9",
   "suite_observation_dim": 64,
   "suite_action_dim": 40,
   "policy_observation_dim": 64,
   "policy_action_dim": 40,
-  "checkpoint_lock": null,
-  "sonic_lock": null,
-  "protocol_lock": null,
-  "seed_plan_lock": null,
-  "precision": null,
-  "expected_episodes": null,
+  "checkpoint_lock": {
+    "path": "benchmark/locks/pi05_ha/checkpoints.json",
+    "sha256": "3664b2f82c220dd0cf05eb785bf05703e1e91a92fc4c3fb85ae1fe1f64d3804a"
+  },
+  "sonic_lock": {
+    "path": "benchmark/locks/pi05_ha/sonic.json",
+    "sha256": "1a64c7b1a45d639c66596e95f84d313ba74a24c58cbb4c300e4d8bca80895c62"
+  },
+  "protocol_lock": {
+    "path": "benchmark/locks/pi05_ha/protocol.json",
+    "sha256": "0dddf47086704b236b6c2fc8530702176cbadaacd9cf2c1487422113abd40e25"
+  },
+  "seed_plan_lock": {
+    "path": "benchmark/locks/pi05_ha/seed_plan.json",
+    "sha256": "8845316c064718c8414a7073629f5267f9e2de1565732059a21a1f181cc01cf0"
+  },
+  "precision": "cuda_int8",
+  "expected_episodes": 1440,
   "status": "pending",
   "result_manifest": null
 }

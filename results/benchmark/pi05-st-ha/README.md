@@ -1,0 +1,39 @@
+# PI0.5 + SONIC + sub-task on HumanoidArena
+
+Status: **pending**, not a paper result. The baseline-only PI0.5 HA branch is
+complete; this branch must independently evaluate the ST hook on its frozen
+six-task primary identities. OpenDoor is diagnostic, never pooled into the
+primary denominator.
+
+The PI0.5 checkpoint, CUDA INT8 backend, SONIC controller, official task
+predicates, task horizons, four modes, three group seeds, twenty repeats, and
+episode-seed derivation are inherited from `benchmark/locks/pi05_ha/`.
+The only intended method difference is the source-observed ST language
+planner. The wrapper records one method trace and summary per episode.
+
+Before the full matrix, run full-horizon seven-task pilot episodes and verify
+that the batch runner produces atomic episode JSON, trace hashes, 40-D policy
+actions, and at least one observed sub-task transition. A task failure or zero
+transitions in an individual episode is an outcome, not permission to discard
+or reroll it. This pilot is development evidence, not part of the 1,440 rows.
+
+Full-matrix command on the pinned workstation, after readiness passes:
+
+```bash
+cd /HELIOS/Robotics/HRVLA-worktrees/pi05-st-live
+python3 scripts/run_humanoidarena_pi05_st_matrix.py \
+  --runtime-root /HELIOS/Robotics/HRVLA \
+  --output-root /HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-ha-cuda-int8-v1 \
+  --tasks boxing doubledesk football pp_box sit_sofa vision_navi \
+  --modes base_test semantic vision execution \
+  --seeds 0 1 2 --repeats 20 \
+  --policy-backend cuda_int8_weight_only \
+  --record-video-every-n 10 --step-log-every-n 250
+```
+
+The same command resumes missing atomic episode JSON after an interruption.
+Do not call this branch `complete` until all 1,440 primary rows, trace hashes,
+sampled videos, paired identities, checkpoint/controller locks, confidence
+intervals, plots, and the final result manifest have passed audit. Run the
+240 OpenDoor episodes separately as a diagnostic with the same driver and
+parameters except `--tasks open_door`.

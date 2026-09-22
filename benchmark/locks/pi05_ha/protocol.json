@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "suite": "HumanoidArena",
+  "scope": "retrospectively frozen released PI0.5 baseline; subsequent methods must use identical identities and scoring",
+  "primary_tasks": ["boxing", "doubledesk", "football", "pp_box", "sit_sofa", "vision_navi"],
+  "diagnostic_tasks": ["open_door"],
+  "modes": ["base_test", "semantic", "vision", "execution"],
+  "group_seeds": [0, 1, 2],
+  "repeats_per_cell": 20,
+  "primary_episode_count": 1440,
+  "diagnostic_episode_count": 240,
+  "max_steps_by_task": {
+    "boxing": 900,
+    "doubledesk": 2000,
+    "football": 2000,
+    "open_door": 1800,
+    "pp_box": 1450,
+    "sit_sofa": 2000,
+    "vision_navi": 1800
+  },
+  "backend": "cuda_int8_weight_only",
+  "policy_device": "cuda:0",
+  "observation_dim": 64,
+  "action_dim": 40,
+  "amendment": "original pp_box rows had the wrong language prompt; retain them but select the 240 separately corrected same-protocol rows",
+  "original_audit_sha256": "49d16cea4b5e14bcb7af40a1293c3af8598ce4c477b3cb61f824ff1e1b6f605f",
+  "amended_summary_sha256": "a87164bccd9709772b0ee5934b001e7be7248457ff493154ea3c863771ddd87e",
+  "baseline_driver_sha256": "b9399d533969a1d60e18484288d1e47b6bc51bf4260fcd6cc2bbf6484bcf834d",
+  "amendment_compiler_sha256": "46b5e8b1d4877be8d59bc056f7d5ef9254602e600ac288718111fd0f778ace7a",
+  "server_script_sha256": "5b33c7aea5295afb059cbdb9e4af6189236b98bc32c15a4ccab077f8fe096a86"
+}
