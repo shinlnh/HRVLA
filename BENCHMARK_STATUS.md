@@ -4,7 +4,24 @@ This file is the persistent source of truth for finishing the pre-`ours`
 benchmark. Update it whenever a pipeline stage starts, stops, fails, or reaches
 a frozen evidence revision. Do not infer paper readiness from branch names.
 
-Last audited: **2026-09-21 (Asia/Bangkok)**.
+Last audited: **2026-09-22 (Asia/Bangkok)**.
+
+## Recovery oracle outcome — 2026-09-22
+
+The corrected-prompt step-13 capture passed its complete manifest: **9/9
+runtime injectors, 7/7 initial snapshots, 3/3 failure-start snapshots**. The
+separate step-14 frozen PI0.5 oracle then executed **180/180** unique trials,
+with all 180 videos and no infrastructure-failure outcomes. The audited outcome
+is **82 successes, 95 timeouts, 3 falls**, but only **2/9 scenarios satisfy the
+registered 20/20 admission threshold**. The two admitted rows are
+`box-missed-grasp-retry` and `contact-recoil`. All seven rejected rows retain
+their original seeds and evidence; no behavioral trial may be rerolled to
+change the frozen result. The audit and visualization are
+`results/benchmark/recovery/oracle_pi05_int8_v0_audit.{json,png}`. Step 14's
+experiment is complete, but its **admission gate failed**, so steps 15–27
+remain closed. A new oracle/model or revised scenario suite would be a new,
+explicitly versioned protocol and require fresh independent validation, not a
+retroactive reclassification of these outcomes.
 
 ## Latest machine audit — 2026-09-21
 
@@ -42,14 +59,9 @@ The corrected 240-episode task rerun finished on 2026-09-21; it started as PID
 `_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-ppbox-route-corrected-v1/launch.json`.
 The pilot and first live request both logged the exact `HOI_pp_box` prompt.
 
-Recovery capture has 9/9 validated runtime traces, 7/7 initial snapshots, and
-3/3 failure-start snapshots in its historical local manifest. Inspection of
-the capture server logs found the same wrong PickPlaceBox prompt in both
-PickPlaceBox scenarios. Consequently that manifest is **not admissible** for
-the corrected policy protocol. All nine scenarios must be recaptured under
-one corrected implementation revision because the compiler rejects mixed
-revisions. Oracle admission remains 0/9 scenarios and 0/180 accepted trials.
-Existing capture evidence is preserved; the new attempt uses a separate root.
+The earlier wrong-prompt recovery capture remains historical and inadmissible.
+The corrected capture and oracle use separate roots and have now been audited
+above; the old evidence was not overwritten.
 
 ## Current state
 
@@ -59,14 +71,16 @@ Existing capture evidence is preserved; the new attempt uses a separate root.
 | Recovery component | 6/6 mechanism variants, symbolic fault injection | Admitted simulator failures and end-to-end recovery rollout |
 | VLA retraining | Legacy 43-DoF study: 6/6 training seeds, 42 held-out trajectories × 5 conditions; HumanoidArena common adaptation: 3/3 seeds trained, global step 300 selected, hidden evaluation complete at 700 rows per seed; HumanoidArena 40-D ST-RT/STR-RT: 3/6 seeds trained, selected, and published | Materialize the admitted recovery dataset, train/select/publish 3 STR-RT checkpoints, then measure closed-loop task and recovery success; validation MSE is not SR/RSR |
 | External HumanoidArena | Amended CUDA INT8 matrix 84/84 cells and 1,680/1,680 episodes, including corrected `pp_box` 240/240; 168 videos and provenance passed | Broader paired CPU–INT8 sensitivity; OpenDoor remains separately diagnostic; INT8/CPU equivalence is not proven |
-| Scenario admission | Historical raw: 9/9 runtime, 7/7 initial, 3/3 failure; corrected capture 0/9; oracle-admitted 0/9 | Re-capture all scenarios under corrected prompt/revision, then independent oracle 20/20 |
+| Scenario admission | Corrected capture 9/9 runtime, 7/7 initial, 3/3 failure; frozen oracle 180/180 executed, 2/9 admitted | Admission gate failed for seven scenarios; investigate/re-design under a newly versioned protocol, not reroll v0 |
 | Internal controlled matrix | 0/5 registered methods; HA state64/action40 train/validation/hidden bridge passed on 700 episodes, the HTTP inference contract is implemented, and the dev/validation/hidden-final split plus power design is frozen | Train the shared bridge and in-domain RT variants, validate real-model servers, then run `gr00t_sonic`, `gr00t_st`, `gr00t_st_rt`, `gr00t_str`, and `gr00t_str_rt` on identical cells |
 
-Recovery admission remains 0/9. Static provenance now resolves and hashes all
+The paragraphs below are the historical preflight log and are superseded by
+the 2026-09-22 recovery outcome above. At that preflight, recovery admission
+was 0/9. Static provenance resolved and hashed all
 7/7 exact upstream task-reward predicates; this corrected several prose-only
 definitions that were stronger than the simulator code. Initial/failure
-snapshots, nine runtime injectors, and independent 20/20 oracle trials remain
-unexecuted and are shown separately in the tracked admission-preflight plot.
+snapshots, nine runtime injectors, and independent 20/20 oracle trials were
+then unexecuted and were shown separately in the tracked admission-preflight plot.
 All 9/9 static detector/injector contracts are now fully parameterized and
 type-checked. Invalid upstream boundaries were removed: DoubleDesk has one
 hammer transfer, Boxing terminates at the first hit, and visual navigation has
@@ -361,7 +375,11 @@ official artifacts are rerun under the same observation/action/controller and
 episode contract. A proxy implementation must never be labeled an official
 paper rerun.
 
-## Live pipeline and reproducible commands
+## Historical pipeline commands (superseded by recovery gate)
+
+The commands in this section predate the completed v0 oracle. Do not run a
+downstream step that requires nine admitted scenarios while only two are
+admitted.
 
 The optimized external runner keeps one exact CPU PI0.5 server per task and one
 persistent Isaac Sim process per mode. It resumes finished episode IDs, records
@@ -425,7 +443,7 @@ python3 -u scripts/run_humanoidarena_internal_matrix.py --split hidden_final
 python3 scripts/render_humanoidarena_internal_results.py
 ```
 
-The current operator handoff intentionally leaves two CPU-bound work packages
+The earlier operator handoff intentionally left two CPU-bound work packages
 for last: (1) the remaining homogeneous PI0.5+SONIC external matrix and (2) the
 recovery admission package (nine live captures plus 180 independent PI0.5 oracle
 trials). All work that is independent of those packages is complete. When the
