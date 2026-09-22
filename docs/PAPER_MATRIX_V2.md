@@ -5,6 +5,15 @@ plan, **not** a claim that unimplemented architectures or unrun benchmarks are
 complete. Preserve all v0 results and failed trials as historical evidence.
 Do not rewrite `main` or `dev` to make a missing result appear complete.
 
+Migration checkpoint: the six obsolete `feat(benchmark)/*` branch names were
+removed locally and from GitHub. Five tips were already reachable from `main`;
+the one unmerged hybrid PI0.5 tip (`621079b`) is recoverable from tag
+`archive/benchmark-hybrid-pi05-20260919`. Existing `fix(benchmark)/*` branches
+and their evidence were not deleted. At this checkpoint, six architecture
+branches exist (five GR00T plus PI0.5 base), zero v2 benchmark branches exist,
+and `ours` does not exist. This count measures branch organization only, not
+experimental completion.
+
 ## Architecture branches (10)
 
 Each architecture branch owns a runnable method and its tests, not a historical
