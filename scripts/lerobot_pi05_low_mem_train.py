@@ -49,18 +49,15 @@ def install_streaming_loader() -> None:
 
         model = cls(config, **kwargs)
         expected_keys = set(model.state_dict())
-        dummy = torch.empty(0)
         with safe_open(weights, framework="pt", device="cpu") as reader:
             source_keys = reader.keys()
-            mapped_keys = []
-            for source_key in source_keys:
-                remapped = model._fix_pytorch_state_dict_keys({source_key: dummy}, config)
-                mapped_keys.extend(
-                    key if key.startswith("model.") else f"model.{key}" for key in remapped
-                )
-            if len(mapped_keys) != len(set(mapped_keys)) or set(mapped_keys) != expected_keys:
-                missing = sorted(expected_keys - set(mapped_keys))[:8]
-                unexpected = sorted(set(mapped_keys) - expected_keys)[:8]
+            # The pinned HumanoidArena checkpoints already use the current
+            # LeRobot names exactly. Do not invoke the upstream remapper: it
+            # clones lm_head into embed_tokens before the checkpoint's own
+            # embed_tokens tensor overwrites that clone, needlessly using RAM.
+            if set(source_keys) != expected_keys:
+                missing = sorted(expected_keys - set(source_keys))[:8]
+                unexpected = sorted(set(source_keys) - expected_keys)[:8]
                 raise RuntimeError(
                     f"PI0.5 checkpoint is not exact: missing={missing}, unexpected={unexpected}"
                 )
@@ -71,18 +68,15 @@ def install_streaming_loader() -> None:
             with torch.no_grad():
                 for source_key in source_keys:
                     tensor = reader.get_tensor(source_key)
-                    remapped = model._fix_pytorch_state_dict_keys({source_key: tensor}, config)
-                    for key, value in remapped.items():
-                        key = key if key.startswith("model.") else f"model.{key}"
-                        target = destination[key]
-                        if target.shape != value.shape:
-                            raise ValueError(
-                                f"PI0.5 checkpoint tensor shape mismatch: {key}: "
-                                f"{tuple(value.shape)} != {tuple(target.shape)}"
-                            )
-                        target.copy_(value)
-                        loaded.add(key)
-                    del tensor, remapped
+                    target = destination[source_key]
+                    if target.shape != tensor.shape:
+                        raise ValueError(
+                            f"PI0.5 checkpoint tensor shape mismatch: {source_key}: "
+                            f"{tuple(tensor.shape)} != {tuple(target.shape)}"
+                        )
+                    target.copy_(tensor)
+                    loaded.add(source_key)
+                    del tensor
         if loaded != expected_keys:
             raise RuntimeError("PI0.5 streaming loader left an uninitialized tensor")
         model.eval()
