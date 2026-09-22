@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "architecture_token": "PI05-STR",
+  "architecture_branch": "feat(PI05-STR)/import-recovery-for-sub-task-into-pi05-sonic",
+  "architecture_revision": "115bfc98546c3a54e0a2777154156a548cd2367b",
+  "suite": "SP",
+  "suite_revision": null,
+  "checkpoint_lock": null,
+  "sonic_lock": null,
+  "protocol_lock": null,
+  "seed_plan_lock": null,
+  "precision": null,
+  "expected_episodes": null,
+  "status": "pending",
+  "result_manifest": null
+}
