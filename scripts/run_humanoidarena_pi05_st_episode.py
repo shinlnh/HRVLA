@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Route a single PI0.5+SONIC episode through the frozen ST language program.
+"""Route PI0.5+SONIC episodes through the frozen ST language program.
 
-This is an architecture-integration runner, not a benchmark matrix. It uses
-the pinned upstream Isaac evaluator and an already running PI0.5 HTTP server.
+This runner uses the pinned upstream Isaac evaluator and an already running
+PI0.5 HTTP server. A batch keeps the policy and simulator alive across trials.
 """
 
 from __future__ import annotations
@@ -59,7 +59,15 @@ def validate_invocation(remaining: list[str], programs: dict) -> str:
     parser.add_argument("--enable_cameras", action="store_true")
     values, _ = parser.parse_known_args(remaining)
     if values.episode_batch_json:
-        raise ValueError("PI0.5 ST integration runner accepts one episode, not a batch")
+        batch = json.loads(Path(values.episode_batch_json).read_text(encoding="utf-8"))
+        episodes = batch.get("episodes")
+        if not isinstance(episodes, list) or not episodes:
+            raise ValueError("PI0.5 ST batch must contain episodes")
+        indices = [int(row["episode_index"]) for row in episodes]
+        if len(indices) != len(set(indices)):
+            raise ValueError("PI0.5 ST batch episode indices must be unique")
+        if any(not row.get("result_json") or "episode_seed" not in row for row in episodes):
+            raise ValueError("PI0.5 ST batch is missing result paths or episode seeds")
     if values.task not in TASK_IDS:
         raise ValueError(f"task is outside the seven-task PI0.5 ST contract: {values.task}")
     if {row["task_id"] for row in programs["tasks"]} != set(TASK_IDS.values()):
@@ -112,9 +120,11 @@ def main() -> int:
         raise ImportError(f"cannot import pinned evaluator: {evaluator}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    batch_mode = "--episode_batch_json" in remaining
     install_method_hooks(
         module, programs, method_id="pi05_st", task_id=task_id,
         output_dir=output, implementation_revision=implementation_revision,
+        per_episode_output=batch_mode,
     )
     sys.argv = [sys.argv[0], *remaining]
     return int(module.main())

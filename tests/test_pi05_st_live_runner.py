@@ -1,9 +1,11 @@
-"""Fail-closed single-episode contract for the PI0.5 ST Isaac hook."""
+"""Fail-closed single- and batched-episode PI0.5 ST Isaac contracts."""
 
 from __future__ import annotations
 
 import unittest
+import json
 from pathlib import Path
+import tempfile
 import types
 
 from hrvla_bench.humanoidarena_method_runtime import load_method_programs
@@ -29,15 +31,36 @@ class TestPI05STLiveRunner(unittest.TestCase):
             with self.subTest(program_id=program_id):
                 self.assertEqual(validate_invocation(self.arguments(gym_id), PROGRAMS), program_id)
 
-    def test_refuses_batch_and_non_loopback_policy(self) -> None:
+    def test_refuses_malformed_batch_and_non_loopback_policy(self) -> None:
         args = self.arguments(next(iter(TASK_IDS)))
-        with self.assertRaisesRegex(ValueError, "one episode"):
-            validate_invocation(args + ["--episode_batch_json", "jobs.json"], PROGRAMS)
+        with tempfile.TemporaryDirectory() as directory:
+            batch = Path(directory) / "jobs.json"
+            batch.write_text(json.dumps({"episodes": []}), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "must contain episodes"):
+                validate_invocation(args + ["--episode_batch_json", str(batch)], PROGRAMS)
         with self.assertRaisesRegex(ValueError, "loopback"):
             validate_invocation(
                 ["http://remote:8765" if value == "http://127.0.0.1:8765" else value
                  for value in args], PROGRAMS,
             )
+
+    def test_accepts_unique_batch_and_rejects_duplicate_index(self) -> None:
+        args = self.arguments(next(iter(TASK_IDS)))
+        with tempfile.TemporaryDirectory() as directory:
+            batch = Path(directory) / "jobs.json"
+            episodes = [
+                {"episode_index": 0, "episode_seed": 11, "result_json": "one.json"},
+                {"episode_index": 1, "episode_seed": 12, "result_json": "two.json"},
+            ]
+            batch.write_text(json.dumps({"episodes": episodes}), encoding="utf-8")
+            self.assertEqual(
+                validate_invocation(args + ["--episode_batch_json", str(batch)], PROGRAMS),
+                TASK_IDS[args[1]],
+            )
+            episodes[1]["episode_index"] = 0
+            batch.write_text(json.dumps({"episodes": episodes}), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "indices must be unique"):
+                validate_invocation(args + ["--episode_batch_json", str(batch)], PROGRAMS)
 
     def test_refuses_missing_camera_and_unknown_task(self) -> None:
         args = self.arguments(next(iter(TASK_IDS)))
