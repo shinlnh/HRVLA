@@ -18,10 +18,10 @@ registered 20/20 admission threshold**. The two admitted rows are
 their original seeds and evidence; no behavioral trial may be rerolled to
 change the frozen result. The audit and visualization are
 `results/benchmark/recovery/oracle_pi05_int8_v0_audit.{json,png}`. Step 14's
-experiment is complete, but its **admission gate failed**, so steps 15–27
-remain closed. A new oracle/model or revised scenario suite would be a new,
-explicitly versioned protocol and require fresh independent validation, not a
-retroactive reclassification of these outcomes.
+experiment is complete, but its **admission gate failed**, so dependent steps
+15–20 and 22–27 remain closed. A new oracle/model or revised scenario suite
+would be a new, explicitly versioned protocol and require fresh independent
+validation, not a retroactive reclassification of these outcomes.
 
 Dependency decision: the v0 step-15 admitted-suite compiler requires all nine
 scenarios, so steps **15–20 are rejected by dependency**, not executed with
