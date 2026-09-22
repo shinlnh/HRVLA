@@ -2,7 +2,7 @@
   "schema_version": 1,
   "architecture_token": "PI05",
   "architecture_branch": "feat(PI05)/reproduce-pi05-sonic-whole-body",
-  "architecture_revision": "1dbcdb8569186d62fc4bb63a128ff0f5015c0e79",
+  "architecture_revision": "fc84a6a57ec659126fabcb4e4c9e5eb8ea7bea39",
   "suite": "SP",
   "suite_revision": "6d10628794d9c7de4596b4f2afb2c054a637c2bc",
   "suite_observation_dim": 43,
