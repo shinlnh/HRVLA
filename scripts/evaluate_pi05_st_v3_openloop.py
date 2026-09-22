@@ -152,6 +152,7 @@ def main() -> None:
     parser.add_argument("--source-dataset", required=True)
     parser.add_argument("--base-policy", type=Path, required=True)
     parser.add_argument("--tuned-policy", type=Path, required=True)
+    parser.add_argument("--training-log", type=Path, required=True)
     parser.add_argument("--tokenizer-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--frames-per-episode", type=int, default=8)
@@ -161,6 +162,13 @@ def main() -> None:
         raise ValueError("positive sampling dimensions and a fresh output path are required")
     if args.source_dataset not in args.base_policy.parts:
         raise ValueError("base policy is not task matched")
+    train_log = args.training_log.read_text(encoding="utf-8", errors="replace")
+    if "restored 5 non-persistent position/rotary buffers" not in train_log:
+        raise ValueError("tuned checkpoint was not trained with the corrected PI0.5 loader")
+    tuned_train_cfg = json.loads((args.tuned_policy / "train_config.json").read_text(encoding="utf-8"))
+    if (tuned_train_cfg["dataset"]["root"] != str(args.train)
+            or tuned_train_cfg["policy"]["pretrained_path"] != str(args.base_policy)):
+        raise ValueError("tuned checkpoint training dataset/base does not match this comparison")
     if os.environ.get("HRVLA_PI05_TOKENIZER_DIR") != str(args.tokenizer_dir):
         raise ValueError("set HRVLA_PI05_TOKENIZER_DIR to the pinned tokenizer")
     rows = selected_episodes(args.validation, args.source_dataset)
@@ -183,6 +191,7 @@ def main() -> None:
         "source_dataset": args.source_dataset,
         "validation_provenance_sha256": sha256(args.validation / "meta/hrvla_source_episodes.jsonl"),
         "train_stats_sha256": sha256(args.train / "meta/stats.json"),
+        "corrected_training_log_sha256": sha256(args.training_log),
         "episode_indices": [int(row["episode_index"]) for row in rows],
         "sample_local_indices": indices,
         "seed_rule": "20260922 + sample batch start index; paired base/tuned",
