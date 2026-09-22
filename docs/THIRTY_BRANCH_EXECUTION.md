@@ -33,8 +33,8 @@ split before validation selection is frozen.
 | GR00T-STR | partial: bounded recovery routing | real failure detector, snapshot/rollback, live recovery smoke |
 | GR00T-ST-RT | partial: guarded 40D training path | select/pin 3-seed 40D checkpoint; closed-loop smoke |
 | GR00T-STR-RT | partial: guarded recovery-labelled training path | admissible 40D recovery data, train/select/pin, live smoke |
-| PI05 | partial: released inference backend and SONIC interface | frozen checkpoint/backend and paired closed-loop smoke |
-| PI05-ST | partial: model-preserving planner routing | connect PI0.5 HTTP client to observed scene detectors |
+| PI05 | code-ready for HA: seven checkpoint/SONIC locks and full closed-loop baseline audited | SIMPLE-compatible adapter remains separate |
+| PI05-ST | partial: 7/7 bounded live HA integration smokes at one revision | full-horizon paired ST results and observed live transition |
 | PI05-STR | partial: bounded recovery instruction routing | connect nine failure injectors and validate live trajectories |
 | PI05-ST-RT | partial: guarded LeRobot v3 trainer | convert audited v2.1 copy; train/select/pin checkpoint |
 | PI05-STR-RT | partial: guarded recovery-labelled v3 trainer | collect/verify labels, train/select/pin checkpoint |
@@ -50,10 +50,12 @@ For each token below, both `feat(<token>-benchmark-HA)/evaluate` and
 `feat(<token>-benchmark-SP)/evaluate` exist. `HA` means HumanoidArena; `SP`
 means SIMPLE. Each branch now contains its architecture tip, a pinned public
 suite revision, a method-specific v2 contract, and a fail-closed preflight.
-All 20 branches passed the preflight's unit tests; all 20 deliberately return
-`ready: false` because model, controller, protocol, seeds and episode count
-are not frozen. Every row is **PENDING**: branch reservation and old component
-evidence are not new v2 rollouts.
+The PI05 HA branch is now `complete` as a **baseline-only six-task result**:
+1,440/1,440 primary episodes and 144/144 sampled primary videos passed the
+raw-evidence recompilation, checkpoint, controller, seed, and visual audits.
+OpenDoor's 240 episodes remain diagnostic. The other 19 benchmark branches
+remain `pending`; no paired ten-method comparison is complete. This baseline
+was retrospectively frozen and must not be described as preregistered.
 
 | Architecture token | HA branch | SP branch | Immediate short task |
 | --- | --- | --- | --- |
@@ -62,7 +64,7 @@ evidence are not new v2 rollouts.
 | GR00T-STR | pending | pending | failure injector, rollback, live recovery smoke |
 | GR00T-ST-RT | pending | pending | validated 40-D in-domain checkpoint selection |
 | GR00T-STR-RT | pending | pending | admissible recovery data and checkpoint selection |
-| PI05 | pending | pending | frozen backend/precision and closed-loop smoke |
+| PI05 | complete baseline only (638/1,440 primary successes) | pending | pair later methods to the frozen HA identities; validate SIMPLE adapter |
 | PI05-ST | pending | pending | observed detector and live PI0.5 planner hook |
 | PI05-STR | pending | pending | nine failure injectors and live recovery smoke |
 | PI05-ST-RT | pending | pending | safe v3 ST data, train and select checkpoint |

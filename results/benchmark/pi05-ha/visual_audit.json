@@ -1,0 +1,79 @@
+{
+  "audit_passed": true,
+  "checked_in_video_count": 7,
+  "claim_boundary": "deterministic visual samples, not representative outcome statistics",
+  "rows": [
+    {
+      "copy_path": "results/benchmark/pi05-ha/videos/boxing.mp4",
+      "copy_sha256": "a61f14c5b0a36d0a488adda04ae6d1d2ddd5d800cf8ebf599e788123bcbb6558",
+      "copy_size_bytes": 614171,
+      "diagnostic_only": false,
+      "selection_rule": "first lexicographic source video in the frozen manifest",
+      "source_path": "_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-v1/base_test/boxing/seed-0/videos/success/pi05_sonic_boxing_0529__100000__seed_0__repeat_0__episode_0__success.mp4",
+      "source_sha256": "a61f14c5b0a36d0a488adda04ae6d1d2ddd5d800cf8ebf599e788123bcbb6558",
+      "task": "boxing"
+    },
+    {
+      "copy_path": "results/benchmark/pi05-ha/videos/doubledesk.mp4",
+      "copy_sha256": "acdba9fbe033927527d558d980d5fca030b4dd265e8e992abb4d60ed50d77b1d",
+      "copy_size_bytes": 2585284,
+      "diagnostic_only": false,
+      "selection_rule": "first lexicographic source video in the frozen manifest",
+      "source_path": "_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-v1/base_test/doubledesk/seed-0/videos/failure/pi05_sonic_doubledesk_0529__100000__seed_0__repeat_10__episode_10__fall.mp4",
+      "source_sha256": "acdba9fbe033927527d558d980d5fca030b4dd265e8e992abb4d60ed50d77b1d",
+      "task": "doubledesk"
+    },
+    {
+      "copy_path": "results/benchmark/pi05-ha/videos/football.mp4",
+      "copy_sha256": "e0b92c581ea38c6c200220770cff7d1730e7a43f90fa7adee03f8f5fdb3f5a9a",
+      "copy_size_bytes": 11407924,
+      "diagnostic_only": false,
+      "selection_rule": "first lexicographic source video in the frozen manifest",
+      "source_path": "_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-v1/base_test/football/seed-0/videos/failure/pi05_sonic_football_0529__100000__seed_0__repeat_0__episode_0__timeout.mp4",
+      "source_sha256": "e0b92c581ea38c6c200220770cff7d1730e7a43f90fa7adee03f8f5fdb3f5a9a",
+      "task": "football"
+    },
+    {
+      "copy_path": "results/benchmark/pi05-ha/videos/pp_box.mp4",
+      "copy_sha256": "c138d8917381e562e23c39c49250191937c1a02db0848355293f2fac16dfa2bc",
+      "copy_size_bytes": 1847860,
+      "diagnostic_only": false,
+      "selection_rule": "first lexicographic source video in the frozen manifest",
+      "source_path": "_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-ppbox-route-corrected-v1/base_test/pp_box/seed-0/videos/success/pi05_sonic_ppbox_0529__100000__seed_0__repeat_0__episode_0__success.mp4",
+      "source_sha256": "c138d8917381e562e23c39c49250191937c1a02db0848355293f2fac16dfa2bc",
+      "task": "pp_box"
+    },
+    {
+      "copy_path": "results/benchmark/pi05-ha/videos/sit_sofa.mp4",
+      "copy_sha256": "4c4eaa5ba50330a8a25cbabfd88cef45a1706b372f46b4ecb5e94f68182499ae",
+      "copy_size_bytes": 1696914,
+      "diagnostic_only": false,
+      "selection_rule": "first lexicographic source video in the frozen manifest",
+      "source_path": "_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-v1/base_test/sit_sofa/seed-0/videos/success/pi05_sonic_sitsofa_0529__100000__seed_0__repeat_0__episode_0__success.mp4",
+      "source_sha256": "4c4eaa5ba50330a8a25cbabfd88cef45a1706b372f46b4ecb5e94f68182499ae",
+      "task": "sit_sofa"
+    },
+    {
+      "copy_path": "results/benchmark/pi05-ha/videos/vision_navi.mp4",
+      "copy_sha256": "798205b758072d1ea143e3dcae4979fd6e4d838c5a7ec9237c9d4cc1be0dccba",
+      "copy_size_bytes": 4791475,
+      "diagnostic_only": false,
+      "selection_rule": "first lexicographic source video in the frozen manifest",
+      "source_path": "_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-v1/base_test/vision_navi/seed-0/videos/failure/pi05_sonic_visionnavi_0529__100000__seed_0__repeat_0__episode_0__timeout.mp4",
+      "source_sha256": "798205b758072d1ea143e3dcae4979fd6e4d838c5a7ec9237c9d4cc1be0dccba",
+      "task": "vision_navi"
+    },
+    {
+      "copy_path": "results/benchmark/pi05-ha/videos/open_door.mp4",
+      "copy_sha256": "bc79cee9247c58b86663028b5c676d557cc7aae259afdca1465deef8159489a1",
+      "copy_size_bytes": 2113653,
+      "diagnostic_only": true,
+      "selection_rule": "first lexicographic source video in the frozen manifest",
+      "source_path": "_artifacts/HumanoidArena/paper-baselines/pi05-sonic-cuda-int8-v1/base_test/open_door/seed-0/videos/success/pi05_sonic_opendoor_0529__100000__seed_0__repeat_0__episode_0__success.mp4",
+      "source_sha256": "bc79cee9247c58b86663028b5c676d557cc7aae259afdca1465deef8159489a1",
+      "task": "open_door"
+    }
+  ],
+  "schema_version": 1,
+  "selected_video_count": 168
+}

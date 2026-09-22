@@ -1,0 +1,37 @@
+{
+  "amended_summary_sha256": "a87164bccd9709772b0ee5934b001e7be7248457ff493154ea3c863771ddd87e",
+  "audit_passed": true,
+  "checkpoint_lock_sha256": "3664b2f82c220dd0cf05eb785bf05703e1e91a92fc4c3fb85ae1fe1f64d3804a",
+  "claim_boundary": "PI0.5/SONIC HA baseline only; no cross-method paired or CPU/INT8 equivalence claim",
+  "diagnostic_episodes": 240,
+  "diagnostic_tasks": [
+    "open_door"
+  ],
+  "diagnostic_video_files_verified": 24,
+  "episodes_observed": 1440,
+  "failures_by_reason": {
+    "fall": 46,
+    "success": 638,
+    "timeout": 756
+  },
+  "original_audit_sha256": "49d16cea4b5e14bcb7af40a1293c3af8598ce4c477b3cb61f824ff1e1b6f605f",
+  "primary_tasks": [
+    "boxing",
+    "doubledesk",
+    "football",
+    "pp_box",
+    "sit_sofa",
+    "vision_navi"
+  ],
+  "primary_video_files_verified": 144,
+  "protocol_lock_sha256": "0dddf47086704b236b6c2fc8530702176cbadaacd9cf2c1487422113abd40e25",
+  "schema_version": 1,
+  "seed_plan_lock_sha256": "8845316c064718c8414a7073629f5267f9e2de1565732059a21a1f181cc01cf0",
+  "sonic_lock_sha256": "1a64c7b1a45d639c66596e95f84d313ba74a24c58cbb4c300e4d8bca80895c62",
+  "success_rate": 0.44305555555555554,
+  "success_rate_wilson_95": [
+    0.4175840028854125,
+    0.4688301189711848
+  ],
+  "successes": 638
+}
