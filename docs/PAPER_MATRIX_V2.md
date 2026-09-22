@@ -38,16 +38,18 @@ end-to-end method and checkpoint pass the execution ledger's gates.
 
 For each architecture token in `GR00T`, `GR00T-ST`, `GR00T-STR`,
 `GR00T-ST-RT`, `GR00T-STR-RT`, `PI05`, `PI05-ST`, `PI05-STR`,
-`PI05-ST-RT`, and `PI05-STR-RT`, create exactly these two branches **after**
-the method runs and its evaluation contract is tested:
+`PI05-ST-RT`, and `PI05-STR-RT`, exactly these two branches now exist:
 
 - `feat(<token>-benchmark-HA)/evaluate` — HumanoidArena.
 - `feat(<token>-benchmark-SP)/evaluate` — SIMPLE.
 
-The branch contains that method's benchmark integration, immutable run
-manifest, audit, metrics, representative video/plot pointers, and result
-provenance. New commits advance that branch; do not invent a new branch for
-each run, repair, or phase. Failed outcomes stay in the record.
+Each branch currently contains the matching architecture ancestry, pinned
+public source revision and fail-closed evaluation contract, but **not yet** a
+completed v2 run. The branch must eventually contain its method's benchmark
+integration, immutable run manifest, audit, metrics, representative video/plot
+pointers, and result provenance. New commits advance that branch; do not
+invent a new branch for each run, repair, or phase. Failed outcomes stay in
+the record.
 
 ## Common evaluation contract
 
