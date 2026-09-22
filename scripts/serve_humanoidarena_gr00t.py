@@ -19,7 +19,7 @@ from hrvla_bench.humanoidarena_gr00t_http import (  # noqa: E402
     make_handler,
     validate_policy_contract,
 )
-from hrvla_subtask.http_routing import ObservedStateRouter  # noqa: E402
+from hrvla_subtask.http_routing import ObservedStateRouter, RecoveryObservedStateRouter  # noqa: E402
 
 
 def _load_modality_config(path: Path) -> None:
@@ -45,6 +45,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--default-instruction")
     parser.add_argument("--subtask-program", type=Path)
+    parser.add_argument("--recovery-protocol", type=Path)
     return parser.parse_args()
 
 
@@ -71,10 +72,17 @@ def main() -> None:
     )
     policy.model.action_head.num_inference_timesteps = args.denoising_steps
     validate_policy_contract(policy)
-    router = (
-        ObservedStateRouter.from_path(args.subtask_program)
-        if args.subtask_program is not None else None
-    )
+    if args.recovery_protocol is not None and args.subtask_program is None:
+        raise ValueError("recovery protocol requires a subtask program")
+    if args.recovery_protocol is not None:
+        router = RecoveryObservedStateRouter.from_paths(
+            args.subtask_program, args.recovery_protocol
+        )
+    else:
+        router = (
+            ObservedStateRouter.from_path(args.subtask_program)
+            if args.subtask_program is not None else None
+        )
     state = HumanoidArenaGr00tState(
         policy, default_instruction=args.default_instruction, instruction_router=router
     )

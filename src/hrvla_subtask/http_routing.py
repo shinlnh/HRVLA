@@ -9,6 +9,11 @@ from typing import Any, Mapping
 from .backends import HeuristicProposalBackend
 from .model import ExecutionMemory, TaskSpec
 from .planner import PlannerConfig, WorldModelGuidedPlanner
+from .recovery import (
+    FailureContext,
+    TransitionRecoveryCoordinator,
+    load_recovery_protocol,
+)
 
 
 class ObservedStateRouter:
@@ -56,3 +61,59 @@ class ObservedStateRouter:
         self.decisions[task_id] += 1
         skill = task.skill_map[decision.selected.skill_id]
         return skill.instruction, skill.skill_id
+
+
+class RecoveryObservedStateRouter:
+    """Select a bounded repair only for an explicitly observed active failure."""
+
+    def __init__(self, program: Mapping[str, Any], protocol_path: Path, *, seed: int = 0) -> None:
+        self.subtask = ObservedStateRouter(program, seed=seed)
+        self.scenarios = load_recovery_protocol(protocol_path, self.subtask.tasks.values())
+        self.coordinators = {
+            task_id: TransitionRecoveryCoordinator("baton_str") for task_id in self.scenarios
+        }
+
+    @classmethod
+    def from_paths(
+        cls, program_path: Path, protocol_path: Path, *, seed: int = 0
+    ) -> "RecoveryObservedStateRouter":
+        return cls(json.loads(program_path.read_text(encoding="utf-8")), protocol_path, seed=seed)
+
+    def reset(self) -> None:
+        self.subtask.reset()
+        self.coordinators = {
+            task_id: TransitionRecoveryCoordinator("baton_str") for task_id in self.scenarios
+        }
+
+    def select(self, task_id: str | None, payload: Mapping[str, Any]) -> tuple[str, str]:
+        if payload.get("failure_active") is not True:
+            return self.subtask.select(task_id, payload)
+        if task_id not in self.scenarios:
+            raise ValueError(f"no recovery scenario for task: {task_id}")
+        scenario = self.scenarios[task_id]
+        if payload.get("failure_label") != scenario.failure_label:
+            raise ValueError("active failure label does not match the frozen scenario")
+        observed = payload.get("observed_predicates")
+        before = payload.get("pre_failure_predicates")
+        if not isinstance(observed, list) or not all(isinstance(x, str) for x in observed):
+            raise ValueError("recovery requires detector-produced observed_predicates")
+        if not isinstance(before, list) or not all(isinstance(x, str) for x in before):
+            raise ValueError("recovery requires detector-produced pre_failure_predicates")
+        task = self.subtask.tasks[task_id]
+        failure = next(
+            item for item in task.failures
+            if item.skill_id == scenario.failed_skill_id and item.label == scenario.failure_label
+        )
+        context = FailureContext(
+            task_id=task_id,
+            failure_label=scenario.failure_label,
+            failed_skill_id=scenario.failed_skill_id,
+            state_before=frozenset(before),
+            observed_state=frozenset(observed),
+            attempt=int(payload.get("failure_attempt", 1)),
+        )
+        decision = self.coordinators[task_id].decide(task, scenario, failure, context)
+        if decision.rollback or decision.primitive_id is None:
+            raise ValueError("recovery requires a verified checkpoint rollback; no action emitted")
+        primitive = scenario.primitive_map[decision.primitive_id]
+        return primitive.instruction, primitive.primitive_id
