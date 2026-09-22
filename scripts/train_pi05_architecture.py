@@ -44,6 +44,8 @@ def main() -> int:
         source_dataset=args.source_dataset,
     )
     command = build_training_command(job)
+    wrapper = Path(__file__).with_name("lerobot_pi05_low_mem_train.py").resolve()
+    command[1:2] = [str(wrapper), str(job.train_script)]
     print(shlex.join(command), flush=True)
     if args.dry_run:
         return 0
