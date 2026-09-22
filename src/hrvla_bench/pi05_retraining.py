@@ -90,6 +90,10 @@ def build_training_command(job: PI05TrainingJob) -> list[str]:
         f"--dataset.repo_id=local/{job.dataset.name}",
         f"--dataset.root={job.dataset}",
         "--dataset.image_transforms.enable=false",
+        # The audited ST view has no image normalization statistics. PI0.5
+        # uses VISUAL=IDENTITY, so do not ask LeRobot to overwrite them with
+        # ImageNet statistics (which otherwise raises KeyError here).
+        "--dataset.use_imagenet_stats=false",
         "--policy.type=pi05",
         f"--policy.pretrained_path={job.base_policy}",
         "--policy.device=cuda",

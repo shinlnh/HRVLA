@@ -44,6 +44,7 @@ class TestPI05Retraining(unittest.TestCase):
         self.assertIn("--policy.gradient_checkpointing=true", command)
         self.assertIn("--policy.train_expert_only=true", command)
         self.assertIn(f"--dataset.root={self.dataset}", command)
+        self.assertIn("--dataset.use_imagenet_stats=false", command)
         self.assertIn("--policy.push_to_hub=false", command)
 
     def test_rejects_old_dataset_without_mutating_it(self) -> None:
