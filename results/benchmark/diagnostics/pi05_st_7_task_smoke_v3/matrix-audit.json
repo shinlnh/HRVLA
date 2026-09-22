@@ -1,0 +1,86 @@
+{
+  "architecture_revision": "e7842a9dbd1aa8df084a6149dab561c882a0c648",
+  "claim_boundary": "seven 60-step live integration smokes; not a paired, full-horizon benchmark",
+  "program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "rows": [
+    {
+      "audit_sha256": "b8124887d86159719e1732fbe41de076c4a9efe1c2ef509eeff6f048ea0c2caf",
+      "episode_seed": 1625594900,
+      "episode_steps": 60,
+      "failure_reason": "timeout",
+      "first_skill": "approach_and_grasp_box",
+      "policy_requests": 3,
+      "success": false,
+      "task_id": "pick_and_place_box",
+      "task_key": "pp_box"
+    },
+    {
+      "audit_sha256": "0826a69464573f50b7462eb6631a1e629f5bbc76e9a4b7e3fa3f0ca0bc6b67e5",
+      "episode_seed": 1049058202,
+      "episode_steps": 60,
+      "failure_reason": "timeout",
+      "first_skill": "approach_strike_range",
+      "policy_requests": 3,
+      "success": false,
+      "task_id": "boxing",
+      "task_key": "boxing"
+    },
+    {
+      "audit_sha256": "b92efd479639e71507f04c30b7456ba57e3ae871023586569997291cc7b0934e",
+      "episode_seed": 250972820,
+      "episode_steps": 60,
+      "failure_reason": "timeout",
+      "first_skill": "approach_and_grasp_hammer",
+      "policy_requests": 3,
+      "success": false,
+      "task_id": "double_desk",
+      "task_key": "doubledesk"
+    },
+    {
+      "audit_sha256": "cbd2bccb873014ad9ea5fa6a403a86cf1960809a0bf3f40f534ca3a09902ebcd",
+      "episode_seed": 1132158683,
+      "episode_steps": 60,
+      "failure_reason": "timeout",
+      "first_skill": "approach_and_align_with_ball",
+      "policy_requests": 3,
+      "success": false,
+      "task_id": "football",
+      "task_key": "football"
+    },
+    {
+      "audit_sha256": "99a733e600ac567f6a8b90c86db53a511e0dabce02d387022c4fd7d3c95ef662",
+      "episode_seed": 1737204259,
+      "episode_steps": 60,
+      "failure_reason": "timeout",
+      "first_skill": "approach_sofa",
+      "policy_requests": 3,
+      "success": false,
+      "task_id": "sit_sofa",
+      "task_key": "sit_sofa"
+    },
+    {
+      "audit_sha256": "76279911a402fd794380422f16d89d6ed449274a0f4eab3961daf9922269f578",
+      "episode_seed": 1305788479,
+      "episode_steps": 60,
+      "failure_reason": "timeout",
+      "first_skill": "leave_start_zone",
+      "policy_requests": 3,
+      "success": false,
+      "task_id": "visual_navigation",
+      "task_key": "vision_navi"
+    },
+    {
+      "audit_sha256": "bf6e172a616511984aaa35b3e2cf43093937688e7216f788ef51336c9a4f85c5",
+      "episode_seed": 1165506222,
+      "episode_steps": 60,
+      "failure_reason": "timeout",
+      "first_skill": "approach_door_handle",
+      "policy_requests": 3,
+      "success": false,
+      "task_id": "open_door",
+      "task_key": "open_door"
+    }
+  ],
+  "schema_version": 1,
+  "status": "integration_smoke_pass_7_of_7"
+}

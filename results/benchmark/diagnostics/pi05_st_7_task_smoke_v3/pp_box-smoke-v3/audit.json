@@ -1,0 +1,30 @@
+{
+  "action_dim": 40,
+  "claim_boundary": "single bounded development episode; timeout is scored behavior, not a success or paired benchmark claim",
+  "episode_seed": 1625594900,
+  "episode_sha256": "18a47e1eb1925a177fa8b5714fe2961516ba349a7e8745720ad7bbf4e37a4c91",
+  "episode_steps": 60,
+  "failure_reason": "timeout",
+  "frame_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-integration/pp_box-smoke-v3/first-second.png",
+  "frame_sha256": "446177dcc6a1fa3bbd716434a5d6e02e6b521136513bb569cf745efc77c18770",
+  "implementation_revision": "e7842a9dbd1aa8df084a6149dab561c882a0c648",
+  "max_steps": 60,
+  "method_id": "pi05_st",
+  "policy_requests": 3,
+  "program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "schema_version": 1,
+  "selected_skills": [
+    "approach_and_grasp_box",
+    "approach_and_grasp_box",
+    "approach_and_grasp_box"
+  ],
+  "server_log_sha256": "1bdff3154ca9a4101f5370a850b0f438bc94d54ca5b7d38cbf3f1ef711325a83",
+  "sim_log_sha256": "c23e1cc7c3cbd58e8967f1ffb0ddb1d7885fdb2d6ecdd70ff3b0080f8654f3ff",
+  "status": "integration_smoke_pass",
+  "success": false,
+  "summary_sha256": "3a321c8a1671155fcddd0fb861d05cf965515927853f1c25f6396daa2f96e2bf",
+  "task_id": "pick_and_place_box",
+  "trace_sha256": "7ba18e35a3fd319ca4fef8f572d4d1ee76ebd557cccd285b368d2da43bb05d11",
+  "video_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-integration/pp_box-smoke-v3/videos/failure/pi05_st_integration_smoke__seed_0__repeat_0__episode_0__timeout.mp4",
+  "video_sha256": "abb3579893e943e4507a991a191adfcb4f2af8a58c71667c7e616b414233feee"
+}

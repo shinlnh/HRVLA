@@ -1,0 +1,283 @@
+{"evaluator": "/HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/script/eval_scripts/sonic_pi05/sim_eval_vla.py", "implementation_revision": "e7842a9dbd1aa8df084a6149dab561c882a0c648", "method_id": "pi05_st", "method_output_dir": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-integration/football-smoke-v3/method", "task_id": "football"}
+[INFO][AppLauncher]: Using device: cuda:0
+[INFO][AppLauncher]: Loading experience file: /HELIOS/Robotics/HRVLA/_vendor/IsaacLab-v2.2.0/apps/isaaclab.python.headless.rendering.kit
+[Warning] [simulation_app.simulation_app] Modules: ['omni.kit_app'] were loaded before SimulationApp was started and might not be loaded correctly.
+[Warning] [simulation_app.simulation_app] Please check to make sure no extra omniverse or pxr modules are imported before the call to SimulationApp(...)
+Loading user config located at: '/HELIOS/Robotics/HRVLA/_vendor/IsaacLab-v2.2.0/.venv/lib/python3.11/site-packages/omni/data/Kit/Isaac-Sim/5.0/user.config.json'
+[Info] [carb] Logging to file: /HELIOS/Robotics/HRVLA/_vendor/IsaacLab-v2.2.0/.venv/lib/python3.11/site-packages/omni/logs/Kit/Isaac-Sim/5.0/kit_20260922_123107.log
+2026-09-22T05:31:07Z [424ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-22T05:31:07Z [424ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-22T05:31:07Z [439ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-09-22T05:31:08Z [883ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-22T05:31:08Z [883ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-22T05:31:08Z [884ms] [Error] [carb.glinterop.plugin] GLInteropContext::init: carb::windowing is not available
+2026-09-22T05:31:08Z [996ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (RPL-S)
+2026-09-22T05:31:08Z [996ms] [Warning] [gpu.foundation.plugin] Skipping unsupported non-NVIDIA GPU: Intel(R) Graphics (RPL-S)
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 580.178.04    | Graphics API: Vulkan
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 5070 Ti       | Yes: 0 |     | 16303   MB | 10de      | 0          |
+|     |                                  |        |     |            | 2c05      | da696980.. |
+|     |                                  |        |     |            | 1         |            |
+|---------------------------------------------------------------------------------------------|
+| 1   | Intel(R) Graphics (RPL-S)        |        |     | 23847   MB | 8086      | 0          |
+|     |                                  |        |     |            | a780      | 868080a7.. |
+|     |                                  |        |     |            | 0         |            |
+|=============================================================================================|
+| OS: 24.04.5 LTS (Noble Numbat) ubuntu, Version: 24.04.5, Kernel: 7.0.0-31-generic
+| Processor: Intel(R) Core(TM) i9-14900K
+| Bare Metal Cores: 24 | Bare Metal Logical Cores: 48
+| Available Cores:  32 
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 31796 | Free Memory: 24712
+| Total Page/Swap (MB): 8191 | Free Page/Swap: 2865
+|---------------------------------------------------------------------------------------------|
+2026-09-22T05:31:08Z [1,415ms] [Warning] [gpu.foundation.plugin] CPU performance profile is set to powersave. This profile sets the CPU to the lowest frequency reducing performance.
+2026-09-22T05:31:08Z [1,417ms] [Warning] [gpu.foundation.plugin] IOMMU is enabled.
+2026-09-22T05:31:08Z [1,417ms] [Warning] [gpu.foundation.plugin] Detected IOMMU is enabled. Running CUDA peer-to-peer bandwidth and latency validation.
+Unidirectional P2P=Enabled Bandwidth (P2P Writes) Matrix (GB/s)
+   D\D     0 
+     0 767.44 
+P2P=Enabled Latency (P2P Writes) Matrix (us)
+   GPU     0 
+     0   2.08 
+
+   CPU     0 
+     0   2.52 
+2026-09-22T05:31:09Z [2,521ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-22T05:31:09Z [2,521ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-22T05:31:09Z [2,543ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-22T05:31:09Z [2,543ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-22T05:31:09Z [2,550ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-22T05:31:09Z [2,550ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-22T05:31:09Z [2,581ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-22T05:31:09Z [2,581ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-22T05:31:09Z [2,582ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-22T05:31:09Z [2,582ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-22T05:31:09Z [2,584ms] [Warning] [carb.windowing-glfw.plugin] GLFW initialization failed.
+2026-09-22T05:31:09Z [2,584ms] [Warning] [carb] Failed to startup plugin carb.windowing-glfw.plugin (interfaces: [carb::windowing::IGLContext v1.0],[carb::windowing::IWindowing v1.5]) (impl: carb.windowing-glfw.plugin)
+2026-09-22T05:31:10Z [2,804ms] [Warning] [omni.log] Source: omni.hydra was already registered.
+2026-09-22T05:31:10Z [3,301ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+2026-09-22T05:31:13Z [5,683ms] [Warning] [pxr.Semantics] pxr.Semantics is deprecated - please use Semantics instead
+Warp CUDA error: Failed to get driver entry point 'cuDeviceGetUuid' (CUDA error 1)
+Warp CUDA error: Function cuDeviceGetUuid_f: a suitable driver entry point was not found
+Warp CUDA error 36: API call is not supported in the installed CUDA driver (in function cuda_init, /builds/omniverse/warp/warp/native/warp.cu:277)
+2026-09-22T05:31:13Z [6,085ms] [Warning] [omni.replicator.core.scripts.extension] No material configuration file, adding configuration to material settings directly.
+2026-09-22T05:31:16Z [9,566ms] [Warning] [usdrt.population.plugin] using high frequency span is disabled
+2026-09-22T05:31:17Z [9,761ms] [Warning] [carb] Acquiring non optional plugin interface which is not listed as dependency: [carb::dictionary::ISerializer v1.1] (plugin: carb.dictionary.serializer-json.plugin), by client: carb.scenerenderer-rtx.plugin. Add it to CARB_PLUGIN_IMPL_DEPS() macro of a client.
+2026-09-22T05:31:19Z [11,823ms] [Warning] [usdrt.hydra.fabric_scene_delegate.plugin] using high frequency span is disabled
+2026-09-22T05:31:19Z [11,823ms] [Warning] [usdrt.hydra.fabric_scene_delegate.plugin] using high frequency span is disabled
+2026-09-22T05:31:19Z [11,824ms] [Warning] [usdrt.hydra.fabric_scene_delegate.plugin] using high frequency span with attrs is disabled
+2026-09-22T05:31:19Z [11,833ms] [Warning] [omni.fabric.plugin] Warning: attribute viewportHandle not found for bucket id 7
+
+2026-09-22T05:31:19Z [11,840ms] [Warning] [usdrt.hydra.fabric_scene_delegate.plugin] using high frequency span is disabled
+2026-09-22T05:31:19Z [11,840ms] [Warning] [usdrt.hydra.fabric_scene_delegate.plugin] using high frequency span is disabled
+[DDSManager] DDS system initialized
+[DDSManager] DDSManager initialized
+================================================================================
+[CAMERA_STATE DIAGNOSTIC] Module is being imported!
+[CAMERA_STATE DIAGNOSTIC] About to create MultiImageWriter...
+================================================================================
+[MultiImageWriter] Shared memory initialized: isaac_multi_image_shm_3972140_0_0_f89e75e6 (created=True)
+================================================================================
+[CAMERA_STATE DIAGNOSTIC] ✅ MultiImageWriter created successfully!
+================================================================================
+[INFO]: Parsing configuration from: <class 'tasks.g1_tasks.move_football_single_g1_29dof_dex3_wholebody.move_football_single_g1_29dof_dex3_hw_env_cfg.MoveFootballG129Dex3WholebodyEnvCfg'>
+[env_config_yaml] loaded: /HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/tasks/common_test_config/base_test/football_single_sonic_test.yaml
+[env_config_yaml] apply wait_for_textures=False
+[env_config_yaml] apply sim.dt=0.005
+[env_config_yaml] apply decimation=4
+[env_config_yaml] apply object_reset_seed_source=env_seed
+[env_config_yaml] apply deterministic_object_resets=[{'record_name': 'football', 'scene_keys': ['object', 'football'], 'pose_range': {'x': [-1.2, 1.2], 'y': [-1.2, 1.2]}, 'zero_velocity_on_reset': True}]
+[env_config_yaml] effective sim.dt=0.005, decimation=4, control_hz=50.00
+[sim_eval_vla] startup seed=0 repeat_idx=0 episode_seed=1132158683
+Setting seed: 1132158683
+[INFO]: Base environment:
+	Environment device    : cuda:0
+	Environment seed      : 1132158683
+	Physics step-size     : 0.005
+	Rendering step-size   : 0.02
+	Environment step-size : 0.02
+2026-09-22T05:31:21Z [13,642ms] [Warning] [isaaclab.sim.utils] Could not perform 'modify_collision_properties' on any prims under: '/World/envs/env_0/Object'. This might be because of the following reasons:
+	(1) The desired attribute does not exist on any of the prims.
+	(2) The desired attribute exists on an instanced prim.
+		Discovered list of instanced prim paths: ['/World/envs/env_0/Object/geometry']
+2026-09-22T05:31:21Z [13,654ms] [Warning] [isaaclab.sim.utils] Could not perform 'modify_collision_properties' on any prims under: '/World/envs/env_0/GoalNet'. This might be because of the following reasons:
+	(1) The desired attribute does not exist on any of the prims.
+	(2) The desired attribute exists on an instanced prim.
+		Discovered list of instanced prim paths: ['/World/envs/env_0/GoalNet/geometry']
+[INFO]: Time taken for scene creation : 0.218870 seconds
+[INFO]: Scene manager:  <class InteractiveScene>
+	Number of environments: 1
+	Environment spacing   : 2.5
+	Source prim name      : /World/envs/env_0
+	Global prim paths     : []
+	Replicate physics     : True
+[INFO]: Starting the simulation. This may take a few seconds. Please wait...
+2026-09-22T05:31:21Z [13,937ms] [Error] [omni.physx.plugin] PhysicsUSD: Parse collision - triangle mesh collision (approximation None/MeshSimplification) cannot be a part of a dynamic body, falling back to convexHull approximation: /World/envs/env_0/Robot/left_ankle_roll_link/collisions.For dynamic collision please use approximations : convex hull, convex decomposition, box, sphere or SDF approximation.
+2026-09-22T05:31:21Z [13,950ms] [Error] [omni.physx.plugin] PhysicsUSD: Parse collision - triangle mesh collision (approximation None/MeshSimplification) cannot be a part of a dynamic body, falling back to convexHull approximation: /World/envs/env_0/Robot/right_ankle_roll_link/collisions.For dynamic collision please use approximations : convex hull, convex decomposition, box, sphere or SDF approximation.
+2026-09-22T05:31:21Z [14,426ms] [Warning] [isaaclab.actuators.actuator_pd] The <ImplicitActuatorCfg> object has a value for 'effort_limit'. This parameter will be removed in the future. To set the effort limit, please use 'effort_limit_sim' instead.
+2026-09-22T05:31:21Z [14,426ms] [Warning] [isaaclab.actuators.actuator_pd] The <ImplicitActuatorCfg> object has a value for 'velocity_limit'. Previously, although this value was specified, it was not getting used by implicit actuators. Since this parameter affects the simulation behavior, we continue to not use it. This parameter will be removed in the future. To set the velocity limit, please use 'velocity_limit_sim' instead.
+2026-09-22T05:31:21Z [14,495ms] [Warning] [usdrt.hydra.fabric_scene_delegate.plugin] using high frequency span with attrs is disabled
+2026-09-22T05:31:21Z [14,506ms] [Warning] [usdrt.hydra.fabric_scene_delegate.plugin] using high frequency span with attrs is disabled
+2026-09-22T05:31:21Z [14,506ms] [Warning] [omni.fabric.plugin] getAttributeCount called on non-existent path /World/envs/env_0/Robot/torso_link/collisions/torso_link_rev_1_0
+2026-09-22T05:31:21Z [14,506ms] [Warning] [omni.fabric.plugin] getTypes called on non-existent path /World/envs/env_0/Robot/torso_link/collisions/torso_link_rev_1_0
+2026-09-22T05:31:22Z [15,078ms] [Warning] [rtx.postprocessing.plugin] DLSS increasing input dimensions: Render resolution of (371, 278) is below minimal input resolution of 300.
+[INFO]: Time taken for simulation start : 1.531643 seconds
+[INFO] Command Manager:  <CommandManager> contains 0 active terms.
++------------------------+
+|  Active Command Terms  |
++--------+-------+-------+
+| Index  | Name  |  Type |
++--------+-------+-------+
++--------+-------+-------+
+
+[INFO] Event Manager:  <EventManager> contains 0 active terms.
+
+[INFO] Recorder Manager:  <RecorderManager> contains 0 active terms.
++---------------------+
+| Active Recorder Terms |
++-----------+---------+
+|   Index   | Name    |
++-----------+---------+
++-----------+---------+
+
+[INFO] Action Manager:  <ActionManager> contains 1 active terms.
++------------------------------------+
+|  Active Action Terms (shape: 43)   |
++--------+-------------+-------------+
+| Index  | Name        |   Dimension |
++--------+-------------+-------------+
+|   0    | joint_pos   |          43 |
++--------+-------------+-------------+
+
+[CAMERA_STATE DEBUG] Checking action_provider availability:
+  - hasattr(env, 'action_provider'): False
+[CAMERA_STATE WARNING] env.action_provider not found! Status indicator will always show IDLE.
+[INFO] Observation Manager: <ObservationManager> contains 1 groups.
++------------------------------------------------+
+|  Active Observation Terms in Group: 'policy'   |
++--------+----------------------+----------------+
+| Index  | Name                 |     Shape      |
++--------+----------------------+----------------+
+|   0    | robot_joint_state    |     (87,)      |
+|   1    | robot_gipper_state   |     (14,)      |
+|   2    | camera_image         | (480, 640, 3)  |
++--------+----------------------+----------------+
+
+[INFO] Termination Manager:  <TerminationManager> contains 0 active terms.
++----------------------------+
+|  Active Termination Terms  |
++--------+-------+-----------+
+| Index  | Name  |  Time Out |
++--------+-------+-----------+
++--------+-------+-----------+
+
+[INFO] Reward Manager:  <RewardManager> contains 1 active terms.
++-------------------------+
+|   Active Reward Terms   |
++-------+--------+--------+
+| Index | Name   | Weight |
++-------+--------+--------+
+|   0   | reward |    1.0 |
++-------+--------+--------+
+
+[INFO] Curriculum Manager:  <CurriculumManager> contains 0 active terms.
++----------------------+
+| Active Curriculum Terms |
++-----------+----------+
+|   Index   | Name     |
++-----------+----------+
++-----------+----------+
+
+[INFO]: Completed setting up the environment...
+[grass_ground_material] 貼圖目錄: /HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/assets/objects/materials/grass_turf
+[grass_ground_material] Albedo: /HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/assets/objects/materials/grass_turf/seamless_pbr_green_grass_ground_texture_with_small_white_flowers_and_leaves__Png_albedo.png
+[grass_ground_material] ✅ 草坪 PBR 材質已套用到 1 個 mesh，已寫入 st UV 的 mesh: 1
+[grass_ground_material] before reset apply result: True
+2026-09-22T05:31:22Z [15,348ms] [Warning] [isaaclab.sim.utils] Could not perform 'bind_physics_material' on any prims under: '/World/envs/env_0/Object'. This might be because of the following reasons:
+	(1) The desired attribute does not exist on any of the prims.
+	(2) The desired attribute exists on an instanced prim.
+		Discovered list of instanced prim paths: ['/World/envs/env_0/Object/geometry']
+[football_physics_material] ✓ 已套用 restitution=0.75 到足球 (1 處)
+[pitch_lines] 已建立圓圈（Mesh 環形）：圓心 (0.0, 0.0)，半徑 1.5m，線寬 0.12m，128 段，line_color=(1.0, 1.0, 1.0)
+[pitch_lines] 已建立球網參考線：length=5.0m, width=0.06m, offsets=((0.0, 0.0),), centers=((0.0, 50.0),)
+[pitch_lines] goal reference lines color=(1.0, 1.0, 1.0), centers=((0.0, 50.0),), offsets=((0.0, 0.0),)
+[football_runtime] applying foot collision rebuild before first reset
+2026-09-22T05:31:22Z [15,562ms] [Error] [omni.physx.plugin] PhysicsUSD: Parse collision - triangle mesh collision (approximation None/MeshSimplification) cannot be a part of a dynamic body, falling back to convexHull approximation: /World/envs/env_0/Robot/left_ankle_roll_link/collisions.For dynamic collision please use approximations : convex hull, convex decomposition, box, sphere or SDF approximation.
+2026-09-22T05:31:22Z [15,571ms] [Error] [omni.physx.plugin] PhysicsUSD: Parse collision - triangle mesh collision (approximation None/MeshSimplification) cannot be a part of a dynamic body, falling back to convexHull approximation: /World/envs/env_0/Robot/right_ankle_roll_link/collisions.For dynamic collision please use approximations : convex hull, convex decomposition, box, sphere or SDF approximation.
+[object_reset] football->object:episode_seed=11400714786159236188:seed_source=env_seed:pos=[-0.42128172516822815, 0.13864360749721527, 0.10999999940395355]
+[grass_ground_material] 貼圖目錄: /HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/assets/objects/materials/grass_turf
+[grass_ground_material] Albedo: /HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/assets/objects/materials/grass_turf/seamless_pbr_green_grass_ground_texture_with_small_white_flowers_and_leaves__Png_albedo.png
+[grass_ground_material] ✅ 草坪 PBR 材質已套用到 1 個 mesh，已寫入 st UV 的 mesh: 1
+[grass_ground_material] after reset apply result: True
+[sim_eval_vla] task=Isaac-Move-Football-Single-G129-Dex3-Wholebody control_hz=50 episodes=1 lerobot_server=http://127.0.0.1:8765 record_video_every_n=1 step_log_every_n=0
+ActionProvider init
+
+[DEBUG] Isaac Lab default_joint_pos (full):
+  left_shoulder_pitch (idx 11): 0.000
+  left_shoulder_roll (idx 15): 0.400
+  left_elbow (idx 21): 1.200
+  right_shoulder_pitch (idx 12): 0.000
+  right_shoulder_roll (idx 16): -0.400
+  right_elbow (idx 22): 1.200
+[SonicActionProvider] onnxruntime available_providers=['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider']
+[SonicActionProvider] loaded model_encoder.onnx requested_device=cuda:0 providers=['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider']
+[SonicActionProvider] loaded model_decoder.onnx requested_device=cuda:0 providers=['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider']
+Successful load sonic model
+[SonicActionProvider] LeRobot VLA remote client enabled: url=http://127.0.0.1:8765 verify_ssl=False
+[SonicActionProvider] POSE mode ready  pose_source=redis  gmt_backend=sonic  (zmq=localhost:5556  redis=localhost:6379)  encoder=/HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/GR00T-WholeBodyControl/gear_sonic_deploy/policy/release/model_encoder.onnx  decoder=/HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/GR00T-WholeBodyControl/gear_sonic_deploy/policy/release/model_decoder.onnx
+[SonicActionProvider] VLA root_rot6d layout mode=row
+[SonicActionProvider] VLA root delta clamp (deg/step)=26.0
+[SonicActionProvider] VLA heading align=enabled (env SONIC_VLA_USE_HEADING_ALIGN)
+  - control frequency: 50Hz
+[SimpleController] set the action provider: SonicActionProvider
+[sim_eval_vla] episode_start seed=0 repeat_idx=0 episode_seed=1132158683 rss_mb=9240.0 record_video=1
+2026-09-22T05:31:30Z [23,492ms] [Error] [omni.physx.plugin] PhysicsUSD: Parse collision - triangle mesh collision (approximation None/MeshSimplification) cannot be a part of a dynamic body, falling back to convexHull approximation: /World/envs/env_0/Robot/left_ankle_roll_link/collisions.For dynamic collision please use approximations : convex hull, convex decomposition, box, sphere or SDF approximation.
+2026-09-22T05:31:30Z [23,501ms] [Error] [omni.physx.plugin] PhysicsUSD: Parse collision - triangle mesh collision (approximation None/MeshSimplification) cannot be a part of a dynamic body, falling back to convexHull approximation: /World/envs/env_0/Robot/right_ankle_roll_link/collisions.For dynamic collision please use approximations : convex hull, convex decomposition, box, sphere or SDF approximation.
+[CAMERA_STATE] 📸 Camera update frequency: 0.36 Hz (count=3)
+[object_reset] football->object:episode_seed=11400714786159236188:seed_source=env_seed:pos=[-0.42128172516822815, 0.13864360749721527, 0.10999999940395355]
+[grass_ground_material] 貼圖目錄: /HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/assets/objects/materials/grass_turf
+[grass_ground_material] Albedo: /HELIOS/Robotics/HRVLA/_vendor/HumanoidArena/isaaclab_twist2_g1/assets/objects/materials/grass_turf/seamless_pbr_green_grass_ground_texture_with_small_white_flowers_and_leaves__Png_albedo.png
+[grass_ground_material] ✅ 草坪 PBR 材質已套用到 1 個 mesh，已寫入 st UV 的 mesh: 1
+[grass_ground_material] after reset apply result: True
+[SONIC] on_env_reset: frame_count and history reset
+[SonicActionProvider] ActionProvider started
+[SimpleController] the controller is started
+
+[SONIC] Real get_action path enabled
+[SONIC] Forcing _smpl_data_valid=True based on joint29 buffer data
+[SONIC] position mode configured: body joint stiffness/damping written to SONIC gains
+render: 0.000 ms
+obs: 0.000 ms
+
+================================================================================
+[PERF_REPORT] Frame 50 - RTF Performance Breakdown
+================================================================================
+Component                        Mean(ms)    Max(ms)     %Total
+--------------------------------------------------------------------------------
+Fetch Pose (ZMQ/Redis)               0.00       0.00       0.0%
+SONIC Encoder                        0.31       4.36       0.3%
+SONIC Decoder                        0.24       3.64       0.3%
+Sim Step (x{self._decimation})      33.76      37.72      35.8%
+Render + Obs                         1.77      45.43       1.9%
+--------------------------------------------------------------------------------
+TOTAL                               94.17    1091.29     100.0%
+Target FPS (RTF=1.0)              50000.0
+Actual FPS                           10.6
+RTF Estimate                         0.21
+================================================================================
+
+[CAMERA_STATE] 📸 Camera update frequency: 0.56 Hz (count=3)
+Video saved: /HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-integration/football-smoke-v3/videos/failure/pi05_st_integration_smoke__seed_0__repeat_0__episode_0__timeout.mp4 (frames=61)
+[SonicActionProvider] ActionProvider stop
+[SonicActionProvider] ActionProvider stopped
+[SimpleController] the controller is stopped
+[sim_eval_vla] episode_end seed=0 repeat_idx=0 episode_seed=1132158683 rss_mb=9311.6
+/home/shin/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked shared_memory objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

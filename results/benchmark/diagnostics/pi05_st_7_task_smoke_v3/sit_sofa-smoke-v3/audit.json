@@ -1,0 +1,30 @@
+{
+  "action_dim": 40,
+  "claim_boundary": "single bounded development episode; timeout is scored behavior, not a success or paired benchmark claim",
+  "episode_seed": 1737204259,
+  "episode_sha256": "677666dc1a2c635a84c372b7f01d550ca8d2893aa3546f2c1590e0e3283ba860",
+  "episode_steps": 60,
+  "failure_reason": "timeout",
+  "frame_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-integration/sit_sofa-smoke-v3/first-second.png",
+  "frame_sha256": "8be1d79d530f8cbc3c2d425c445515d3a6349029e9f81d21930ca36cfcf1f3b5",
+  "implementation_revision": "e7842a9dbd1aa8df084a6149dab561c882a0c648",
+  "max_steps": 60,
+  "method_id": "pi05_st",
+  "policy_requests": 3,
+  "program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "schema_version": 1,
+  "selected_skills": [
+    "approach_sofa",
+    "approach_sofa",
+    "approach_sofa"
+  ],
+  "server_log_sha256": "2dbcf05e983722c12ac8c3754f3dce4a7af210632c4bf4379ebfef8fe31e5d42",
+  "sim_log_sha256": "5a6c2a6bf441ab9b3e05650274655aedd43c09a0b203190c290cc106c94cdcc5",
+  "status": "integration_smoke_pass",
+  "success": false,
+  "summary_sha256": "4706e5a4d3e786eda41193cf41f83e2137443a9a97926a5d368596ea86c74637",
+  "task_id": "sit_sofa",
+  "trace_sha256": "bb99aa33f321d6353ddba533c381d7bd45f6f3c3a9569d86adcfe534dd974a01",
+  "video_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-integration/sit_sofa-smoke-v3/videos/failure/pi05_st_integration_smoke__seed_0__repeat_0__episode_0__timeout.mp4",
+  "video_sha256": "bb05bfae22edfdaf503cee0420cac6ff3a9536a4c7207433b58040fafb618084"
+}

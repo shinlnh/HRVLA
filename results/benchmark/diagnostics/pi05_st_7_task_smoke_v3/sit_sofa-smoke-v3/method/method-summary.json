@@ -1,0 +1,43 @@
+{
+  "completed_transition_count": 0,
+  "features": {
+    "recovery": false,
+    "retrained": false,
+    "subtask": true
+  },
+  "first_recovery_decision_control_step": null,
+  "implementation_revision": "e7842a9dbd1aa8df084a6149dab561c882a0c648",
+  "mean_planner_latency_ms": 0.35964100000758964,
+  "mean_policy_request_latency_ms": 1030.7957353361417,
+  "memory": {
+    "completed": [],
+    "failed": [],
+    "last_subtask": "approach_sofa",
+    "observations": 3,
+    "revisions": 0
+  },
+  "method_id": "pi05_st",
+  "p95_planner_latency_ms": 0.5244709900580347,
+  "p95_policy_request_latency_ms": 1037.0805469865445,
+  "planner_calls": 3,
+  "planner_decisions": 3,
+  "planner_latencies_ms": [
+    0.06256499909795821,
+    0.4918870108667761,
+    0.5244709900580347
+  ],
+  "policy_request_latencies_ms": [
+    1025.833109015366,
+    1029.4735500065144,
+    1037.0805469865445
+  ],
+  "policy_requests": 3,
+  "policy_reset_seed": 1737204259,
+  "program_id": "humanoidarena-st-str-v1",
+  "program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "recovery_decisions": 0,
+  "schema_version": 1,
+  "task_id": "sit_sofa",
+  "total_transition_count": 1,
+  "trace_sha256": "21bbb24eee2c706c52c3c74250516efd9de825f332d8a7a4917f4e3811c89139"
+}

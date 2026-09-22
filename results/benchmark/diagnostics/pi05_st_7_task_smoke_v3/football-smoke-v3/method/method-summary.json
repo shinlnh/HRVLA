@@ -1,0 +1,43 @@
+{
+  "completed_transition_count": 0,
+  "features": {
+    "recovery": false,
+    "retrained": false,
+    "subtask": true
+  },
+  "first_recovery_decision_control_step": null,
+  "implementation_revision": "e7842a9dbd1aa8df084a6149dab561c882a0c648",
+  "mean_planner_latency_ms": 0.055537326261401176,
+  "mean_policy_request_latency_ms": 916.9939270068426,
+  "memory": {
+    "completed": [],
+    "failed": [],
+    "last_subtask": "approach_and_align_with_ball",
+    "observations": 3,
+    "revisions": 0
+  },
+  "method_id": "pi05_st",
+  "p95_planner_latency_ms": 0.0621090002823621,
+  "p95_policy_request_latency_ms": 1048.1895570119377,
+  "planner_calls": 3,
+  "planner_decisions": 3,
+  "planner_latencies_ms": [
+    0.048466987209394574,
+    0.05603599129244685,
+    0.0621090002823621
+  ],
+  "policy_request_latencies_ms": [
+    659.9938879953697,
+    1042.7983360132203,
+    1048.1895570119377
+  ],
+  "policy_requests": 3,
+  "policy_reset_seed": 1132158683,
+  "program_id": "humanoidarena-st-str-v1",
+  "program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "recovery_decisions": 0,
+  "schema_version": 1,
+  "task_id": "football",
+  "total_transition_count": 1,
+  "trace_sha256": "0205904fbcafef1257d446fa4385d7c1e9565b692b3ba7acc17f0d79d83e1b4e"
+}

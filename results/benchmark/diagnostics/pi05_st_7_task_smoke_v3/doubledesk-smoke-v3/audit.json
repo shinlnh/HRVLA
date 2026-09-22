@@ -1,0 +1,30 @@
+{
+  "action_dim": 40,
+  "claim_boundary": "single bounded development episode; timeout is scored behavior, not a success or paired benchmark claim",
+  "episode_seed": 250972820,
+  "episode_sha256": "bcf762fd2b95800739bb8d1a331394048dca9c36b58c899da899c00988455c7c",
+  "episode_steps": 60,
+  "failure_reason": "timeout",
+  "frame_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-integration/doubledesk-smoke-v3/first-second.png",
+  "frame_sha256": "ccaaecc76fc585b7fc8ffbaa458cee0ab7ef5f4c615edc099821e2724cacce0c",
+  "implementation_revision": "e7842a9dbd1aa8df084a6149dab561c882a0c648",
+  "max_steps": 60,
+  "method_id": "pi05_st",
+  "policy_requests": 3,
+  "program_sha256": "01f89c13b5a08c4bbda67931bfd2d15d57cbab3469b3514f7d3161627cd9e8dc",
+  "schema_version": 1,
+  "selected_skills": [
+    "approach_and_grasp_hammer",
+    "approach_and_grasp_hammer",
+    "approach_and_grasp_hammer"
+  ],
+  "server_log_sha256": "22deab32fb9f3e17a5ecad9a69961792eb128806baeda5e7fe8b93905ee3f093",
+  "sim_log_sha256": "a1594af90bd185508dc060fc68d4d2b7b0f12fb3380362a7da5a7b6a304fbfa7",
+  "status": "integration_smoke_pass",
+  "success": false,
+  "summary_sha256": "0217ff0471808262bc8672c00bc1076fe598df4b5b2352631f93cf8a39d43875",
+  "task_id": "double_desk",
+  "trace_sha256": "7bc8cc9d08416fb9f62f7ab38d34b109d66fc3f8aebf831d7433c2905c52845a",
+  "video_path": "/HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-integration/doubledesk-smoke-v3/videos/failure/pi05_st_integration_smoke__seed_0__repeat_0__episode_0__timeout.mp4",
+  "video_sha256": "f3fd560b004b114b2057b3a102af37ca98c0069f38aa7be65b34613d57e23693"
+}
