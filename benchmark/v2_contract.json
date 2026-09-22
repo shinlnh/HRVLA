@@ -2,7 +2,7 @@
   "schema_version": 1,
   "architecture_token": "PI05-ST",
   "architecture_branch": "feat(PI05-ST)/import-sub-task-feature-into-pi05-sonic",
-  "architecture_revision": "bb195f7a7e8d76e3c6de814c88a895b86d8b4deb",
+  "architecture_revision": "d389f3eedb9c8da8601c2368712b171b45b2ecae",
   "suite": "SP",
   "suite_revision": "6d10628794d9c7de4596b4f2afb2c054a637c2bc",
   "suite_observation_dim": 43,
