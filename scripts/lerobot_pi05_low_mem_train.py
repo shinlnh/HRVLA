@@ -107,30 +107,44 @@ def install_streaming_loader() -> None:
             model.to_empty(device="cuda")
             destination = model.state_dict()
             # `to_empty` also discards non-persistent buffers, which are not
-            # represented in safetensors. SigLIP's position_ids would
-            # otherwise contain allocator garbage and can silently train on
-            # incorrect image positions or assert during inference.
+            # represented in safetensors. Restore SigLIP/Gemma position IDs
+            # and Gemma rotary frequencies from the pinned config. Otherwise
+            # allocator garbage can silently change training or assert.
             nonpersistent = {
                 name for name, _ in model.named_buffers() if name not in destination
             }
+            regenerable_suffixes = (".position_ids", ".inv_freq", ".original_inv_freq")
             unexpected_buffers = sorted(
-                name for name in nonpersistent if not name.endswith(".position_ids")
+                name for name in nonpersistent if not name.endswith(regenerable_suffixes)
             )
             if unexpected_buffers:
                 raise RuntimeError(
                     f"unrestored non-persistent PI0.5 buffers: {unexpected_buffers[:8]}"
                 )
             if not nonpersistent:
-                raise RuntimeError("expected PI0.5 position_ids buffers were not found")
+                raise RuntimeError("expected PI0.5 non-persistent buffers were not found")
             for module in model.modules():
-                if "position_ids" not in module._non_persistent_buffers_set:
-                    continue
-                positions = module.position_ids
-                if positions.ndim != 2 or positions.shape[0] != 1:
-                    raise RuntimeError("unexpected PI0.5 position_ids buffer shape")
-                module.position_ids = torch.arange(
-                    positions.shape[1], device="cuda", dtype=positions.dtype
-                ).unsqueeze(0)
+                if "position_ids" in module._non_persistent_buffers_set:
+                    positions = module.position_ids
+                    if positions.ndim != 2 or positions.shape[0] != 1:
+                        raise RuntimeError("unexpected PI0.5 position_ids buffer shape")
+                    module.position_ids = torch.arange(
+                        positions.shape[1], device="cuda", dtype=positions.dtype
+                    ).unsqueeze(0)
+                if "inv_freq" in module._non_persistent_buffers_set:
+                    if (module._non_persistent_buffers_set & {"inv_freq", "original_inv_freq"}) != {
+                        "inv_freq", "original_inv_freq"
+                    } or module.rope_type != "default":
+                        raise RuntimeError("unsupported PI0.5 rotary buffer regeneration contract")
+                    inverse, scaling = module.compute_default_rope_parameters(
+                        module.config, torch.device("cuda")
+                    )
+                    if (inverse.shape != module.inv_freq.shape
+                            or inverse.shape != module.original_inv_freq.shape):
+                        raise RuntimeError("PI0.5 rotary buffer shape differs from constructor")
+                    module.inv_freq = inverse
+                    module.original_inv_freq = inverse.clone()
+                    module.attention_scaling = scaling
             loaded = set()
             with torch.no_grad():
                 for source_key in source_keys:
@@ -149,7 +163,7 @@ def install_streaming_loader() -> None:
         model.eval()
         print(
             f"HRVLA: loaded all {len(loaded)} PI0.5 tensors to CUDA; "
-            f"restored {len(nonpersistent)} non-persistent position buffers; "
+            f"restored {len(nonpersistent)} non-persistent position/rotary buffers; "
             f"allocated={torch.cuda.memory_allocated() / 2**30:.2f} GiB",
             flush=True,
         )
