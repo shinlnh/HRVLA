@@ -20,6 +20,7 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--lerobot-root", type=Path, required=True)
     parser.add_argument("--python", type=Path, required=True)
+    parser.add_argument("--tokenizer-dir", type=Path, required=True)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--steps", type=int, default=100_000)
     parser.add_argument("--batch-size", type=int, default=1)
@@ -51,6 +52,7 @@ def main() -> int:
         return 0
     env = os.environ.copy()
     env["PYTHONPATH"] = str((args.lerobot_root / "src").resolve())
+    env["HRVLA_PI05_TOKENIZER_DIR"] = str(args.tokenizer_dir.resolve(strict=True))
     return subprocess.call(command, env=env, cwd=args.lerobot_root)
 
 

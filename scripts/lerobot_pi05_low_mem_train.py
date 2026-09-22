@@ -12,6 +12,9 @@ training; no randomly initialized parameter may survive.
 from __future__ import annotations
 
 import functools
+import hashlib
+import json
+import os
 from pathlib import Path
 import runpy
 import sys
@@ -19,7 +22,44 @@ import sys
 from safetensors import safe_open
 import torch
 from lerobot.configs.policies import PreTrainedConfig
+from lerobot.policies import factory as policy_factory
 from lerobot.policies.pi05.modeling_pi05 import PI05Policy
+
+
+TOKENIZER_SHA256 = "ef6773c135b77b834de1d13c75a4c98ab7a3684ffd602d1831e1f1bf5467c563"
+TOKENIZER_CONFIG_SHA256 = "3259402b1d1802e02417d7bff75a889ec61d359d15be6050a957b307c48edbbe"
+STALE_TOKENIZER = "/ai/Yichi/taowen/ckpts/checkpoints/paligemma-3b-pt-224"
+
+
+def install_tokenizer_override() -> None:
+    tokenizer_dir = Path(os.environ["HRVLA_PI05_TOKENIZER_DIR"]).resolve(strict=True)
+    tokenizer_file = tokenizer_dir / "tokenizer.json"
+    digest = hashlib.sha256(tokenizer_file.read_bytes()).hexdigest()
+    if digest != TOKENIZER_SHA256:
+        raise ValueError("local PaliGemma tokenizer does not match the pinned artifact")
+    config_digest = hashlib.sha256((tokenizer_dir / "tokenizer_config.json").read_bytes()).hexdigest()
+    if config_digest != TOKENIZER_CONFIG_SHA256:
+        raise ValueError("local PaliGemma tokenizer config does not match the pinned artifact")
+    original = policy_factory.make_pre_post_processors
+
+    @functools.wraps(original)
+    def use_local_tokenizer(*args, **kwargs):
+        checkpoint = kwargs.get("pretrained_path")
+        if checkpoint:
+            payload = json.loads(
+                (Path(checkpoint) / "policy_preprocessor.json").read_text(encoding="utf-8")
+            )
+            steps = [step for step in payload.get("steps", [])
+                     if step.get("registry_name") == "tokenizer_processor"]
+            if len(steps) != 1 or steps[0].get("config", {}).get("tokenizer_name") != STALE_TOKENIZER:
+                raise ValueError("checkpoint tokenizer contract differs from pinned PaliGemma artifact")
+            overrides = kwargs.setdefault("preprocessor_overrides", {})
+            tokenizer_override = overrides.setdefault("tokenizer_processor", {})
+            tokenizer_override["tokenizer_name"] = str(tokenizer_dir)
+        return original(*args, **kwargs)
+
+    policy_factory.make_pre_post_processors = use_local_tokenizer
+    print(f"HRVLA: pinned local PaliGemma tokenizer {digest[:12]}", flush=True)
 
 
 def install_streaming_loader() -> None:
@@ -96,6 +136,7 @@ def main() -> None:
         raise SystemExit("usage: lerobot_pi05_low_mem_train.py LEROBOT_TRAIN.py [options]")
     upstream = Path(sys.argv[1]).resolve(strict=True)
     install_streaming_loader()
+    install_tokenizer_override()
     sys.argv = [str(upstream), *sys.argv[2:]]
     print("HRVLA: exact-key meta-device PI0.5 streaming loader enabled", flush=True)
     runpy.run_path(str(upstream), run_name="__main__")
