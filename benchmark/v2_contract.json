@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "architecture_token": "PI05-ST-RT",
+  "architecture_branch": "feat(PI05-ST-RT)/retrain-sub-task-vla-for-pi05-sonic",
+  "architecture_revision": "9a3c863867dd560e192ab441ee6db777e163e677",
+  "suite": "HA",
+  "suite_revision": null,
+  "checkpoint_lock": null,
+  "sonic_lock": null,
+  "protocol_lock": null,
+  "seed_plan_lock": null,
+  "precision": null,
+  "expected_episodes": null,
+  "status": "pending",
+  "result_manifest": null
+}
