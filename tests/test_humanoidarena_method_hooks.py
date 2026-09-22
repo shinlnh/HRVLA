@@ -119,3 +119,49 @@ def test_hook_routes_only_str_to_recovery_after_runtime_trigger(tmp_path: Path) 
     assert "re-align" in provider.instructions[0]
     assert result["hrvla_method"]["recovery_decisions"] == 1
     assert result["hrvla_method"]["first_recovery_decision_control_step"] == 0
+
+
+def test_pi05_st_hook_routes_real_provider_calls_and_checks_action40(tmp_path: Path) -> None:
+    provider = _Provider()
+    module = _module(provider, _Env(), fetches=2)
+    install_method_hooks(
+        module, PROGRAMS, method_id="pi05_st", task_id="pick_and_place_box",
+        output_dir=tmp_path, implementation_revision="b" * 40,
+    )
+    result = module._run_episode_once(spec={"episode_index": 0})
+    assert len(provider.instructions) == 2
+    assert "Approach the box" in provider.instructions[0]
+    assert "Lift the grasped box" in provider.instructions[1]
+    assert result["hrvla_method"]["completed_transition_count"] == 1
+    trace = [json.loads(line) for line in (tmp_path / "method-trace.jsonl").read_text().splitlines()]
+    assert [row["policy_action_dim"] for row in trace[1:]] == [40, 40]
+
+
+def test_pi05_st_hook_rejects_non_action40_chunk(tmp_path: Path) -> None:
+    provider = _Provider()
+    provider._fetch_lerobot_action_chunk = lambda: [[0.0] * 64]
+    module = _module(provider, _Env())
+    install_method_hooks(
+        module, PROGRAMS, method_id="pi05_st", task_id="pick_and_place_box",
+        output_dir=tmp_path, implementation_revision="b" * 40,
+    )
+    try:
+        module._run_episode_once(spec={"episode_index": 0})
+    except RuntimeError as error:
+        assert "non-action40 chunk" in str(error)
+    else:
+        raise AssertionError("PI0.5 ST accepted a 64-D policy action")
+
+
+def test_pi05_st_ignores_isaac_startup_reset_before_episode(tmp_path: Path) -> None:
+    provider = _Provider()
+    env = _Env()
+    module = _module(provider, env)
+    install_method_hooks(
+        module, PROGRAMS, method_id="pi05_st", task_id="pick_and_place_box",
+        output_dir=tmp_path, implementation_revision="b" * 40,
+    )
+    module._reset_environment_for_episode(env, types.SimpleNamespace(decimation=1), 17)
+    assert not (tmp_path / "method-trace.jsonl").exists()
+    result = module._run_episode_once(spec={"episode_index": 0})
+    assert result["hrvla_method"]["policy_requests"] == 1
