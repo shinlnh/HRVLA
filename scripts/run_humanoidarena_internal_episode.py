@@ -23,9 +23,8 @@ from hrvla_bench.recovery_restore import restore_snapshot_for_trial  # noqa: E40
 
 
 RECOVERY_RUNNER = ROOT / "scripts/run_humanoidarena_recovery_episode.py"
-EVALUATOR = (
-    ROOT
-    / "_vendor/HumanoidArena/isaaclab_twist2_g1/script/eval_scripts/sonic_pi05/sim_eval_vla.py"
+EVALUATOR_RELATIVE = Path(
+    "_vendor/HumanoidArena/isaaclab_twist2_g1/script/eval_scripts/sonic_pi05/sim_eval_vla.py"
 )
 
 
@@ -90,6 +89,12 @@ def _install_nominal_restore_hooks(
 
 def main() -> int:
     parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument(
+        "--runtime-root",
+        type=Path,
+        default=ROOT,
+        help="Runtime checkout containing the pinned HumanoidArena/Isaac assets.",
+    )
     parser.add_argument("--internal-method", required=True)
     parser.add_argument(
         "--method-programs",
@@ -104,6 +109,8 @@ def main() -> int:
     parser.add_argument("--per-episode-output", action="store_true")
     args, remaining = parser.parse_known_args()
 
+    runtime_root = args.runtime_root.resolve(strict=True)
+    evaluator = (runtime_root / EVALUATOR_RELATIVE).resolve(strict=True)
     suite = load_json(args.suite.resolve())
     programs = load_method_programs(args.method_programs.resolve())
     implementation_revision = RECOVERY._repository_revision()
@@ -141,7 +148,7 @@ def main() -> int:
             raise ValueError(f"runtime environment conflict for {key}: {existing!r} != {value!r}")
         os.environ[key] = value
 
-    module = _load_module("hrvla_internal_upstream_evaluator", EVALUATOR)
+    module = _load_module("hrvla_internal_upstream_evaluator", evaluator)
     shared_context: dict[str, Any] = {}
     recovery_state = None
     failure_start = bool(scenario and scenario["protocol"] == "failure_start")

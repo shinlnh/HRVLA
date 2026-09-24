@@ -5,8 +5,10 @@ import types
 import numpy as np
 
 from hrvla_bench.humanoidarena_recovery_signals import (
+    _body_names,
     _point_box_xy_distance,
     _root_upright,
+    _usd_door_handle_position,
     signals_for_detector,
 )
 
@@ -40,3 +42,32 @@ def test_point_to_live_seat_aabb_distance_is_zero_inside() -> None:
 
 def test_scene_only_detector_does_not_request_private_task_signals() -> None:
     assert signals_for_detector("root-displacement", object(), {}) == {}
+
+
+def test_xform_door_uses_pinned_usd_handle_instead_of_articulation_data() -> None:
+    class Handle:
+        def IsValid(self) -> bool:
+            return True
+
+        def GetName(self) -> str:
+            return "E_handle_4"
+
+    class Transform:
+        def ExtractTranslation(self) -> tuple[float, float, float]:
+            return (1.0, -0.2, 0.7)
+
+    handle = Handle()
+    cfg = types.SimpleNamespace(
+        _get_open_door_prims=lambda stage, env_id: {"handle": handle}
+        if stage == "stage" and env_id == 0 else {}
+    )
+    cache = types.SimpleNamespace(GetLocalToWorldTransform=lambda prim: Transform())
+    assert _usd_door_handle_position(cfg, "stage", 0, cache) == (
+        "E_handle_4", (1.0, -0.2, 0.7)
+    )
+    try:
+        _body_names(types.SimpleNamespace())
+    except ValueError as exc:
+        assert "body_names" in str(exc)
+    else:
+        raise AssertionError("XFormPrim-like object must not be treated as an articulation")
