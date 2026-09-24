@@ -13,5 +13,5 @@
   "router": "src/hrvla_bench/humanoidarena_method_runtime.py",
   "hook": "src/hrvla_bench/humanoidarena_method_hooks.py",
   "checkpoint": "Reuse the exact PI0.5+SONIC task checkpoint; no retraining",
-  "claim_boundary": "ST instruction routing is implemented and unit-tested; PI0.5 HTTP hook integration and closed-loop benchmark are not yet validated."
+  "claim_boundary": "ST instruction routing is unit-tested and one bounded pp_box PI0.5 HTTP+Isaac integration smoke passed; seven-task transitions and paired closed-loop benchmark remain pending."
 }

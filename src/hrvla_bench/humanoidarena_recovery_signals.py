@@ -18,23 +18,38 @@ _WRIST_BODY_TOKENS = (
 
 
 def _body_names(asset: Any) -> list[str]:
-    names = getattr(asset, "body_names", None) or getattr(asset.data, "body_names", None)
+    data = getattr(asset, "data", None)
+    names = getattr(asset, "body_names", None) or getattr(data, "body_names", None)
     if not names:
         raise ValueError("asset does not expose body_names")
     return [str(name) for name in names]
 
 
 def _body_positions(asset: Any) -> Any:
-    positions = getattr(asset.data, "body_link_pos_w", None)
+    data = getattr(asset, "data", None)
+    positions = getattr(data, "body_link_pos_w", None)
     if positions is None:
-        positions = getattr(asset.data, "body_pos_w", None)
+        positions = getattr(data, "body_pos_w", None)
     if positions is None:
-        state = getattr(asset.data, "body_state_w", None)
+        state = getattr(data, "body_state_w", None)
         if state is not None:
             positions = state[..., :3]
     if positions is None:
         raise ValueError("asset does not expose world-frame body positions")
     return positions
+
+
+def _usd_door_handle_position(cfg: Any, stage: Any, env_id: int, cache: Any) -> tuple[str, tuple[float, float, float]]:
+    """Use the pinned OpenDoor task's handle prim when its scene asset is XFormPrim."""
+
+    resolver = getattr(cfg, "_get_open_door_prims", None)
+    if not callable(resolver):
+        raise ValueError("OpenDoor task does not expose its pinned USD handle resolver")
+    handle = resolver(stage, env_id).get("handle")
+    if handle is None or not handle.IsValid():
+        raise ValueError("OpenDoor USD handle prim is unavailable")
+    translation = cache.GetLocalToWorldTransform(handle).ExtractTranslation()
+    return str(handle.GetName()), tuple(float(value) for value in translation)
 
 
 def _scalar(value: Any, env_id: int = 0) -> float:
@@ -73,10 +88,6 @@ def _open_door_signals(env: Any, door_asset_name: str) -> dict[str, Any]:
     }
 
     door = env.scene[door_asset_name]
-    door_names = _body_names(door)
-    handle_ids = [index for index, name in enumerate(door_names) if "handle" in name.lower()]
-    if not handle_ids:
-        raise ValueError(f"no handle body found in door body_names: {door_names}")
     robot = env.scene["robot"]
     robot_names = _body_names(robot)
     wrist_ids = [
@@ -86,13 +97,30 @@ def _open_door_signals(env: Any, door_asset_name: str) -> dict[str, Any]:
     ]
     if not wrist_ids:
         raise ValueError(f"no wrist proxy found in robot body_names: {robot_names[:20]}")
-    handle_positions = _body_positions(door)[0, handle_ids, :3]
     wrist_positions = _body_positions(robot)[0, wrist_ids, :3]
+    if getattr(door, "data", None) is not None:
+        door_names = _body_names(door)
+        handle_ids = [index for index, name in enumerate(door_names) if "handle" in name.lower()]
+        if not handle_ids:
+            raise ValueError(f"no handle body found in door body_names: {door_names}")
+        handle_positions = _body_positions(door)[0, handle_ids, :3]
+        handle_body_names = [door_names[index] for index in handle_ids]
+    else:
+        import omni.usd
+        from pxr import Usd, UsdGeom
+
+        stage = omni.usd.get_context().get_stage()
+        cache = UsdGeom.XformCache(Usd.TimeCode.Default())
+        handle_name, handle_position = _usd_door_handle_position(cfg, stage, 0, cache)
+        handle_positions = torch.as_tensor(
+            handle_position, device=wrist_positions.device, dtype=wrist_positions.dtype
+        ).reshape(1, 3)
+        handle_body_names = [handle_name]
     deltas = wrist_positions[:, None, :] - handle_positions[None, :, :]
     output["wrist_handle_min_distance_m"] = float(
         torch.linalg.vector_norm(deltas, dim=-1).min().detach().cpu().item()
     )
-    output["door_handle_body_names"] = [door_names[index] for index in handle_ids]
+    output["door_handle_body_names"] = handle_body_names
     output["wrist_body_names"] = [robot_names[index] for index in wrist_ids]
     return output
 

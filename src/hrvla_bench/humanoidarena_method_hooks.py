@@ -9,6 +9,8 @@ import statistics
 import time
 from typing import Any
 
+import numpy as np
+
 from .humanoidarena_method_runtime import HumanoidArenaMethodRuntime
 from .plan import canonical_sha256
 
@@ -80,6 +82,12 @@ def install_method_hooks(
     def method_reset(env, env_cfg, episode_seed):
         result = original_reset(env, env_cfg, episode_seed)
         episode_output = state.get("episode_output_dir")
+        # HumanoidArena resets once during scene startup, before entering
+        # `_run_episode_once`. That is not a scored episode and has no method
+        # output context yet. Leave it untouched; the episode reset below is
+        # the one that must create a planner and trace.
+        if episode_output is None:
+            return result
         if not isinstance(episode_output, Path):
             raise RuntimeError("method episode output directory is unresolved")
         trace_path = episode_output / "method-trace.jsonl"
@@ -155,6 +163,9 @@ def install_method_hooks(
                     recovery_runtime is not None and recovery_runtime.triggered
                 )
             semantic_action = getattr(provider, "_latest_vla_action", None)
+            if method_id.startswith("pi05_") and semantic_action is not None:
+                if np.asarray(semantic_action).shape != (40,):
+                    raise RuntimeError("PI0.5 ST runtime requires canonical action40 feedback")
             decision = runtime.instruction(
                 env,
                 task_success=bool(state["task_success"]),
@@ -170,6 +181,12 @@ def install_method_hooks(
             provider.task_name = decision.instruction
             started = time.perf_counter()
             action = original_fetch()
+            if method_id.startswith("pi05_"):
+                action_shape = np.asarray(action).shape
+                if len(action_shape) != 2 or action_shape[1] != 40 or action_shape[0] < 1:
+                    raise RuntimeError(
+                        f"PI0.5 ST policy returned a non-action40 chunk: {action_shape}"
+                    )
             policy_latency_ms = (time.perf_counter() - started) * 1000.0
             state["policy_request_latencies_ms"].append(policy_latency_ms)
             _append_jsonl(
@@ -182,6 +199,7 @@ def install_method_hooks(
                     "recovery_scenario_id": recovery_scenario_id,
                     "recovery_active": recovery_active,
                     "policy_request_latency_ms": policy_latency_ms,
+                    "policy_action_dim": 40 if method_id.startswith("pi05_") else None,
                     **decision.to_dict(),
                 },
             )
@@ -205,6 +223,7 @@ def install_method_hooks(
             **runtime.summary(),
             "program_sha256": canonical_sha256(programs),
             "implementation_revision": implementation_revision,
+            "trace_path": str(episode_output / "method-trace.jsonl"),
             "trace_sha256": canonical_sha256(
                 [
                     json.loads(line)
