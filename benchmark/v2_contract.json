@@ -27,6 +27,6 @@
   },
   "precision": "cuda_int8",
   "expected_episodes": 1440,
-  "status": "ready",
-  "result_manifest": null
+  "status": "complete",
+  "result_manifest": "results/benchmark/pi05-st-ha/result_manifest.json"
 }

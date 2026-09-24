@@ -1,72 +1,52 @@
-# PI0.5 + SONIC + sub-task on HumanoidArena
+# PI0.5 + SONIC + sub-task on HumanoidArena — frozen result
 
-Status: **running full matrix**, not a paper result. The baseline-only PI0.5 HA branch is
-complete; this branch must independently evaluate the ST hook on its frozen
-six-task primary identities. OpenDoor is diagnostic, never pooled into the
-primary denominator.
+This branch contains the completed **PI0.5-ST HumanoidArena** evaluation. The
+primary denominator is the same six tasks and the same 1,440
+task/mode/seed/repeat identities used by the frozen PI0.5 baseline. OpenDoor's
+240 episodes are retained as a separate diagnostic and are never pooled into
+the primary score. No behavioral failure was discarded or rerolled.
 
-The PI0.5 checkpoint, CUDA INT8 backend, SONIC controller, official task
-predicates, task horizons, four modes, three group seeds, twenty repeats, and
-episode-seed derivation are inherited from `benchmark/locks/pi05_ha/`.
-The only intended method difference is the source-observed ST language
-planner. The wrapper records one method trace and summary per episode.
+| Primary task | PI0.5 baseline | PI0.5-ST | ST − baseline |
+| --- | ---: | ---: | ---: |
+| Boxing | 163/240 (67.92%) | 20/240 (8.33%) | -59.58 pp |
+| DoubleDesk | 96/240 (40.00%) | 68/240 (28.33%) | -11.67 pp |
+| Football | 56/240 (23.33%) | 21/240 (8.75%) | -14.58 pp |
+| PickPlaceBox | 145/240 (60.42%) | 127/240 (52.92%) | -7.50 pp |
+| SitSofa | 131/240 (54.58%) | 110/240 (45.83%) | -8.75 pp |
+| VisionNavigation | 47/240 (19.58%) | 0/240 (0.00%) | -19.58 pp |
+| **Six-task primary** | **638/1,440 (44.31%)** | **346/1,440 (24.03%)** | **-20.28 pp** |
 
-Before the full matrix, run full-horizon seven-task pilot episodes and verify
-that the batch runner produces atomic episode JSON, trace hashes, 40-D policy
-actions, and at least one observed sub-task transition. A task failure or zero
-transitions in an individual episode is an outcome, not permission to discard
-or reroll it. This pilot is development evidence, not part of the 1,440 rows.
-The pilot at architecture revision `573ef3da6ff80595e6f53cd2bcaa20ae1464968a`
-completed 7/7 full-horizon episodes: 2 successes, 2 observed sub-task
-transitions (SitSofa and OpenDoor), and 7/7 trace/summary/video integrity
-checks. Five failures and all zero-transition rows remain recorded. The raw
-pilot is at `_artifacts/HumanoidArena/pi05-st-pilot-v1/` on HELIOS.
+The paired, task-stratified bootstrap 95% interval for the success-rate delta
+is **[-23.06, -17.57] percentage points**. The ST run recorded 606 completed
+sub-task transitions. Its Wilson 95% interval is 21.89–26.30%. The separately
+labeled OpenDoor diagnostic recorded 2/240 successes (0.83%) and 35 completed
+sub-task transitions.
 
-Full-matrix command on the pinned workstation, after readiness passes:
+The negative result is retained unchanged: this ST implementation is worse
+than the matched PI0.5 baseline under the frozen nominal protocol. It is not
+evidence against every sub-task planner, and it is not a recovery or
+cross-family result.
 
-```bash
-cd /HELIOS/Robotics/HRVLA-worktrees/pi05-st-live
-python3 scripts/run_humanoidarena_pi05_st_matrix.py \
-  --runtime-root /HELIOS/Robotics/HRVLA \
-  --output-root /HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-ha-cuda-int8-v1 \
-  --tasks boxing doubledesk football pp_box sit_sofa vision_navi \
-  --modes base_test semantic vision execution \
-  --seeds 0 1 2 --repeats 20 \
-  --policy-backend cuda_int8_weight_only \
-  --record-video-every-n 10 --step-log-every-n 250
-```
+Evidence in this directory:
 
-The same command resumes missing atomic episode JSON after an interruption.
-The primary matrix started on HELIOS at `2026-09-22T07:04:32Z` as detached
-driver PID `4021344`; the process log is
-`_artifacts/HumanoidArena/pi05-st-ha-cuda-int8-v1/driver.log` and the live
-progress file is the adjacent `progress.json`. At launch it reported 0/72
-cells and 0/1,440 episodes. To check without touching the job:
+- `primary-audit.json`: all 1,440 primary episode identities, raw hashes,
+  method-trace hashes, checkpoint/controller/source checks, metrics and CIs.
+- `diagnostic-audit.json`: the separate 240-row OpenDoor audit.
+- `comparison.json`: exact paired outcomes and per-task summaries.
+- `comparison.svg`: the checked-in metric chart.
+- `videos/`: deterministic, non-outcome-selected samples for six primary tasks
+  plus OpenDoor diagnostic.
+- `result_manifest.json`: compact release boundary and SHA-256 bindings.
+
+Recheck on the pinned workstation:
 
 ```bash
-python3 -m json.tool /HELIOS/Robotics/HRVLA/_artifacts/HumanoidArena/pi05-st-ha-cuda-int8-v1/progress.json
-pgrep -af '^/usr/bin/python3 -u scripts/run_humanoidarena_pi05_st_matrix.py'
+python3 scripts/benchmark_v2_preflight.py \
+  --suite-root /HELIOS/Robotics/HRVLA/_vendor/HumanoidArena
+python3 scripts/audit_pi05_st_ha_release.py
 ```
 
-If interrupted, confirm the old driver and its child simulator/server are no
-longer running, then rerun the exact full-matrix command above. Valid atomic
-episode rows are skipped; never remove them to improve the outcome.
-
-An unattended continuation was started at `2026-09-22T07:09:41Z` and upgraded
-while waiting; its current PID is `4032647`. The primary benchmark PID was
-not interrupted. Its script is `scripts/continue_pi05_st_ha_after_primary.py` on
-this branch. It waits for primary PID `4021344`, audits the primary 1,440
-rows, runs the 240 OpenDoor diagnostic episodes separately, then audits those
-rows, then compiles the exact paired 1,440-identity comparison, SVG chart, and
-six deterministic sample videos. Its status is
-`_artifacts/HumanoidArena/pi05-st-ha-release-v1/continuation-status.json`.
-An `audits_and_comparison_passed_review_required` status means raw evidence passed automatic
-checks; it does **not** silently mark this branch complete. Review the audit
-manifests, generate/verify the paired comparison chart and video index, then
-commit the final manifest and change `benchmark/v2_contract.json` to
-`complete` only after a clean preflight.
-Do not call this branch `complete` until all 1,440 primary rows, trace hashes,
-sampled videos, paired identities, checkpoint/controller locks, confidence
-intervals, plots, and the final result manifest have passed audit. Run the
-240 OpenDoor episodes separately as a diagnostic with the same driver and
-parameters except `--tasks open_door`.
+The PI0.5-ST architecture revision, CUDA INT8 backend, task checkpoints, SONIC
+controller, simulator revisions, horizons and seed plan are frozen by
+`benchmark/v2_contract.json` and `benchmark/locks/pi05_ha/`. Sample videos are
+visual evidence only, not statistically representative outcomes.
