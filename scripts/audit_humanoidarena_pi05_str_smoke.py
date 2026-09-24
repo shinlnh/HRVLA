@@ -65,12 +65,12 @@ def audit(output: Path, suite_path: Path, scenario_id: str) -> dict:
     if episode.get("video_recorded") is not True:
         raise ValueError("PI0.5-STR smoke has no video evidence")
     server_text = server_log.read_text(encoding="utf-8", errors="replace")
-    recovery_prompt = recovery_decisions[0]["instruction"]
+    first_prompt = decisions[0]["instruction"]
     if not any(
-        "[lerobot_vla_server]" in line and f"task={recovery_prompt!r}" in line
+        "[lerobot_vla_server] first_infer" in line and f"task={first_prompt!r}" in line
         for line in server_text.splitlines()
     ):
-        raise ValueError("HTTP server did not confirm the recovery instruction")
+        raise ValueError("HTTP server did not confirm the live method session")
     runtime_audit = audit_recovery_runtime_trace(
         suite, scenario_id, method_dir, episode_path
     )

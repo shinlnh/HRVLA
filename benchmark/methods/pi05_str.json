@@ -13,5 +13,14 @@
   "router": "src/hrvla_bench/humanoidarena_method_runtime.py",
   "recovery_runtime": "src/hrvla_bench/humanoidarena_recovery_runtime.py",
   "checkpoint": "Reuse the exact PI0.5+SONIC task checkpoint; no retraining",
-  "claim_boundary": "Recovery instruction routing is implemented and unit-tested; live PI0.5 failure injection and closed-loop recovery are not validated."
+  "live_qualification": {
+    "scenario_id": "box-missed-grasp-retry",
+    "status": "integration_smoke_pass",
+    "policy_requests": 30,
+    "recovery_decisions": 29,
+    "action_dim": 40,
+    "audit": "benchmark/evidence/pi05_str_ha_smoke/audit.json",
+    "frame": "benchmark/evidence/pi05_str_ha_smoke/recovery-evidence.png"
+  },
+  "claim_boundary": "One bounded pp_box PI0.5 HTTP+Isaac episode validated locked failure injection, action40 policy calls, and closed-loop STR routing. The timeout is retained as behavior; nominal paired HA benchmarking and multi-seed recovery comparison remain separate claims."
 }
