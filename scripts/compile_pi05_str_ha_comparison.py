@@ -169,7 +169,7 @@ def compile_comparison(runtime_root: Path, primary_audit: Path, output_root: Pat
             "str_success_rate": candidate / len(rows),
             "str_minus_baseline_success_rate": (candidate - base) / len(rows),
             "baseline_only_successes": discordant[(1, 0)],
-            "st_only_successes": discordant[(0, 1)],
+            "str_only_successes": discordant[(0, 1)],
             "both_successes": discordant[(1, 1)],
             "neither_successes": discordant[(0, 0)],
         }
