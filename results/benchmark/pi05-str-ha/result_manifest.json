@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "audit_passed": true,
+  "claim_boundary": "paired PI0.5-STR versus PI0.5 HumanoidArena six-task nominal result only; recovery-injection outcomes are separate",
+  "episodes_observed": 1440,
+  "successes": 381,
+  "success_rate": 0.26458333333333334,
+  "success_rate_wilson_95": [
+    0.2424481826029319,
+    0.28797117482861095
+  ],
+  "baseline_successes": 638,
+  "baseline_success_rate": 0.44305555555555554,
+  "str_minus_baseline_success_rate": -0.17847222222222223,
+  "paired_stratified_bootstrap_delta_95": [
+    -0.20625,
+    -0.15
+  ],
+  "completed_subtask_transitions": 587,
+  "videos_verified": 144,
+  "artifacts": {
+    "primary-audit.json": "d2ec77aa0e730b3f9ce1e8189b706fc36dbbc80f69f3e91fbbbf9dc9105a5905",
+    "comparison.json": "6243fb8c1be29232f876197ffb32320e9da015021c83b9ad4f4bf0dc44d00e32",
+    "comparison.svg": "4b6261a6b6473ba3d84d7ab88f4c06f120332db04ccc64e2c598d0da46bfbf45",
+    "videos/boxing.mp4": "f5cfd293ee7c006c89019f783cf4482980e73fb4bce5d62d36a5051e2c2656f7",
+    "videos/doubledesk.mp4": "0b39f19065bdbedcf4890848f97c89db5fa971a535e1e8409b22d5251d61b9ca",
+    "videos/football.mp4": "9418da117beb59afa8e8f4b86b2f0dd3f9de095559d7d012d8c09d34448cecf8",
+    "videos/pp_box.mp4": "61816a8690d2018011c45891752e087736dd3e9595554f22fe27a668af3692e1",
+    "videos/sit_sofa.mp4": "72d14f27b50651b845b7ded45207af8bc877121f8353b268dd533f9e07d5751e",
+    "videos/vision_navi.mp4": "961959fca9febfae374bab4e833ee47e0fa5be31cf1438b0ad7841ca20d30f95"
+  }
+}

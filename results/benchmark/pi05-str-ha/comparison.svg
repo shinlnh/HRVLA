@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="544" viewBox="0 0 1000 544">
+<rect width="1000" height="100%" fill="#ffffff"/>
+<text x="28" y="30" font-family="sans-serif" font-size="21" fill="#172033">PI0.5 + SONIC vs PI0.5-STR · HumanoidArena</text>
+<text x="28" y="52" font-family="sans-serif" font-size="13" fill="#475569">Same 1,440 task × mode × seed × repeat identities; OpenDoor excluded</text>
+<text x="28" y="103" font-family="sans-serif" font-size="15" fill="#172033">Boxing</text>
+<rect x="242" y="84" width="366" height="18" rx="3" fill="#64748b"/>
+<text x="618" y="98" font-family="sans-serif" font-size="13" fill="#172033">base: 163/240 (67.9%)</text>
+<rect x="242" y="109" width="49" height="18" rx="3" fill="#7c3aed"/>
+<text x="301" y="123" font-family="sans-serif" font-size="13" fill="#172033">STR: 22/240 (9.2%)</text>
+<text x="28" y="169" font-family="sans-serif" font-size="15" fill="#172033">DoubleDesk</text>
+<rect x="242" y="150" width="216" height="18" rx="3" fill="#64748b"/>
+<text x="468" y="164" font-family="sans-serif" font-size="13" fill="#172033">base: 96/240 (40.0%)</text>
+<rect x="242" y="175" width="184" height="18" rx="3" fill="#7c3aed"/>
+<text x="436" y="189" font-family="sans-serif" font-size="13" fill="#172033">STR: 82/240 (34.2%)</text>
+<text x="28" y="235" font-family="sans-serif" font-size="15" fill="#172033">Football</text>
+<rect x="242" y="216" width="126" height="18" rx="3" fill="#64748b"/>
+<text x="378" y="230" font-family="sans-serif" font-size="13" fill="#172033">base: 56/240 (23.3%)</text>
+<rect x="242" y="241" width="42" height="18" rx="3" fill="#7c3aed"/>
+<text x="294" y="255" font-family="sans-serif" font-size="13" fill="#172033">STR: 19/240 (7.9%)</text>
+<text x="28" y="301" font-family="sans-serif" font-size="15" fill="#172033">PickPlaceBox</text>
+<rect x="242" y="282" width="326" height="18" rx="3" fill="#64748b"/>
+<text x="578" y="296" font-family="sans-serif" font-size="13" fill="#172033">base: 145/240 (60.4%)</text>
+<rect x="242" y="307" width="303" height="18" rx="3" fill="#7c3aed"/>
+<text x="555" y="321" font-family="sans-serif" font-size="13" fill="#172033">STR: 135/240 (56.2%)</text>
+<text x="28" y="367" font-family="sans-serif" font-size="15" fill="#172033">SitSofa</text>
+<rect x="242" y="348" width="294" height="18" rx="3" fill="#64748b"/>
+<text x="546" y="362" font-family="sans-serif" font-size="13" fill="#172033">base: 131/240 (54.6%)</text>
+<rect x="242" y="373" width="276" height="18" rx="3" fill="#7c3aed"/>
+<text x="528" y="387" font-family="sans-serif" font-size="13" fill="#172033">STR: 123/240 (51.2%)</text>
+<text x="28" y="433" font-family="sans-serif" font-size="15" fill="#172033">VisionNavigation</text>
+<rect x="242" y="414" width="105" height="18" rx="3" fill="#64748b"/>
+<text x="357" y="428" font-family="sans-serif" font-size="13" fill="#172033">base: 47/240 (19.6%)</text>
+<rect x="242" y="439" width="0" height="18" rx="3" fill="#7c3aed"/>
+<text x="252" y="453" font-family="sans-serif" font-size="13" fill="#172033">STR: 0/240 (0.0%)</text>
+<text x="28" y="499" font-family="sans-serif" font-size="15" fill="#172033">Six-task primary</text>
+<rect x="242" y="480" width="239" height="18" rx="3" fill="#64748b"/>
+<text x="491" y="494" font-family="sans-serif" font-size="13" fill="#172033">base: 638/1440 (44.3%)</text>
+<rect x="242" y="505" width="142" height="18" rx="3" fill="#7c3aed"/>
+<text x="394" y="519" font-family="sans-serif" font-size="13" fill="#172033">STR: 381/1440 (26.5%)</text>
+</svg>
