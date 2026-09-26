@@ -30,7 +30,10 @@ from lerobot.policies.pi05.modeling_pi05 import PI05Policy
 
 TOKENIZER_SHA256 = "ef6773c135b77b834de1d13c75a4c98ab7a3684ffd602d1831e1f1bf5467c563"
 TOKENIZER_CONFIG_SHA256 = "3259402b1d1802e02417d7bff75a889ec61d359d15be6050a957b307c48edbbe"
-STALE_TOKENIZER = "/ai/Yichi/taowen/ckpts/checkpoints/paligemma-3b-pt-224"
+STALE_TOKENIZERS = {
+    "/ai/Yichi/taowen/ckpts/checkpoints/paligemma-3b-pt-224",
+    "/mnt/workspace/users/xujunzhe/yunhengwang/lerobot/lerobot/checkpoints/paligemma-3b-pt-224",
+}
 
 
 def install_tokenizer_override() -> None:
@@ -53,7 +56,11 @@ def install_tokenizer_override() -> None:
             )
             steps = [step for step in payload.get("steps", [])
                      if step.get("registry_name") == "tokenizer_processor"]
-            if len(steps) != 1 or steps[0].get("config", {}).get("tokenizer_name") != STALE_TOKENIZER:
+            if (
+                len(steps) != 1
+                or steps[0].get("config", {}).get("tokenizer_name")
+                not in STALE_TOKENIZERS
+            ):
                 raise ValueError("checkpoint tokenizer contract differs from pinned PaliGemma artifact")
             overrides = kwargs.setdefault("preprocessor_overrides", {})
             tokenizer_override = overrides.setdefault("tokenizer_processor", {})
